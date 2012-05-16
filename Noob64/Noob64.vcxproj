@@ -87,9 +87,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="CPU.cpp" />
+    <ClCompile Include="R4300i.cpp" />
     <ClCompile Include="Helper.cpp" />
-    <ClCompile Include="Instruction.cpp" />
     <ClCompile Include="Noob64.cpp" />
     <ClCompile Include="RCP.cpp" />
     <ClCompile Include="Memory.cpp" />
@@ -104,6 +103,7 @@
     </ClInclude>
     <ClInclude Include="Helper.h" />
     <ClInclude Include="Instruction.h" />
+    <ClInclude Include="R4300i.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />

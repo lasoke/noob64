@@ -36,9 +36,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CPU.cpp">
-      <Filter>Source Files\CPU</Filter>
-    </ClCompile>
     <ClCompile Include="RCP.cpp">
       <Filter>Source Files\RCP</Filter>
     </ClCompile>
@@ -48,8 +45,8 @@
     <ClCompile Include="Helper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Instruction.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="R4300i.cpp">
+      <Filter>Source Files\CPU</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -69,6 +66,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Instruction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="R4300i.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

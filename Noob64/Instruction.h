@@ -1,56 +1,62 @@
 #pragma once
 #include "Memory.h"
 
-class Instruction
+inline int getOpCode(word instr)
 {
-public:
-	Instruction(word w);
-	void operator=(const word &w);
-	bool operator==(const word &w) const;
-	word getInstr(void);
-	int getOpCode(void);
-protected:
-	word instr;
-};
+	return (instr & 0xfc000000) >> 26;
+}
 
-class InstrR : Instruction
+inline int getRs(word instr)
 {
-public:
-	int getRs(void);
-	int getRt(void);
-	int getRd(void);
-	int getSa(void);
-	int getFunc(void);
-private:
+	return (instr & 0x3e00000) >> 21;
+}
 
-};
-
-class InstrI : Instruction
+inline int getRt(word instr)
 {
-public:
-	int getRs(void);
-	int getRt(void);
-	int getImmed(void);
-private:
+	return (instr & 0x1F0000) >> 16;
+}
 
-};
-
-class InstrJ : Instruction
+inline int getRd(word instr)
 {
-public:
-	int getAdress(void);
-private:
+	return (instr & 0xF800) >> 11;
+}
 
-};
-
-class InstrC : Instruction
+inline int getSa(word instr)
 {
-public:
-	int getFormat(void);
-	int getFt(void);
-	int getFs(void);
-	int getFd(void);
-	int getFunc(void);
-private:
+	return (instr & 0x7C0) >> 6;
+}
 
-};
+inline int getFunc(word instr)
+{
+	return instr & 0x3F;
+}
+
+inline int getImmed(word instr)
+{
+	return instr & 0xffff;
+}
+
+inline int getAdress(word instr)
+{
+	return instr & 0x3ffffff;
+}
+
+inline int getFormat(word instr)
+{
+	return (instr & 0x3e00000) >> 21;
+}
+
+inline int getFt(word instr)
+{
+	return (instr & 0x1F0000) >> 16;
+}
+
+inline int getFs(word instr)
+{
+	return (instr & 0xF800) >> 11;
+}
+
+inline int getFd(word instr)
+{
+	return (instr & 0x7C0) >> 6;
+}
