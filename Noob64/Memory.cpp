@@ -39,7 +39,7 @@ void RDRAM::debug(bool registers, word start, word end)
 		cout << "	device_manuf_reg = "	<< device_manuf_reg << endl;
 		cout << endl;
 	}
-	for (int i = start; i < end; i += sizeof(word))
+	for (unsigned int i = start; i < end; i += sizeof(word))
 		read<word>(i);
 	cout << endl;
 	cout << "*** END OF [" << typeid(this).name() << "] DEBUGING ***"<< endl;

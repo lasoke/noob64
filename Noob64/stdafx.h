@@ -5,6 +5,7 @@
 
 // TODO: reference additional headers your program requires here
 #include "Memory.h"
+#include "Instruction.h"
 
 #include <iostream>
 #include <string>

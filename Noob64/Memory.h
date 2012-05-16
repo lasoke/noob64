@@ -1,11 +1,13 @@
-typedef unsigned __int8		byte;
-typedef unsigned __int16	hword;
-typedef unsigned __int32	word;
-typedef unsigned __int64	dword;
+#pragma once
 
 #include <iostream>
 #include <string>
 #include <sstream>
+
+typedef unsigned __int8		byte;
+typedef unsigned __int16	hword;
+typedef unsigned __int32	word;
+typedef unsigned __int64	dword;
 
 class RDRAM
 {
@@ -13,16 +15,13 @@ public:
 	RDRAM();
 	~RDRAM();
 
-	static const int size = 256;
-
 	template <typename Type>
 	Type read(word address);
 
 	template <typename Type>
 	void write(Type data, word address);
 
-	template <typename Type>
-	void print_word(word address);
+	static const int size = 0x800000;
 
 	word config_reg;
 	word device_id_reg;
@@ -39,6 +38,9 @@ public:
 	void debug(bool registers, word start, word end);
 
 private:
+	template <typename Type>
+	void print_word(word address);
+
 	byte rdram[size];
 };
 
@@ -66,12 +68,12 @@ inline Type RDRAM::read(word address)
 	Type data = *((Type *)(rdram + address));
 	if (DEBUG)
 	{
-		char buffer1[8];
-		itoa(address, buffer1, 16);
-		cout << "	" << format_number(string(8 - strlen(buffer1), '0') + buffer1, ' ', 2) << " : ";
-		char buffer2[64];
-		itoa(data, buffer2, 2);
-		cout << format_number(string(sizeof(Type) * 8 - strlen(buffer2), '0') + buffer2, ' ', 4) << endl;
+		char addr[8];
+		itoa(address, addr, 16);
+		cout << "	" << format_number(string(8 - strlen(addr), '0') + addr, ' ', 2) << " : ";
+		char mem[64];
+		itoa(data, mem, 2);
+		cout << format_number(string(sizeof(Type) * 8 - strlen(mem), '0') + mem, ' ', 4) << endl;
 	}
 	return data;
 }
@@ -88,9 +90,136 @@ inline void RDRAM::write(Type data, word address)
 	}
 }
 
+class SP
+{
+private:
+	byte dmem[4000];
+	byte imem[4000];
+
+	word mem_addr_reg;
+	word dram_addr_reg;
+	word rd_len_reg;
+	word wr_len_reg;
+	word status_reg;
+	word dma_full_reg;
+	word dma_busy_reg;
+	word semaphore_reg;
+	word pc_reg;
+	word ibist_reg;
+};
+
+class DPC
+{
+private:
+   word start_reg;
+   word end_reg;
+   word current_reg;
+   word status_reg;
+   word clock_reg;
+   word bufbusy_reg;
+   word pipebusy_reg;
+   word tmem_reg;
+};
+
+class DPS
+{
+private:
+   word tbist_reg;
+   word test_mode_reg;
+   word buftest_addr_reg;
+   word buftest_data_reg;
+};
+
+class MI
+{
+private:
+   word init_mode_reg;
+   word version_reg;
+   word intr_reg;
+   word intr_mask_reg;
+};
+
+class VI
+{
+private:
+   word status_reg;
+   word origin_reg;
+   word width_reg;
+   word v_intr_reg;
+   word current_reg;
+   word burst_reg;
+   word v_sync_reg;
+   word h_sync_reg;
+   word leap_reg;
+   word h_start_reg;
+   word v_start_reg;
+   word v_burst_reg;
+   word x_scale_reg;
+   word y_scale_reg;
+   //word delay_reg;
+};
+
+/*
+class AI
+{
+private:
+   word dram_addr_reg;
+   word len_reg;
+   word control_reg;
+   word status_reg;
+   word dacrate_reg;
+   word bitrate_reg;
+   word next_delay_reg;
+   word next_len_reg;
+   word current_delay_reg;
+   word current_len_reg;
+};
+
+class PI
+{
+private:
+   word dram_addr_reg;
+   word cart_addr_reg;
+   word rd_len_reg;
+   word wr_len_reg;
+   word read_status_reg;
+   word bsd_dom1_lat_reg;
+   word bsd_dom1_pwd_reg;
+   word bsd_dom1_pgs_reg;
+   word bsd_dom1_rls_reg;
+   word bsd_dom2_lat_reg;
+   word bsd_dom2_pwd_reg;
+   word bsd_dom2_pgs_reg;
+   word bsd_dom2_rls_reg;
+};
+
+class RI
+{
+private:
+   word mode_reg;
+   word config_reg;
+   word current_load_reg;
+   word select_reg;
+   word refresh_reg;
+   word latency_reg;
+   word error_reg;
+   word werror_reg;
+};
+
+class SI
+{
+private:
+   word dram_addr_reg;
+   word pif_addr_rd64b_reg;
+   word pif_addr_wr64b_reg;
+   word status_reg;
+};
+
+
 /*
   00000000-03EFFFFF   RDRAM Memory
   03F00000-03FFFFFF   RDRAM Registers
+
   04000000-040FFFFF   SP Registers
   04100000-041FFFFF   DP Command Registers
   04200000-042FFFFF   DP Span Registers
