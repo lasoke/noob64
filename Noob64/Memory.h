@@ -4,6 +4,11 @@
 #include <string>
 #include <sstream>
 
+#define BYTE_MAX			255
+#define DWORD_MAX			65535
+#define DWORD_MAX			4294967295
+#define DWORD_MAX			18446744073709551615
+
 typedef unsigned __int8		byte;
 typedef unsigned __int16	hword;
 typedef unsigned __int32	word;

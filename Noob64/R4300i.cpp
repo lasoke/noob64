@@ -165,6 +165,12 @@ inline void R4300i::decode_r(word instr)
 
 void R4300i::ADDI(int rt, int rs, int immed)
 {
-	r[rt] = r[rs] + immed;
-    //FIXME: If overflow occurs, then trap.
+	if (DWORD_MAX - immed < r[rs])
+	{
+		//FIXME: If overflow occurs, then trap.
+	}
+	else
+	{
+		r[rt] = r[rs] + immed;
+	}
 }
