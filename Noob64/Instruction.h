@@ -41,7 +41,7 @@ inline int getAdress(word instr)
 	return instr & 0x3ffffff;
 }
 
-inline int getFormat(word instr)
+inline int getFmt(word instr)
 {
 	return (instr & 0x3e00000) >> 21;
 }
@@ -60,3 +60,20 @@ inline int getFd(word instr)
 {
 	return (instr & 0x7C0) >> 6;
 }
+
+inline int getNd(word instr)
+{
+	return (instr & 0x20000) >> 17;
+}
+
+inline int getTf(word instr)
+{
+	return (instr & 0x10000) >> 16;
+}
+
+inline int getNdTf(word instr)
+{
+	return (instr & 0x30000) >> 16;
+}
+
+

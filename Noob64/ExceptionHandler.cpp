@@ -2,7 +2,7 @@
 #include "ExceptionHandler.h"
 
 
-ExceptionHandler::ExceptionHandler()
+ExceptionHandler::ExceptionHandler(void)
 {
 }
 
@@ -19,4 +19,12 @@ void ExceptionHandler::trap(void)
 void ExceptionHandler::syscall(void)
 {
 	cerr << "Syscall" << endl;
+}
+
+void ExceptionHandler::unknownInstruction(word i)
+{
+	char mem[64];
+	itoa(i, mem, 2);
+	cerr << "	Unknown instruction: " << format_number(string(32 - strlen(mem), '0') + mem, ' ', 4) << endl;
+	exit(0);
 }

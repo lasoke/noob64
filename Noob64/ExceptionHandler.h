@@ -3,10 +3,11 @@
 class ExceptionHandler
 {
 public:
-	ExceptionHandler();
+	ExceptionHandler(void);
 	void interruption(void);
 	void trap(void);
 	void syscall(void);
+	static void unknownInstruction(word instr);
 private:
 };
 

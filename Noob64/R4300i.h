@@ -7,14 +7,22 @@ public:
 	R4300i(void);
 	void decode(const word instr);
 private:
-	ExceptionHandler &ehandler;
 	void decode_r(const word instr);
-	// General Purpose Registers (GPRs)
-	dword r[32];
-	// FP General Purpose Registers (FGRs)
-	dword fr[32];
-	// Special Registers
-	dword pc, hi, lo, ll, fcr0, fcr31;
+	void decode_regimm(const word instr);
+	void decode_cop0(const word instr);
+	void decode_tlb(const word instr);
+	void decode_cop1(const word instr);
+	void decode_bc1(const word instr);
+	// TODO: templates
+	void decode_fpu_b(const word instr);
+	void decode_fpu_h(const word instr);
+	void decode_fpu_w(const word instr);
+	void decode_fpu_d(const word instr);
+
+	ExceptionHandler &ehandler;
+	dword r[32];									// General Purpose Registers (GPRs)
+	dword fr[32];									// FP General Purpose Registers (FGRs)
+	dword pc, hi, lo, ll, fcr0, fcr31;				// Special Registers
 	//****************************************************************************
 	//** Load and Store Instructions                                            **
 	//****************************************************************************
