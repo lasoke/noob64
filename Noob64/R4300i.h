@@ -9,6 +9,13 @@ public:
 private:
 	void decode_r(const word instr);
 
+	// General Purpose Registers (GPRs)
+	dword r[32];
+	// FP General Purpose Registers (FGRs)
+	dword fr[32];
+	// Special Registers
+	dword pc, hi, lo, ll, fcr0, fcr31
+
 	//****************************************************************************
 	//** Load and Store Instructions                                            **
 	//****************************************************************************
@@ -40,14 +47,14 @@ private:
 	//** Atithmetic Instructions                                                **
 	//****************************************************************************
 	void ADD          (int rd, int rs, int rt);		//	ADD word
-	void ADDI         (int rt, int rs, int imm);		//	ADD Immediate word
-	void ADDIU        (int rt, int rs, int imm);		//	Add Immediate Unsigned word
+	void ADDI         (int rt, int rs, int immed);	//	ADD immediate word
+	void ADDIU        (int rt, int rs, int immed);	//	Add immediate Unsigned word
 	void ADDU         (int rd, int rs, int rt);		//	Add Unsigned word
 	void AND          (int rd, int rs, int rt);		//	AND
-	void ANDI         (int rt, int rs, int imm);		//	AND Immediate
+	void ANDI         (int rt, int rs, int immed);	//	AND immediate
 	void DADD         (int rd, int rs, int rt);		//	Doubleword ADD
-	void DADDI        (int rt, int rs, int imm);		//	Doubleword ADD Immediate
-	void DADDIU       (int rt, int rs, int imm);		//	Doubleword ADD Immediate Unsigned
+	void DADDI        (int rt, int rs, int immed);	//	Doubleword ADD immediate
+	void DADDIU       (int rt, int rs, int immed);	//	Doubleword ADD immediate Unsigned
 	void DADDU        (int rd, int rs, int rt);		//	Doubleword ADD Unsigned
 	void DDIV         (int rs, int rt);				//	Doubleword DIVide
 	void DDIVU        (int rs, int rt);				//	Doubleword DIVide Unsigned
@@ -66,7 +73,7 @@ private:
 	void DSRLV        (int rd, int rt, int rs);		//	Doubleword Shift Right Logical Variable
 	void DSUB         (int rd, int rs, int rt);		//	Doubleword SUBtract
 	void DSUBU        (int rd, int rs, int rt);		//	Doubleword SUBtract Unsigned
-	void LUI          (int rt, int imm);				//	Load Upper Immediate
+	void LUI          (int rt, int immed);			//	Load Upper immediate
 	void MFHI         (int rd);						//	Move From HI register
 	void MFLO         (int rd);						//	Move From LO register
 	void MTHI         (int rd);						//	Move To HI register
@@ -75,12 +82,12 @@ private:
 	void MULTU        (int rs, int rt);				//	MULTiply Unsigned word
 	void NOR          (int rd, int rs, int rt);		//	Not OR
 	void OR           (int rd, int rs, int rt);		//	OR
-	void ORI          (int rt, int rs, int imm);		//	OR Immediate
+	void ORI          (int rt, int rs, int immed);	//	OR immediate
 	void SLL          (int rd, int rt, int sa);		//	Shift word Left Logical
 	void SLLV         (int rd, int rt, int rs);		//	Shift word Left Logical Variable
 	void SLT          (int rd, int rs, int rt);		//	Set on Less Than
-	void SLTI         (int rt, int rs, int imm);		//	Set on Less Than Immediate
-	void SLTIU        (int rt, int rs, int imm);		//	Set on Less Than Immediate Unsigned
+	void SLTI         (int rt, int rs, int immed);	//	Set on Less Than immediate
+	void SLTIU        (int rt, int rs, int immed);	//	Set on Less Than immediate Unsigned
 	void SLTU         (int rd, int rs, int rt);		//	Set on Less Than Unsigned
 	void SRA          (int rd, int rt, int sa);		//	Shift word Right Arithmetic
 	void SRAV         (int rd, int rt, int rs);		//	Shift word Right Arithmetic Variable
@@ -89,7 +96,7 @@ private:
 	void SUB          (int rd, int rs, int rt);		//	SUBtract word
 	void SUBU         (int rd, int rs, int rt);		//	SUBtract Unsigned word
 	void XOR          (int rd, int rs, int rt);		//	eXclusive OR
-	void XORI         (int rt, int rs, int imm);		//	eXclusive OR Immediate
+	void XORI         (int rt, int rs, int immed);	//	eXclusive OR immediate
 	//****************************************************************************
 	//** Jump and Branch Instructions                                           **
 	//****************************************************************************
@@ -109,8 +116,8 @@ private:
 	void BLTZL        (int immed, int rs);			//	Branch on < Zero Likely
 	void BNE          (int rs, int rt, int immed);	//	Branch on <>
 	void BNEL         (int rs, int rt, int immed);	//	Branch on <> Likely
-	void J            (int address);					//	Jump
-	void JAL          (int address);					//	Jump And Link
+	void J            (int address);				//	Jump
+	void JAL          (int address);				//	Jump And Link
 	void JALR         (int rs, int rd);				//	Jump And Link Register
 	void JR           (int rs);						//	Jump Register
 	//****************************************************************************
@@ -122,17 +129,17 @@ private:
 	//** Exception Instructions                                                 **
 	//****************************************************************************
 	void TEQ          (int rs, int rt);				//	Trap if =
-	void TEQI         (int rs, int imm);				//	Trap if = Immediate
+	void TEQI         (int rs, int immed);			//	Trap if = immediate
 	void TGE          (int rs, int rt);				//	Trap if >=
-	void TGEI         (int rs, int imm);				//	Trap if >= Immediate
-	void TGEIU        (int rs, int imm);				//	Trap if >= Immediate Unsigned
+	void TGEI         (int rs, int immed);			//	Trap if >= immediate
+	void TGEIU        (int rs, int immed);			//	Trap if >= immediate Unsigned
 	void TGEU         (int rs, int rt);				//	Trap if >= Unsigned
 	void TLT          (int rs, int rt);				//	Trap if <
-	void TLTI         (int rs, int imm);				//	Trap if < Immediate
-	void TLTIU        (int rs, int imm);				//	Trap if < Immediate Unsigned
+	void TLTI         (int rs, int immed);			//	Trap if < immediate
+	void TLTIU        (int rs, int immed);			//	Trap if < immediate Unsigned
 	void TLTU         (int rs, int rt);				//	Trap if < Unsigned
 	void TNE          (int rs, int rt);				//	Trap if <>
-	void TNEI         (int rs, int imm);				//	Trap if <> Immediate
+	void TNEI         (int rs, int immed);				//	Trap if <> immediate
 	//****************************************************************************
 	//** System Control Processor (COP0); Instructions                           **
 	//****************************************************************************
@@ -195,10 +202,10 @@ private:
 	void BEQZL        (int immed, int rs);			//	Assembles to BEQL   (int rs, r0, immed
 	void B            (int immed);					//	Assembles to BEQ    r0, r0, immed
 	void BAL          (int immed);					//	Assembles to BGEZAL r0, immed
-	void LI           (int rt, int imm);				//	Assembles to ORI    rt, r0, imm (if imm is 16 bit);
-	 												//						or ADDIU  rt, r0, imm
+	void LI           (int rt, int immed);			//	Assembles to ORI    rt, r0, immed (if immed is 16 bit);
+	 												//						or ADDIU  rt, r0, immed
 	 												//						or LUI    rt, high_16
-													//						   ORI    rt, rt, low_16 (if imm is 32 bit);
+													//						   ORI    rt, rt, low_16 (if immed is 32 bit);
 	void S_S          (int ft, int immed, int rs);	//	Assembles to SWC1   ft, immed(rs);
 	void L_S          (int ft, int immed, int rs);	//	Assembles to LWC1   ft, immed(rs);
 };

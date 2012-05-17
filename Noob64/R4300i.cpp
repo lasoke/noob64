@@ -1,9 +1,9 @@
 #include "StdAfx.h"
 #include "R4300i.h"
 
-//R4300i::R4300i(void)
-//{
-//}
+R4300i::R4300i(void)
+{
+}
 
 void R4300i::decode(const word instr)
 {
@@ -27,7 +27,7 @@ void R4300i::decode(const word instr)
 	case 7: // 
 		break;
 	case 8: // 001000
-		//ADDI();
+		ADDI(getRt(instr), getRs(instr), getImmed(instr));
 		break;
 	case 9: // 
 		break;
@@ -161,4 +161,10 @@ inline void R4300i::decode_r(word instr)
 //		cerr << "	Unknown instruction: " << format_number(string(32 - strlen(mem), '0') + mem, ' ', 4) << endl;
 //		exit(0);
 //	}
+}
+
+void R4300i::ADDI(int rt, int rs, int immed)
+{
+	r[rt] = r[rs] + immed;
+    //FIXME: If overflow occurs, then trap.
 }
