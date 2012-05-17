@@ -7,15 +7,14 @@ public:
 	R4300i(void);
 	void decode(const word instr);
 private:
+	ExceptionHandler &ehandler;
 	void decode_r(const word instr);
-
 	// General Purpose Registers (GPRs)
 	dword r[32];
 	// FP General Purpose Registers (FGRs)
 	dword fr[32];
 	// Special Registers
-	dword pc, hi, lo, ll, fcr0, fcr31
-
+	dword pc, hi, lo, ll, fcr0, fcr31;
 	//****************************************************************************
 	//** Load and Store Instructions                                            **
 	//****************************************************************************

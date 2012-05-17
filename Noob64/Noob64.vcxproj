@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="ExceptionHandler.cpp" />
     <ClCompile Include="R4300i.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="Noob64.cpp" />
@@ -98,6 +99,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ExceptionHandler.h" />
     <ClInclude Include="Form1.h">
       <FileType>CppForm</FileType>
     </ClInclude>

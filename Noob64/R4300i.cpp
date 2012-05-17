@@ -1,16 +1,16 @@
 #include "StdAfx.h"
 #include "R4300i.h"
 
-R4300i::R4300i(void)
+R4300i::R4300i(void) : ehandler(*new ExceptionHandler())
 {
 }
 
-void R4300i::decode(const word instr)
+void R4300i::decode(const word i)
 {
-	switch(getOpCode(instr)) {
+	switch(getOpCode(i)) {
 
 	case 0: // 000000
-		decode_r(instr);
+		decode_r(i);
 		break;
 	case 1: // 
 		break;
@@ -27,7 +27,7 @@ void R4300i::decode(const word instr)
 	case 7: // 
 		break;
 	case 8: // 001000
-		ADDI(getRt(instr), getRs(instr), getImmed(instr));
+		ADDI(getRt(i), getRs(i), getImmed(i));
 		break;
 	case 9: // 
 		break;
@@ -142,7 +142,7 @@ void R4300i::decode(const word instr)
 
 	default: // Unknown instruction
 		char mem[64];
-		itoa(instr, mem, 2);
+		itoa(i, mem, 2);
 		cerr << "	Unknown instruction: " << format_number(string(32 - strlen(mem), '0') + mem, ' ', 4) << endl;
 		exit(0);
 	}
@@ -167,7 +167,8 @@ void R4300i::ADDI(int rt, int rs, int immed)
 {
 	if (DWORD_MAX - immed < r[rs])
 	{
-		//FIXME: If overflow occurs, then trap.
+		//TODO: If overflow occurs, then trap.
+		ehandler.trap();
 	}
 	else
 	{

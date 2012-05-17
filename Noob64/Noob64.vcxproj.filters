@@ -48,6 +48,9 @@
     <ClCompile Include="R4300i.cpp">
       <Filter>Source Files\CPU</Filter>
     </ClCompile>
+    <ClCompile Include="ExceptionHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Form1.h">
@@ -69,6 +72,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="R4300i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExceptionHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
