@@ -5,14 +5,19 @@
 #include <sstream>
 
 #define BYTE_MAX			255
-#define DWORD_MAX			65535
-#define DWORD_MAX			4294967295
+#define HWORD_MAX			65535
+#define WORD_MAX			4294967295
 #define DWORD_MAX			18446744073709551615
 
 typedef unsigned __int8		byte;
 typedef unsigned __int16	hword;
 typedef unsigned __int32	word;
 typedef unsigned __int64	dword;
+
+typedef float				s; // Single-Precision	Floating-Point Format:	[31:sign;30-23-exponent;22-0:fraction]
+typedef double				d; // Double-Precision	Floating-Point Format:	[63:sign;62-52:exponent;51-0:fraction]
+typedef /*FIXME:*/ float	w; // Word				Fixed-Point Format:		[31:sign;30-0:int]
+typedef /*FIXME:*/ float	l; // Longword			Fixed-Point Format:		[63:sign;62-0:int]
 
 class RDRAM
 {

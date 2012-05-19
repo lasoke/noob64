@@ -7,21 +7,21 @@ public:
 	R4300i(void);
 	void decode(const word instr);
 private:
+	ExceptionHandler &ehandler;
+
 	void decode_r(const word instr);
-	void decode_regimm(const word instr);
+	void decode_i(const word instr);
 	void decode_cop0(const word instr);
 	void decode_tlb(const word instr);
 	void decode_cop1(const word instr);
 	void decode_bc1(const word instr);
-	// TODO: templates
-	void decode_fpu_b(const word instr);
-	void decode_fpu_h(const word instr);
-	void decode_fpu_w(const word instr);
-	void decode_fpu_d(const word instr);
-
-	ExceptionHandler &ehandler;
+	template<typename Type>
+	void decode_fpu(const word instr);
+	//****************************************************************************
+	//** Rregisters					                                            **
+	//****************************************************************************
 	dword r[32];									// General Purpose Registers (GPRs)
-	dword fr[32];									// FP General Purpose Registers (FGRs)
+	dword f[32];									// FP General Purpose Registers (FGRs)
 	dword pc, hi, lo, ll, fcr0, fcr31;				// Special Registers
 	//****************************************************************************
 	//** Load and Store Instructions                                            **
@@ -148,9 +148,9 @@ private:
 	void TNE          (int rs, int rt);				//	Trap if <>
 	void TNEI         (int rs, int immed);				//	Trap if <> immediate
 	//****************************************************************************
-	//** System Control Processor (COP0); Instructions                           **
+	//** System Control Processor (COP0); Instructions                          **
 	//****************************************************************************
-	void CACHE        (int op, int immed, int rs);	//	CACHE
+	void CACHE        (int rt, int immed, int rs);	//	CACHE
 	void ERET		  (void);						//	Return from Exception
 	void MFC0         (int rt, int fs);				//	Move Word From CP0
 	void MTC0         (int rt, int fs);				//	Move Word To CP0
@@ -159,46 +159,54 @@ private:
 	void TLBWI		  (void);						//	Write Indexed TLB Entry
 	void TLBWR		  (void);						//	Write Random TLB Entry
 	//****************************************************************************
-	//** Floating-point Unit, FPU (COP1); instructions                           **
+	//** Floating-point Unit, FPU (COP1); instructions                          **
 	//****************************************************************************
-	void ABS_fmt      (int fd, int fs);				//	floating-point ABSolute value
-	void ADD_fmt      (int fd, int fs, int ft);		//	floating-point ADD
+	template<typename Type>
+	void ABS		  (int fd, int fs);				//	floating-point ABSolute value
+	template<typename Type>
+	void ADD		  (int fd, int fs, int ft);		//	floating-point ADD
 	void BC1F         (int immed);					//	Branch on FP False
 	void BC1FL        (int immed);					//	Branch on FP False Likely
 	void BC1T         (int immed);					//	Branch on FP True
 	void BC1TL        (int immed);					//	Branch on FP True Likely
-	void C_cond_fmt   (int fs, int ft);				//	floating-point floating point Compare
-	void CEIL_L_fmt   (int fd, int fs);				//	floating-point CEILing convert to Long fixed-point
-	void CEIL_W_fmt   (int fd, int fs);				//	floating-point CEILing convert to Word fixed-point
+	template<typename Type>
+	void C			  (int fs, int ft, int cond);	//	floating-point floating point Compare
+	template<typename Type, typename toType>
+	void CEIL		  (int fd, int fs);				//	floating-point CEILing convert to toType fixed-point
 	void CFC1         (int rt, int fs);				//	Move control word From Floating-Point
 	void CTC1         (int rt, int fs);				//	Move control word To Floating-Point
-	void CVT_D_fmt    (int fd, int fs);				//	floating-point ConVerT to Double floating-point
-	void CVT_L_fmt    (int fd, int fs);				//	floating-point ConVerT to Long fixed-point
-	void CVT_S_fmt    (int fd, int fs);				//	floating-point ConVerT to Single floating-point
-	void CVT_W_fmt    (int fd, int fs);				//	floating-point ConVerT to Word fixed-point
-	void DIV_fmt      (int fd, int fs, int ft);		//	floating-point DIVide
+	template<typename Type, typename toType>
+	void CVT		  (int fd, int fs);				//	floating-point ConVerT to toType floating/fixed-point
+	template<typename Type>
+	void DIV		  (int fd, int fs, int ft);		//	floating-point DIVide
 	void DMFC1        (int rt, int fs);				//	Doubleword Move From Floating-Point
 	void DMTC1        (int rt, int fs);				//	Doubleword Move To Floating-Point
-	void FLOOR_L_fmt  (int fd, int fs);				//	floating-point FLOOR convert to Long fixed-point
-	void FLOOR_W_fmt  (int fd, int fs);				//	floating-point FLOOR convert to Word fixed-point
+	template<typename Type, typename toType>
+	void FLOOR		  (int fd, int fs);				//	floating-point FLOOR convert to toType fixed-point
 	void LDC1         (int ft, int immed, int rs);	//	Load Doubleword to Floating-Point
 	void LWC1         (int ft, int immed, int rs);	//	Load Word to Floating-Point
 	void MFC1         (int rt, int fs);				//	Move Word From Floating-Point
-	void MOV_fmt      (int fd, int fs);				//	floating-point MOVe
+	template<typename Type>
+	void MOV		  (int fd, int fs);				//	floating-point MOVe
 	void MTC1         (int rt, int fs);				//	Move Word To Floating-Point
-	void MUL_fmt      (int fd, int fs, int ft);		//	floating-point MULtiply
-	void NEG_fmt      (int fd, int fs);				//	floating-point NEGate
-	void ROUND_L_fmt  (int fd, int fs);				//	floating-point ROUND to Long fixed-point
-	void ROUND_W_fmt  (int fd, int fs);				//	floating-point ROUND to Word fixed-point
+	template<typename Type>
+	void MUL		  (int fd, int fs, int ft);		//	floating-point MULtiply
+	template<typename Type>
+	void NEG		  (int fd, int fs);				//	floating-point NEGate
+	template<typename Type, typename toType>
+	void ROUND		  (int fd, int fs);				//	floating-point ROUND to toType fixed-point
 	void SDC1         (int ft, int immed, int rs);	//	Store Doubleword from Floating-Point
-	void SQRT_fmt     (int fd, int fs);				//	floating-point SQuare RooT
-	void SUB_fmt      (int fd, int fs, int ft);		//	floating-point SUBtract
+	template<typename Type>
+	void SQRT		  (int fd, int fs);				//	floating-point SQuare RooT
+	template<typename Type>
+	void SUB		  (int fd, int fs, int ft);		//	floating-point SUBtract
 	void SWC1         (int ft, int immed, int rs);	//	Store Word from Floating-Point
-	void TRUNC_L_fmt  (int fd, int fs);				//	floating-point TRUNCate to Long fixed-point
-	void TRUNC_W_fmt  (int fd, int fs);				//	floating-point TRUNCate to Word fixed-point
+	template<typename Type, typename toType>
+	void TRUNC		  (int fd, int fs);				//	floating-point TRUNCate to Long fixed-point
 	//****************************************************************************
 	//** Pseudo opcodes                                                         **
 	//****************************************************************************
+	// FIXME: cleanup, or try to figure out why there is no opcode for some of these:
 	void NOP          (void);						//	Assembles to SLL    r0, r0, 0
 	void MOVE         (int rd, int rs);				//	Assembles to ADD    int rd, r0, rs
 	void NEG          (int rd, int rt);				//	Assembles to SUB    int rd, r0, rt
@@ -215,5 +223,40 @@ private:
 													//						   ORI    rt, rt, low_16 (if immed is 32 bit);
 	void S_S          (int ft, int immed, int rs);	//	Assembles to SWC1   ft, immed(rs);
 	void L_S          (int ft, int immed, int rs);	//	Assembles to LWC1   ft, immed(rs);
+	//****************************************************************************
+	//** Conditions		                                                        **
+	//****************************************************************************
+	template<typename Type>
+	bool F(Type a, Type b);		// False
+	template<typename Type>
+	bool UN(Type a, Type b);	// Unordered
+	template<typename Type>
+	bool EQ(Type a, Type b);	// Equal
+	template<typename Type>
+	bool UEQ(Type a, Type b);	// Unordered or Equal
+	template<typename Type>
+	bool OLT(Type a, Type b);	// Ordered or Less Than
+	template<typename Type>
+	bool ULT(Type a, Type b);	// Unordered or Less Than
+	template<typename Type>
+	bool OLE(Type a, Type b);	// Ordered or Less than or Equal
+	template<typename Type>
+	bool ULE(Type a, Type b);	// Unordered or Less than or Equal
+	template<typename Type>
+	bool SF(Type a, Type b);	// Signaling False
+	template<typename Type>
+	bool NGLE(Type a, Type b);	// Not Greater than or Less than or Equal
+	template<typename Type>
+	bool SEQ(Type a, Type b);	// Signaling Equal
+	template<typename Type>
+	bool NGL(Type a, Type b);	// Not Greater than or Less than
+	template<typename Type>
+	bool LT(Type a, Type b);	// Less Than
+	template<typename Type>
+	bool NGE(Type a, Type b);	// Not Greater than or Equal
+	template<typename Type>
+	bool LE(Type a, Type b);	// Less than or Equal
+	template<typename Type>
+	bool NGT(Type a, Type b);	// Not Greater Than
 };
 

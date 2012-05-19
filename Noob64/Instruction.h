@@ -26,39 +26,24 @@ inline int getSa(word instr)
 	return (instr & 0x7C0) >> 6;
 }
 
-inline int getFunc(word instr)
+inline int getFunct(word instr)
 {
 	return instr & 0x3F;
 }
 
-inline int getImmed(word instr)
+inline int getImmediate(word instr)
 {
 	return instr & 0xffff;
 }
 
-inline int getAdress(word instr)
+inline int getTarget(word instr)
 {
 	return instr & 0x3ffffff;
 }
 
-inline int getFmt(word instr)
+inline int getCond(word instr)
 {
-	return (instr & 0x3e00000) >> 21;
-}
-
-inline int getFt(word instr)
-{
-	return (instr & 0x1F0000) >> 16;
-}
-
-inline int getFs(word instr)
-{
-	return (instr & 0xF800) >> 11;
-}
-
-inline int getFd(word instr)
-{
-	return (instr & 0x7C0) >> 6;
+	return instr & 0xF;
 }
 
 inline int getNd(word instr)
