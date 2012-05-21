@@ -7,6 +7,7 @@
 #include "Memory.h"
 #include "Instruction.h"
 #include "ExceptionHandler.h"
+#include "R4300i.h"
 
 #include <iostream>
 #include <string>

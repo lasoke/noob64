@@ -5,8 +5,11 @@ class R4300i
 {
 public:
 	R4300i(void);
+	void start();
 	void decode(const word instr);
 private:
+	char* SuperMario64;
+
 	ExceptionHandler &ehandler;
 
 	void decode_r(const word instr);

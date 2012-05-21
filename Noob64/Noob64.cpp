@@ -4,7 +4,6 @@
 #include "Form1.h"
 #include <windows.h>
 
-
 using namespace Noob64;
 
 void inline enableConsole()
@@ -20,7 +19,9 @@ int main(array<System::String ^> ^args)
 {
 	enableConsole();
 
-	RDRAM* ram = new RDRAM();
+	RDRAM*	ram = new RDRAM();
+	R4300i* cpu = new R4300i();
+	cpu->start();
 	/*
 	ram->write<word>(4294967295, 1);
 	ram->write<word>(0, 2);
