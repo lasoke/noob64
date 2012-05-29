@@ -8,6 +8,7 @@
 #include "Instruction.h"
 #include "ExceptionHandler.h"
 #include "R4300i.h"
+#include "RomLoader.h"
 
 #include <iostream>
 #include <string>

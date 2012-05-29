@@ -4,12 +4,10 @@
 class R4300i
 {
 public:
-	R4300i(void);
-	void start();
+	R4300i(RDRAM &ram);
 	void decode(const word instr);
 private:
-	char* SuperMario64;
-
+	RDRAM &ram;
 	ExceptionHandler &ehandler;
 
 	void decode_r(const word instr);

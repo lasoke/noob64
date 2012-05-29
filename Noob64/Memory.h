@@ -14,6 +14,11 @@ typedef unsigned __int16	hword;
 typedef unsigned __int32	word;
 typedef unsigned __int64	dword;
 
+typedef __int8				sbyte;
+typedef __int16				shword;
+typedef __int32				sword;
+typedef __int64				sdword;
+
 typedef float				s; // Single-Precision	Floating-Point Format:	[31:sign;30-23-exponent;22-0:fraction]
 typedef double				d; // Double-Precision	Floating-Point Format:	[63:sign;62-52:exponent;51-0:fraction]
 typedef /*FIXME:*/ float	w; // Word				Fixed-Point Format:		[31:sign;30-0:int]
@@ -100,6 +105,8 @@ inline void RDRAM::write(Type data, word address)
 	}
 }
 
+/*
+
 class SP
 {
 private:
@@ -169,7 +176,6 @@ private:
    //word delay_reg;
 };
 
-/*
 class AI
 {
 private:
