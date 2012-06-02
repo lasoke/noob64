@@ -1,9 +1,5 @@
 #pragma once
 
-#include <iostream>
-#include <string>
-#include <sstream>
-
 #define BYTE_MAX			255
 #define HWORD_MAX			65535
 #define WORD_MAX			4294967295
@@ -81,15 +77,14 @@ template <typename Type>
 inline Type RDRAM::read(word address)
 {
 	Type data = *((Type *)(rdram + address));
-	if (DEBUG)
-	{
+#if defined DEBUG
 		char addr[8];
-		itoa(address, addr, 16);
-		cout << "	" << format_number(string(8 - strlen(addr), '0') + addr, ' ', 2) << " : ";
+		_itoa_s(address, addr, 8, 16);
+		cout << " *READING* address : " << format_number(string(8 - strlen(addr), '0') + addr, ' ', 2) << " data : ";
 		char mem[64];
-		itoa(data, mem, 2);
-		cout << format_number(string(sizeof(Type) * 8 - strlen(mem), '0') + mem, ' ', 4) << endl;
-	}
+		_itoa_s(data, mem, 64, 2);
+		cout << format_number(string(sizeof(Type) * 8 - strlen(mem), '0') + mem, ' ', 4);
+#endif // DEBUG
 	return data;
 }
 
@@ -97,12 +92,11 @@ template <typename Type>
 inline void RDRAM::write(Type data, word address)
 {
 	*((Type *)(rdram + address)) = data;
-	if (DEBUG)
-	{
+#if defined DEBUG
 		cout << "	*WRITING* " << data << " @ " << address << ":" << endl;
 		print_word<Type>(address);
 		cout << endl;
-	}
+#endif // DEBUG
 }
 
 /*

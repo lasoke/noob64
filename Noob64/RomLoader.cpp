@@ -1,6 +1,4 @@
 #include "StdAfx.h"
-#include "RomLoader.h"
-
 
 RomLoader::RomLoader(void) :
 	PI_BSB_DOM1_LAT_REG		(0x80),

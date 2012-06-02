@@ -3,25 +3,27 @@
 // are changed infrequently
 #pragma once
 
-// TODO: reference additional headers your program requires here
-#include "Memory.h"
-#include "Instruction.h"
-#include "ExceptionHandler.h"
-#include "R4300i.h"
-#include "RomLoader.h"
-
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <vector>
-
-using namespace std;
+#define DEBUG true
 
 // DEBUG
 #include <typeinfo>
 #include <stdio.h>
 #include <stdlib.h>
-#include "Helper.h"
 
-static const bool DEBUG = true;
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <windows.h>
+
+using namespace std;
+
+// TODO: reference additional headers your program requires here
+#include "Memory.h"
+#include "Instruction.h"
+#include "ExceptionHandler.h"
+#include "Helper.h"
+#include "R4300i.h"
+#include "RomLoader.h"
+#include "Form1.h"
 

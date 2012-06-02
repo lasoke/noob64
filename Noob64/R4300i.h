@@ -1,5 +1,4 @@
 #pragma once
-#include "StdAfx.h"
 
 class R4300i
 {
