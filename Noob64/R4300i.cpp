@@ -687,7 +687,7 @@ void R4300i::LL(int rt, int immed, int rs)
 #if defined DEBUG
 		cout << "LL " << rt << " " << immed << "[" << rs << "]";
 #endif // DEBUG
-	r[rt] = sign_extended<sword>(ram.read<sword>(r[rs] + immed * sizeof(sword)));
+	r[rt] = (sdword) ram.read<sword>(r[rs] + immed * sizeof(sword));
 	ll = 1;
 	++pc;
 }
@@ -747,66 +747,272 @@ void R4300i::LWU(int rt, int immed, int rs)
 
 void R4300i::SB(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+#if defined DEBUG
+		cout << "SB " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	ram.write<byte>(r[rt] & 0xFF, r[rs] + immed * sizeof(byte));
+	++pc;
 }
 
 void R4300i::SC(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+	if (ll)
+	{
+#if defined DEBUG
+		cout << "SC " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+		ram.write<word>(r[rt] & 0xFFFFFFFF, r[rs] + immed * sizeof(word));
+		//maybe something to do here...
+		ll = 0;
+	}
+	else
+	{
+#if defined DEBUG
+		cout << "SC " << rt << " " << immed << "[" << rs << "]  no ll was done before";
+#endif // DEBUG
+	}
+	++pc;
 }
 
 void R4300i::SCD(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+	if (ll)
+	{
+#if defined DEBUG
+		cout << "SCD " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+		ram.write<dword>(r[rt] & 0xFFFFFFFF, r[rs] + immed * sizeof(dword));
+		//maybe something to do here...
+		ll = 0;
+	}
+	else
+	{
+#if defined DEBUG
+		cout << "SCD " << rt << " " << immed << "[" << rs << "]  no ll was done before";
+#endif // DEBUG
+	}
+	++pc;
 }
 
 void R4300i::SD(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+#if defined DEBUG
+		cout << "SD " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	ram.write<dword>(r[rt], r[rs] + immed * sizeof(dword));
+	++pc;
 }
 
 void R4300i::SDL(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+   dword old_word = 0;
+#if defined DEBUG
+		cout << "SDL " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	old_word = ram.read<dword>(r[rs] + immed * sizeof(dword));
+	old_word = (r[rt] >> (8 * (r[rs] + immed * sizeof(dword)) & 7)) | old_word;
+	ram.write<dword>(old_word, r[rs] + immed * sizeof(dword));
+	++pc;
 }
 
 void R4300i::SDR(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+   dword old_word = 0;
+#if defined DEBUG
+		cout << "SDR " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	old_word = ram.read<dword>(r[rs] + immed * sizeof(dword));
+	old_word = (r[rt] << (8 * (7 - (r[rs] + immed * sizeof(dword)) & 7))) | old_word;
+	ram.write<dword>(old_word, r[rs] + immed * sizeof(dword));
+	++pc;
 }
 
 void R4300i::SH(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+#if defined DEBUG
+		cout << "SH " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	ram.write<hword>(r[rt] & 0xFFFF, r[rs] + immed * sizeof(hword));
+	++pc;
 }
 
 void R4300i::SW(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+#if defined DEBUG
+		cout << "SW " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	ram.write<word>(r[rt] & 0xFFFFFFFF, r[rs] + immed * sizeof(word));
+	++pc;
 }
 
 void R4300i::SWL(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+   word old_word = 0;
+#if defined DEBUG
+		cout << "SWL " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	old_word = ram.read<word>(r[rs] + immed * sizeof(word));
+	old_word = (r[rt] >> (8 * (r[rs] + immed * sizeof(word)) & 3)) | old_word;
+	ram.write<word>(old_word, r[rs] + immed * sizeof(word));
+	++pc;
 }
 
 void R4300i::SWR(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+   word old_word = 0;
+#if defined DEBUG
+		cout << "SWR " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	old_word = ram.read<word>(r[rs] + immed * sizeof(word));
+	old_word = (r[rt] << (8 * (3 - (r[rs] + immed * sizeof(word)) & 3))) | old_word;
+	ram.write<word>(old_word, r[rs] + immed * sizeof(word));
+	++pc;
 }
 
 void R4300i::SYNC(void)
 {
-	// TODO
+	// TODO: TEST
+#if defined DEBUG
+		cout << "SYNC TO DO MAYBE";
+#endif // DEBUG
+	++pc;
 }
 
 void R4300i::ADD(int rd, int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "ADD " << rd << ", " << rs << " " << rt;
+#endif // DEBUG
+	if (WORD_MAX - r[rt] < r[rs])
+	{
+		//TODO: "If overflow occurs, then trap."
+		ehandler.trap();
+	}
+	else
+	{
+		r[rd] = (sdword) ((sword) r[rs] + (sword) r[rt]);
+	}
+	++pc;
 }
 
 void R4300i::ADDI(int rt, int rs, int immed)
 {
+#if defined DEBUG
+		cout << "ADDI " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	if (WORD_MAX - immed < r[rs])
+	{
+		//TODO: "If overflow occurs, then trap."
+		ehandler.trap();
+	}
+	else
+	{
+		r[rt] = (sdword) ((sword) r[rs] + immed);
+	}
+	++pc;
+}
+
+void R4300i::ADDIU(int rt, int rs, int immed)
+{
+#if defined DEBUG
+		cout << "ADDIU " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	if (WORD_MAX - immed < r[rs])
+	{
+		//TODO: "If overflow occurs, then trap."
+		ehandler.trap();
+	}
+	else
+	{
+		r[rt] = (word) r[rs] + immed;
+	}
+	++pc;
+}
+
+void R4300i::ADDU(int rd, int rs, int rt)
+{
+#if defined DEBUG
+		cout << "ADDU " << rd << ", " << rs << " " << rt;
+#endif // DEBUG
+	if (WORD_MAX - (word) r[rt] < (word) r[rs])
+	{
+		//TODO: "If overflow occurs, then trap."
+		ehandler.trap();
+	}
+	else
+	{
+		r[rd] = (word) r[rs] + (word) r[rt];
+	}
+	++pc;
+}
+
+void R4300i::AND(int rd, int rs, int rt)
+{
+#if defined DEBUG
+		cout << "AND " << rd << ", " << rs << " " << rt;
+#endif // DEBUG
+	r[rd] = r[rs] & r[rt];
+	++pc;
+}
+
+void R4300i::ANDI(int rt, int rs, int immed)
+{
+#if defined DEBUG
+		cout << "ANDI " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	r[rt] = r[rs] & immed;
+	++pc;
+}
+
+void R4300i::DADD(int rd, int rs, int rt)
+{
+#if defined DEBUG
+		cout << "DADD " << rd << ", " << rs << " " << rt;
+#endif // DEBUG
+	if (DWORD_MAX - r[rt] < r[rs])
+	{
+		//TODO: "If overflow occurs, then trap."
+		ehandler.trap();
+	}
+	else
+	{
+		r[rd] = (sdword) ((sdword) r[rs] + (sdword) r[rt]);
+	}
+	++pc;
+}
+
+void R4300i::DADDI(int rt, int rs, int immed)
+{
+#if defined DEBUG
+		cout << "DADDI " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	if (DWORD_MAX - immed < r[rs])
+	{
+		//TODO: "If overflow occurs, then trap."
+		ehandler.trap();
+	}
+	else
+	{
+		r[rt] = (sdword) ((sdword) r[rs] + immed);
+	}
+	++pc;
+}
+
+void R4300i::DADDIU(int rt, int rs, int immed)
+{
+#if defined DEBUG
+		cout << "DADDIU " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
 	if (DWORD_MAX - immed < r[rs])
 	{
 		//TODO: "If overflow occurs, then trap."
@@ -816,76 +1022,178 @@ void R4300i::ADDI(int rt, int rs, int immed)
 	{
 		r[rt] = r[rs] + immed;
 	}
-}
-
-void R4300i::ADDIU(int rt, int rs, int immed)
-{
-	// TODO
-}
-
-void R4300i::ADDU(int rd, int rs, int rt)
-{
-	// TODO
-}
-
-void R4300i::AND(int rd, int rs, int rt)
-{
-	// TODO
-}
-
-void R4300i::ANDI(int rt, int rs, int immed)
-{
-	// TODO
-}
-
-void R4300i::DADD(int rd, int rs, int rt)
-{
-	// TODO
-}
-
-void R4300i::DADDI(int rt, int rs, int immed)
-{
-	// TODO
-}
-
-void R4300i::DADDIU(int rt, int rs, int immed)
-{
-	// TODO
+	++pc;
 }
 
 void R4300i::DADDU(int rd, int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DADDU " << rd << ", " << rs << " " << rt;
+#endif // DEBUG
+	if (DWORD_MAX - r[rt] < r[rs])
+	{
+		//TODO: "If overflow occurs, then trap."
+		ehandler.trap();
+	}
+	else
+	{
+		r[rd] = r[rs] + r[rt];
+	}
+	++pc;
 }
 
 void R4300i::DDIV(int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DDIV " << rs << ", " << rt;
+#endif // DEBUG
+	if (r[rt] == 0)
+	{
+		//TODO: "If overflow occurs, then trap."
+		ehandler.trap();
+	}
+	else
+	{
+		lo = (sdword) r[rs] / (sdword) r[rt];
+		hi = (sdword) r[rs] % (sdword) r[rt];
+	}
+	++pc;
 }
 
 void R4300i::DDIVU(int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DDIVU " << rs << ", " << rt;
+#endif // DEBUG
+	if (r[rt] == 0)
+	{
+		//TODO: "If overflow occurs, then trap."
+		ehandler.trap();
+	}
+	else
+	{
+		lo = r[rs] / r[rt];
+		hi = r[rs] % r[rt];
+	}
+	++pc;
 }
 
 void R4300i::DIV(int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DIV " << rs << ", " << rt;
+#endif // DEBUG
+	if (r[rt] == 0)
+	{
+		//TODO: "If overflow occurs, then trap."
+		ehandler.trap();
+	}
+	else
+	{
+		lo = (sword) r[rs] / (sword) r[rt];
+		hi = (sword) r[rs] % (sword) r[rt];
+	}
+	++pc;
 }
 
 void R4300i::DIVU(int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DIVU " << rs << ", " << rt;
+#endif // DEBUG
+	if (r[rt] == 0)
+	{
+		//TODO: "If overflow occurs, then trap."
+		ehandler.trap();
+	}
+	else
+	{
+		lo = (word) r[rs] / (word) r[rt];
+		hi = (word) r[rs] % (word) r[rt];
+	}
+	++pc;
 }
 
 void R4300i::DMULT(int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DMULT " << rs << ", " << rt;
+#endif // DEBUG
+	dword op1, op2, op3, op4;
+    dword result1, result2, result3, result4;
+    dword temp1, temp2, temp3, temp4;
+    int sign = 0;
+   
+    if (r[rs] < 0)
+    {
+		op2 = - (sdword) r[rs];
+		sign = 1 - sign;
+    }
+    else
+		op2 = r[rs];
+    if (r[rt] < 0)
+    {
+		op4 = - (sdword) r[rt];
+		sign = 1 - sign;
+    }
+    else
+		op4 = r[rt];
+   
+    op1 = op2 & 0xFFFFFFFF;
+    op2 = (op2 >> 32) & 0xFFFFFFFF;
+    op3 = op4 & 0xFFFFFFFF;
+    op4 = (op4 >> 32) & 0xFFFFFFFF;
+   
+    temp1 = op1 * op3;
+    temp2 = (temp1 >> 32) + op1 * op4;
+    temp3 = op2 * op3;
+    temp4 = (temp3 >> 32) + op2 * op4;
+   
+    result1 = temp1 & 0xFFFFFFFF;
+    result2 = temp2 + (temp3 & 0xFFFFFFFF);
+    result3 = (result2 >> 32) + temp4;
+    result4 = (result3 >> 32);
+   
+    lo = result1 | (result2 << 32);
+    hi = (result3 & 0xFFFFFFFF) | (result4 << 32);
+    if (sign)
+    {
+		hi = ~hi;
+		if (!lo)
+			hi++;
+		else
+			lo = ~lo + 1;
+    }
+	++pc;
 }
 
 void R4300i::DMULTU(int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DMULTU " << rs << ", " << rt;
+#endif // DEBUG
+	dword op1, op2, op3, op4;
+	dword result1, result2, result3, result4;
+    dword temp1, temp2, temp3, temp4;
+   
+    op1 = r[rs] & 0xFFFFFFFF;
+    op2 = (r[rs] >> 32) & 0xFFFFFFFF;
+    op3 = r[rt] & 0xFFFFFFFF;
+    op4 = (r[rt] >> 32) & 0xFFFFFFFF;
+   
+    temp1 = op1 * op3;
+    temp2 = (temp1 >> 32) + op1 * op4;
+    temp3 = op2 * op3;
+    temp4 = (temp3 >> 32) + op2 * op4;
+   
+    result1 = temp1 & 0xFFFFFFFF;
+    result2 = temp2 + (temp3 & 0xFFFFFFFF);
+    result3 = (result2 >> 32) + temp4;
+    result4 = (result3 >> 32);
+   
+    lo = result1 | (result2 << 32);
+    hi = (result3 & 0xFFFFFFFF) | (result4 << 32);
+	++pc;
 }
 
 void R4300i::DSLL(int rd, int rt, int sa)
@@ -970,12 +1278,24 @@ void R4300i::MTLO(int rd)
 
 void R4300i::MULT(int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "MULT " << rs << ", " << rt;
+#endif // DEBUG
+	sdword temp = r[rs] * r[rt];
+	hi = temp >> 32;
+	lo = temp;
+	++pc;
 }
 
 void R4300i::MULTU(int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DMULTU " << rs << ", " << rt;
+#endif // DEBUG
+	dword temp = r[rs] * r[rt];
+	hi = temp >> 32;
+	lo = temp;
+	++pc;
 }
 
 void R4300i::NOR(int rd, int rs, int rt)
