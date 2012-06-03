@@ -1,7 +1,5 @@
 #pragma once
 
-#define BOOT_CODE_SIZE		1008
-
 #define BYTE_MAX			255
 #define HWORD_MAX			65535
 #define WORD_MAX			4294967295

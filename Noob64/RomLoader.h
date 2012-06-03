@@ -1,5 +1,7 @@
 #pragma once
 
+#define BOOT_CODE_SIZE 1008
+
 class RomLoader
 {
 public:
