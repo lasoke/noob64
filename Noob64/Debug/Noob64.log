@@ -1,18 +1,12 @@
-﻿La génération a démarré 02/06/2012 23:36:07.
+﻿La génération a démarré 04/06/2012 01:31:34.
      1>Projet "C:\Users\ugly\Desktop\noob64\noob64\Noob64\Noob64.vcxproj" sur le nœud 2 (build cible(s)).
      1>InitializeBuildStatus:
-         Mise à jour de l'horodatage "Debug\Noob64.unsuccessfulbuild".
+         Création de "Debug\Noob64.unsuccessfulbuild", car "AlwaysCreate" a été spécifié.
        GenerateTargetFrameworkMonikerAttribute:
        La cible est ignorée "GenerateTargetFrameworkMonikerAttribute", car tous les fichiers de sortie sont à jour par rapport aux fichiers d'entrée.
        ClCompile:
-         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /AI"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" /Zi /clr:pure /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _UNICODE /D UNICODE /EHa /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"StdAfx.h" /Fp"Debug\Noob64.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /TP /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Drawing.dll" /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.dll" /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /analyze- /errorReport:prompt stdafx.cpp /clr:nostdlib 
-         stdafx.cpp
-         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /AI"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" /Zi /clr:pure /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _UNICODE /D UNICODE /EHa /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\Noob64.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /TP /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Drawing.dll" /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.dll" /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /analyze- /errorReport:prompt AssemblyInfo.cpp ExceptionHandler.cpp Helper.cpp Memory.cpp Noob64.cpp R4300i.cpp RCP.cpp RomLoader.cpp /clr:nostdlib 
-         AssemblyInfo.cpp
-         ExceptionHandler.cpp
-         Helper.cpp
-         Memory.cpp
-         Noob64.cpp
+         Toutes les sorties sont à jour.
+         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /AI"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" /Zi /clr:pure /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _UNICODE /D UNICODE /EHa /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\Noob64.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /TP /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Drawing.dll" /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.dll" /FU"C:\Program Files\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /analyze- /errorReport:prompt R4300i.cpp /clr:nostdlib 
          R4300i.cpp
      1>R4300i.cpp(618): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
      1>R4300i.cpp(628): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
@@ -27,6 +21,22 @@
      1>R4300i.cpp(722): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
      1>R4300i.cpp(733): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
      1>R4300i.cpp(744): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(754): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(766): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(787): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(806): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(817): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(819): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(830): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(832): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(842): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(852): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(863): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(864): warning C4244: '=' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(865): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(876): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(877): warning C4244: '=' : conversion de 'dword' en 'word', perte possible de données
+     1>R4300i.cpp(878): warning C4244: 'argument' : conversion de 'dword' en 'word', perte possible de données
      1>c:\users\ugly\desktop\noob64\noob64\noob64\Memory.h(85): warning C4244: 'argument' : conversion de 'dword' en 'int', perte possible de données
                  R4300i.cpp(638) : voir la référence à l'instanciation de la fonction modèle 'Type RDRAM::read<dword>(word)' en cours de compilation
                  with
@@ -39,9 +49,6 @@
                  [
                      Type=sdword
                  ]
-         RCP.cpp
-         RomLoader.cpp
-         Génération de code en cours...
          Toutes les sorties sont à jour.
        CoreResGen:
          Toutes les sorties sont à jour.
@@ -69,4 +76,4 @@
 
 La génération a réussi.
 
-Temps écoulé 00:00:08.80
+Temps écoulé 00:00:04.53
