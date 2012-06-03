@@ -1,14 +1,14 @@
 #pragma once
-#include "StdAfx.h"
 
 class R4300i
 {
 public:
 	R4300i(RDRAM &ram);
+	void boot(word *bootcode);
 	void decode(const word instr);
 private:
-	RDRAM &ram;
-	ExceptionHandler &ehandler;
+	RDRAM				&ram;
+	ExceptionHandler	&ehandler;
 
 	void decode_r(const word instr);
 	void decode_i(const word instr);
@@ -19,7 +19,7 @@ private:
 	template<typename Type>
 	void decode_fpu(const word instr);
 	//****************************************************************************
-	//** Rregisters					                                            **
+	//** Registers					                                            **
 	//****************************************************************************
 	dword r[32];									// General Purpose Registers (GPRs)
 	dword f[32];									// FP General Purpose Registers (FGRs)

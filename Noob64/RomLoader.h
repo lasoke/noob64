@@ -1,14 +1,11 @@
 #pragma once
-#include "Memory.h"
-
-#define BOOT_CODE_SIZE 1008
 
 class RomLoader
 {
 public:
 	RomLoader(void);
 	RomLoader(char* filename);
-	word getInstruction(int i);
+	word* getBootCode(void);
 private:
 	byte		PI_BSB_DOM1_LAT_REG;
 	byte		PI_BSB_DOM1_PGS_REG;

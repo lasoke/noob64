@@ -1,5 +1,4 @@
 #pragma once
-#include "Memory.h"
 
 inline int getOpCode(word instr)
 {

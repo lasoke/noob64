@@ -1,10 +1,31 @@
 #include "StdAfx.h"
 #include "R4300i.h"
 
-R4300i::R4300i(RDRAM &rdram) : ram(rdram) , ehandler(*new ExceptionHandler())
+R4300i::R4300i(RDRAM &rdram) :
+	ram(rdram), ehandler(*new ExceptionHandler()),
+	pc(0), hi(0), lo(0), ll(0), fcr0(0), fcr31(0)
 {
 	for (int i = 0; i < 32; i++)
+	{
 		r[i] = (dword) 0;
+		f[i] = (dword) 0;
+	}
+}
+
+void R4300i::boot(word *bootcode)
+{
+	char addr[8];
+	int	instr_s = sizeof(word);
+
+	for (int i = 0; i < BOOT_CODE_SIZE; i++)
+	{
+#		if defined DEBUG
+			memset(addr, 0, 8);
+			_itoa_s(0x40 + i * instr_s, addr, 8, 16);
+			cout << endl << format_number(string(8 - strlen(addr), '0') + addr, ' ', 2) << " : ";
+#		endif
+		decode(bootcode[pc]);
+	}
 }
 
 void R4300i::decode(const word i)
@@ -612,81 +633,137 @@ inline void R4300i::decode_fpu(const word i)
 void R4300i::LB(int rt, int immed, int rs)
 {
 	// TODO: TEST
-	if (DEBUG)
-	{
+#if defined DEBUG
 		cout << "LB " << rt << " " << immed << "[" << rs << "]";
-	}
+#endif // DEBUG
 	r[rt] = ram.read<sbyte>(r[rs] + immed * sizeof(sbyte));
+	++pc;
 }
 
 void R4300i::LBU(int rt, int immed, int rs)
 {
 	// TODO: TEST
-	if (DEBUG)
-	{
+#if defined DEBUG
 		cout << "LBU " << rt << " " << immed << "[" << rs << "]";
-	}
+#endif // DEBUG
 	r[rt] = ram.read<byte>(r[rs] + immed * sizeof(byte));
+	++pc;
 }
 
 void R4300i::LD(int rt, int immed, int rs)
 {
 	// TODO: TEST
-	if (DEBUG)
-	{
+#if defined DEBUG
 		cout << "LD " << rt << " " << immed << "[" << rs << "]";
-	}
+#endif // DEBUG
 	r[rt] = ram.read<dword>(r[rs] + immed * sizeof(dword));
+	++pc;
 }
 
 void R4300i::LDL(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+#if defined DEBUG
+		cout << "LDL " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	dword tmp = ram.read<dword>(r[rs] + immed * sizeof(dword));
+	r[rt] |= (tmp << ((r[rs] + immed * sizeof(dword)) & 7) * 8);
+	++pc;
 }
 
 void R4300i::LDR(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+#if defined DEBUG
+		cout << "LDR " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	dword tmp = ram.read<dword>(r[rs] + immed * sizeof(dword));
+	r[rt] |= (tmp >> (( 7 - (r[rs] + immed * sizeof(dword)) & 7)) * 8);
+	++pc;
 }
 
 void R4300i::LH(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+#if defined DEBUG
+		cout << "LH " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	r[rt] = ram.read<shword>(r[rs] + immed * sizeof(shword));
+	++pc;
 }
 
 void R4300i::LHU(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+#if defined DEBUG
+		cout << "LHU " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	r[rt] = ram.read<hword>(r[rs] + immed * sizeof(hword));
+	++pc;
 }
 
 void R4300i::LL(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+#if defined DEBUG
+		cout << "LL " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	r[rt] = sign_extended<sword>(ram.read<sword>(r[rs] + immed * sizeof(sword)));
+	ll = 1;
+	++pc;
 }
 
 void R4300i::LLD(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+#if defined DEBUG
+		cout << "LLD " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	r[rt] = ram.read<sdword>(r[rs] + immed * sizeof(sdword));
+	ll = 1;
+	++pc;
 }
 
 void R4300i::LW(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+#if defined DEBUG
+		cout << "LW " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	r[rt] = ram.read<sword>(r[rs] + immed * sizeof(sword));
+	++pc;
 }
 
 void R4300i::LWL(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+#if defined DEBUG
+		cout << "LWL " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	word tmp = ram.read<word>(r[rs] + immed * sizeof(word));
+	r[rt] |= (tmp << (3 - (r[rs] + immed * sizeof(word)) & 3) * 8);
+	++pc;
 }
 
 void R4300i::LWR(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+#if defined DEBUG
+		cout << "LWR " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	word tmp = ram.read<word>(r[rs] + immed * sizeof(word));
+	r[rt] |= (tmp >> ((3 - (r[rs] + immed * sizeof(word)) & 3)) * 8);
+	++pc;
 }
 
 void R4300i::LWU(int rt, int immed, int rs)
 {
-	// TODO
+	// TODO: TEST
+#if defined DEBUG
+		cout << "LWU " << rt << " " << immed << "[" << rs << "]";
+#endif // DEBUG
+	r[rt] = ram.read<word>(r[rs] + immed * sizeof(word));
+	++pc;
 }
 
 void R4300i::SB(int rt, int immed, int rs)

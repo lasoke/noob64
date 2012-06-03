@@ -1,17 +1,18 @@
 // Noob64.cpp : main project file.
 
 #include "stdafx.h"
-#include "Form1.h"
-#include <windows.h>
 
 using namespace Noob64;
 
+FILE *stream;
+
 void inline enableConsole()
 {
+    errno_t err;
 	AllocConsole();
-	freopen("conin$","r", stdin);
-	freopen("conout$","w", stdout);
-	freopen("conout$","w", stderr);
+	err = freopen_s(&stream, "conin$","r", stdin);
+	err = freopen_s(&stream, "conout$","w", stdout);
+	err = freopen_s(&stream, "conout$","w", stderr);
 }
 
 [STAThreadAttribute]
@@ -20,21 +21,10 @@ int main(array<System::String ^> ^args)
 	enableConsole();
 
 	RDRAM*		ram = new RDRAM();
-	R4300i*		cpu = new R4300i(*ram);
 	RomLoader*	rom = new RomLoader();
+	R4300i*		cpu = new R4300i(*ram);
 
-	char		addr[8];
-	int			instr_s = sizeof(word);
-	for (int i = 0; i < BOOT_CODE_SIZE; i++)
-	{
-		if (DEBUG)
-		{
-			memset(addr, 0, 8);
-			itoa(0x40 + i * instr_s, addr, 16);
-			cout << endl << format_number(string(8 - strlen(addr), '0') + addr, ' ', 2) << " : ";
-		}
-		cpu->decode(rom->getInstruction(i));
-	}
+	cpu->boot(rom->getBootCode());
 
 	/*
 	ram->write<word>(4294967295, 1);

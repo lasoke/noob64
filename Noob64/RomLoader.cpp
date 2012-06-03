@@ -1,6 +1,4 @@
 #include "StdAfx.h"
-#include "RomLoader.h"
-
 
 RomLoader::RomLoader(void) :
 	PI_BSB_DOM1_LAT_REG		(0x80),
@@ -8,7 +6,7 @@ RomLoader::RomLoader(void) :
 	PI_BSB_DOM1_PWD_REG		(0x12),
 	PI_BSB_DOM1_PGS_2_REG	(0x40),
 	clock					(0x0000000f),
-	pc						(0x80246000),
+	pc						(0x80246000), // TODO: understand why pc is 0x80246000
 	release					(0x00001444),
 	CRC1					(0x635a2bff),
 	CRC2					(0x8b022326),
@@ -37,7 +35,7 @@ RomLoader::RomLoader(char* filename)
 {
 }
 
-word RomLoader::getInstruction(int i)
+word* RomLoader::getBootCode(void)
 {
-	return bootcode[i];
+	return bootcode;
 }
