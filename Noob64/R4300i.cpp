@@ -217,13 +217,13 @@ inline void R4300i::decode_r(word i)
 		MFHI(getRd(i));
 		break;
 	case 17:
-		MTHI(getRd(i));
+		MTHI(getRs(i));
 		break;
 	case 18:
 		MFLO(getRd(i));
 		break;
 	case 19:
-		MTLO(getRd(i));
+		MTLO(getRs(i));
 		break;
 	case 20:
 		DSLLV(getRd(i), getRt(i), getRs(i));
@@ -1198,82 +1198,146 @@ void R4300i::DMULTU(int rs, int rt)
 
 void R4300i::DSLL(int rd, int rt, int sa)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DSLL " << rd << " " << rt << " " << sa;
+#endif // DEBUG
+	r[rd] = r[rt] << sa;
+	++pc;
 }
 
 void R4300i::DSLL32(int rd, int rt, int sa)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DSLL32 " << rd << " " << rt << " " << sa;
+#endif // DEBUG
+	r[rd] = r[rt] << (sa + 32);
+	++pc;
 }
 
 void R4300i::DSLLV(int rd, int rt, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DSLLV " << rd << " " << rt << " " << rs;
+#endif // DEBUG
+	r[rd] = r[rt] << r[rs];
+	++pc;
 }
 
 void R4300i::DSRA(int rd, int rt, int sa)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DSRA " << rd << " " << rt << " " << sa;
+#endif // DEBUG
+	r[rd] = r[rt] >> sa;
+	++pc;
 }
 
 void R4300i::DSRA32(int rd, int rt, int sa)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DSRA32 " << rd << " " << rt << " " << sa;
+#endif // DEBUG
+	r[rd] = r[rt] >> (sa + 32);
+	++pc;
 }
 
 void R4300i::DSRAV(int rd, int rt, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DSRAV " << rd << " " << rt << " " << rs;
+#endif // DEBUG
+	r[rd] = r[rt] >> r[rs];
+	++pc;
 }
 
 void R4300i::DSRL(int rd, int rt, int sa)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DSRL " << rd << " " << rt << " " << sa;
+#endif // DEBUG
+	r[rd] = r[rt] >> sa;
+	++pc;
 }
 
 void R4300i::DSRL32(int rd, int rt, int sa)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DSRL32 " << rd << " " << rt << " " << sa;
+#endif // DEBUG
+	r[rd] = r[rt] >> (sa + 32);
+	++pc;
 }
 
 void R4300i::DSRLV(int rd, int rt, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DSRLV " << rd << " " << rt << " " << rs;
+#endif // DEBUG
+	r[rd] = r[rt] >> r[rs];
+	++pc;
 }
 
 void R4300i::DSUB(int rd, int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DSUB " << rd << " " << rs << " " << rt;
+#endif // DEBUG
+	r[rd] = (sdword) r[rs] - (sdword) r[rs];
+	++pc;
 }
 
 void R4300i::DSUBU(int rd, int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DSUBU " << rd << " " << rs << " " << rt;
+#endif // DEBUG
+	r[rd] = r[rs] - r[rs];
+	++pc;
 }
 
 void R4300i::LUI(int rt, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "LUI " << rt << " " << immed;
+#endif // DEBUG
+	r[rt] = immed << 16;
+	++pc;
 }
 
 void R4300i::MFHI(int rd)
 {
-	// TODO
+#if defined DEBUG
+		cout << "MFHI " << rd;
+#endif // DEBUG
+	r[rd] = hi;
+	++pc;
 }
 
 void R4300i::MFLO(int rd)
 {
-	// TODO
+#if defined DEBUG
+		cout << "MFLO " << rd;
+#endif // DEBUG
+	r[rd] = lo;
+	++pc;
 }
 
-void R4300i::MTHI(int rd)
+void R4300i::MTHI(int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "MTHI " << rs;
+#endif // DEBUG
+	hi = r[rs];
+	++pc;
 }
 
-void R4300i::MTLO(int rd)
+void R4300i::MTLO(int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "MTLO " << rs;
+#endif // DEBUG
+	lo = r[rs];
+	++pc;
 }
 
 void R4300i::MULT(int rs, int rt)

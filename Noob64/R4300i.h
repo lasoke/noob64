@@ -83,8 +83,8 @@ private:
 	void LUI          (int rt, int immed);			//	Load Upper immediate
 	void MFHI         (int rd);						//	Move From HI register
 	void MFLO         (int rd);						//	Move From LO register
-	void MTHI         (int rd);						//	Move To HI register
-	void MTLO         (int rd);						//	Move To LO register
+	void MTHI         (int rs);						//	Move To HI register
+	void MTLO         (int rs);						//	Move To LO register
 	void MULT         (int rs, int rt);				//	MULTiply word
 	void MULTU        (int rs, int rt);				//	MULTiply Unsigned word
 	void NOR          (int rd, int rs, int rt);		//	Not OR
