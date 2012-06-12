@@ -21,8 +21,8 @@ int main(array<System::String ^> ^args)
 	enableConsole();
 
 	RDRAM*		ram = new RDRAM();
-	R4300i*		cpu = new R4300i(*ram);
 	RomLoader*	rom = new RomLoader();
+	R4300i*		cpu = new R4300i(*rom, *ram);
 
 	char		addr[8];
 	int			instr_s = sizeof(word);

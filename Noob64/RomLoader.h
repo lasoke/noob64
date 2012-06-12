@@ -7,7 +7,9 @@ class RomLoader
 public:
 	RomLoader(void);
 	RomLoader(char* filename);
-	word getInstruction(int i);
+	word getInstruction(dword i);
+	word		CRC1;
+	word		CRC2;
 private:
 	byte		PI_BSB_DOM1_LAT_REG;
 	byte		PI_BSB_DOM1_PGS_REG;
@@ -16,8 +18,6 @@ private:
 	word		clock;
 	word		pc;
 	word		release;
-	word		CRC1;
-	word		CRC2;
 	char		name[20];
 	word		manufacturer;
 	hword		cartridge;

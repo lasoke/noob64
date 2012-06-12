@@ -3,10 +3,11 @@
 class R4300i
 {
 public:
-	R4300i(RDRAM &ram);
+	R4300i(RomLoader &rom, RDRAM &ram);
 	void decode(const word instr);
 private:
 	RDRAM &ram;
+	RomLoader &rom;
 	ExceptionHandler &ehandler;
 
 	void decode_r(const word instr);
@@ -21,8 +22,17 @@ private:
 	//** Registers					                                            **
 	//****************************************************************************
 	dword r[32];									// General Purpose Registers (GPRs)
+	word  cop0[32];									// Cop0 registers
 	dword f[32];									// FP General Purpose Registers (FGRs)
 	dword pc, hi, lo, ll, fcr0, fcr31;				// Special Registers
+	word delay_slot;								// for branch instructions
+	//****************************************************************************
+	//** OTHER																	**
+	//****************************************************************************
+	char invalid_code[0x100000];					// Invalid tlb code
+	word tlb_LUT_r[0x100000];
+	word tlb_LUT_w[0x100000];
+	tlb tlb_e[32];									// TLB
 	//****************************************************************************
 	//** Load and Store Instructions                                            **
 	//****************************************************************************
