@@ -17,8 +17,8 @@ typedef __int64				sdword;
 
 typedef float				s; // Single-Precision	Floating-Point Format:	[31:sign;30-23-exponent;22-0:fraction]
 typedef double				d; // Double-Precision	Floating-Point Format:	[63:sign;62-52:exponent;51-0:fraction]
-typedef /*FIXME:*/ float	w; // Word				Fixed-Point Format:		[31:sign;30-0:int]
-typedef /*FIXME:*/ float	l; // Longword			Fixed-Point Format:		[63:sign;62-0:int]
+typedef long				w; // Word				Fixed-Point Format:		[31:sign;30-0:int]
+typedef long long int		l; // Longword			Fixed-Point Format:		[63:sign;62-0:int]
 
 class RDRAM
 {
