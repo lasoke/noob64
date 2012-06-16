@@ -93,9 +93,8 @@ inline void RDRAM::write(Type data, word address)
 {
 	*((Type *)(rdram + address)) = data;
 #if defined DEBUG
-		cout << "	*WRITING* " << data << " @ " << address << ":" << endl;
+		cout << " *WRITING* " << data << " @ " << address << " : ";
 		print_word<Type>(address);
-		cout << endl;
 #endif // DEBUG
 }
 

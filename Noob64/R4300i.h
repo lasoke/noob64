@@ -4,11 +4,10 @@ class R4300i
 {
 public:
 	R4300i(RDRAM &ram);
-	void boot(word *bootcode);
 	void decode(const word instr);
 private:
-	RDRAM				&ram;
-	ExceptionHandler	&ehandler;
+	RDRAM &ram;
+	ExceptionHandler &ehandler;
 
 	void decode_r(const word instr);
 	void decode_i(const word instr);
@@ -84,8 +83,8 @@ private:
 	void LUI          (int rt, int immed);			//	Load Upper immediate
 	void MFHI         (int rd);						//	Move From HI register
 	void MFLO         (int rd);						//	Move From LO register
-	void MTHI         (int rd);						//	Move To HI register
-	void MTLO         (int rd);						//	Move To LO register
+	void MTHI         (int rs);						//	Move To HI register
+	void MTLO         (int rs);						//	Move To LO register
 	void MULT         (int rs, int rt);				//	MULTiply word
 	void MULTU        (int rs, int rt);				//	MULTiply Unsigned word
 	void NOR          (int rd, int rs, int rt);		//	Not OR
