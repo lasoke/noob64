@@ -17,8 +17,8 @@ typedef __int64				sdword;
 
 typedef float				s; // Single-Precision	Floating-Point Format:	[31:sign;30-23-exponent;22-0:fraction]
 typedef double				d; // Double-Precision	Floating-Point Format:	[63:sign;62-52:exponent;51-0:fraction]
-typedef /*FIXME:*/ float	w; // Word				Fixed-Point Format:		[31:sign;30-0:int]
-typedef /*FIXME:*/ float	l; // Longword			Fixed-Point Format:		[63:sign;62-0:int]
+typedef long				w; // Word				Fixed-Point Format:		[31:sign;30-0:int]
+typedef long long int		l; // Longword			Fixed-Point Format:		[63:sign;62-0:int]
 
 class RDRAM
 {
@@ -27,10 +27,10 @@ public:
 	~RDRAM();
 
 	template <typename Type>
-	Type read(word address);
+	Type read(dword address);
 
 	template <typename Type>
-	void write(Type data, word address);
+	void write(Type data, dword address);
 
 	static const int size = 0x800000;
 
@@ -50,13 +50,13 @@ public:
 
 private:
 	template <typename Type>
-	void print_word(word address);
+	void print_word(dword address);
 
 	byte rdram[size];
 };
 
 template <typename Type>
-inline void RDRAM::print_word(word address)
+inline void RDRAM::print_word(dword address)
 {
 	int remainder;
 	if (remainder = address % 4)
@@ -74,22 +74,22 @@ inline void RDRAM::print_word(word address)
 }
 
 template <typename Type>
-inline Type RDRAM::read(word address)
+inline Type RDRAM::read(dword address)
 {
 	Type data = *((Type *)(rdram + address));
 #if defined DEBUG
 		char addr[8];
-		_itoa_s(address, addr, 8, 16);
+		_itoa_s((int) address, addr, 8, 16);
 		cout << " *READING* address : " << format_number(string(8 - strlen(addr), '0') + addr, ' ', 2) << " data : ";
 		char mem[64];
-		_itoa_s(data, mem, 64, 2);
+		_itoa_s((int) data, mem, 64, 2);
 		cout << format_number(string(sizeof(Type) * 8 - strlen(mem), '0') + mem, ' ', 4);
 #endif // DEBUG
 	return data;
 }
 
 template <typename Type>
-inline void RDRAM::write(Type data, word address)
+inline void RDRAM::write(Type data, dword address)
 {
 	*((Type *)(rdram + address)) = data;
 #if defined DEBUG

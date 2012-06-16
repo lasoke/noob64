@@ -19,11 +19,13 @@
 using namespace std;
 
 // TODO: reference additional headers your program requires here
+#include "cop0.h"
 #include "Memory.h"
 #include "Instruction.h"
 #include "ExceptionHandler.h"
 #include "Helper.h"
-#include "R4300i.h"
 #include "RomLoader.h"
+#include "tlb.h"
+#include "R4300i.h"
 #include "Form1.h"
 

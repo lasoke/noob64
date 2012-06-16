@@ -1,5 +1,4 @@
 #include "StdAfx.h"
-#include "R4300i.h"
 
 R4300i::R4300i(RDRAM &rdram) :
 	ram(rdram), ehandler(*new ExceptionHandler()),
@@ -879,7 +878,7 @@ void R4300i::SWL(int rt, int immed, int rs)
 		cout << "SWL " << rt << " " << immed << "[" << rs << "]";
 #endif // DEBUG
 	old_word = ram.read<word>(r[rs] + immed * sizeof(word));
-	old_word = (r[rt] >> (8 * (r[rs] + immed * sizeof(word)) & 3)) | old_word;
+	old_word = (word) (r[rt] >> (8 * (r[rs] + immed * sizeof(word)) & 3)) | old_word;
 	ram.write<word>(old_word, r[rs] + immed * sizeof(word));
 	++pc;
 }
@@ -892,7 +891,7 @@ void R4300i::SWR(int rt, int immed, int rs)
 		cout << "SWR " << rt << " " << immed << "[" << rs << "]";
 #endif // DEBUG
 	old_word = ram.read<word>(r[rs] + immed * sizeof(word));
-	old_word = (r[rt] << (8 * (3 - (r[rs] + immed * sizeof(word)) & 3))) | old_word;
+	old_word = (word) (r[rt] << (8 * (3 - (r[rs] + immed * sizeof(word)) & 3))) | old_word;
 	ram.write<word>(old_word, r[rs] + immed * sizeof(word));
 	++pc;
 }
@@ -1300,7 +1299,7 @@ void R4300i::DSUB(int rd, int rs, int rt)
 #if defined DEBUG
 		cout << "DSUB " << rd << " " << rs << " " << rt;
 #endif // DEBUG
-	r[rd] = (sdword) r[rs] - (sdword) r[rs];
+	r[rd] = (sdword) r[rs] - (sdword) r[rt];
 	++pc;
 }
 
@@ -1309,7 +1308,7 @@ void R4300i::DSUBU(int rd, int rs, int rt)
 #if defined DEBUG
 		cout << "DSUBU " << rd << " " << rs << " " << rt;
 #endif // DEBUG
-	r[rd] = r[rs] - r[rs];
+	r[rd] = r[rs] - r[rt];
 	++pc;
 }
 
@@ -1382,642 +1381,1628 @@ void R4300i::MULTU(int rs, int rt)
 
 void R4300i::NOR(int rd, int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "NOR " << rd << " " << rs << " " << rt;
+#endif // DEBUG
+	r[rd] = ~(r[rs] | r[rt]);
+	++pc;
 }
 
 void R4300i::OR(int rd, int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "OR " << rd << " " << rs << " " << rt;
+#endif // DEBUG
+	r[rd] = r[rs] | r[rt];
+	++pc;
 }
 
 void R4300i::ORI(int rt, int rs, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "ORI " << rt << " " << rs << " " << immed;
+#endif // DEBUG
+	r[rt] = r[rs] | (word) immed;
+	++pc;
 }
 
 void R4300i::SLL(int rd, int rt, int sa)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SLL " << rd << " " << rt << " " << sa;
+#endif // DEBUG
+	r[rd] = (word) r[rt] << sa;
+	++pc;
 }
 
 void R4300i::SLLV(int rd, int rt, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SLLV " << rd << " " << rt << " " << rs;
+#endif // DEBUG
+	r[rd] = (word) r[rt] << (r[rs]&0x1F);
+	++pc;
 }
 
 void R4300i::SLT(int rd, int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SLT " << rd << " " << rs << " " << rt;
+#endif // DEBUG
+	if ((sword) r[rs] < (sword) r[rt])
+		r[rd] = 1;
+	else
+		r[rd] = 0;
+	++pc;
 }
 
 void R4300i::SLTI(int rt, int rs, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SLTI " << rt << " " << rs << " " << immed;
+#endif // DEBUG
+	if ((sword) r[rs] < immed)
+		r[rt] = 1;
+	else
+		r[rt] = 0;
+	++pc;
 }
 
 void R4300i::SLTIU(int rt, int rs, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SLTIU " << rt << " " << rs << " " << immed;
+#endif // DEBUG
+	if (r[rs] < immed)
+		r[rt] = 1;
+	else
+		r[rt] = 0;
+	++pc;
 }
 
 void R4300i::SLTU(int rd, int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SLTU " << rd << " " << rs << " " << rt;
+#endif // DEBUG
+	if (r[rs] < r[rt])
+		r[rd] = 1;
+	else
+		r[rd] = 0;
+	++pc;
 }
 
 void R4300i::SRA(int rd, int rt, int sa)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SRA " << rd << " " << rt << " " << sa;
+#endif // DEBUG
+	r[rd] = (sword) r[rt] >> sa;
+	++pc;
 }
 
 void R4300i::SRAV(int rd, int rt, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SRAV " << rd << " " << rt << " " << rs;
+#endif // DEBUG
+	r[rd] = (sword) r[rt] >> (r[rs]&0x1F);
+	++pc;
 }
 
 void R4300i::SRL(int rd, int rt, int sa)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SRL " << rd << " " << rt << " " << sa;
+#endif // DEBUG
+	r[rd] = (word) r[rt] >> sa;
+	++pc;
 }
 
 void R4300i::SRLV(int rd, int rt, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SRLV " << rd << " " << rt << " " << rs;
+#endif // DEBUG
+	r[rd] = (word) r[rt] >> (r[rs]&0x1F);
+	++pc;
 }
 
 void R4300i::SUB(int rd, int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SUB " << rd << " " << rs << " " << rt;
+#endif // DEBUG
+	r[rd] = (sword) r[rs] - (sword) r[rt];
+	++pc;
 }
 
 void R4300i::SUBU(int rd, int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SUBU " << rd << " " << rs << " " << rt;
+#endif // DEBUG
+	r[rd] = (word) r[rs] - (word) r[rt];
+	++pc;
 }
 
 void R4300i::XOR(int rd, int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "XOR " << rd << " " << rs << " " << rt;
+#endif // DEBUG
+	r[rd] = r[rs] ^ r[rt];
+	++pc;
 }
 
 void R4300i::XORI(int rt, int rs, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "XORI " << rt << " " << rs << " " << immed;
+#endif // DEBUG
+	r[rt] = (word) r[rs] ^ immed;
+	++pc;
 }
 
 void R4300i::BEQ(int rs, int rt, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BEQ " << rs << " " << rt << " " << immed;
+#endif // DEBUG
+	if (r[rs] == r[rt])
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		decode(rom.getInstruction(pc));
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BEQL(int rs, int rt, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BEQL " << rs << " " << rt << " " << immed;
+#endif // DEBUG
+	if (r[rs] == r[rt])
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		delay_slot = 1;
+		decode(rom.getInstruction(pc));
+		delay_slot = 0;
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BGEZ(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BGEZ " << rs << " " << immed;
+#endif // DEBUG
+	if ((sdword) r[rs] >= 0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		decode(rom.getInstruction(pc));
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BGEZAL(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BGEZAL " << rs << " " << immed;
+#endif // DEBUG
+	if ((sdword) r[rs] >= 0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		decode(rom.getInstruction(pc));
+		r[31] = pc;
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BGEZALL(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BGEZALL " << rs << " " << immed;
+#endif // DEBUG
+	if ((sdword) r[rs] >= 0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		delay_slot = 1;
+		decode(rom.getInstruction(pc));
+		delay_slot = 0;
+		r[31] = pc;
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BGEZL(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BGEZL " << rs << " " << immed;
+#endif // DEBUG
+	if ((sdword) r[rs] >= 0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		delay_slot = 1;
+		decode(rom.getInstruction(pc));
+		delay_slot = 0;
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BGTZ(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BGTZ " << rs << " " << immed;
+#endif // DEBUG
+	if ((sdword) r[rs] > 0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		decode(rom.getInstruction(pc));
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BGTZL(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BGTZL " << rs << " " << immed;
+#endif // DEBUG
+	if ((sdword) r[rs] > 0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		delay_slot = 1;
+		decode(rom.getInstruction(pc));
+		delay_slot = 0;
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BLEZ(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BLEZ " << rs << " " << immed;
+#endif // DEBUG
+	if ((sdword) r[rs] <= 0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		decode(rom.getInstruction(pc));
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BLEZL(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BLEZL " << rs << " " << immed;
+#endif // DEBUG
+	if ((sdword) r[rs] <= 0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		delay_slot = 1;
+		decode(rom.getInstruction(pc));
+		delay_slot = 0;
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BLTZ(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BLTZ " << rs << " " << immed;
+#endif // DEBUG
+	if ((sdword) r[rs] < 0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		decode(rom.getInstruction(pc));
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BLTZAL(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BLTZAL " << rs << " " << immed;
+#endif // DEBUG
+	if ((sdword) r[rs] < 0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		decode(rom.getInstruction(pc));
+		r[31] = pc;
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BLTZALL(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BLTZALL " << rs << " " << immed;
+#endif // DEBUG
+	if ((sdword) r[rs] < 0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		delay_slot = 1;
+		decode(rom.getInstruction(pc));
+		delay_slot = 0;
+		r[31] = pc;
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BLTZL(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BLTZL " << rs << " " << immed;
+#endif // DEBUG
+	if ((sdword) r[rs] < 0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		delay_slot = 1;
+		decode(rom.getInstruction(pc));
+		delay_slot = 0;
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BNE(int rs, int rt, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BNE " << rs << " " << rt << " " << immed;
+#endif // DEBUG
+	if (r[rs] != r[rt])
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		decode(rom.getInstruction(pc));
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BNEL(int rs, int rt, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BNEL " << rs << " " << rt << " " << immed;
+#endif // DEBUG
+	if (r[rs] != r[rt])
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		delay_slot = 1;
+		decode(rom.getInstruction(pc));
+		delay_slot = 0;
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::J(int address)
 {
-	// TODO
+#if defined DEBUG
+		cout << "J " << address;
+#endif // DEBUG
+	++pc;
+	delay_slot = 1;
+	decode(rom.getInstruction(pc));
+	delay_slot = 0;
+	pc = address;
 }
 
 void R4300i::JAL(int address)
 {
-	// TODO
+#if defined DEBUG
+		cout << "JAL " << address;
+#endif // DEBUG
+	++pc;
+	delay_slot = 1;
+	decode(rom.getInstruction(pc));
+	delay_slot = 0;
+	r[31] = pc;
+	pc = address;
 }
 
 void R4300i::JALR(int rs, int rd)
 {
-	// TODO
+#if defined DEBUG
+		cout << "JALR " << rs << " " << rd;
+#endif // DEBUG
+	++pc;
+	delay_slot = 1;
+	decode(rom.getInstruction(pc));
+	delay_slot = 0;
+	r[rd] = pc;
+	pc = r[rs];
 }
 
 void R4300i::JR(int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "JR " << rs;
+#endif // DEBUG
+	++pc;
+	delay_slot = 1;
+	decode(rom.getInstruction(pc));
+	delay_slot = 0;
+	pc = r[rs];
 }
 
 void R4300i::BREAK(int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SYSCALL " << immed;
+#endif // DEBUG
+	ehandler.interruption();
 }
 
 void R4300i::SYSCALL(int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SYSCALL " << immed;
+#endif // DEBUG
+	ehandler.syscall();
 }
 
 void R4300i::TEQ(int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TEQ " << rs << " " << rt;
+#endif // DEBUG
+	if (r[rt] == r[rs])
+		ehandler.trap();
+	++pc;
 }
 
 void R4300i::TEQI(int rs, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TEQI " << rs << " " << immed;
+#endif // DEBUG
+	if (r[rs] == immed)
+		ehandler.trap();
+	++pc;
 }
 
 void R4300i::TGE(int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TGE " << rs << " " << rt;
+#endif // DEBUG
+	if (r[rs] >= r[rt])
+		ehandler.trap();
+	++pc;
 }
 
 void R4300i::TGEI(int rs, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TGEI " << rs << " " << immed;
+#endif // DEBUG
+	if (r[rs] >= immed)
+		ehandler.trap();
+	++pc;
 }
 
 void R4300i::TGEIU(int rs, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TGEIU " << rs << " " << immed;
+#endif // DEBUG
+	if (r[rs] >= immed)
+		ehandler.trap();
+	++pc;
 }
 
 void R4300i::TGEU(int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TGEU " << rs << " " << rt;
+#endif // DEBUG
+	if (r[rs] >= r[rt])
+		ehandler.trap();
+	++pc;
 }
 
 void R4300i::TLT(int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TLT " << rs << " " << rt;
+#endif // DEBUG
+	if (r[rs] < r[rt])
+		ehandler.trap();
+	++pc;
 }
 
 void R4300i::TLTI(int rs, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TLTI " << rs << " " << immed;
+#endif // DEBUG
+	if ((sdword) r[rs] < immed)
+		ehandler.trap();
+	++pc;
 }
 
 void R4300i::TLTIU(int rs, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TLTIU " << rs << " " << immed;
+#endif // DEBUG
+	if (r[rs] < immed)
+		ehandler.trap();
+	++pc;
 }
 
 void R4300i::TLTU(int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TLTU " << rs << " " << rt;
+#endif // DEBUG
+	if (r[rs] < r[rt])
+		ehandler.trap();
+	++pc;
 }
 
 void R4300i::TNE(int rs, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TNE " << rs << " " << rt;
+#endif // DEBUG
+	if (r[rs] != r[rt])
+		ehandler.trap();
+	++pc;
 }
 
 void R4300i::TNEI(int rs, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TNEI " << rs << " " << immed;
+#endif // DEBUG
+	if (r[rs] != immed)
+		ehandler.trap();
+	++pc;
 }
 
 void R4300i::CACHE(int rt, int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "CACHE " << rt << " " << immed << " " << rs;
+#endif // DEBUG
+	++pc;
 }
+
+int jump_marker = 0;
 
 void R4300i::ERET(void)
 {
-	// TODO
+#if defined DEBUG
+		cout << "ERET";
+#endif // DEBUG
+   if (Status & 0x4)
+     {
+#if defined DEBUG
+		cout << " : ERROR IN ERET";
+#endif // DEBUG
+     }
+   else
+     {
+	Status &= 0xFFFFFFFD;
+	pc = EPC;
+     }
+   ll = 0;
 }
 
 void R4300i::MFC0(int rt, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "MFC0 " << rt << " " << fs;
+#endif // DEBUG
+	r[rt] = cop0[fs];
+	++pc;
 }
 
 void R4300i::MTC0(int rt, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "MTC0 " << rt << " " << fs;
+#endif // DEBUG
+		switch(fs)
+     {
+      case 0:    // Index
+	Index = r[rt] & 0x8000003F;
+	if ((Index & 0x3F) > 31) 
+	     cout << " il y a plus de 32 TLB";
+	break;
+      case 1:    // Random
+	break;
+      case 2:    // EntryLo0
+	EntryLo0 = r[rt] & 0x3FFFFFFF;
+	break;
+      case 3:    // EntryLo1
+ 	EntryLo1 = r[rt] & 0x3FFFFFFF;
+	break;
+      case 4:    // Context
+	Context = (r[rt] & 0xFF800000) | (Context & 0x007FFFF0);
+	break;
+      case 5:    // PageMask
+	PageMask = r[rt] & 0x01FFE000;
+	break;
+      case 6:    // Wired
+	Wired = (word) r[rt];
+	Random = 31;
+	break;
+      case 8:    // BadVAddr
+	break;
+      case 9:    // Count)
+	break;
+      case 10:   // EntryHi
+	EntryHi = r[rt] & 0xFFFFE0FF;
+	break;
+      case 11:   // Compare
+	break;
+      case 12:   // Status
+	Status = (word) r[rt];
+	break;
+      case 13:   // Cause
+	if (r[rt]!=0)
+	     cout << " écriture dans Cause";
+	else Cause = (word) r[rt];
+	break;
+      case 14:   // EPC
+	EPC = (word) r[rt];
+	break;
+      case 15:  // PRevID
+	break;
+      case 16:  // Config
+	Config = (word) r[rt];
+	break;
+      case 18:  // WatchLo
+	WatchLo = r[rt] & 0xFFFFFFFF;
+	break;
+      case 19:  // WatchHi
+	WatchHi = r[rt] & 0xFFFFFFFF;
+	break;
+      case 27: // CacheErr
+	break;
+      case 28: // TagLo
+	TagLo = r[rt] & 0x0FFFFFC0;
+	break;
+      case 29: // TagHi
+	TagHi =0;
+	break;
+      default:
+	cout << "unknown mtc0 write";
+     }
+   ++pc;
 }
 
 void R4300i::TLBP(void)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TLBP";
+#endif // DEBUG
+   int i;
+   Index |= 0x80000000;
+   for (i=0; i<32; i++)
+     {
+	if (((tlb_e[i].vpn2 & (~tlb_e[i].mask)) ==
+	     (((EntryHi & 0xFFFFE000) >> 13) & (~tlb_e[i].mask))) &&
+	    ((tlb_e[i].g) ||
+	     (tlb_e[i].asid == (EntryHi & 0xFF))))
+	  {
+	     Index = i;
+	     break;
+	  }
+     }
+   ++pc;
 }
 
 void R4300i::TLBR(void)
-{
-	// TODO
+{  
+#if defined DEBUG
+		cout << "TLBR";
+#endif // DEBUG
+   int index;
+   index = Index & 0x1F;
+   PageMask = tlb_e[index].mask << 13;
+   EntryHi = ((tlb_e[index].vpn2 << 13) | tlb_e[index].asid);
+   EntryLo0 = (tlb_e[index].pfn_even << 6) | (tlb_e[index].c_even << 3)
+     | (tlb_e[index].d_even << 2) | (tlb_e[index].v_even << 1)
+       | tlb_e[index].g;
+   EntryLo1 = (tlb_e[index].pfn_odd << 6) | (tlb_e[index].c_odd << 3)
+     | (tlb_e[index].d_odd << 2) | (tlb_e[index].v_odd << 1)
+       | tlb_e[index].g;
+   ++pc;
 }
 
 void R4300i::TLBWI(void)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TLBWI";
+#endif // DEBUG
+   unsigned int i;
+   if (tlb_e[Index&0x3F].v_even)
+     {
+	for (i=tlb_e[Index&0x3F].start_even; i<tlb_e[Index&0x3F].end_even; i++)
+	  {
+	     tlb_LUT_r[i>>12] = 0;
+	     invalid_code[i>>12] = 1;
+	  }
+	if (tlb_e[Index&0x3F].d_even)
+	  for (i=tlb_e[Index&0x3F].start_even; i<tlb_e[Index&0x3F].end_even; i++)
+	    tlb_LUT_w[i>>12] = 0;
+     }
+   if (tlb_e[Index&0x3F].v_odd)
+     {
+	for (i=tlb_e[Index&0x3F].start_odd; i<tlb_e[Index&0x3F].end_odd; i++)
+	  {
+	     tlb_LUT_r[i>>12] = 0;
+	     invalid_code[i>>12] = 1;
+	  }
+	if (tlb_e[Index&0x3F].d_odd)
+	  for (i=tlb_e[Index&0x3F].start_odd; i<tlb_e[Index&0x3F].end_odd; i++)
+	    tlb_LUT_w[i>>12] = 0;
+     }
+   tlb_e[Index&0x3F].g = (EntryLo0 & EntryLo1 & 1);
+   tlb_e[Index&0x3F].pfn_even = (EntryLo0 & 0x3FFFFFC0) >> 6;
+   tlb_e[Index&0x3F].pfn_odd = (EntryLo1 & 0x3FFFFFC0) >> 6;
+   tlb_e[Index&0x3F].c_even = (EntryLo0 & 0x38) >> 3;
+   tlb_e[Index&0x3F].c_odd = (EntryLo1 & 0x38) >> 3;
+   tlb_e[Index&0x3F].d_even = (EntryLo0 & 0x4) >> 2;
+   tlb_e[Index&0x3F].d_odd = (EntryLo1 & 0x4) >> 2;
+   tlb_e[Index&0x3F].v_even = (EntryLo0 & 0x2) >> 1;
+   tlb_e[Index&0x3F].v_odd = (EntryLo1 & 0x2) >> 1;
+   tlb_e[Index&0x3F].asid = (EntryHi & 0xFF);
+   tlb_e[Index&0x3F].vpn2 = (EntryHi & 0xFFFFE000) >> 13;
+   tlb_e[Index&0x3F].r = (EntryHi & 0xC000000000000000LL) >> 62;
+   tlb_e[Index&0x3F].mask = (PageMask & 0x1FFE000) >> 13;
+   
+   tlb_e[Index&0x3F].start_even = tlb_e[Index&0x3F].vpn2 << 13;
+   tlb_e[Index&0x3F].end_even = tlb_e[Index&0x3F].start_even+
+     (tlb_e[Index&0x3F].mask << 12) + 0xFFF;
+   tlb_e[Index&0x3F].phys_even = tlb_e[Index&0x3F].pfn_even << 12;
+   
+   if (tlb_e[Index&0x3F].v_even)
+     {
+	if (tlb_e[Index&0x3F].start_even < tlb_e[Index&0x3F].end_even &&
+	    !(tlb_e[Index&0x3F].start_even >= 0x80000000 &&
+	    tlb_e[Index&0x3F].end_even < 0xC0000000) &&
+	    tlb_e[Index&0x3F].phys_even < 0x20000000)
+	  {
+	     for (i=tlb_e[Index&0x3F].start_even;i<tlb_e[Index&0x3F].end_even;i++)
+	       tlb_LUT_r[i>>12] = 0x80000000 | 
+	       (tlb_e[Index&0x3F].phys_even + (i - tlb_e[Index&0x3F].start_even));
+	     if (tlb_e[Index&0x3F].d_even)
+	       for (i=tlb_e[Index&0x3F].start_even;i<tlb_e[Index&0x3F].end_even;i++)
+		 tlb_LUT_w[i>>12] = 0x80000000 | 
+	       (tlb_e[Index&0x3F].phys_even + (i - tlb_e[Index&0x3F].start_even));
+	  }
+     }
+   tlb_e[Index&0x3F].start_odd = tlb_e[Index&0x3F].end_even+1;
+   tlb_e[Index&0x3F].end_odd = tlb_e[Index&0x3F].start_odd+
+     (tlb_e[Index&0x3F].mask << 12) + 0xFFF;
+   tlb_e[Index&0x3F].phys_odd = tlb_e[Index&0x3F].pfn_odd << 12;
+   
+   if (tlb_e[Index&0x3F].v_odd)
+     {
+	if (tlb_e[Index&0x3F].start_odd < tlb_e[Index&0x3F].end_odd &&
+	    !(tlb_e[Index&0x3F].start_odd >= 0x80000000 &&
+	    tlb_e[Index&0x3F].end_odd < 0xC0000000) &&
+	    tlb_e[Index&0x3F].phys_odd < 0x20000000)
+	  {
+	     for (i=tlb_e[Index&0x3F].start_odd;i<tlb_e[Index&0x3F].end_odd;i++)
+	       tlb_LUT_r[i>>12] = 0x80000000 | 
+	       (tlb_e[Index&0x3F].phys_odd + (i - tlb_e[Index&0x3F].start_odd));
+	     if (tlb_e[Index&0x3F].d_odd)
+	       for (i=tlb_e[Index&0x3F].start_odd;i<tlb_e[Index&0x3F].end_odd;i++)
+		 tlb_LUT_w[i>>12] = 0x80000000 | 
+	       (tlb_e[Index&0x3F].phys_odd + (i - tlb_e[Index&0x3F].start_odd));
+	  }
+     }
+   ++pc;
 }
 
 void R4300i::TLBWR(void)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TLBWR";
+#endif // DEBUG
+   unsigned int i;
+   Random = (Count/2 % (32 - Wired)) + Wired;
+   if (tlb_e[Random].v_even)
+     {
+	for (i=tlb_e[Random].start_even; i<tlb_e[Random].end_even; i++)
+	  {
+	     tlb_LUT_r[i>>12] = 0;
+	     invalid_code[i>>12] = 1;
+	  }
+	if (tlb_e[Random].d_even)
+	  for (i=tlb_e[Random].start_even; i<tlb_e[Random].end_even; i++)
+	    tlb_LUT_w[i>>12] = 0;
+     }
+   if (tlb_e[Random].v_odd)
+     {
+	for (i=tlb_e[Random].start_odd; i<tlb_e[Random].end_odd; i++)
+	  {
+	     tlb_LUT_r[i>>12] = 0;
+	     invalid_code[i>>12] = 1;
+	  }
+	if (tlb_e[Random].d_odd)
+	  for (i=tlb_e[Random].start_odd; i<tlb_e[Random].end_odd; i++)
+	    tlb_LUT_w[i>>12] = 0;
+     }
+   tlb_e[Random].g = (EntryLo0 & EntryLo1 & 1);
+   tlb_e[Random].pfn_even = (EntryLo0 & 0x3FFFFFC0) >> 6;
+   tlb_e[Random].pfn_odd = (EntryLo1 & 0x3FFFFFC0) >> 6;
+   tlb_e[Random].c_even = (EntryLo0 & 0x38) >> 3;
+   tlb_e[Random].c_odd = (EntryLo1 & 0x38) >> 3;
+   tlb_e[Random].d_even = (EntryLo0 & 0x4) >> 2;
+   tlb_e[Random].d_odd = (EntryLo1 & 0x4) >> 2;
+   tlb_e[Random].v_even = (EntryLo0 & 0x2) >> 1;
+   tlb_e[Random].v_odd = (EntryLo1 & 0x2) >> 1;
+   tlb_e[Random].asid = (EntryHi & 0xFF);
+   tlb_e[Random].vpn2 = (EntryHi & 0xFFFFE000) >> 13;
+   tlb_e[Random].r = (EntryHi & 0xC000000000000000LL) >> 62;
+   tlb_e[Random].mask = (PageMask & 0x1FFE000) >> 13;
+   
+   tlb_e[Random].start_even = tlb_e[Random].vpn2 << 13;
+   tlb_e[Random].end_even = tlb_e[Random].start_even+
+     (tlb_e[Random].mask << 12) + 0xFFF;
+   tlb_e[Random].phys_even = tlb_e[Random].pfn_even << 12;
+   
+   if (tlb_e[Random].v_even)
+     {
+	if (tlb_e[Random].start_even < tlb_e[Random].end_even &&
+	    !(tlb_e[Random].start_even >= 0x80000000 &&
+	    tlb_e[Random].end_even < 0xC0000000) &&
+	    tlb_e[Random].phys_even < 0x20000000)
+	  {
+	     for (i=tlb_e[Random].start_even;i<tlb_e[Random].end_even;i++)
+	       tlb_LUT_r[i>>12] = 0x80000000 | 
+	       (tlb_e[Random].phys_even + (i - tlb_e[Random].start_even));
+	     if (tlb_e[Random].d_even)
+	       for (i=tlb_e[Random].start_even;i<tlb_e[Random].end_even;i++)
+		 tlb_LUT_w[i>>12] = 0x80000000 | 
+	       (tlb_e[Random].phys_even + (i - tlb_e[Random].start_even));
+	  }
+     }
+   tlb_e[Random].start_odd = tlb_e[Random].end_even+1;
+   tlb_e[Random].end_odd = tlb_e[Random].start_odd+
+     (tlb_e[Random].mask << 12) + 0xFFF;
+   tlb_e[Random].phys_odd = tlb_e[Random].pfn_odd << 12;
+   
+   if (tlb_e[Random].v_odd)
+     {
+	if (tlb_e[Random].start_odd < tlb_e[Random].end_odd &&
+	    !(tlb_e[Random].start_odd >= 0x80000000 &&
+	    tlb_e[Random].end_odd < 0xC0000000) &&
+	    tlb_e[Random].phys_odd < 0x20000000)
+	  {
+	     for (i=tlb_e[Random].start_odd;i<tlb_e[Random].end_odd;i++)
+	       tlb_LUT_r[i>>12] = 0x80000000 | 
+	       (tlb_e[Random].phys_odd + (i - tlb_e[Random].start_odd));
+	     if (tlb_e[Random].d_odd)
+	       for (i=tlb_e[Random].start_odd;i<tlb_e[Random].end_odd;i++)
+		 tlb_LUT_w[i>>12] = 0x80000000 | 
+	       (tlb_e[Random].phys_odd + (i - tlb_e[Random].start_odd));
+	  }
+     }
+   ++pc;
 }
 
 template<typename Type>
 void R4300i::ABS(int fd, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "ABS " << fd << " " << fs;
+#endif // DEBUG
+	f[fd] = (dword) abs((Type) f[fs]);
+	++pc;
 }
 
 template<typename Type>
 void R4300i::ADD(int fd, int fs, int ft)
 {
-	// TODO
+#if defined DEBUG
+		cout << "ADD " << fd << " " << fs << " " << ft;
+#endif // DEBUG
+	f[fd] = (dword) ((Type) f[fs] + (Type) f[ft]);
+	++pc;
 }
 
 void R4300i::BC1F(int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BC1F " << immed;
+#endif // DEBUG
+	if ((fcr31 & 0x800000)==0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		decode(rom.getInstruction(pc));
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BC1FL(int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BC1FL " << immed;
+#endif // DEBUG
+	if ((fcr31 & 0x800000)==0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		delay_slot = 1;
+		decode(rom.getInstruction(pc));
+		delay_slot = 0;
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BC1T(int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BC1T " << immed;
+#endif // DEBUG
+#if defined DEBUG
+		cout << "BC1F " << immed;
+#endif // DEBUG
+	if ((fcr31 & 0x800000)!=0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		decode(rom.getInstruction(pc));
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 void R4300i::BC1TL(int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BC1TL " << immed;
+#endif // DEBUG
+	if ((fcr31 & 0x800000)!=0)
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		delay_slot = 1;
+		decode(rom.getInstruction(pc));
+		delay_slot = 0;
+		pc = pc_tmp;
+	}
+	else
+	{
+		++pc;
+	}
 }
 
 template<typename Type>
 void R4300i::C(int fs, int ft, int cond)
 {
-	// TODO
-	/*
+#if defined DEBUG
+		cout << "C " << fs << " " << ft << " " << cond;
+#endif // DEBUG
 	switch (cond) {
-	case 0:
-		F<Type>(f[fs], f[ft]);
-	case 1:
-		UN<Type>(f[fs], f[ft]);
-	case 2:
-		EQ<Type>(f[fs], f[ft]);
-		//...
-	default:
-		// ERROR
-		;
+		case 0:
+			F<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		case 1:
+			UN<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		case 2:
+			EQ<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		case 3:
+			UEQ<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		case 4:
+			OLT<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		case 5:
+			ULT<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		case 6:
+			OLE<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		case 7:
+			ULE<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		case 8:
+			SF<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		case 9:
+			NGLE<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		case 10:
+			SEQ<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		case 11:
+			NGL<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		case 12:
+			LT<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		case 13:
+			NGE<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		case 14:
+			LE<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		case 15:
+			NGT<Type>((Type) f[fs], (Type) f[ft]);
+			break;
+		default:
+			cout << "Unknown Condition";
+			break;
 	}
-	*/
+	++pc;
 }
 
 template<typename Type, typename toType>
 void R4300i::CEIL(int fd, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "CEIL " << fd << " " << fs;
+#endif // DEBUG
+	f[fd] = (toType) ((Type) f[fs]);
+	++pc;
 }
 
 void R4300i::CFC1(int rt, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "CFC1 " << rt << " " << fs;
+#endif // DEBUG
+	r[rt] = (word) f[fs];
+	++pc;
 }
 
 void R4300i::CTC1(int rt, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "CTC1 " << rt << " " << fs;
+#endif // DEBUG
+	f[fs] = (word) r[rt];
+	++pc;
 }
 
 template<typename Type, typename toType>
 void R4300i::CVT(int fd, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "CVT " << fd << " " << fs;
+#endif // DEBUG
+	f[fd] = (dword) ((toType) ((Type) f[fs]));
+	++pc;
 }
 
 template<typename Type>
 void R4300i::DIV(int fd, int fs, int ft)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DIV " << fd << " " << fs << " " << ft;
+#endif // DEBUG
+	f[fd] = (dword) ((Type) f[fs] / (Type) f[ft]);
+	++pc;
 }
 
 void R4300i::DMFC1(int rt, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DMFC1 " << rt << " " << fs;
+#endif // DEBUG
+	r[rt] = f[fs];
+	++pc;
 }
 
 void R4300i::DMTC1(int rt, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "DMTC1 " << rt << " " << fs;
+#endif // DEBUG
+	f[fs] = r[rt];
+	++pc;
 }
 
 template<typename Type, typename toType>
 void R4300i::FLOOR(int fd, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "FLOOR " << fd << " " << fs;
+#endif // DEBUG
+	f[fd] = (toType) ((Type) f[fs]);
+	++pc;
 }
 
 void R4300i::LDC1(int ft, int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "LDC1 " << ft << " " << immed << " " << rs;
+#endif // DEBUG
+	f[ft] = ram.read<dword>(r[rs] + immed * sizeof(dword));
+	++pc;
 }
 
 void R4300i::LWC1(int ft, int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "LWC1 " << ft << " " << immed << " " << rs;
+#endif // DEBUG
+	f[ft] = ram.read<word>(r[rs] + immed * sizeof(word));
+	++pc;
 }
 
 void R4300i::MFC1(int rt, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "MFC1 " << rt << " " << fs;
+#endif // DEBUG
+	r[rt] = (word) f[fs];
+	++pc;
 }
 
 template<typename Type>
 void R4300i::MOV(int fd, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "MOV " << fd << " " << fs;
+#endif // DEBUG
+	f[fd] = (dword) ((Type) f[fs]);
+	++pc;
 }
 
 void R4300i::MTC1(int rt, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "MTC1 " << rt << " " << fs;
+#endif // DEBUG
+	f[fs] = (word) r[rt];
+	++pc;
 }
 
 template<typename Type>
 void R4300i::MUL(int fd, int fs, int ft)
 {
-	// TODO
+#if defined DEBUG
+		cout << "MUL " << fd << " " << fs << " " << ft;
+#endif // DEBUG
+	f[fd] = (dword) ((Type) f[fs] * (Type) f[ft]);
+	++pc;
 }
 
 template<typename Type>
 void R4300i::NEG(int fd, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "NEG " << fd << " " << fs;
+#endif // DEBUG
+	f[fd] = (dword) (- (Type) f[fs]);
+	++pc;
 }
 
 template<typename Type, typename toType>
 void R4300i::ROUND(int fd, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "ROUND " << fd << " " << fs;
+#endif // DEBUG
+	f[fd] = (toType) ((Type) f[fs]);
+	++pc;
 }
 
 void R4300i::SDC1(int ft, int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SDC1 " << ft << " " << immed << " " << rs;
+#endif // DEBUG
+	ram.write<dword>(r[rs] + immed * sizeof(dword), f[ft]);
+	++pc;
+}
+
+template<>
+void R4300i::SQRT<w>(int fd, int fs)
+{
+#if defined DEBUG
+		cout << "SQRT " << fd << " " << fs;
+#endif // DEBUG
+	f[fd] = (dword) sqrt((double)f[fs]);
+	++pc;
+}
+
+template<>
+void R4300i::SQRT<l>(int fd, int fs)
+{
+#if defined DEBUG
+		cout << "SQRT " << fd << " " << fs;
+#endif // DEBUG
+	f[fd] = (dword) sqrt((double)f[fs]);
+	++pc;
 }
 
 template<typename Type>
 void R4300i::SQRT(int fd, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SQRT " << fd << " " << fs;
+#endif // DEBUG
+	f[fd] = (dword) sqrt((Type)f[fs]);
+	++pc;
 }
 
 template<typename Type>
 void R4300i::SUB(int fd, int fs, int ft)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SUB " << fd << " " << fs << " " << ft;
+#endif // DEBUG
+	f[fd] = (dword) ((Type) f[fs] - (Type) f[ft]);
+	++pc;
 }
 
 void R4300i::SWC1(int ft, int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "SWC1 " << ft << " " << immed << " " << rs;
+#endif // DEBUG
+	ram.write<word>((word) r[rs] + immed * sizeof(word), (word) f[ft]);
+	++pc;
 }
 
 template<typename Type, typename toType>
 void R4300i::TRUNC(int fd, int fs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "TRUNC " << fd << " " << fs;
+#endif // DEBUG
+	f[fd] = (toType) ((Type) f[fs]);
+	++pc;
 }
 
 void R4300i::NOP(void)
 {
-	// TODO
+#if defined DEBUG
+		cout << "NOP";
+#endif // DEBUG
+	++pc;
 }
 
 void R4300i::MOVE(int rd, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "MOVE " << rd << " " << rs;
+#endif // DEBUG
 }
 
 void R4300i::NEG(int rd, int rt)
 {
-	// TODO
+#if defined DEBUG
+		cout << "NEG " << rd << " " << rt;
+#endif // DEBUG
 }
 
 void R4300i::NEGU(int rd, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "NEGU " << rd << " " << rs;
+#endif // DEBUG
 }
 
 void R4300i::BNEZ(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BNEZ " << immed << " " << rs;
+#endif // DEBUG
 }
 
 void R4300i::BNEZL(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BNEZL " << immed << " " << rs;
+#endif // DEBUG
 }
 
 void R4300i::BEQZ(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BEQZ " << immed << " " << rs;
+#endif // DEBUG
 }
 
 void R4300i::BEQZL(int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BEQZL " << immed << " " << rs;
+#endif // DEBUG
 }
 
 void R4300i::B(int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "B " << immed;
+#endif // DEBUG
 }
 
 void R4300i::BAL(int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "BAL " << immed;
+#endif // DEBUG
 }
 
 void R4300i::LI(int rt, int immed)
 {
-	// TODO
+#if defined DEBUG
+		cout << "LI " << rt << " " << immed;
+#endif // DEBUG
 }
 
 void R4300i::S_S(int ft, int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "S_S " << ft << " " << immed << " " << rs;
+#endif // DEBUG
 }
 
 void R4300i::L_S(int ft, int immed, int rs)
 {
-	// TODO
+#if defined DEBUG
+		cout << "L_S " << ft << " " << immed << " " << rs;
+#endif // DEBUG
 }
 
 template<typename Type>
-bool R4300i::F(Type a, Type b)
+void R4300i::F(Type a, Type b)
 {
-	// TODO
-	return true;
+	fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-bool R4300i::UN(Type a, Type b)
+void R4300i::UN(Type a, Type b)
 {
-	// TODO
-	return true;
+   if (_isnan((double) a) || _isnan((double) b))
+	   fcr31 |= 0x800000;
+   else
+	   fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-bool R4300i::EQ(Type a, Type b)
+void R4300i::EQ(Type a, Type b)
 {
-	// TODO
-	return true;
+   if (!_isnan((double) a) && !_isnan((double) b) && a == b)
+	   fcr31 |= 0x800000;
+   else
+	   fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-bool R4300i::UEQ(Type a, Type b)
+void R4300i::UEQ(Type a, Type b)
 {
-	// TODO
-	return true;
+   if (_isnan((double) a) || _isnan((double) b) || a == b)
+	   fcr31 |= 0x800000;
+   else
+	   fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-bool R4300i::OLT(Type a, Type b)
+void R4300i::OLT(Type a, Type b)
 {
-	// TODO
-	return true;
+   if (!_isnan((double) a) && !_isnan((double) b) && a < b)
+	   fcr31 |= 0x800000;
+   else
+	   fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-bool R4300i::ULT(Type a, Type b)
+void R4300i::ULT(Type a, Type b)
 {
-	// TODO
-	return true;
+   if (_isnan((double) a) || _isnan((double) b) || a < b)
+	   fcr31 |= 0x800000;
+   else
+	   fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-bool R4300i::OLE(Type a, Type b)
+void R4300i::OLE(Type a, Type b)
 {
-	// TODO
-	return true;
+   if (!_isnan((double) a) && !_isnan((double) b) && a <= b)
+	   fcr31 |= 0x800000;
+   else
+	   fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-bool R4300i::ULE(Type a, Type b)
+void R4300i::ULE(Type a, Type b)
 {
-	// TODO
-	return true;
+   if (_isnan((double) a) || _isnan((double) b) || a <= b)
+	   fcr31 |= 0x800000;
+   else
+	   fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-bool R4300i::SF(Type a, Type b)
+void R4300i::SF(Type a, Type b)
 {
-	// TODO
-	return true;
+   if (_isnan((double) a) || _isnan((double) b))
+   {
+	   cout << " Invalid operation exception in C opcode";
+   }
+   fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-bool R4300i::NGLE(Type a, Type b)
+void R4300i::NGLE(Type a, Type b)
 {
-	// TODO
-	return true;
+   if (_isnan((double) a) || _isnan((double) b))
+   {
+	   cout << " Invalid operation exception in C opcode";
+   }
+   fcr31 &= ~0x800000;
 }
 
 
 template<typename Type>
-bool R4300i::SEQ(Type a, Type b)
+void R4300i::SEQ(Type a, Type b)
 {
-	// TODO
-	return true;
+   if (_isnan((double) a) || _isnan((double) b))
+   {
+	   cout << " Invalid operation exception in C opcode";
+   }
+   if (a == b)
+	   fcr31 |= 0x800000;
+   else
+	   fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-bool R4300i::NGL(Type a, Type b)
+void R4300i::NGL(Type a, Type b)
 {
-	// TODO
-	return true;
+   if (_isnan((double) a) || _isnan((double) b))
+   {
+	   cout << " Invalid operation exception in C opcode";
+   }
+   if (a == b)
+	   fcr31 |= 0x800000;
+   else
+	   fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-bool LT(Type a, Type b)
+void R4300i::LT(Type a, Type b)
 {
-	// TODO
-	return true;
+   if (_isnan((double) a) || _isnan((double) b))
+   {
+	   cout << " Invalid operation exception in C opcode";
+   }
+   if (a < b)
+	   fcr31 |= 0x800000;
+   else
+	   fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-bool R4300i::NGE(Type a, Type b)
+void R4300i::NGE(Type a, Type b)
 {
-	// TODO
-	return true;
+   if (_isnan((double) a) || _isnan((double) b))
+   {
+	   cout << " Invalid operation exception in C opcode";
+   }
+   if (a < b)
+	   fcr31 |= 0x800000;
+   else
+	   fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-bool R4300i::LE(Type a, Type b)
+void R4300i::LE(Type a, Type b)
 {
-	// TODO
-	return true;
+   if (_isnan((double) a) || _isnan((double) b))
+   {
+	   cout << " Invalid operation exception in C opcode";
+   }
+   if (a <= b)
+	   fcr31 |= 0x800000;
+   else
+	   fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-bool R4300i::NGT(Type a, Type b)
+void R4300i::NGT(Type a, Type b)
 {
-	// TODO
-	return true;
+   if (_isnan((double) a) || _isnan((double) b))
+   {
+	   cout << " Invalid operation exception in C opcode";
+   }
+   if (a <= b)
+	   fcr31 |= 0x800000;
+   else
+	   fcr31 &= ~0x800000;
 }
 

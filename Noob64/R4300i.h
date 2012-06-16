@@ -4,9 +4,11 @@ class R4300i
 {
 public:
 	R4300i(RDRAM &ram);
+	void R4300i::boot(word *bootcode);
 	void decode(const word instr);
 private:
 	RDRAM &ram;
+	RomLoader &rom;
 	ExceptionHandler &ehandler;
 
 	void decode_r(const word instr);
@@ -21,8 +23,17 @@ private:
 	//** Registers					                                            **
 	//****************************************************************************
 	dword r[32];									// General Purpose Registers (GPRs)
+	word  cop0[32];									// Cop0 registers
 	dword f[32];									// FP General Purpose Registers (FGRs)
 	dword pc, hi, lo, ll, fcr0, fcr31;				// Special Registers
+	word delay_slot;								// for branch instructions
+	//****************************************************************************
+	//** OTHER																	**
+	//****************************************************************************
+	char invalid_code[0x100000];					// Invalid tlb code
+	word tlb_LUT_r[0x100000];
+	word tlb_LUT_w[0x100000];
+	tlb tlb_e[32];									// TLB
 	//****************************************************************************
 	//** Load and Store Instructions                                            **
 	//****************************************************************************
@@ -227,36 +238,36 @@ private:
 	//** Conditions		                                                        **
 	//****************************************************************************
 	template<typename Type>
-	bool F(Type a, Type b);		// False
+	void F(Type a, Type b);		// False
 	template<typename Type>
-	bool UN(Type a, Type b);	// Unordered
+	void UN(Type a, Type b);	// Unordered
 	template<typename Type>
-	bool EQ(Type a, Type b);	// Equal
+	void EQ(Type a, Type b);	// Equal
 	template<typename Type>
-	bool UEQ(Type a, Type b);	// Unordered or Equal
+	void UEQ(Type a, Type b);	// Unordered or Equal
 	template<typename Type>
-	bool OLT(Type a, Type b);	// Ordered or Less Than
+	void OLT(Type a, Type b);	// Ordered or Less Than
 	template<typename Type>
-	bool ULT(Type a, Type b);	// Unordered or Less Than
+	void ULT(Type a, Type b);	// Unordered or Less Than
 	template<typename Type>
-	bool OLE(Type a, Type b);	// Ordered or Less than or Equal
+	void OLE(Type a, Type b);	// Ordered or Less than or Equal
 	template<typename Type>
-	bool ULE(Type a, Type b);	// Unordered or Less than or Equal
+	void ULE(Type a, Type b);	// Unordered or Less than or Equal
 	template<typename Type>
-	bool SF(Type a, Type b);	// Signaling False
+	void SF(Type a, Type b);	// Signaling False
 	template<typename Type>
-	bool NGLE(Type a, Type b);	// Not Greater than or Less than or Equal
+	void NGLE(Type a, Type b);	// Not Greater than or Less than or Equal
 	template<typename Type>
-	bool SEQ(Type a, Type b);	// Signaling Equal
+	void SEQ(Type a, Type b);	// Signaling Equal
 	template<typename Type>
-	bool NGL(Type a, Type b);	// Not Greater than or Less than
+	void NGL(Type a, Type b);	// Not Greater than or Less than
 	template<typename Type>
-	bool LT(Type a, Type b);	// Less Than
+	void LT(Type a, Type b);	// Less Than
 	template<typename Type>
-	bool NGE(Type a, Type b);	// Not Greater than or Equal
+	void NGE(Type a, Type b);	// Not Greater than or Equal
 	template<typename Type>
-	bool LE(Type a, Type b);	// Less than or Equal
+	void LE(Type a, Type b);	// Less than or Equal
 	template<typename Type>
-	bool NGT(Type a, Type b);	// Not Greater Than
+	void NGT(Type a, Type b);	// Not Greater Than
 };
 
