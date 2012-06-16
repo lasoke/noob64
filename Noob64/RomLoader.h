@@ -7,7 +7,7 @@ class RomLoader
 public:
 	RomLoader(void);
 	RomLoader(char* filename);
-	word getInstruction(dword i);
+	word* getBootCode(void);
 	word		CRC1;
 	word		CRC2;
 private:

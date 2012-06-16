@@ -35,7 +35,7 @@ RomLoader::RomLoader(char* filename)
 {
 }
 
-word RomLoader::getInstruction(dword i)
+word* RomLoader::getBootCode(void)
 {
-	return bootcode[i];
+	return bootcode;
 }

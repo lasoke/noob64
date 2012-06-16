@@ -22,20 +22,9 @@ int main(array<System::String ^> ^args)
 
 	RDRAM*		ram = new RDRAM();
 	RomLoader*	rom = new RomLoader();
-	R4300i*		cpu = new R4300i(*rom, *ram);
+	R4300i*		cpu = new R4300i(*ram);
 
-	char		addr[8];
-	int			instr_s = sizeof(word);
-
-	for (int i = 0; i < BOOT_CODE_SIZE; i++)
-	{
-#if defined DEBUG
-			memset(addr, 0, 8);
-			_itoa_s(0x40 + i * instr_s, addr, 8, 16);
-			cout << endl << format_number(string(8 - strlen(addr), '0') + addr, ' ', 2) << " : ";
-#endif
-		cpu->decode(rom->getInstruction(i));
-	}
+	cpu->boot(rom->getBootCode());
 
 	/*
 	ram->write<word>(4294967295, 1);

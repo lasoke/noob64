@@ -1,9 +1,27 @@
 #include "StdAfx.h"
 
-R4300i::R4300i(RomLoader &rdrom, RDRAM &rdram) : rom(rdrom), ram(rdram) , ehandler(*new ExceptionHandler())
+R4300i::R4300i(RDRAM &rdram) :
+	ram(rdram), ehandler(*new ExceptionHandler()),
+	pc(0), hi(0), lo(0), ll(0), fcr0(0), fcr31(0)
 {
 	for (int i = 0; i < 32; i++)
 		r[i] = (dword) 0;
+}
+
+void R4300i::boot(word *bootcode)
+{
+	char addr[8];
+	int	instr_s = sizeof(word);
+
+	for (int i = 0; i < BOOT_CODE_SIZE; i++)
+	{
+#		if defined DEBUG
+			memset(addr, 0, 8);
+			_itoa_s(0x40 + i * instr_s, addr, 8, 16);
+			cout << endl << format_number(string(8 - strlen(addr), '0') + addr, ' ', 2) << " : ";
+#		endif
+		decode(bootcode[pc]);
+	}
 }
 
 void R4300i::decode(const word i)

@@ -3,7 +3,8 @@
 class R4300i
 {
 public:
-	R4300i(RomLoader &rom, RDRAM &ram);
+	R4300i(RDRAM &ram);
+	void R4300i::boot(word *bootcode);
 	void decode(const word instr);
 private:
 	RDRAM &ram;
