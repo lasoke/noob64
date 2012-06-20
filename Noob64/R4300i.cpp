@@ -24,6 +24,10 @@ void R4300i::boot(word *bootcode)
 	}
 }
 
+void R4300i::decode_next_instr(const dword pc)
+{
+}
+
 void R4300i::decode(const word i)
 {
 	switch(getOpCode(i)) {
@@ -1553,7 +1557,7 @@ void R4300i::BEQ(int rs, int rt, int immed)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		pc = pc_tmp;
 	}
 	else
@@ -1572,7 +1576,7 @@ void R4300i::BEQL(int rs, int rt, int immed)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
@@ -1591,7 +1595,7 @@ void R4300i::BGEZ(int immed, int rs)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		pc = pc_tmp;
 	}
 	else
@@ -1609,7 +1613,7 @@ void R4300i::BGEZAL(int immed, int rs)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		r[31] = pc;
 		pc = pc_tmp;
 	}
@@ -1629,7 +1633,7 @@ void R4300i::BGEZALL(int immed, int rs)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		delay_slot = 0;
 		r[31] = pc;
 		pc = pc_tmp;
@@ -1650,7 +1654,7 @@ void R4300i::BGEZL(int immed, int rs)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
@@ -1669,7 +1673,7 @@ void R4300i::BGTZ(int immed, int rs)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		pc = pc_tmp;
 	}
 	else
@@ -1688,7 +1692,7 @@ void R4300i::BGTZL(int immed, int rs)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
@@ -1707,7 +1711,7 @@ void R4300i::BLEZ(int immed, int rs)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		pc = pc_tmp;
 	}
 	else
@@ -1726,7 +1730,7 @@ void R4300i::BLEZL(int immed, int rs)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
@@ -1745,7 +1749,7 @@ void R4300i::BLTZ(int immed, int rs)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		pc = pc_tmp;
 	}
 	else
@@ -1763,7 +1767,7 @@ void R4300i::BLTZAL(int immed, int rs)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		r[31] = pc;
 		pc = pc_tmp;
 	}
@@ -1783,7 +1787,7 @@ void R4300i::BLTZALL(int immed, int rs)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		delay_slot = 0;
 		r[31] = pc;
 		pc = pc_tmp;
@@ -1804,7 +1808,7 @@ void R4300i::BLTZL(int immed, int rs)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
@@ -1823,7 +1827,7 @@ void R4300i::BNE(int rs, int rt, int immed)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		pc = pc_tmp;
 	}
 	else
@@ -1842,7 +1846,7 @@ void R4300i::BNEL(int rs, int rt, int immed)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
@@ -1859,7 +1863,7 @@ void R4300i::J(int address)
 #endif // DEBUG
 	++pc;
 	delay_slot = 1;
-	decode(rom.getInstruction(pc));
+	decode_next_instr(pc);
 	delay_slot = 0;
 	pc = address;
 }
@@ -1871,7 +1875,7 @@ void R4300i::JAL(int address)
 #endif // DEBUG
 	++pc;
 	delay_slot = 1;
-	decode(rom.getInstruction(pc));
+	decode_next_instr(pc);
 	delay_slot = 0;
 	r[31] = pc;
 	pc = address;
@@ -1884,7 +1888,7 @@ void R4300i::JALR(int rs, int rd)
 #endif // DEBUG
 	++pc;
 	delay_slot = 1;
-	decode(rom.getInstruction(pc));
+	decode_next_instr(pc);
 	delay_slot = 0;
 	r[rd] = pc;
 	pc = r[rs];
@@ -1897,7 +1901,7 @@ void R4300i::JR(int rs)
 #endif // DEBUG
 	++pc;
 	delay_slot = 1;
-	decode(rom.getInstruction(pc));
+	decode_next_instr(pc);
 	delay_slot = 0;
 	pc = r[rs];
 }
@@ -2394,7 +2398,7 @@ void R4300i::BC1F(int immed)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		pc = pc_tmp;
 	}
 	else
@@ -2413,7 +2417,7 @@ void R4300i::BC1FL(int immed)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
@@ -2435,7 +2439,7 @@ void R4300i::BC1T(int immed)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		pc = pc_tmp;
 	}
 	else
@@ -2454,7 +2458,7 @@ void R4300i::BC1TL(int immed)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode(rom.getInstruction(pc));
+		decode_next_instr(pc);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
