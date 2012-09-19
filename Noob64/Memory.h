@@ -20,6 +20,8 @@ typedef double				d; // Double-Precision	Floating-Point Format:	[63:sign;62-52:e
 typedef long				w; // Word				Fixed-Point Format:		[31:sign;30-0:int]
 typedef long long int		l; // Longword			Fixed-Point Format:		[63:sign;62-0:int]
 
+//RDRAM is the class which contains the memory of the emulator
+//and every relatives functions
 class RDRAM
 {
 public:
@@ -55,6 +57,8 @@ private:
 	byte rdram[size];
 };
 
+//print the word of the type Type contains at the address given
+//in the parameter to the console
 template <typename Type>
 inline void RDRAM::print_word(dword address)
 {
@@ -73,6 +77,7 @@ inline void RDRAM::print_word(dword address)
 	}
 }
 
+//Read and return a data of the type Type contains at the address given in argument
 template <typename Type>
 inline Type RDRAM::read(dword address)
 {
@@ -88,6 +93,7 @@ inline Type RDRAM::read(dword address)
 	return data;
 }
 
+//Write a data of the type Type into the RAM at the address given in argument
 template <typename Type>
 inline void RDRAM::write(Type data, dword address)
 {

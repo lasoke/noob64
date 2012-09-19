@@ -1,5 +1,8 @@
 #pragma once
 
+
+//The class of the Exception Handler allows the emulator
+//to trigger and execute exception and interruption
 class ExceptionHandler
 {
 public:
