@@ -10,6 +10,7 @@ private:
 	RDRAM &ram;
 	ExceptionHandler &ehandler;
 
+	void decode_next_instr(const dword pc);
 	void decode_r(const word instr);
 	void decode_i(const word instr);
 	void decode_cop0(const word instr);

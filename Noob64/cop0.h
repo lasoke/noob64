@@ -1,6 +1,8 @@
 #pragma once
 
 //cop0 macros
+//Each entry of the co processor 0 have a signification
+//So we can rename each entry to have a better understanding of the code
 #define Index cop0[0]
 #define Random cop0[1]
 #define EntryLo0 cop0[2]
