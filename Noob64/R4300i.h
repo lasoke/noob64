@@ -8,7 +8,6 @@ public:
 	void decode(const word instr);
 private:
 	RDRAM &ram;
-	RomLoader &rom;
 	ExceptionHandler &ehandler;
 
 	void decode_r(const word instr);

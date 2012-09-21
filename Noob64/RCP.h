@@ -2,7 +2,7 @@
 ref class RCP
 {
 public:
-	RCP(RDRAM &ram);
+	RCP(RDRAM &rdram);
 	void decode(const word instr);
 private:
 	RDRAM &ram;

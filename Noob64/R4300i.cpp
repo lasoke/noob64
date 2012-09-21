@@ -1546,9 +1546,9 @@ void R4300i::XORI(int rt, int rs, int immed)
 
 void R4300i::BEQ(int rs, int rt, int immed)
 {
-#if defined DEBUG
+#	if defined DEBUG
 		cout << "BEQ " << rs << " " << rt << " " << immed;
-#endif // DEBUG
+#	endif // DEBUG
 	if (r[rs] == r[rt])
 	{
 		dword pc_tmp = pc + immed;
