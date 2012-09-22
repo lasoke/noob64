@@ -950,26 +950,16 @@ void R4300i::SYNC(void)
 
 void R4300i::ADD(int rd, int rs, int rt)
 {
+#if defined DEBUG
 	if (rt == 0)
-	{
-#if defined DEBUG
 		cout << "MOVE " << dec << "r" << rd << ", " << dec << "r" << rs;
-#endif // DEBUG
-		r[rd] = r[rs] & 0xFFFF;
-#if defined DEBUG
-		cout << " r" << dec << rd << hex << "=0x" << r[rd];
-#endif // DEBUG
-	}
 	else
-	{
-#if defined DEBUG
 		cout << "ADD " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
-		r[rd] = (r[rs] + r[rt]) & 0xFFFF;
+	r[rd] = (r[rs] + r[rt]) & 0xFFFF;
 #if defined DEBUG
 		cout << " r" << dec << rd << hex << "=0x" << r[rd];
 #endif // DEBUG
-	}
 	++pc;
 }
 
@@ -1567,22 +1557,18 @@ void R4300i::ORI(int rt, int rs, int immed)
 
 void R4300i::SLL(int rd, int rt, int sa)
 {
+#if defined DEBUG
 	if (rd == 0 && rt == 0 && sa == 0)
-	{
-#if defined DEBUG
 		cout << "NOP";
-#endif // DEBUG
-	}
 	else
-	{
-#if defined DEBUG
 		cout << "SLL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "s" << sa;
 #endif // DEBUG
+
 	r[rd] = r[rt] << sa;
+
 #if defined DEBUG
 		cout << " r" << dec << rd << hex << "=0x" << r[rd];
 #endif // DEBUG
-	}
 	++pc;
 }
 
@@ -1708,20 +1694,13 @@ void R4300i::SRLV(int rd, int rt, int rs)
 
 void R4300i::SUB(int rd, int rs, int rt)
 {
+#if defined DEBUG
 	if (rs == 0)
-	{
-#if defined DEBUG
 		cout << "NEG " << dec << "r" << rd << " " << dec << "r" << rt;
-#endif // DEBUG
-		r[rd] = - (sword) (r[rt] & 0xFFFF);
-	}
 	else
-	{
-#if defined DEBUG
 		cout << "SUB " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 		r[rd] = (r[rs] - r[rt]) & 0xFFFF;
-	}
 #if defined DEBUG
 		cout << " r" << dec << rd << hex << "=0x" << r[rd];
 #endif // DEBUG
@@ -1730,20 +1709,15 @@ void R4300i::SUB(int rd, int rs, int rt)
 
 void R4300i::SUBU(int rd, int rs, int rt)
 {
+#if defined DEBUG
 	if (rs == 0)
-	{
-#if defined DEBUG
 		cout << "NEGU " << dec << "r" << rd << " " << dec << "r" << rt;
-#endif // DEBUG
-		r[rd] = - (sword) (r[rt] & 0xFFFF);
-	}
 	else
-	{
-#if defined DEBUG
 		cout << "SUBU " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
-		r[rd] = (r[rs] - r[rt]) & 0xFFFF;
-	}
+
+	r[rd] = (r[rs] - r[rt]) & 0xFFFF;
+
 #if defined DEBUG
 		cout << " r" << dec << rd << hex << "=0x" << r[rd];
 #endif // DEBUG
@@ -1776,91 +1750,49 @@ void R4300i::XORI(int rt, int rs, int immed)
 
 void R4300i::BEQ(int rs, int rt, int immed)
 {
-	if (rt == 0 && rs == 0)
-	{
 #	if defined DEBUG
+	if (rt == 0 && rs == 0)
 		cout << "B";
+	else if (rt == 0)
+		cout << "BEQZ " << dec << "r" << rs << " " << hex << "0x" << immed;
+	else
+		cout << "BEQ " << dec << "r" << rs << " " << dec << "r" << rt << " " << hex << "0x" << immed;
 #	endif // DEBUG
+
+	if (r[rs] == r[rt])
+	{
 		dword pc_tmp = pc + immed;
 		++pc;
 		decode_next_instr(pc);
 		pc = pc_tmp;
 	}
-	else if (rt == 0)
-	{
-#	if defined DEBUG
-		cout << "BEQZ " << dec << "r" << rs << " " << hex << "0x" << immed;
-#	endif // DEBUG
-		if (r[rs] == 0)
-		{
-			dword pc_tmp = pc + immed;
-			++pc;
-			decode_next_instr(pc);
-			pc = pc_tmp;
-		}
-		else
-		{
-			++pc;
-		}
-	}
 	else
 	{
-#	if defined DEBUG
-		cout << "BEQ " << dec << "r" << rs << " " << dec << "r" << rt << " " << hex << "0x" << immed;
-#	endif // DEBUG
-		if (r[rs] == r[rt])
-		{
-			dword pc_tmp = pc + immed;
-			++pc;
-			decode_next_instr(pc);
-			pc = pc_tmp;
-		}
-		else
-		{
-			++pc;
-		}
+		++pc;
 	}
 }
 
 void R4300i::BEQL(int rs, int rt, int immed)
 {
-	if ( rt == 0)
-	{
 #if defined DEBUG
+	if ( rt == 0)
 		cout << "BEQLZ " << dec << "r" << rs << " " << hex << "0x" << immed;
+	else
+		cout << "BEQL " << dec << "r" << rs << " " << dec << "r" << rt << " " << hex << "0x" << immed;
 #endif // DEBUG
-		if (r[rs] == 0)
-		{
-			dword pc_tmp = pc + immed;
-			++pc;
-			delay_slot = 1;
-			decode_next_instr(pc);
-			delay_slot = 0;
-			pc = pc_tmp;
-		}
-		else
-		{
-			++pc;
-		}
+
+	if (r[rs] == r[rt])
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		delay_slot = 1;
+		decode_next_instr(pc);
+		delay_slot = 0;
+		pc = pc_tmp;
 	}
 	else
 	{
-#if defined DEBUG
-		cout << "BEQL " << dec << "r" << rs << " " << dec << "r" << rt << " " << hex << "0x" << immed;
-#endif // DEBUG
-		if (r[rs] == r[rt])
-		{
-			dword pc_tmp = pc + immed;
-			++pc;
-			delay_slot = 1;
-			decode_next_instr(pc);
-			delay_slot = 0;
-			pc = pc_tmp;
-		}
-		else
-		{
-			++pc;
-		}
+		++pc;
 	}
 }
 
@@ -1884,11 +1816,15 @@ void R4300i::BGEZ(int immed, int rs)
 
 void R4300i::BGEZAL(int immed, int rs)
 {
-	if (rs == 0)
-	{
 #if defined DEBUG
+	if (rs == 0)
 		cout << "BAL";
+	else
+		cout << "BGEZAL " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
+
+	if ((sdword) r[rs] >= 0)
+	{
 		dword pc_tmp = pc + immed;
 		++pc;
 		decode_next_instr(pc);
@@ -1897,21 +1833,7 @@ void R4300i::BGEZAL(int immed, int rs)
 	}
 	else
 	{
-#if defined DEBUG
-		cout << "BGEZAL " << dec << "r" << rs << " " << hex << "0x" << immed;
-#endif // DEBUG
-		if ((sdword) r[rs] >= 0)
-		{
-			dword pc_tmp = pc + immed;
-			++pc;
-			decode_next_instr(pc);
-			r[31] = pc;
-			pc = pc_tmp;
-		}
-		else
-		{
-			++pc;
-		}
+		++pc;
 	}
 }
 
@@ -2112,81 +2034,46 @@ void R4300i::BLTZL(int immed, int rs)
 
 void R4300i::BNE(int rs, int rt, int immed)
 {
-	if (rt == 0)
-	{
 #if defined DEBUG
+	if (rt == 0)
 		cout << "BNEZ " << dec << "r" << rs << " 0x" << hex << immed;
+	else
+		cout << "BNE " << dec << "r" << rs << " " << dec << "r" << rt << " 0x" << hex << immed;
 #endif // DEBUG
-		if (r[rs] != 0)
-		{
-			dword pc_tmp = pc + immed;
-			++pc;
-			decode_next_instr(pc);
-			pc = pc_tmp;
-		}
-		else
-		{
-			++pc;
-		}
+	if (r[rs] != r[rt])
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		decode_next_instr(pc);
+		pc = pc_tmp;
 	}
 	else
 	{
-#if defined DEBUG
-		cout << "BNE " << dec << "r" << rs << " " << dec << "r" << rt << " 0x" << hex << immed;
-#endif // DEBUG
-		if (r[rs] != r[rt])
-		{
-			dword pc_tmp = pc + immed;
-			++pc;
-			decode_next_instr(pc);
-			pc = pc_tmp;
-		}
-		else
-		{
-			++pc;
-		}
+		++pc;
 	}
 }
 
 void R4300i::BNEL(int rs, int rt, int immed)
 {
-	if (rt == 0)
-	{
 #if defined DEBUG
+	if (rt == 0)
 		cout << "BNELZ " << dec << "r" << rs << " " << hex << "0x" << immed;
+	else
+		cout << "BNEL " << dec << "r" << rs << " " << dec << "r" << rt << " " << hex << "0x" << immed;
 #endif // DEBUG
-		if (r[rs] != 0)
-		{
-			dword pc_tmp = pc + immed;
-			++pc;
-			delay_slot = 1;
-			decode_next_instr(pc);
-			delay_slot = 0;
-			pc = pc_tmp;
-		}
-		else
-		{
-			++pc;
-		}
+
+	if (r[rs] != r[rt])
+	{
+		dword pc_tmp = pc + immed;
+		++pc;
+		delay_slot = 1;
+		decode_next_instr(pc);
+		delay_slot = 0;
+		pc = pc_tmp;
 	}
 	else
 	{
-#if defined DEBUG
-		cout << "BNEL " << dec << "r" << rs << " " << dec << "r" << rt << " " << hex << "0x" << immed;
-#endif // DEBUG
-		if (r[rs] != r[rt])
-		{
-			dword pc_tmp = pc + immed;
-			++pc;
-			delay_slot = 1;
-			decode_next_instr(pc);
-			delay_slot = 0;
-			pc = pc_tmp;
-		}
-		else
-		{
-			++pc;
-		}
+		++pc;
 	}
 }
 
