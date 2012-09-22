@@ -215,26 +215,6 @@ private:
 	template<typename Type, typename toType>
 	void TRUNC		  (int fd, int fs);				//	floating-point TRUNCate to Long fixed-point
 	//****************************************************************************
-	//** Pseudo opcodes                                                         **
-	//****************************************************************************
-	// FIXME: cleanup, or try to figure out why there is no opcode for some of these:
-	void NOP          (void);						//	Assembles to SLL    r0, r0, 0
-	void MOVE         (int rd, int rs);				//	Assembles to ADD    int rd, r0, rs
-	void NEG          (int rd, int rt);				//	Assembles to SUB    int rd, r0, rt
-	void NEGU         (int rd, int rs);				//	Assembles to SUBU   int rd, r0, rs
-	void BNEZ         (int immed, int rs);			//	Assembles to BNE    (int rs, r0, immed
-	void BNEZL        (int immed, int rs);			//	Assembles to BNEL   (int rs, r0, immed
-	void BEQZ         (int immed, int rs);			//	Assembles to BEQ    (int rs, r0, immed
-	void BEQZL        (int immed, int rs);			//	Assembles to BEQL   (int rs, r0, immed
-	void B            (int immed);					//	Assembles to BEQ    r0, r0, immed
-	void BAL          (int immed);					//	Assembles to BGEZAL r0, immed
-	void LI           (int rt, int immed);			//	Assembles to ORI    rt, r0, immed (if immed is 16 bit);
-	 												//						or ADDIU  rt, r0, immed
-	 												//						or LUI    rt, high_16
-													//						   ORI    rt, rt, low_16 (if immed is 32 bit);
-	void S_S          (int ft, int immed, int rs);	//	Assembles to SWC1   ft, immed(rs);
-	void L_S          (int ft, int immed, int rs);	//	Assembles to LWC1   ft, immed(rs);
-	//****************************************************************************
 	//** Conditions		                                                        **
 	//****************************************************************************
 	template<typename Type>

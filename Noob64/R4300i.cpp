@@ -633,9 +633,12 @@ void R4300i::LB(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "LB " << rt << " " << immed << "[" << rs << "]";
+		cout << "LB " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	r[rt] = ram.read<sbyte>(r[rs] + immed * sizeof(sbyte));
+	r[rt] = ram.read<sbyte>(r[rs] + immed);
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
@@ -643,9 +646,12 @@ void R4300i::LBU(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "LBU " << rt << " " << immed << "[" << rs << "]";
+		cout << "LBU " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	r[rt] = ram.read<byte>(r[rs] + immed * sizeof(byte));
+	r[rt] = ram.read<byte>(r[rs] + immed);
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
@@ -653,9 +659,12 @@ void R4300i::LD(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "LD " << rt << " " << immed << "[" << rs << "]";
+		cout << "LD " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	r[rt] = ram.read<dword>(r[rs] + immed * sizeof(dword));
+	r[rt] = ram.read<dword>(r[rs] + immed);
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
@@ -663,10 +672,13 @@ void R4300i::LDL(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "LDL " << rt << " " << immed << "[" << rs << "]";
+		cout << "LDL " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	dword tmp = ram.read<dword>(r[rs] + immed * sizeof(dword));
-	r[rt] |= (tmp << ((r[rs] + immed * sizeof(dword)) & 7) * 8);
+	dword tmp = ram.read<dword>(r[rs] + immed);
+	r[rt] |= (tmp << ((r[rs] + immed) & 7) * 8);
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
@@ -674,10 +686,13 @@ void R4300i::LDR(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "LDR " << rt << " " << immed << "[" << rs << "]";
+		cout << "LDR " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	dword tmp = ram.read<dword>(r[rs] + immed * sizeof(dword));
-	r[rt] |= (tmp >> (( 7 - (r[rs] + immed * sizeof(dword)) & 7)) * 8);
+	dword tmp = ram.read<dword>(r[rs] + immed);
+	r[rt] |= (tmp >> (( 7 - (r[rs] + immed) & 7)) * 8);
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
@@ -685,9 +700,12 @@ void R4300i::LH(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "LH " << rt << " " << immed << "[" << rs << "]";
+		cout << "LH " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	r[rt] = ram.read<shword>(r[rs] + immed * sizeof(shword));
+	r[rt] = ram.read<shword>(r[rs] + immed);
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
@@ -695,9 +713,12 @@ void R4300i::LHU(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "LHU " << rt << " " << immed << "[" << rs << "]";
+		cout << "LHU " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	r[rt] = ram.read<hword>(r[rs] + immed * sizeof(hword));
+	r[rt] = ram.read<hword>(r[rs] + immed);
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
@@ -705,9 +726,12 @@ void R4300i::LL(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "LL " << rt << " " << immed << "[" << rs << "]";
+		cout << "LL " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	r[rt] = (sdword) ram.read<sword>(r[rs] + immed * sizeof(sword));
+	r[rt] = (sdword) ram.read<sword>(r[rs] + immed);
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	ll = 1;
 	++pc;
 }
@@ -716,9 +740,12 @@ void R4300i::LLD(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "LLD " << rt << " " << immed << "[" << rs << "]";
+		cout << "LLD " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	r[rt] = ram.read<sdword>(r[rs] + immed * sizeof(sdword));
+	r[rt] = ram.read<sdword>(r[rs] + immed);
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	ll = 1;
 	++pc;
 }
@@ -727,9 +754,12 @@ void R4300i::LW(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "LW " << rt << " " << immed << "[" << rs << "]";
+		cout << "LW " << dec << "r" << rt << " 0x" << hex << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	r[rt] = ram.read<sword>(r[rs] + immed * sizeof(sword));
+	r[rt] = ram.read<sword>((r[rs] + immed) & 0xFFFFFF);
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
@@ -737,10 +767,13 @@ void R4300i::LWL(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "LWL " << rt << " " << immed << "[" << rs << "]";
+		cout << "LWL " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	word tmp = ram.read<word>(r[rs] + immed * sizeof(word));
-	r[rt] |= (tmp << (3 - (r[rs] + immed * sizeof(word)) & 3) * 8);
+	word tmp = ram.read<word>(r[rs] + immed);
+	r[rt] |= (tmp << (3 - (r[rs] + immed) & 3) * 8);
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
@@ -748,10 +781,13 @@ void R4300i::LWR(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "LWR " << rt << " " << immed << "[" << rs << "]";
+		cout << "LWR " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	word tmp = ram.read<word>(r[rs] + immed * sizeof(word));
-	r[rt] |= (tmp >> ((3 - (r[rs] + immed * sizeof(word)) & 3)) * 8);
+	word tmp = ram.read<word>(r[rs] + immed);
+	r[rt] |= (tmp >> ((3 - (r[rs] + immed) & 3)) * 8);
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
@@ -759,9 +795,12 @@ void R4300i::LWU(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "LWU " << rt << " " << immed << "[" << rs << "]";
+		cout << "LWU " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	r[rt] = ram.read<word>(r[rs] + immed * sizeof(word));
+	r[rt] = ram.read<word>(r[rs] + immed);
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
@@ -769,9 +808,9 @@ void R4300i::SB(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "SB " << rt << " " << immed << "[" << rs << "]";
+		cout << "SB " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	ram.write<byte>(r[rt] & 0xFF, r[rs] + immed * sizeof(byte));
+	ram.write<byte>(r[rt] & 0xFF, r[rs] + immed);
 	++pc;
 }
 
@@ -781,16 +820,16 @@ void R4300i::SC(int rt, int immed, int rs)
 	if (ll)
 	{
 #if defined DEBUG
-		cout << "SC " << rt << " " << immed << "[" << rs << "]";
+		cout << "SC " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-		ram.write<word>(r[rt] & 0xFFFFFFFF, r[rs] + immed * sizeof(word));
+		ram.write<word>(r[rt] & 0xFFFFFFFF, r[rs] + immed);
 		//maybe something to do here...
 		ll = 0;
 	}
 	else
 	{
 #if defined DEBUG
-		cout << "SC " << rt << " " << immed << "[" << rs << "]  no ll was done before";
+		cout << "SC " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]  no ll was done before";
 #endif // DEBUG
 	}
 	++pc;
@@ -802,16 +841,16 @@ void R4300i::SCD(int rt, int immed, int rs)
 	if (ll)
 	{
 #if defined DEBUG
-		cout << "SCD " << rt << " " << immed << "[" << rs << "]";
+		cout << "SCD " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-		ram.write<dword>(r[rt] & 0xFFFFFFFF, r[rs] + immed * sizeof(dword));
+		ram.write<dword>(r[rt] & 0xFFFFFFFF, r[rs] + immed);
 		//maybe something to do here...
 		ll = 0;
 	}
 	else
 	{
 #if defined DEBUG
-		cout << "SCD " << rt << " " << immed << "[" << rs << "]  no ll was done before";
+		cout << "SCD " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]  no ll was done before";
 #endif // DEBUG
 	}
 	++pc;
@@ -821,9 +860,9 @@ void R4300i::SD(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "SD " << rt << " " << immed << "[" << rs << "]";
+		cout << "SD " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	ram.write<dword>(r[rt], r[rs] + immed * sizeof(dword));
+	ram.write<dword>(r[rt], r[rs] + immed);
 	++pc;
 }
 
@@ -832,11 +871,11 @@ void R4300i::SDL(int rt, int immed, int rs)
 	// TODO: TEST
    dword old_word = 0;
 #if defined DEBUG
-		cout << "SDL " << rt << " " << immed << "[" << rs << "]";
+		cout << "SDL " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	old_word = ram.read<dword>(r[rs] + immed * sizeof(dword));
-	old_word = (r[rt] >> (8 * (r[rs] + immed * sizeof(dword)) & 7)) | old_word;
-	ram.write<dword>(old_word, r[rs] + immed * sizeof(dword));
+	old_word = ram.read<dword>(r[rs] + immed);
+	old_word = (r[rt] >> (8 * (r[rs] + immed) & 7)) | old_word;
+	ram.write<dword>(old_word, r[rs] + immed);
 	++pc;
 }
 
@@ -845,11 +884,11 @@ void R4300i::SDR(int rt, int immed, int rs)
 	// TODO: TEST
    dword old_word = 0;
 #if defined DEBUG
-		cout << "SDR " << rt << " " << immed << "[" << rs << "]";
+		cout << "SDR " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	old_word = ram.read<dword>(r[rs] + immed * sizeof(dword));
-	old_word = (r[rt] << (8 * (7 - (r[rs] + immed * sizeof(dword)) & 7))) | old_word;
-	ram.write<dword>(old_word, r[rs] + immed * sizeof(dword));
+	old_word = ram.read<dword>(r[rs] + immed);
+	old_word = (r[rt] << (8 * (7 - (r[rs] + immed) & 7))) | old_word;
+	ram.write<dword>(old_word, r[rs] + immed);
 	++pc;
 }
 
@@ -857,9 +896,9 @@ void R4300i::SH(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "SH " << rt << " " << immed << "[" << rs << "]";
+		cout << "SH " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	ram.write<hword>(r[rt] & 0xFFFF, r[rs] + immed * sizeof(hword));
+	ram.write<hword>(r[rt] & 0xFFFF, r[rs] + immed);
 	++pc;
 }
 
@@ -867,9 +906,9 @@ void R4300i::SW(int rt, int immed, int rs)
 {
 	// TODO: TEST
 #if defined DEBUG
-		cout << "SW " << rt << " " << immed << "[" << rs << "]";
+		cout << "SW " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	ram.write<word>(r[rt] & 0xFFFFFFFF, r[rs] + immed * sizeof(word));
+	ram.write<word>(r[rt] & 0xFFFFFFFF, (r[rs] + immed) & 0xFFFFFF);
 	++pc;
 }
 
@@ -878,11 +917,11 @@ void R4300i::SWL(int rt, int immed, int rs)
 	// TODO: TEST
    word old_word = 0;
 #if defined DEBUG
-		cout << "SWL " << rt << " " << immed << "[" << rs << "]";
+		cout << "SWL " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	old_word = ram.read<word>(r[rs] + immed * sizeof(word));
-	old_word = (word) (r[rt] >> (8 * (r[rs] + immed * sizeof(word)) & 3)) | old_word;
-	ram.write<word>(old_word, r[rs] + immed * sizeof(word));
+	old_word = ram.read<word>(r[rs] + immed);
+	old_word = (r[rt] >> (8 * (r[rs] + immed) & 3)) & 0xFFFF | old_word;
+	ram.write<word>(old_word, r[rs] + immed);
 	++pc;
 }
 
@@ -891,11 +930,11 @@ void R4300i::SWR(int rt, int immed, int rs)
 	// TODO: TEST
    word old_word = 0;
 #if defined DEBUG
-		cout << "SWR " << rt << " " << immed << "[" << rs << "]";
+		cout << "SWR " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	old_word = ram.read<word>(r[rs] + immed * sizeof(word));
-	old_word = (word) (r[rt] << (8 * (3 - (r[rs] + immed * sizeof(word)) & 3))) | old_word;
-	ram.write<word>(old_word, r[rs] + immed * sizeof(word));
+	old_word = ram.read<word>(r[rs] + immed);
+	old_word = (r[rt] << (8 * (3 - (r[rs] + immed) & 3))) & 0xFFFF | old_word;
+	ram.write<word>(old_word, r[rs] + immed);
 	++pc;
 }
 
@@ -911,24 +950,22 @@ void R4300i::SYNC(void)
 void R4300i::ADD(int rd, int rs, int rt)
 {
 #if defined DEBUG
-		cout << "ADD " << rd << ", " << rs << " " << rt;
-#endif // DEBUG
-	if (WORD_MAX - r[rt] < r[rs])
-	{
-		//TODO: "If overflow occurs, then trap."
-		ehandler.trap();
-	}
+	if (rt == 0)
+		cout << "MOVE " << dec << "r" << rd << ", " << dec << "r" << rs;
 	else
-	{
-		r[rd] = (sdword) ((sword) r[rs] + (sword) r[rt]);
-	}
+		cout << "ADD " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
+#endif // DEBUG
+	r[rd] = (r[rs] + r[rt]) & 0xFFFF;
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::ADDI(int rt, int rs, int immed)
 {
 #if defined DEBUG
-		cout << "ADDI " << rt << " " << immed << "[" << rs << "]";
+		cout << "ADDI " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
 	if (WORD_MAX - immed < r[rs])
 	{
@@ -937,7 +974,10 @@ void R4300i::ADDI(int rt, int rs, int immed)
 	}
 	else
 	{
-		r[rt] = (sdword) ((sword) r[rs] + immed);
+		r[rt] = (r[rs] + immed) & 0xFFFF;
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	}
 	++pc;
 }
@@ -945,33 +985,39 @@ void R4300i::ADDI(int rt, int rs, int immed)
 void R4300i::ADDIU(int rt, int rs, int immed)
 {
 #if defined DEBUG
-		cout << "ADDIU " << rt << " " << immed << "[" << rs << "]";
+		cout << "ADDIU " << dec << "r" << rt << " " << hex << "0x" << immed << dec << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
-	if (WORD_MAX - immed < r[rs])
-	{
+	//if (WORD_MAX - immed < r[rs])
+	//{
 		//TODO: "If overflow occurs, then trap."
-		ehandler.trap();
-	}
-	else
-	{
-		r[rt] = (word) r[rs] + immed;
-	}
+	//	ehandler.trap();
+	//}
+	//else
+	//{
+		r[rt] = (r[rs] + immed)  & 0xFFFF;
+	//}
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::ADDU(int rd, int rs, int rt)
 {
 #if defined DEBUG
-		cout << "ADDU " << rd << ", " << rs << " " << rt;
+		cout << "ADDU " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
-	if (WORD_MAX - (word) r[rt] < (word) r[rs])
+	if (WORD_MAX - (r[rt] & 0xFFFF) < (r[rs] & 0xFFFF))
 	{
 		//TODO: "If overflow occurs, then trap."
 		ehandler.trap();
 	}
 	else
 	{
-		r[rd] = (word) r[rs] + (word) r[rt];
+		r[rd] = (r[rs] + r[rt])  & 0xFFFF;
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	}
 	++pc;
 }
@@ -979,25 +1025,31 @@ void R4300i::ADDU(int rd, int rs, int rt)
 void R4300i::AND(int rd, int rs, int rt)
 {
 #if defined DEBUG
-		cout << "AND " << rd << ", " << rs << " " << rt;
+		cout << "AND " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	r[rd] = r[rs] & r[rt];
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::ANDI(int rt, int rs, int immed)
 {
 #if defined DEBUG
-		cout << "ANDI " << rt << " " << immed << "[" << rs << "]";
+		cout << "ANDI " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
 	r[rt] = r[rs] & immed;
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::DADD(int rd, int rs, int rt)
 {
 #if defined DEBUG
-		cout << "DADD " << rd << ", " << rs << " " << rt;
+		cout << "DADD " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	if (DWORD_MAX - r[rt] < r[rs])
 	{
@@ -1007,6 +1059,9 @@ void R4300i::DADD(int rd, int rs, int rt)
 	else
 	{
 		r[rd] = (sdword) ((sdword) r[rs] + (sdword) r[rt]);
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	}
 	++pc;
 }
@@ -1014,7 +1069,7 @@ void R4300i::DADD(int rd, int rs, int rt)
 void R4300i::DADDI(int rt, int rs, int immed)
 {
 #if defined DEBUG
-		cout << "DADDI " << rt << " " << immed << "[" << rs << "]";
+		cout << "DADDI " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
 	if (DWORD_MAX - immed < r[rs])
 	{
@@ -1024,6 +1079,9 @@ void R4300i::DADDI(int rt, int rs, int immed)
 	else
 	{
 		r[rt] = (sdword) ((sdword) r[rs] + immed);
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	}
 	++pc;
 }
@@ -1031,7 +1089,7 @@ void R4300i::DADDI(int rt, int rs, int immed)
 void R4300i::DADDIU(int rt, int rs, int immed)
 {
 #if defined DEBUG
-		cout << "DADDIU " << rt << " " << immed << "[" << rs << "]";
+		cout << "DADDIU " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #endif // DEBUG
 	if (DWORD_MAX - immed < r[rs])
 	{
@@ -1041,6 +1099,9 @@ void R4300i::DADDIU(int rt, int rs, int immed)
 	else
 	{
 		r[rt] = r[rs] + immed;
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	}
 	++pc;
 }
@@ -1048,7 +1109,7 @@ void R4300i::DADDIU(int rt, int rs, int immed)
 void R4300i::DADDU(int rd, int rs, int rt)
 {
 #if defined DEBUG
-		cout << "DADDU " << rd << ", " << rs << " " << rt;
+		cout << "DADDU " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	if (DWORD_MAX - r[rt] < r[rs])
 	{
@@ -1058,6 +1119,9 @@ void R4300i::DADDU(int rd, int rs, int rt)
 	else
 	{
 		r[rd] = r[rs] + r[rt];
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	}
 	++pc;
 }
@@ -1065,7 +1129,7 @@ void R4300i::DADDU(int rd, int rs, int rt)
 void R4300i::DDIV(int rs, int rt)
 {
 #if defined DEBUG
-		cout << "DDIV " << rs << ", " << rt;
+		cout << "DDIV " << dec << "r" << rs << ", " << dec << "r" << rt;
 #endif // DEBUG
 	if (r[rt] == 0)
 	{
@@ -1076,6 +1140,9 @@ void R4300i::DDIV(int rs, int rt)
 	{
 		lo = (sdword) r[rs] / (sdword) r[rt];
 		hi = (sdword) r[rs] % (sdword) r[rt];
+#if defined DEBUG
+		cout << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+#endif // DEBUG
 	}
 	++pc;
 }
@@ -1083,7 +1150,7 @@ void R4300i::DDIV(int rs, int rt)
 void R4300i::DDIVU(int rs, int rt)
 {
 #if defined DEBUG
-		cout << "DDIVU " << rs << ", " << rt;
+		cout << "DDIVU " << dec << "r" << rs << ", " << dec << "r" << rt;
 #endif // DEBUG
 	if (r[rt] == 0)
 	{
@@ -1094,6 +1161,9 @@ void R4300i::DDIVU(int rs, int rt)
 	{
 		lo = r[rs] / r[rt];
 		hi = r[rs] % r[rt];
+#if defined DEBUG
+		cout << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+#endif // DEBUG
 	}
 	++pc;
 }
@@ -1101,7 +1171,7 @@ void R4300i::DDIVU(int rs, int rt)
 void R4300i::DIV(int rs, int rt)
 {
 #if defined DEBUG
-		cout << "DIV " << rs << ", " << rt;
+		cout << "DIV " << dec << "r" << rs << ", " << dec << "r" << rt;
 #endif // DEBUG
 	if (r[rt] == 0)
 	{
@@ -1110,8 +1180,11 @@ void R4300i::DIV(int rs, int rt)
 	}
 	else
 	{
-		lo = (sword) r[rs] / (sword) r[rt];
-		hi = (sword) r[rs] % (sword) r[rt];
+		lo = (r[rs] / r[rt]) & 0xFFFF;
+		hi = (r[rs] % r[rt]) & 0xFFFF;
+#if defined DEBUG
+		cout << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+#endif // DEBUG
 	}
 	++pc;
 }
@@ -1119,7 +1192,7 @@ void R4300i::DIV(int rs, int rt)
 void R4300i::DIVU(int rs, int rt)
 {
 #if defined DEBUG
-		cout << "DIVU " << rs << ", " << rt;
+		cout << "DIVU " << dec << "r" << rs << ", " << dec << "r" << rt;
 #endif // DEBUG
 	if (r[rt] == 0)
 	{
@@ -1128,8 +1201,11 @@ void R4300i::DIVU(int rs, int rt)
 	}
 	else
 	{
-		lo = (word) r[rs] / (word) r[rt];
-		hi = (word) r[rs] % (word) r[rt];
+		lo = (r[rs] / r[rt]) & 0xFFFF;
+		hi = (r[rs] % r[rt]) & 0xFFFF;
+#if defined DEBUG
+		cout << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+#endif // DEBUG
 	}
 	++pc;
 }
@@ -1137,7 +1213,7 @@ void R4300i::DIVU(int rs, int rt)
 void R4300i::DMULT(int rs, int rt)
 {
 #if defined DEBUG
-		cout << "DMULT " << rs << ", " << rt;
+		cout << "DMULT " << dec << "r" << rs << ", " << dec << "r" << rt;
 #endif // DEBUG
 	dword op1, op2, op3, op4;
     dword result1, result2, result3, result4;
@@ -1184,13 +1260,16 @@ void R4300i::DMULT(int rs, int rt)
 		else
 			lo = ~lo + 1;
     }
+#if defined DEBUG
+		cout << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::DMULTU(int rs, int rt)
 {
 #if defined DEBUG
-		cout << "DMULTU " << rs << ", " << rt;
+		cout << "DMULTU " << dec << "r" << rs << ", " << dec << "r" << rt;
 #endif // DEBUG
 	dword op1, op2, op3, op4;
 	dword result1, result2, result3, result4;
@@ -1213,345 +1292,472 @@ void R4300i::DMULTU(int rs, int rt)
    
     lo = result1 | (result2 << 32);
     hi = (result3 & 0xFFFFFFFF) | (result4 << 32);
+#if defined DEBUG
+		cout << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::DSLL(int rd, int rt, int sa)
 {
 #if defined DEBUG
-		cout << "DSLL " << rd << " " << rt << " " << sa;
+		cout << "DSLL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "s" << sa;
 #endif // DEBUG
 	r[rd] = r[rt] << sa;
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::DSLL32(int rd, int rt, int sa)
 {
 #if defined DEBUG
-		cout << "DSLL32 " << rd << " " << rt << " " << sa;
+		cout << "DSLL32 " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "s" << sa;
 #endif // DEBUG
 	r[rd] = r[rt] << (sa + 32);
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::DSLLV(int rd, int rt, int rs)
 {
 #if defined DEBUG
-		cout << "DSLLV " << rd << " " << rt << " " << rs;
+		cout << "DSLLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
 #endif // DEBUG
 	r[rd] = r[rt] << r[rs];
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::DSRA(int rd, int rt, int sa)
 {
 #if defined DEBUG
-		cout << "DSRA " << rd << " " << rt << " " << sa;
+		cout << "DSRA " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "s" << sa;
 #endif // DEBUG
 	r[rd] = r[rt] >> sa;
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::DSRA32(int rd, int rt, int sa)
 {
 #if defined DEBUG
-		cout << "DSRA32 " << rd << " " << rt << " " << sa;
+		cout << "DSRA32 " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "s" << sa;
 #endif // DEBUG
 	r[rd] = r[rt] >> (sa + 32);
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::DSRAV(int rd, int rt, int rs)
 {
 #if defined DEBUG
-		cout << "DSRAV " << rd << " " << rt << " " << rs;
+		cout << "DSRAV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
 #endif // DEBUG
 	r[rd] = r[rt] >> r[rs];
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::DSRL(int rd, int rt, int sa)
 {
 #if defined DEBUG
-		cout << "DSRL " << rd << " " << rt << " " << sa;
+		cout << "DSRL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "s" << sa;
 #endif // DEBUG
 	r[rd] = r[rt] >> sa;
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::DSRL32(int rd, int rt, int sa)
 {
 #if defined DEBUG
-		cout << "DSRL32 " << rd << " " << rt << " " << sa;
+		cout << "DSRL32 " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "s" << sa;
 #endif // DEBUG
 	r[rd] = r[rt] >> (sa + 32);
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::DSRLV(int rd, int rt, int rs)
 {
 #if defined DEBUG
-		cout << "DSRLV " << rd << " " << rt << " " << rs;
+		cout << "DSRLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
 #endif // DEBUG
 	r[rd] = r[rt] >> r[rs];
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::DSUB(int rd, int rs, int rt)
 {
 #if defined DEBUG
-		cout << "DSUB " << rd << " " << rs << " " << rt;
+		cout << "DSUB " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	r[rd] = (sdword) r[rs] - (sdword) r[rt];
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::DSUBU(int rd, int rs, int rt)
 {
 #if defined DEBUG
-		cout << "DSUBU " << rd << " " << rs << " " << rt;
+		cout << "DSUBU " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	r[rd] = r[rs] - r[rt];
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::LUI(int rt, int immed)
 {
 #if defined DEBUG
-		cout << "LUI " << rt << " " << immed;
+		cout << "LUI " << dec << "r" << rt << " 0x" << hex << immed;
 #endif // DEBUG
 	r[rt] = immed << 16;
+#if defined DEBUG
+	cout << " r" << dec << rt << "=0x" << hex << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::MFHI(int rd)
 {
 #if defined DEBUG
-		cout << "MFHI " << rd;
+		cout << "MFHI " << dec << "r" << rd;
 #endif // DEBUG
 	r[rd] = hi;
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::MFLO(int rd)
 {
 #if defined DEBUG
-		cout << "MFLO " << rd;
+		cout << "MFLO " << dec << "r" << rd;
 #endif // DEBUG
 	r[rd] = lo;
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::MTHI(int rs)
 {
 #if defined DEBUG
-		cout << "MTHI " << rs;
+		cout << "MTHI " << dec << "r" << rs;
 #endif // DEBUG
 	hi = r[rs];
+#if defined DEBUG
+		cout << " hi" << hex << "=0x" << hi;
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::MTLO(int rs)
 {
 #if defined DEBUG
-		cout << "MTLO " << rs;
+		cout << "MTLO " << dec << "r" << rs;
 #endif // DEBUG
 	lo = r[rs];
+#if defined DEBUG
+		cout << " lo" << hex << "=0x" << lo;
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::MULT(int rs, int rt)
 {
 #if defined DEBUG
-		cout << "MULT " << rs << ", " << rt;
+		cout << "MULT " << dec << "r" << rs << ", " << dec << "r" << rt;
 #endif // DEBUG
 	sdword temp = r[rs] * r[rt];
 	hi = temp >> 32;
 	lo = temp;
+#if defined DEBUG
+		cout << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::MULTU(int rs, int rt)
 {
 #if defined DEBUG
-		cout << "DMULTU " << rs << ", " << rt;
+		cout << "DMULTU " << dec << "r" << rs << ", " << dec << "r" << rt;
 #endif // DEBUG
 	dword temp = r[rs] * r[rt];
 	hi = temp >> 32;
 	lo = temp;
+#if defined DEBUG
+		cout << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::NOR(int rd, int rs, int rt)
 {
 #if defined DEBUG
-		cout << "NOR " << rd << " " << rs << " " << rt;
+		cout << "NOR " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	r[rd] = ~(r[rs] | r[rt]);
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::OR(int rd, int rs, int rt)
 {
 #if defined DEBUG
-		cout << "OR " << rd << " " << rs << " " << rt;
+		cout << "OR " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	r[rd] = r[rs] | r[rt];
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::ORI(int rt, int rs, int immed)
 {
 #if defined DEBUG
-		cout << "ORI " << rt << " " << rs << " " << immed;
+		cout << "ORI " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
-	r[rt] = r[rs] | (word) immed;
+	r[rt] = r[rs] | immed;
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::SLL(int rd, int rt, int sa)
 {
 #if defined DEBUG
-		cout << "SLL " << rd << " " << rt << " " << sa;
+	if (rd == 0 && rt == 0 && sa == 0)
+		cout << "NOP";
+	else
+		cout << "SLL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "s" << sa;
 #endif // DEBUG
-	r[rd] = (word) r[rt] << sa;
+
+	r[rd] = r[rt] << sa;
+
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::SLLV(int rd, int rt, int rs)
 {
 #if defined DEBUG
-		cout << "SLLV " << rd << " " << rt << " " << rs;
+		cout << "SLLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
 #endif // DEBUG
-	r[rd] = (word) r[rt] << (r[rs]&0x1F);
+	r[rd] = r[rt] << (r[rs]&0x1F);
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::SLT(int rd, int rs, int rt)
 {
 #if defined DEBUG
-		cout << "SLT " << rd << " " << rs << " " << rt;
+		cout << "SLT " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	if ((sword) r[rs] < (sword) r[rt])
 		r[rd] = 1;
 	else
 		r[rd] = 0;
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::SLTI(int rt, int rs, int immed)
 {
 #if defined DEBUG
-		cout << "SLTI " << rt << " " << rs << " " << immed;
+		cout << "SLTI " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((sword) r[rs] < immed)
 		r[rt] = 1;
 	else
 		r[rt] = 0;
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::SLTIU(int rt, int rs, int immed)
 {
 #if defined DEBUG
-		cout << "SLTIU " << rt << " " << rs << " " << immed;
+		cout << "SLTIU " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if (r[rs] < immed)
 		r[rt] = 1;
 	else
 		r[rt] = 0;
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::SLTU(int rd, int rs, int rt)
 {
 #if defined DEBUG
-		cout << "SLTU " << rd << " " << rs << " " << rt;
+		cout << "SLTU " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	if (r[rs] < r[rt])
 		r[rd] = 1;
 	else
 		r[rd] = 0;
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::SRA(int rd, int rt, int sa)
 {
 #if defined DEBUG
-		cout << "SRA " << rd << " " << rt << " " << sa;
+		cout << "SRA " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "s" << sa;
 #endif // DEBUG
 	r[rd] = (sword) r[rt] >> sa;
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::SRAV(int rd, int rt, int rs)
 {
 #if defined DEBUG
-		cout << "SRAV " << rd << " " << rt << " " << rs;
+		cout << "SRAV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
 #endif // DEBUG
 	r[rd] = (sword) r[rt] >> (r[rs]&0x1F);
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::SRL(int rd, int rt, int sa)
 {
 #if defined DEBUG
-		cout << "SRL " << rd << " " << rt << " " << sa;
+		cout << "SRL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "s" << sa;
 #endif // DEBUG
-	r[rd] = (word) r[rt] >> sa;
+	r[rd] = r[rt] & 0xFFFF >> sa;
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::SRLV(int rd, int rt, int rs)
 {
 #if defined DEBUG
-		cout << "SRLV " << rd << " " << rt << " " << rs;
+		cout << "SRLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
 #endif // DEBUG
-	r[rd] = (word) r[rt] >> (r[rs]&0x1F);
+	r[rd] = r[rt] & 0xFFFF >> (r[rs]&0x1F);
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::SUB(int rd, int rs, int rt)
 {
 #if defined DEBUG
-		cout << "SUB " << rd << " " << rs << " " << rt;
+	if (rs == 0)
+		cout << "NEG " << dec << "r" << rd << " " << dec << "r" << rt;
+	else
+		cout << "SUB " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
-	r[rd] = (sword) r[rs] - (sword) r[rt];
+		r[rd] = (r[rs] - r[rt]) & 0xFFFF;
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::SUBU(int rd, int rs, int rt)
 {
 #if defined DEBUG
-		cout << "SUBU " << rd << " " << rs << " " << rt;
+	if (rs == 0)
+		cout << "NEGU " << dec << "r" << rd << " " << dec << "r" << rt;
+	else
+		cout << "SUBU " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
-	r[rd] = (word) r[rs] - (word) r[rt];
+
+	r[rd] = (r[rs] - r[rt]) & 0xFFFF;
+
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::XOR(int rd, int rs, int rt)
 {
 #if defined DEBUG
-		cout << "XOR " << rd << " " << rs << " " << rt;
+		cout << "XOR " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	r[rd] = r[rs] ^ r[rt];
+#if defined DEBUG
+		cout << " r" << dec << rd << hex << "=0x" << r[rd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::XORI(int rt, int rs, int immed)
 {
 #if defined DEBUG
-		cout << "XORI " << rt << " " << rs << " " << immed;
+		cout << "XORI " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
-	r[rt] = (word) r[rs] ^ immed;
+	r[rt] = r[rs] ^ immed;
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::BEQ(int rs, int rt, int immed)
 {
 #	if defined DEBUG
-		cout << "BEQ " << rs << " " << rt << " " << immed;
+	if (rt == 0 && rs == 0)
+		cout << "B";
+	else if (rt == 0)
+		cout << "BEQZ " << dec << "r" << rs << " " << hex << "0x" << immed;
+	else
+		cout << "BEQ " << dec << "r" << rs << " " << dec << "r" << rt << " " << hex << "0x" << immed;
 #	endif // DEBUG
+
 	if (r[rs] == r[rt])
 	{
 		dword pc_tmp = pc + immed;
@@ -1568,8 +1774,12 @@ void R4300i::BEQ(int rs, int rt, int immed)
 void R4300i::BEQL(int rs, int rt, int immed)
 {
 #if defined DEBUG
-		cout << "BEQL " << rs << " " << rt << " " << immed;
+	if ( rt == 0)
+		cout << "BEQLZ " << dec << "r" << rs << " " << hex << "0x" << immed;
+	else
+		cout << "BEQL " << dec << "r" << rs << " " << dec << "r" << rt << " " << hex << "0x" << immed;
 #endif // DEBUG
+
 	if (r[rs] == r[rt])
 	{
 		dword pc_tmp = pc + immed;
@@ -1588,7 +1798,7 @@ void R4300i::BEQL(int rs, int rt, int immed)
 void R4300i::BGEZ(int immed, int rs)
 {
 #if defined DEBUG
-		cout << "BGEZ " << rs << " " << immed;
+		cout << "BGEZ " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((sdword) r[rs] >= 0)
 	{
@@ -1606,8 +1816,12 @@ void R4300i::BGEZ(int immed, int rs)
 void R4300i::BGEZAL(int immed, int rs)
 {
 #if defined DEBUG
-		cout << "BGEZAL " << rs << " " << immed;
+	if (rs == 0)
+		cout << "BAL";
+	else
+		cout << "BGEZAL " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
+
 	if ((sdword) r[rs] >= 0)
 	{
 		dword pc_tmp = pc + immed;
@@ -1625,7 +1839,7 @@ void R4300i::BGEZAL(int immed, int rs)
 void R4300i::BGEZALL(int immed, int rs)
 {
 #if defined DEBUG
-		cout << "BGEZALL " << rs << " " << immed;
+		cout << "BGEZALL " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((sdword) r[rs] >= 0)
 	{
@@ -1646,7 +1860,7 @@ void R4300i::BGEZALL(int immed, int rs)
 void R4300i::BGEZL(int immed, int rs)
 {
 #if defined DEBUG
-		cout << "BGEZL " << rs << " " << immed;
+		cout << "BGEZL " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((sdword) r[rs] >= 0)
 	{
@@ -1666,7 +1880,7 @@ void R4300i::BGEZL(int immed, int rs)
 void R4300i::BGTZ(int immed, int rs)
 {
 #if defined DEBUG
-		cout << "BGTZ " << rs << " " << immed;
+		cout << "BGTZ " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((sdword) r[rs] > 0)
 	{
@@ -1684,7 +1898,7 @@ void R4300i::BGTZ(int immed, int rs)
 void R4300i::BGTZL(int immed, int rs)
 {
 #if defined DEBUG
-		cout << "BGTZL " << rs << " " << immed;
+		cout << "BGTZL " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((sdword) r[rs] > 0)
 	{
@@ -1704,7 +1918,7 @@ void R4300i::BGTZL(int immed, int rs)
 void R4300i::BLEZ(int immed, int rs)
 {
 #if defined DEBUG
-		cout << "BLEZ " << rs << " " << immed;
+		cout << "BLEZ " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((sdword) r[rs] <= 0)
 	{
@@ -1722,7 +1936,7 @@ void R4300i::BLEZ(int immed, int rs)
 void R4300i::BLEZL(int immed, int rs)
 {
 #if defined DEBUG
-		cout << "BLEZL " << rs << " " << immed;
+		cout << "BLEZL " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((sdword) r[rs] <= 0)
 	{
@@ -1742,7 +1956,7 @@ void R4300i::BLEZL(int immed, int rs)
 void R4300i::BLTZ(int immed, int rs)
 {
 #if defined DEBUG
-		cout << "BLTZ " << rs << " " << immed;
+		cout << "BLTZ " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((sdword) r[rs] < 0)
 	{
@@ -1760,7 +1974,7 @@ void R4300i::BLTZ(int immed, int rs)
 void R4300i::BLTZAL(int immed, int rs)
 {
 #if defined DEBUG
-		cout << "BLTZAL " << rs << " " << immed;
+		cout << "BLTZAL " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((sdword) r[rs] < 0)
 	{
@@ -1779,7 +1993,7 @@ void R4300i::BLTZAL(int immed, int rs)
 void R4300i::BLTZALL(int immed, int rs)
 {
 #if defined DEBUG
-		cout << "BLTZALL " << rs << " " << immed;
+		cout << "BLTZALL " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((sdword) r[rs] < 0)
 	{
@@ -1800,7 +2014,7 @@ void R4300i::BLTZALL(int immed, int rs)
 void R4300i::BLTZL(int immed, int rs)
 {
 #if defined DEBUG
-		cout << "BLTZL " << rs << " " << immed;
+		cout << "BLTZL " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((sdword) r[rs] < 0)
 	{
@@ -1820,7 +2034,10 @@ void R4300i::BLTZL(int immed, int rs)
 void R4300i::BNE(int rs, int rt, int immed)
 {
 #if defined DEBUG
-		cout << "BNE " << rs << " " << rt << " " << immed;
+	if (rt == 0)
+		cout << "BNEZ " << dec << "r" << rs << " 0x" << hex << immed;
+	else
+		cout << "BNE " << dec << "r" << rs << " " << dec << "r" << rt << " 0x" << hex << immed;
 #endif // DEBUG
 	if (r[rs] != r[rt])
 	{
@@ -1838,8 +2055,12 @@ void R4300i::BNE(int rs, int rt, int immed)
 void R4300i::BNEL(int rs, int rt, int immed)
 {
 #if defined DEBUG
-		cout << "BNEL " << rs << " " << rt << " " << immed;
+	if (rt == 0)
+		cout << "BNELZ " << dec << "r" << rs << " " << hex << "0x" << immed;
+	else
+		cout << "BNEL " << dec << "r" << rs << " " << dec << "r" << rt << " " << hex << "0x" << immed;
 #endif // DEBUG
+
 	if (r[rs] != r[rt])
 	{
 		dword pc_tmp = pc + immed;
@@ -1883,7 +2104,7 @@ void R4300i::JAL(int address)
 void R4300i::JALR(int rs, int rd)
 {
 #if defined DEBUG
-		cout << "JALR " << rs << " " << rd;
+		cout << "JALR " << dec << "r" << rs << " " << dec << "r" << rd;
 #endif // DEBUG
 	++pc;
 	delay_slot = 1;
@@ -1896,7 +2117,7 @@ void R4300i::JALR(int rs, int rd)
 void R4300i::JR(int rs)
 {
 #if defined DEBUG
-		cout << "JR " << rs;
+		cout << "JR " << dec << "r" << rs;
 #endif // DEBUG
 	++pc;
 	delay_slot = 1;
@@ -1916,7 +2137,7 @@ void R4300i::BREAK(int immed)
 void R4300i::SYSCALL(int immed)
 {
 #if defined DEBUG
-		cout << "SYSCALL " << immed;
+		cout << "SYSCALL " << hex << "0x" << immed;
 #endif // DEBUG
 	ehandler.syscall();
 }
@@ -1924,7 +2145,7 @@ void R4300i::SYSCALL(int immed)
 void R4300i::TEQ(int rs, int rt)
 {
 #if defined DEBUG
-		cout << "TEQ " << rs << " " << rt;
+		cout << "TEQ " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	if (r[rt] == r[rs])
 		ehandler.trap();
@@ -1934,7 +2155,7 @@ void R4300i::TEQ(int rs, int rt)
 void R4300i::TEQI(int rs, int immed)
 {
 #if defined DEBUG
-		cout << "TEQI " << rs << " " << immed;
+		cout << "TEQI " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if (r[rs] == immed)
 		ehandler.trap();
@@ -1944,7 +2165,7 @@ void R4300i::TEQI(int rs, int immed)
 void R4300i::TGE(int rs, int rt)
 {
 #if defined DEBUG
-		cout << "TGE " << rs << " " << rt;
+		cout << "TGE " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	if (r[rs] >= r[rt])
 		ehandler.trap();
@@ -1954,7 +2175,7 @@ void R4300i::TGE(int rs, int rt)
 void R4300i::TGEI(int rs, int immed)
 {
 #if defined DEBUG
-		cout << "TGEI " << rs << " " << immed;
+		cout << "TGEI " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if (r[rs] >= immed)
 		ehandler.trap();
@@ -1964,7 +2185,7 @@ void R4300i::TGEI(int rs, int immed)
 void R4300i::TGEIU(int rs, int immed)
 {
 #if defined DEBUG
-		cout << "TGEIU " << rs << " " << immed;
+		cout << "TGEIU " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if (r[rs] >= immed)
 		ehandler.trap();
@@ -1974,7 +2195,7 @@ void R4300i::TGEIU(int rs, int immed)
 void R4300i::TGEU(int rs, int rt)
 {
 #if defined DEBUG
-		cout << "TGEU " << rs << " " << rt;
+		cout << "TGEU " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	if (r[rs] >= r[rt])
 		ehandler.trap();
@@ -1984,7 +2205,7 @@ void R4300i::TGEU(int rs, int rt)
 void R4300i::TLT(int rs, int rt)
 {
 #if defined DEBUG
-		cout << "TLT " << rs << " " << rt;
+		cout << "TLT " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	if (r[rs] < r[rt])
 		ehandler.trap();
@@ -1994,7 +2215,7 @@ void R4300i::TLT(int rs, int rt)
 void R4300i::TLTI(int rs, int immed)
 {
 #if defined DEBUG
-		cout << "TLTI " << rs << " " << immed;
+		cout << "TLTI " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((sdword) r[rs] < immed)
 		ehandler.trap();
@@ -2004,7 +2225,7 @@ void R4300i::TLTI(int rs, int immed)
 void R4300i::TLTIU(int rs, int immed)
 {
 #if defined DEBUG
-		cout << "TLTIU " << rs << " " << immed;
+		cout << "TLTIU " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if (r[rs] < immed)
 		ehandler.trap();
@@ -2014,7 +2235,7 @@ void R4300i::TLTIU(int rs, int immed)
 void R4300i::TLTU(int rs, int rt)
 {
 #if defined DEBUG
-		cout << "TLTU " << rs << " " << rt;
+		cout << "TLTU " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	if (r[rs] < r[rt])
 		ehandler.trap();
@@ -2024,7 +2245,7 @@ void R4300i::TLTU(int rs, int rt)
 void R4300i::TNE(int rs, int rt)
 {
 #if defined DEBUG
-		cout << "TNE " << rs << " " << rt;
+		cout << "TNE " << dec << "r" << rs << " " << dec << "r" << rt;
 #endif // DEBUG
 	if (r[rs] != r[rt])
 		ehandler.trap();
@@ -2034,7 +2255,7 @@ void R4300i::TNE(int rs, int rt)
 void R4300i::TNEI(int rs, int immed)
 {
 #if defined DEBUG
-		cout << "TNEI " << rs << " " << immed;
+		cout << "TNEI " << dec << "r" << rs << " " << hex << "0x" << immed;
 #endif // DEBUG
 	if (r[rs] != immed)
 		ehandler.trap();
@@ -2044,7 +2265,7 @@ void R4300i::TNEI(int rs, int immed)
 void R4300i::CACHE(int rt, int immed, int rs)
 {
 #if defined DEBUG
-		cout << "CACHE " << rt << " " << immed << " " << rs;
+		cout << "CACHE " << dec << "r" << rt << " " << hex << "0x" << immed << " " << dec << "r" << rs;
 #endif // DEBUG
 	++pc;
 }
@@ -2073,16 +2294,19 @@ void R4300i::ERET(void)
 void R4300i::MFC0(int rt, int fs)
 {
 #if defined DEBUG
-		cout << "MFC0 " << rt << " " << fs;
+		cout << "MFC0 " << dec << "r" << rt << " " << dec << "f" << fs;
 #endif // DEBUG
 	r[rt] = cop0[fs];
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::MTC0(int rt, int fs)
 {
 #if defined DEBUG
-		cout << "MTC0 " << rt << " " << fs;
+		cout << "MTC0 " << dec << "r" << rt << " " << dec << "f" << fs;
 #endif // DEBUG
 		switch(fs)
      {
@@ -2106,7 +2330,7 @@ void R4300i::MTC0(int rt, int fs)
 	PageMask = r[rt] & 0x01FFE000;
 	break;
       case 6:    // Wired
-	Wired = (word) r[rt];
+	Wired = r[rt] & 0xFFFF;
 	Random = 31;
 	break;
       case 8:    // BadVAddr
@@ -2119,20 +2343,20 @@ void R4300i::MTC0(int rt, int fs)
       case 11:   // Compare
 	break;
       case 12:   // Status
-	Status = (word) r[rt];
+	Status = r[rt] & 0xFFFF;
 	break;
       case 13:   // Cause
 	if (r[rt]!=0)
 	     cout << " écriture dans Cause";
-	else Cause = (word) r[rt];
+	else Cause = r[rt] & 0xFFFF;
 	break;
       case 14:   // EPC
-	EPC = (word) r[rt];
+	EPC = r[rt] & 0xFFFF;
 	break;
       case 15:  // PRevID
 	break;
       case 16:  // Config
-	Config = (word) r[rt];
+	Config = r[rt] & 0xFFFF;
 	break;
       case 18:  // WatchLo
 	WatchLo = r[rt] & 0xFFFFFFFF;
@@ -2372,9 +2596,12 @@ template<typename Type>
 void R4300i::ABS(int fd, int fs)
 {
 #if defined DEBUG
-		cout << "ABS " << fd << " " << fs;
+		cout << "ABS " << dec << "f" << fd << " " << dec << "f" << fs;
 #endif // DEBUG
 	f[fd] = (dword) abs((Type) f[fs]);
+#if defined DEBUG
+		cout << " f" << dec << fd << hex << "=0x" << f[fd];
+#endif // DEBUG
 	++pc;
 }
 
@@ -2382,16 +2609,19 @@ template<typename Type>
 void R4300i::ADD(int fd, int fs, int ft)
 {
 #if defined DEBUG
-		cout << "ADD " << fd << " " << fs << " " << ft;
+		cout << "ADD " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft;
 #endif // DEBUG
 	f[fd] = (dword) ((Type) f[fs] + (Type) f[ft]);
+#if defined DEBUG
+		cout << " f" << dec << fd << hex << "=0x" << f[fd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::BC1F(int immed)
 {
 #if defined DEBUG
-		cout << "BC1F " << immed;
+		cout << "BC1F " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((fcr31 & 0x800000)==0)
 	{
@@ -2409,7 +2639,7 @@ void R4300i::BC1F(int immed)
 void R4300i::BC1FL(int immed)
 {
 #if defined DEBUG
-		cout << "BC1FL " << immed;
+		cout << "BC1FL " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((fcr31 & 0x800000)==0)
 	{
@@ -2429,10 +2659,7 @@ void R4300i::BC1FL(int immed)
 void R4300i::BC1T(int immed)
 {
 #if defined DEBUG
-		cout << "BC1T " << immed;
-#endif // DEBUG
-#if defined DEBUG
-		cout << "BC1F " << immed;
+		cout << "BC1T " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((fcr31 & 0x800000)!=0)
 	{
@@ -2450,7 +2677,7 @@ void R4300i::BC1T(int immed)
 void R4300i::BC1TL(int immed)
 {
 #if defined DEBUG
-		cout << "BC1TL " << immed;
+		cout << "BC1TL " << hex << "0x" << immed;
 #endif // DEBUG
 	if ((fcr31 & 0x800000)!=0)
 	{
@@ -2471,7 +2698,7 @@ template<typename Type>
 void R4300i::C(int fs, int ft, int cond)
 {
 #if defined DEBUG
-		cout << "C " << fs << " " << ft << " " << cond;
+		cout << "C " << dec << "f" << fs << " " << dec << "f" << ft << " " << dec << "cond " << cond;
 #endif // DEBUG
 	switch (cond) {
 		case 0:
@@ -2533,27 +2760,36 @@ template<typename Type, typename toType>
 void R4300i::CEIL(int fd, int fs)
 {
 #if defined DEBUG
-		cout << "CEIL " << fd << " " << fs;
+		cout << "CEIL " << dec << "f" << fd << " " << dec << "f" << fs;
 #endif // DEBUG
 	f[fd] = (toType) ((Type) f[fs]);
+#if defined DEBUG
+		cout << " f" << dec << fd << hex << "=0x" << f[fd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::CFC1(int rt, int fs)
 {
 #if defined DEBUG
-		cout << "CFC1 " << rt << " " << fs;
+		cout << "CFC1 " << dec << "r" << rt << " " << dec << "f" << fs;
 #endif // DEBUG
-	r[rt] = (word) f[fs];
+	r[rt] = f[fs] & 0xFFFF;
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::CTC1(int rt, int fs)
 {
 #if defined DEBUG
-		cout << "CTC1 " << rt << " " << fs;
+		cout << "CTC1 " << dec << "r" << rt << " " << dec << "f" << fs;
 #endif // DEBUG
-	f[fs] = (word) r[rt];
+	f[fs] = r[rt] & 0xFFFF;
+#if defined DEBUG
+		cout << " f" << dec << fs << hex << "=0x" << f[fs];
+#endif // DEBUG
 	++pc;
 }
 
@@ -2561,9 +2797,12 @@ template<typename Type, typename toType>
 void R4300i::CVT(int fd, int fs)
 {
 #if defined DEBUG
-		cout << "CVT " << fd << " " << fs;
+		cout << "CVT " << dec << "f" << fd << " " << dec << "f" << fs;
 #endif // DEBUG
 	f[fd] = (dword) ((toType) ((Type) f[fs]));
+#if defined DEBUG
+		cout << " f" << dec << fd << hex << "=0x" << f[fd];
+#endif // DEBUG
 	++pc;
 }
 
@@ -2571,27 +2810,36 @@ template<typename Type>
 void R4300i::DIV(int fd, int fs, int ft)
 {
 #if defined DEBUG
-		cout << "DIV " << fd << " " << fs << " " << ft;
+		cout << "DIV " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft;
 #endif // DEBUG
 	f[fd] = (dword) ((Type) f[fs] / (Type) f[ft]);
+#if defined DEBUG
+		cout << " f" << dec << fd << hex << "=0x" << f[fd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::DMFC1(int rt, int fs)
 {
 #if defined DEBUG
-		cout << "DMFC1 " << rt << " " << fs;
+		cout << "DMFC1 " << dec << "r" << rt << " " << dec << "f" << fs;
 #endif // DEBUG
 	r[rt] = f[fs];
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::DMTC1(int rt, int fs)
 {
 #if defined DEBUG
-		cout << "DMTC1 " << rt << " " << fs;
+		cout << "DMTC1 " << dec << "r" << rt << " " << dec << "f" << fs;
 #endif // DEBUG
 	f[fs] = r[rt];
+#if defined DEBUG
+		cout << " f" << dec << fs << hex << "=0x" << f[fs];
+#endif // DEBUG
 	++pc;
 }
 
@@ -2599,36 +2847,48 @@ template<typename Type, typename toType>
 void R4300i::FLOOR(int fd, int fs)
 {
 #if defined DEBUG
-		cout << "FLOOR " << fd << " " << fs;
+		cout << "FLOOR " << dec << "f" << fd << " " << dec << "f" << fs;
 #endif // DEBUG
 	f[fd] = (toType) ((Type) f[fs]);
+#if defined DEBUG
+		cout << " f" << dec << fd << hex << "=0x" << f[fd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::LDC1(int ft, int immed, int rs)
 {
 #if defined DEBUG
-		cout << "LDC1 " << ft << " " << immed << " " << rs;
+		cout << "LDC1 " << dec << "f" << ft << " " << hex << "0x" << immed << " " << dec << "r" << rs;
 #endif // DEBUG
 	f[ft] = ram.read<dword>(r[rs] + immed * sizeof(dword));
+#if defined DEBUG
+		cout << " f" << dec << ft << hex << "=0x" << f[ft];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::LWC1(int ft, int immed, int rs)
 {
 #if defined DEBUG
-		cout << "LWC1 " << ft << " " << immed << " " << rs;
+		cout << "LWC1 " << dec << "f" << ft << " " << hex << "0x" << immed << " " << dec << "r" << rs;
 #endif // DEBUG
-	f[ft] = ram.read<word>(r[rs] + immed * sizeof(word));
+	f[ft] = ram.read<word>(r[rs] + immed);
+#if defined DEBUG
+		cout << " f" << dec << ft << hex << "=0x" << f[ft];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::MFC1(int rt, int fs)
 {
 #if defined DEBUG
-		cout << "MFC1 " << rt << " " << fs;
+		cout << "MFC1 " << dec << "r" << rt << " " << dec << "f" << fs;
 #endif // DEBUG
-	r[rt] = (word) f[fs];
+	r[rt] = f[fs] & 0xFFFF;
+#if defined DEBUG
+		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+#endif // DEBUG
 	++pc;
 }
 
@@ -2636,18 +2896,24 @@ template<typename Type>
 void R4300i::MOV(int fd, int fs)
 {
 #if defined DEBUG
-		cout << "MOV " << fd << " " << fs;
+		cout << "MOV " << dec << "f" << fd << " " << dec << "f" << fs;
 #endif // DEBUG
 	f[fd] = (dword) ((Type) f[fs]);
+#if defined DEBUG
+		cout << " f" << dec << fd << hex << "=0x" << f[fd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::MTC1(int rt, int fs)
 {
 #if defined DEBUG
-		cout << "MTC1 " << rt << " " << fs;
+		cout << "MTC1 " << dec << "r" << rt << " " << dec << "f" << fs;
 #endif // DEBUG
-	f[fs] = (word) r[rt];
+	f[fs] = r[rt] & 0xFFFF;
+#if defined DEBUG
+		cout << " f" << dec << fs << hex << "=0x" << f[fs];
+#endif // DEBUG
 	++pc;
 }
 
@@ -2655,9 +2921,12 @@ template<typename Type>
 void R4300i::MUL(int fd, int fs, int ft)
 {
 #if defined DEBUG
-		cout << "MUL " << fd << " " << fs << " " << ft;
+		cout << "MUL " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft;
 #endif // DEBUG
 	f[fd] = (dword) ((Type) f[fs] * (Type) f[ft]);
+#if defined DEBUG
+		cout << " f" << dec << fd << hex << "=0x" << f[fd];
+#endif // DEBUG
 	++pc;
 }
 
@@ -2665,9 +2934,12 @@ template<typename Type>
 void R4300i::NEG(int fd, int fs)
 {
 #if defined DEBUG
-		cout << "NEG " << fd << " " << fs;
+		cout << "NEG " << dec << "f" << fd << " " << dec << "f" << fs;
 #endif // DEBUG
 	f[fd] = (dword) (- (Type) f[fs]);
+#if defined DEBUG
+		cout << " f" << dec << fd << hex << "=0x" << f[fd];
+#endif // DEBUG
 	++pc;
 }
 
@@ -2675,16 +2947,19 @@ template<typename Type, typename toType>
 void R4300i::ROUND(int fd, int fs)
 {
 #if defined DEBUG
-		cout << "ROUND " << fd << " " << fs;
+		cout << "ROUND " << dec << "f" << fd << " " << dec << "f" << fs;
 #endif // DEBUG
 	f[fd] = (toType) ((Type) f[fs]);
+#if defined DEBUG
+		cout << " f" << dec << fd << hex << "=0x" << f[fd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::SDC1(int ft, int immed, int rs)
 {
 #if defined DEBUG
-		cout << "SDC1 " << ft << " " << immed << " " << rs;
+		cout << "SDC1 " << dec << "f" << ft << " " << hex << "0x" << immed << " " << dec << "r" << rs;
 #endif // DEBUG
 	ram.write<dword>(r[rs] + immed * sizeof(dword), f[ft]);
 	++pc;
@@ -2694,9 +2969,12 @@ template<>
 void R4300i::SQRT<w>(int fd, int fs)
 {
 #if defined DEBUG
-		cout << "SQRT " << fd << " " << fs;
+		cout << "SQRT " << dec << "f" << fd << " " << dec << "f" << fs;
 #endif // DEBUG
 	f[fd] = (dword) sqrt((double)f[fs]);
+#if defined DEBUG
+		cout << " f" << dec << fd << hex << "=0x" << f[fd];
+#endif // DEBUG
 	++pc;
 }
 
@@ -2704,9 +2982,12 @@ template<>
 void R4300i::SQRT<l>(int fd, int fs)
 {
 #if defined DEBUG
-		cout << "SQRT " << fd << " " << fs;
+		cout << "SQRT " << dec << "f" << fd << " " << dec << "f" << fs;
 #endif // DEBUG
 	f[fd] = (dword) sqrt((double)f[fs]);
+#if defined DEBUG
+		cout << " f" << dec << fd << hex << "=0x" << f[fd];
+#endif // DEBUG
 	++pc;
 }
 
@@ -2714,9 +2995,12 @@ template<typename Type>
 void R4300i::SQRT(int fd, int fs)
 {
 #if defined DEBUG
-		cout << "SQRT " << fd << " " << fs;
+		cout << "SQRT " << dec << "f" << fd << " " << dec << "f" << fs;
 #endif // DEBUG
 	f[fd] = (dword) sqrt((Type)f[fs]);
+#if defined DEBUG
+		cout << " f" << dec << fd << hex << "=0x" << f[fd];
+#endif // DEBUG
 	++pc;
 }
 
@@ -2724,18 +3008,21 @@ template<typename Type>
 void R4300i::SUB(int fd, int fs, int ft)
 {
 #if defined DEBUG
-		cout << "SUB " << fd << " " << fs << " " << ft;
+		cout << "SUB " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft;
 #endif // DEBUG
 	f[fd] = (dword) ((Type) f[fs] - (Type) f[ft]);
+#if defined DEBUG
+		cout << " f" << dec << fd << hex << "=0x" << f[fd];
+#endif // DEBUG
 	++pc;
 }
 
 void R4300i::SWC1(int ft, int immed, int rs)
 {
 #if defined DEBUG
-		cout << "SWC1 " << ft << " " << immed << " " << rs;
+		cout << "SWC1 " << dec << "f" << ft << " " << hex << "0x" << immed << " " << dec << "r" << rs;
 #endif // DEBUG
-	ram.write<word>((word) r[rs] + immed * sizeof(word), (word) f[ft]);
+	ram.write<word>((word) r[rs] + immed, f[ft]);
 	++pc;
 }
 
@@ -2743,102 +3030,13 @@ template<typename Type, typename toType>
 void R4300i::TRUNC(int fd, int fs)
 {
 #if defined DEBUG
-		cout << "TRUNC " << fd << " " << fs;
+		cout << "TRUNC " << dec << "f" << fd << " " << dec << "f" << fs;
 #endif // DEBUG
 	f[fd] = (toType) ((Type) f[fs]);
-	++pc;
-}
-
-void R4300i::NOP(void)
-{
 #if defined DEBUG
-		cout << "NOP";
+		cout << " f" << dec << fd << hex << "=0x" << f[fd];
 #endif // DEBUG
 	++pc;
-}
-
-void R4300i::MOVE(int rd, int rs)
-{
-#if defined DEBUG
-		cout << "MOVE " << rd << " " << rs;
-#endif // DEBUG
-}
-
-void R4300i::NEG(int rd, int rt)
-{
-#if defined DEBUG
-		cout << "NEG " << rd << " " << rt;
-#endif // DEBUG
-}
-
-void R4300i::NEGU(int rd, int rs)
-{
-#if defined DEBUG
-		cout << "NEGU " << rd << " " << rs;
-#endif // DEBUG
-}
-
-void R4300i::BNEZ(int immed, int rs)
-{
-#if defined DEBUG
-		cout << "BNEZ " << immed << " " << rs;
-#endif // DEBUG
-}
-
-void R4300i::BNEZL(int immed, int rs)
-{
-#if defined DEBUG
-		cout << "BNEZL " << immed << " " << rs;
-#endif // DEBUG
-}
-
-void R4300i::BEQZ(int immed, int rs)
-{
-#if defined DEBUG
-		cout << "BEQZ " << immed << " " << rs;
-#endif // DEBUG
-}
-
-void R4300i::BEQZL(int immed, int rs)
-{
-#if defined DEBUG
-		cout << "BEQZL " << immed << " " << rs;
-#endif // DEBUG
-}
-
-void R4300i::B(int immed)
-{
-#if defined DEBUG
-		cout << "B " << immed;
-#endif // DEBUG
-}
-
-void R4300i::BAL(int immed)
-{
-#if defined DEBUG
-		cout << "BAL " << immed;
-#endif // DEBUG
-}
-
-void R4300i::LI(int rt, int immed)
-{
-#if defined DEBUG
-		cout << "LI " << rt << " " << immed;
-#endif // DEBUG
-}
-
-void R4300i::S_S(int ft, int immed, int rs)
-{
-#if defined DEBUG
-		cout << "S_S " << ft << " " << immed << " " << rs;
-#endif // DEBUG
-}
-
-void R4300i::L_S(int ft, int immed, int rs)
-{
-#if defined DEBUG
-		cout << "L_S " << ft << " " << immed << " " << rs;
-#endif // DEBUG
 }
 
 template<typename Type>
