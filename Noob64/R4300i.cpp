@@ -8,24 +8,23 @@ R4300i::R4300i(RDRAM &rdram) :
 		r[i] = (dword) 0;
 }
 
-void R4300i::boot(word *bootcode)
+word *bootcode;
+
+void R4300i::boot(word *bc)
 {
+	bootcode = bc;
 	char addr[8];
 	int	instr_s = sizeof(word);
 
-	for (int i = 0; i < BOOT_CODE_SIZE; i++)
+	while (true)//for (int i = 0; i < BOOT_CODE_SIZE; i++)
 	{
 #		if defined DEBUG
 			memset(addr, 0, 8);
-			_itoa_s(0x40 + i * instr_s, addr, 8, 16);
+			_itoa_s(0x40 + pc/*i*/ * instr_s, addr, 8, 16);
 			cout << endl << format_number(string(8 - strlen(addr), '0') + addr, ' ', 2) << " : ";
 #		endif
 		decode(bootcode[pc]);
 	}
-}
-
-void R4300i::decode_next_instr(const dword pc)
-{
 }
 
 void R4300i::decode(const word i)
@@ -1557,7 +1556,7 @@ void R4300i::BEQ(int rs, int rt, int immed)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		pc = pc_tmp;
 	}
 	else
@@ -1576,7 +1575,7 @@ void R4300i::BEQL(int rs, int rt, int immed)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
@@ -1595,7 +1594,7 @@ void R4300i::BGEZ(int immed, int rs)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		pc = pc_tmp;
 	}
 	else
@@ -1613,7 +1612,7 @@ void R4300i::BGEZAL(int immed, int rs)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		r[31] = pc;
 		pc = pc_tmp;
 	}
@@ -1633,7 +1632,7 @@ void R4300i::BGEZALL(int immed, int rs)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		delay_slot = 0;
 		r[31] = pc;
 		pc = pc_tmp;
@@ -1654,7 +1653,7 @@ void R4300i::BGEZL(int immed, int rs)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
@@ -1673,7 +1672,7 @@ void R4300i::BGTZ(int immed, int rs)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		pc = pc_tmp;
 	}
 	else
@@ -1692,7 +1691,7 @@ void R4300i::BGTZL(int immed, int rs)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
@@ -1711,7 +1710,7 @@ void R4300i::BLEZ(int immed, int rs)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		pc = pc_tmp;
 	}
 	else
@@ -1730,7 +1729,7 @@ void R4300i::BLEZL(int immed, int rs)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
@@ -1749,7 +1748,7 @@ void R4300i::BLTZ(int immed, int rs)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		pc = pc_tmp;
 	}
 	else
@@ -1767,7 +1766,7 @@ void R4300i::BLTZAL(int immed, int rs)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		r[31] = pc;
 		pc = pc_tmp;
 	}
@@ -1787,7 +1786,7 @@ void R4300i::BLTZALL(int immed, int rs)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		delay_slot = 0;
 		r[31] = pc;
 		pc = pc_tmp;
@@ -1808,7 +1807,7 @@ void R4300i::BLTZL(int immed, int rs)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
@@ -1827,7 +1826,7 @@ void R4300i::BNE(int rs, int rt, int immed)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		pc = pc_tmp;
 	}
 	else
@@ -1846,7 +1845,7 @@ void R4300i::BNEL(int rs, int rt, int immed)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
@@ -1863,7 +1862,7 @@ void R4300i::J(int address)
 #endif // DEBUG
 	++pc;
 	delay_slot = 1;
-	decode_next_instr(pc);
+	decode(bootcode[pc]);
 	delay_slot = 0;
 	pc = address;
 }
@@ -1875,7 +1874,7 @@ void R4300i::JAL(int address)
 #endif // DEBUG
 	++pc;
 	delay_slot = 1;
-	decode_next_instr(pc);
+	decode(bootcode[pc]);
 	delay_slot = 0;
 	r[31] = pc;
 	pc = address;
@@ -1888,7 +1887,7 @@ void R4300i::JALR(int rs, int rd)
 #endif // DEBUG
 	++pc;
 	delay_slot = 1;
-	decode_next_instr(pc);
+	decode(bootcode[pc]);
 	delay_slot = 0;
 	r[rd] = pc;
 	pc = r[rs];
@@ -1901,7 +1900,7 @@ void R4300i::JR(int rs)
 #endif // DEBUG
 	++pc;
 	delay_slot = 1;
-	decode_next_instr(pc);
+	decode(bootcode[pc]);
 	delay_slot = 0;
 	pc = r[rs];
 }
@@ -2398,7 +2397,7 @@ void R4300i::BC1F(int immed)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		pc = pc_tmp;
 	}
 	else
@@ -2417,7 +2416,7 @@ void R4300i::BC1FL(int immed)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
@@ -2439,7 +2438,7 @@ void R4300i::BC1T(int immed)
 	{
 		dword pc_tmp = pc + immed;
 		++pc;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		pc = pc_tmp;
 	}
 	else
@@ -2458,7 +2457,7 @@ void R4300i::BC1TL(int immed)
 		dword pc_tmp = pc + immed;
 		++pc;
 		delay_slot = 1;
-		decode_next_instr(pc);
+		decode(bootcode[pc]);
 		delay_slot = 0;
 		pc = pc_tmp;
 	}
