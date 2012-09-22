@@ -85,10 +85,9 @@ inline Type RDRAM::read(dword address)
 #if defined DEBUG
 		char addr[8];
 		_itoa_s((int) address, addr, 8, 16);
-		cout << " *READING* address : " << format_number(string(8 - strlen(addr), '0') + addr, ' ', 2) << " data : ";
 		char mem[64];
 		_itoa_s((int) data, mem, 64, 2);
-		cout << format_number(string(sizeof(Type) * 8 - strlen(mem), '0') + mem, ' ', 4);
+		cout << " *READING* " << hex << mem << " @ " << addr;
 #endif // DEBUG
 	return data;
 }
@@ -99,8 +98,7 @@ inline void RDRAM::write(Type data, dword address)
 {
 	*((Type *)(rdram + address)) = data;
 #if defined DEBUG
-		cout << " *WRITING* " << data << " @ " << address << " : ";
-		print_word<Type>(address);
+		cout << " *WRITING* " << hex << data << " @ " << address;
 #endif // DEBUG
 }
 
