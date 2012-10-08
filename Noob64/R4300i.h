@@ -32,11 +32,11 @@
 class R4300i
 {
 public:
-	R4300i(RDRAM &ram);
+	R4300i(MEMORY &mem);
 	void R4300i::boot(word *bootcode);
 	void decode(const word instr);
 private:
-	RDRAM &ram;
+	MEMORY &memory;
 	ExceptionHandler &ehandler;
 	string print_addr();
 

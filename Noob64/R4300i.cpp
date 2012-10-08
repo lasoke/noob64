@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 
-R4300i::R4300i(RDRAM &rdram) :
-	ram(rdram), ehandler(*new ExceptionHandler()),
+R4300i::R4300i(MEMORY &mem) :
+	memory(mem), ehandler(*new ExceptionHandler()),
 	pc(0), hi(0), lo(0), ll(0), fcr0(0), fcr31(0)
 {
 	for (int i = 0; i < 32; i++)
@@ -17,8 +17,7 @@ word *bootcode;
 void R4300i::boot(word *bc)
 {
 	bootcode = bc;
-
-	while (true)//for (int i = 0; i < BOOT_CODE_SIZE; i++)
+	while (true)
 	{
 		decode(bootcode[pc]);
 	}
@@ -642,7 +641,7 @@ void R4300i::LB(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LB " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = extend_sign_byte(ram.read<sbyte>(r[rs] + immed));
+	r[rt] = extend_sign_byte(memory.read<sbyte>(r[rs] + immed));
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -655,7 +654,7 @@ void R4300i::LBU(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LBU " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = ram.read<byte>(r[rs] + immed);
+	r[rt] = memory.read<byte>(r[rs] + immed);
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -668,7 +667,7 @@ void R4300i::LD(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LD " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = ram.read<dword>(r[rs] + immed);
+	r[rt] = memory.read<dword>(r[rs] + immed);
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -681,7 +680,7 @@ void R4300i::LDL(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LDL " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	dword tmp = ram.read<dword>(r[rs] + immed);
+	dword tmp = memory.read<dword>(r[rs] + immed);
 	r[rt] |= (tmp << ((r[rs] + immed) & 7) * 8);
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
@@ -695,7 +694,7 @@ void R4300i::LDR(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LDR " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	dword tmp = ram.read<dword>(r[rs] + immed);
+	dword tmp = memory.read<dword>(r[rs] + immed);
 	r[rt] |= (tmp >> (( 7 - (r[rs] + immed) & 7)) * 8);
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
@@ -709,7 +708,7 @@ void R4300i::LH(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LH " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = extend_sign_halfword(ram.read<shword>(r[rs] + immed));
+	r[rt] = extend_sign_halfword(memory.read<shword>(r[rs] + immed));
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -722,7 +721,7 @@ void R4300i::LHU(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LHU " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = ram.read<hword>(r[rs] + immed);
+	r[rt] = memory.read<hword>(r[rs] + immed);
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -735,7 +734,7 @@ void R4300i::LL(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LL " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = (sdword) ram.read<sword>(r[rs] + immed);
+	r[rt] = (sdword) memory.read<sword>(r[rs] + immed);
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -749,7 +748,7 @@ void R4300i::LLD(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LLD " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = ram.read<sdword>(r[rs] + immed);
+	r[rt] = memory.read<sdword>(r[rs] + immed);
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -763,7 +762,7 @@ void R4300i::LW(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LW " << dec << "r" << rt << " 0x" << hex << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = extend_sign_word(ram.read<sword>(r[rs] + immed));
+	r[rt] = extend_sign_word(memory.read<sword>(r[rs] + immed));
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -776,7 +775,7 @@ void R4300i::LWL(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LWL " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	word tmp = ram.read<word>(r[rs] + immed);
+	word tmp = memory.read<word>(r[rs] + immed);
 	r[rt] |= (tmp << (3 - (r[rs] + immed) & 3) * 8);
 	r[rt] = extend_sign_word(r[rt]);
 #	if defined DEBUG
@@ -791,7 +790,7 @@ void R4300i::LWR(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LWR " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	word tmp = ram.read<word>(r[rs] + immed);
+	word tmp = memory.read<word>(r[rs] + immed);
 	r[rt] |= (tmp >> ((3 - (r[rs] + immed) & 3)) * 8);
 	r[rt] = extend_sign_word(r[rt]);
 #	if defined DEBUG
@@ -806,7 +805,7 @@ void R4300i::LWU(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LWU " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = ram.read<word>(r[rs] + immed);
+	r[rt] = memory.read<word>(r[rs] + immed);
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -819,7 +818,7 @@ void R4300i::SB(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "SB " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	ram.write<byte>(r[rt] & 0xFF, r[rs] + immed);
+	memory.write<byte>(r[rt] & 0xFF, r[rs] + immed);
 	++pc;
 }
 
@@ -831,7 +830,7 @@ void R4300i::SC(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "SC " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-		ram.write<word>(r[rt] & 0xFFFFFFFF, r[rs] + immed);
+		memory.write<word>(r[rt] & 0xFFFFFFFF, r[rs] + immed);
 		//maybe something to do here...
 		ll = 0;
 	}
@@ -852,7 +851,7 @@ void R4300i::SCD(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "SCD " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-		ram.write<dword>(r[rt], r[rs] + immed);
+		memory.write<dword>(r[rt], r[rs] + immed);
 		//maybe something to do here...
 		ll = 0;
 	}
@@ -871,7 +870,7 @@ void R4300i::SD(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "SD " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	ram.write<dword>(r[rt], r[rs] + immed);
+	memory.write<dword>(r[rt], r[rs] + immed);
 	++pc;
 }
 
@@ -882,9 +881,9 @@ void R4300i::SDL(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "SDL " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	old_word = ram.read<dword>(r[rs] + immed);
+	old_word = memory.read<dword>(r[rs] + immed);
 	old_word = (r[rt] >> (8 * (r[rs] + immed) & 7)) | old_word;
-	ram.write<dword>(old_word, r[rs] + immed);
+	memory.write<dword>(old_word, r[rs] + immed);
 	++pc;
 }
 
@@ -895,9 +894,9 @@ void R4300i::SDR(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "SDR " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	old_word = ram.read<dword>(r[rs] + immed);
+	old_word = memory.read<dword>(r[rs] + immed);
 	old_word = (r[rt] << (8 * (7 - (r[rs] + immed) & 7))) | old_word;
-	ram.write<dword>(old_word, r[rs] + immed);
+	memory.write<dword>(old_word, r[rs] + immed);
 	++pc;
 }
 
@@ -907,7 +906,7 @@ void R4300i::SH(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "SH " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	ram.write<hword>(r[rt] & 0xFFFF, r[rs] + immed);
+	memory.write<hword>(r[rt] & 0xFFFF, r[rs] + immed);
 	++pc;
 }
 
@@ -917,7 +916,7 @@ void R4300i::SW(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "SW " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	ram.write<word>(r[rt] & 0xFFFFFFFF, r[rs] + immed);
+	memory.write<word>(r[rt] & 0xFFFFFFFF, r[rs] + immed);
 	++pc;
 }
 
@@ -928,9 +927,9 @@ void R4300i::SWL(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "SWL " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	old_word = ram.read<word>(r[rs] + immed);
+	old_word = memory.read<word>(r[rs] + immed);
 	old_word = (r[rt] >> (8 * (r[rs] + immed) & 3)) & 0xFFFFFFFF | old_word;
-	ram.write<word>(old_word, r[rs] + immed);
+	memory.write<word>(old_word, r[rs] + immed);
 	++pc;
 }
 
@@ -941,9 +940,9 @@ void R4300i::SWR(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "SWR " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	old_word = ram.read<word>(r[rs] + immed);
+	old_word = memory.read<word>(r[rs] + immed);
 	old_word = (r[rt] << (8 * (3 - (r[rs] + immed) & 3))) & 0xFFFFFFFF | old_word;
-	ram.write<word>(old_word, r[rs] + immed);
+	memory.write<word>(old_word, r[rs] + immed);
 	++pc;
 }
 
@@ -2863,7 +2862,7 @@ void R4300i::LDC1(int ft, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LDC1 " << dec << "f" << ft << " " << hex << "0x" << immed << " " << dec << "r" << rs;
 #	endif // DEBUG
-	f[ft] = ram.read<dword>(r[rs] + immed * sizeof(dword));
+	f[ft] = memory.read<dword>(r[rs] + immed * sizeof(dword));
 #	if defined DEBUG
 		cout << print_addr() << " f" << dec << ft << hex << "=0x" << f[ft];
 #	endif // DEBUG
@@ -2875,7 +2874,7 @@ void R4300i::LWC1(int ft, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LWC1 " << dec << "f" << ft << " " << hex << "0x" << immed << " " << dec << "r" << rs;
 #	endif // DEBUG
-	f[ft] = ram.read<word>(r[rs] + immed);
+	f[ft] = memory.read<word>(r[rs] + immed);
 #	if defined DEBUG
 		cout << print_addr() << " f" << dec << ft << hex << "=0x" << f[ft];
 #	endif // DEBUG
@@ -2963,7 +2962,7 @@ void R4300i::SDC1(int ft, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "SDC1 " << dec << "f" << ft << " " << hex << "0x" << immed << " " << dec << "r" << rs;
 #	endif // DEBUG
-	ram.write<dword>(r[rs] + immed * sizeof(dword), f[ft]);
+	memory.write<dword>(r[rs] + immed * sizeof(dword), f[ft]);
 	++pc;
 }
 
@@ -3024,7 +3023,7 @@ void R4300i::SWC1(int ft, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "SWC1 " << dec << "f" << ft << " " << hex << "0x" << immed << " " << dec << "r" << rs;
 #	endif // DEBUG
-	ram.write<word>((word) r[rs] + immed, f[ft]);
+	memory.write<word>((word) r[rs] + immed, f[ft]);
 	++pc;
 }
 

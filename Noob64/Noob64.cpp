@@ -20,9 +20,9 @@ int main(array<System::String ^> ^args)
 {
 	enableConsole();
 
-	RDRAM*		ram = new RDRAM();
-	RomLoader*	rom = new RomLoader();
-	R4300i*		cpu = new R4300i(*ram);
+	MEMORY*		memory	= new MEMORY();
+	RomLoader*	rom		= new RomLoader();
+	R4300i*		cpu		= new R4300i(*memory);
 
 	cpu->boot(rom->getBootCode());
 

@@ -20,22 +20,43 @@ typedef double				d; // Double-Precision	Floating-Point Format:	[63:sign;62-52:e
 typedef long				w; // Word				Fixed-Point Format:		[31:sign;30-0:int]
 typedef long long int		l; // Longword			Fixed-Point Format:		[63:sign;62-0:int]
 
-//RDRAM is the class which contains the memory of the emulator
-//and every relatives functions
-class RDRAM
+//****************************************************************************
+//** MEMORY SEGMENTS					                                    **
+//****************************************************************************
+class MEM_SEG
+{
+public:
+	MEM_SEG();
+	static const word begining = 0;
+	static const word end = -1;
+	static inline bool contains(dword address) { return begining <= address && address <= end; };
+	const void *ptr;
+	virtual void dump(void) const = 0;
+};
+
+//RDRAM
+class RDRAM : public MEM_SEG
 {
 public:
 	RDRAM();
-	~RDRAM();
-
-	template <typename Type>
-	Type read(dword address);
-
-	template <typename Type>
-	void write(Type data, dword address);
-
+	static const word begining = 0x00000000;
+	static const word end = 0x03EFFFFF;
 	static const int size = 0x800000;
+	void dump(void) const;
+private:
+	byte rdram[size];
+};
 
+// RDRAM Registers
+class RDRAM_REGS : public MEM_SEG
+{
+public:
+	RDRAM_REGS();
+	static const word begining = 0x03F00000;
+	static const word end = 0x03FFFFFF;
+	void dump(void) const;
+private:
+	// TODO: make sure every register is a word
 	word config_reg;
 	word device_id_reg;
 	word delay_reg;
@@ -46,64 +67,9 @@ public:
 	word min_interval_reg;
 	word addr_select_reg;
 	word device_manuf_reg;
-
-	void debug(void);
-	void debug(bool registers, word start, word end);
-
-private:
-	template <typename Type>
-	void print_word(dword address);
-
-	byte rdram[size];
 };
 
-//print the word of the type Type contains at the address given
-//in the parameter to the console
-template <typename Type>
-inline void RDRAM::print_word(dword address)
-{
-	int remainder;
-	if (remainder = address % 4)
-	{
-		read<word>(address - remainder);
-		if (sizeof(Type) > (4 - remainder))
-		{
-			read<word>(address + (4 - remainder));
-		}
-	}
-	else
-	{
-		read<word>(address);
-	}
-}
-
-//Read and return a data of the type Type contains at the address given in argument
-template <typename Type>
-inline Type RDRAM::read(dword address)
-{
-	Type data = *((Type *)(rdram + address));
-#if defined DEBUG
-		char addr[8];
-		_itoa_s((int) address, addr, 8, 16);
-		char mem[64];
-		_itoa_s((int) data, mem, 64, 2);
-		cout << " *READING* " << hex << mem << " @ " << addr;
-#endif // DEBUG
-	return data;
-}
-
-//Write a data of the type Type into the RAM at the address given in argument
-template <typename Type>
-inline void RDRAM::write(Type data, dword address)
-{
-	*((Type *)(rdram + address)) = data;
-#if defined DEBUG
-		cout << " *WRITING* " << hex << data << " @ " << address;
-#endif // DEBUG
-}
-
 /*
-
 class SP
 {
 private:
@@ -206,18 +172,18 @@ private:
    word bsd_dom2_rls_reg;
 };
 
-class RI
-{
-private:
-   word mode_reg;
-   word config_reg;
-   word current_load_reg;
-   word select_reg;
-   word refresh_reg;
-   word latency_reg;
-   word error_reg;
-   word werror_reg;
-};
+// RDRAM Interface (RI) Registers
+struct ri_registers
+{	// 0x04700000
+	word mode_reg;
+	word config_reg;
+	word current_load_reg;
+	word select_reg;
+	word refresh_reg;
+	word latency_reg;
+	word error_reg;
+	word werror_reg;
+};	// 0x047FFFFF
 
 class SI
 {
@@ -227,29 +193,106 @@ private:
    word pif_addr_wr64b_reg;
    word status_reg;
 };
+*/
 
+//****************************************************************************
+//** MEMORY					                                                **
+//****************************************************************************
+class MEMORY
+{
+public:
+	MEMORY();
+
+	RDRAM* rdram;
+	RDRAM_REGS* rdram_regs;
+	// TODO: declare the other segments
+
+	inline void* virtual_to_physical(word address);
+	template <typename Type> inline Type read(dword address);
+	template <typename Type> inline void write(Type data, dword address);
+};
+
+//****************************************************************************
+//** READ					                                                **
+//****************************************************************************
+template <typename Type>
+inline Type MEMORY::read(dword address)
+{
+	void *dst = NULL;
+	memcpy(dst, virtual_to_physical(address), sizeof(Type));
+	return (Type) dst;
+}
+
+//****************************************************************************
+//** WRITE					                                                **
+//****************************************************************************
+template <typename Type>
+inline void MEMORY::write(Type data, dword address)
+{
+	memcpy(virtual_to_physical(address), &data, sizeof(Type));
+}
+
+//****************************************************************************
+//** CONVERTS VIRTUAL ADDRESSES TO PHYSICAL ADDRESSES                       **
+//****************************************************************************
+inline void* MEMORY::virtual_to_physical(word address)
+{
+	if (RDRAM::contains(address))
+		return (void*) ((char*) rdram->ptr + address - RDRAM::begining);
+	else if (RDRAM_REGS::contains(address))
+		return (void*) ((char*) rdram_regs->ptr + address - RDRAM_REGS::begining);
+	else ; // TODO
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* JUNK:
 
 /*
-  00000000-03EFFFFF   RDRAM Memory
-  03F00000-03FFFFFF   RDRAM Registers
+//print the word of the type Type contains at the address given
+//in the parameter to the console
+template <typename Type>
+inline void MEM_SEG::print_word(dword address)
+{
+	int remainder;
+	if (remainder = address % 4)
+	{
+		read<word>(address - remainder);
+		if (sizeof(Type) > (4 - remainder))
+		{
+			read<word>(address + (4 - remainder));
+		}
+	}
+	else
+	{
+		read<word>(address);
+	}
+}
+*/
 
-  04000000-040FFFFF   SP Registers
-  04100000-041FFFFF   DP Command Registers
-  04200000-042FFFFF   DP Span Registers
-  04300000-043FFFFF   MIPS Interface (MI) Registers
-  04400000-044FFFFF   Video Interface (VI) Registers
-  04500000-045FFFFF   Audio Interface (AI) Registers
-  04600000-046FFFFF   Peripheral Interface (PI) Registers
-  04700000-047FFFFF   RDRAM Interface (RI) Registers
-  04800000-048FFFFF   Serial Interface (SI) Registers
-  04900000-04FFFFFF   Unused
-  05000000-05FFFFFF   Cartridge Domain 2 Address 1
-  06000000-07FFFFFF   Cartridge Domain 1 Address 1
-  08000000-0FFFFFFF   Cartridge Domain 2 Address 2
-  10000000-1FBFFFFF   Cartridge Domain 1 Address 2
-  1FC00000-1FC007BF   PIF Boot ROM
-  1FC007C0-1FC007FF   PIF RAM
-  1FC00800-1FCFFFFF   Reserved
-  1FD00000-7FFFFFFF   Cartridge Domain 1 Address 3
-  80000000-FFFFFFFF   External SysAD Device
-  */
+//Read and return a data of the type Type contains at the address given in argument
+/*
+template <typename Type>
+inline Type read(dword address)
+{
+	return data = *((Type *)((char) ptr + address));
+}
+*/
+/*
+//Write a data of the type Type into the RAM at the address given in argument
+template <typename Type>
+inline void write(Type data, void *address)
+{
+	*((Type *)(address) = data;
+}
+*/

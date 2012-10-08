@@ -1,6 +1,32 @@
 #include "StdAfx.h"
 
-RDRAM::RDRAM() :
+//****************************************************************************
+//** CONSTRUCTORS					                                        **
+//****************************************************************************
+
+// MEMORY
+MEMORY::MEMORY()
+{
+	rdram = new RDRAM();
+	rdram_regs = new RDRAM_REGS();
+}
+
+// MEMORY SEGMENT
+MEM_SEG::MEM_SEG() :
+	ptr(0)
+{
+}
+
+// RDRAM
+RDRAM::RDRAM()
+{
+	for (int i = 0; i < size; i++)
+		rdram[i] = 0;
+	ptr = rdram;
+}
+
+// RDRAM REGISTERS
+RDRAM_REGS::RDRAM_REGS() :
 	config_reg(0),
 	device_id_reg(0),
 	delay_reg(0),
@@ -12,36 +38,37 @@ RDRAM::RDRAM() :
 	addr_select_reg(0),
 	device_manuf_reg(0)
 {
-	for (int i = 0; i < size; i++)
-		rdram[i] = 0;
+	// IMPORTANT: ptr has to point on the first data of the segment!
+	ptr = &config_reg;
 }
 
-void RDRAM::debug(void)
+
+
+//****************************************************************************
+//** DUMP METHODS					                                        **
+//****************************************************************************
+
+void RDRAM::dump(/*word start, word end*/) const
 {
-	debug(true, 0, 0);
+	cout << "*** RDRAM ***" << endl;
+//	for (unsigned int i = start; i < end; i += sizeof(word))
+//		read<word>(i);
+	cout << "*** END OF RDRAM ***"<< endl;
 }
 
-void RDRAM::debug(bool registers, word start, word end)
+void RDRAM_REGS::dump(void) const
 {
-	cout << "*** [" << typeid(this).name() << "] DEBUGING ***" << endl;
-	cout << endl;
-	if (registers)
-	{
-		cout << "	config_reg = "			<< config_reg		<< endl;
-		cout << "	device_id_reg = "		<< device_id_reg	<< endl;
-		cout << "	delay_reg = "			<< delay_reg		<< endl;
-		cout << "	mode_reg = "			<< mode_reg			<< endl;
-		cout << "	ref_interval_reg = "	<< ref_interval_reg << endl;
-		cout << "	ref_row_reg = "			<< ref_row_reg		<< endl;
-		cout << "	ras_interval_reg = "	<< ras_interval_reg << endl;
-		cout << "	min_interval_reg = "	<< min_interval_reg << endl;
-		cout << "	addr_select_reg = "		<< addr_select_reg	<< endl;
-		cout << "	device_manuf_reg = "	<< device_manuf_reg << endl;
-		cout << endl;
-	}
-	for (unsigned int i = start; i < end; i += sizeof(word))
-		read<word>(i);
-	cout << endl;
-	cout << "*** END OF [" << typeid(this).name() << "] DEBUGING ***"<< endl;
+	cout << "*** RDRAM REGISTERS ***" << endl;
+	cout << "	config_reg = "			<< config_reg		<< endl;
+	cout << "	device_id_reg = "		<< device_id_reg	<< endl;
+	cout << "	delay_reg = "			<< delay_reg		<< endl;
+	cout << "	mode_reg = "			<< mode_reg			<< endl;
+	cout << "	ref_interval_reg = "	<< ref_interval_reg << endl;
+	cout << "	ref_row_reg = "			<< ref_row_reg		<< endl;
+	cout << "	ras_interval_reg = "	<< ras_interval_reg << endl;
+	cout << "	min_interval_reg = "	<< min_interval_reg << endl;
+	cout << "	addr_select_reg = "		<< addr_select_reg	<< endl;
+	cout << "	device_manuf_reg = "	<< device_manuf_reg << endl;
+	cout << "*** END OF RDRAM REGISTERS ***"<< endl;
 }
 
