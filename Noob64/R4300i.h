@@ -1,5 +1,34 @@
 #pragma once
 
+//Cop0 Macros
+//Each entry of the co processor 0 have a signification
+//So we can rename each entry to have a better understanding of the code
+#define Index		cop0[0]
+#define Random		cop0[1]
+#define EntryLo0	cop0[2]
+#define EntryLo1	cop0[3]
+#define Context		cop0[4]
+#define PageMask	cop0[5]
+#define Wired		cop0[6]
+#define BadVAddr	cop0[8]
+#define Count		cop0[9]
+#define EntryHi		cop0[10]
+#define Compare		cop0[11]
+#define Status		cop0[12]
+#define Cause		cop0[13]
+#define EPC			cop0[14]
+#define PRevID		cop0[15]
+#define Config		cop0[16]
+#define LLAddr		cop0[17]
+#define WatchLo		cop0[18]
+#define WatchHi		cop0[19]
+#define XContext	cop0[20]
+#define PErr		cop0[26]
+#define CacheErr	cop0[27]
+#define TagLo		cop0[28]
+#define TagHi		cop0[29]
+#define ErrorEPC	cop0[30]
+
 class R4300i
 {
 public:
@@ -9,6 +38,7 @@ public:
 private:
 	RDRAM &ram;
 	ExceptionHandler &ehandler;
+	string print_addr();
 
 	void decode_next_instr(const dword pc);
 	void decode_r(const word instr);
@@ -23,8 +53,8 @@ private:
 	//** Registers					                                            **
 	//****************************************************************************
 	dword r[32];									// General Purpose Registers (GPRs)
-	word  cop0[32];									// Cop0 registers
 	dword f[32];									// FP General Purpose Registers (FGRs)
+	word  cop0[32];									// Cop0 registers
 	dword pc, hi, lo, ll, fcr0, fcr31;				// Special Registers
 	word delay_slot;								// for branch instructions
 	//****************************************************************************
