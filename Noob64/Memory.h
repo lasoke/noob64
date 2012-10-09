@@ -27,9 +27,9 @@ class MEM_SEG
 {
 public:
 	MEM_SEG();
-	static const word begining = 0;
-	static const word end = -1;
-	static inline bool contains(dword address) { return begining <= address && address <= end; };
+	static const word begining;
+	static const word end;
+	//static bool contains(word address) { return begining <= address && address <= end; };
 	const void *ptr;
 	virtual void dump(void) const = 0;
 };
@@ -56,17 +56,19 @@ public:
 	static const word end = 0x03FFFFFF;
 	void dump(void) const;
 private:
-	// TODO: make sure every register is a word
-	word config_reg;
-	word device_id_reg;
-	word delay_reg;
-	word mode_reg;
-	word ref_interval_reg;
-	word ref_row_reg;
-	word ras_interval_reg;
-	word min_interval_reg;
-	word addr_select_reg;
-	word device_manuf_reg;
+	struct {
+		word config;
+		word device_id;
+		word delay;
+		word mode;
+		word ref_interval;
+		word ref_row;
+		word ras_interval;
+		word min_interval;
+		word addr_select;
+		word device_manuf;
+		byte unknown[0xFFFD8];
+	} data;
 };
 
 /*
@@ -218,9 +220,9 @@ public:
 template <typename Type>
 inline Type MEMORY::read(dword address)
 {
-	void *dst = NULL;
+	Type dst[1];
 	memcpy(dst, virtual_to_physical(address), sizeof(Type));
-	return (Type) dst;
+	return dst[0];
 }
 
 //****************************************************************************
@@ -229,7 +231,8 @@ inline Type MEMORY::read(dword address)
 template <typename Type>
 inline void MEMORY::write(Type data, dword address)
 {
-	memcpy(virtual_to_physical(address), &data, sizeof(Type));
+	Type *dst = (Type*) virtual_to_physical(address);
+	memcpy(dst, &data, sizeof(Type));
 }
 
 //****************************************************************************
@@ -237,62 +240,18 @@ inline void MEMORY::write(Type data, dword address)
 //****************************************************************************
 inline void* MEMORY::virtual_to_physical(word address)
 {
-	if (RDRAM::contains(address))
+	if (RDRAM::begining <= address && address <= RDRAM::end)
+	{
+		//cout << "[RRDRAM]";
 		return (void*) ((char*) rdram->ptr + address - RDRAM::begining);
-	else if (RDRAM_REGS::contains(address))
+	}
+	else if (RDRAM_REGS::begining <= address && address <= RDRAM_REGS::end)
+	{
+		//cout << "[RRDRAM_REGS]";
 		return (void*) ((char*) rdram_regs->ptr + address - RDRAM_REGS::begining);
-	else ; // TODO
+	}
+	else
+		cout << "ERROR: Address not handled (yet)" << endl;
 	return 0;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-/* JUNK:
-
-/*
-//print the word of the type Type contains at the address given
-//in the parameter to the console
-template <typename Type>
-inline void MEM_SEG::print_word(dword address)
-{
-	int remainder;
-	if (remainder = address % 4)
-	{
-		read<word>(address - remainder);
-		if (sizeof(Type) > (4 - remainder))
-		{
-			read<word>(address + (4 - remainder));
-		}
-	}
-	else
-	{
-		read<word>(address);
-	}
-}
-*/
-
-//Read and return a data of the type Type contains at the address given in argument
-/*
-template <typename Type>
-inline Type read(dword address)
-{
-	return data = *((Type *)((char) ptr + address));
-}
-*/
-/*
-//Write a data of the type Type into the RAM at the address given in argument
-template <typename Type>
-inline void write(Type data, void *address)
-{
-	*((Type *)(address) = data;
-}
-*/

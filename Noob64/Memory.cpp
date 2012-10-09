@@ -26,20 +26,22 @@ RDRAM::RDRAM()
 }
 
 // RDRAM REGISTERS
-RDRAM_REGS::RDRAM_REGS() :
-	config_reg(0),
-	device_id_reg(0),
-	delay_reg(0),
-	mode_reg(0),
-	ref_interval_reg(0),
-	ref_row_reg(0),
-	ras_interval_reg(0),
-	min_interval_reg(0),
-	addr_select_reg(0),
-	device_manuf_reg(0)
+RDRAM_REGS::RDRAM_REGS()
 {
-	// IMPORTANT: ptr has to point on the first data of the segment!
-	ptr = &config_reg;
+	data.config = 0;
+	data.device_id = 0;
+	data.delay = 0;
+	data.mode = 0;
+	data.ref_interval = 0;
+	data.ref_row = 0;
+	data.ras_interval = 0;
+	data.min_interval = 0;
+	data.addr_select = 0;
+	data.device_manuf = 0;
+	int length = sizeof(data.unknown); 
+	for (int i = 0; i < length; i++)
+		data.unknown[0] = 0;
+	ptr = &data;
 }
 
 
@@ -48,27 +50,39 @@ RDRAM_REGS::RDRAM_REGS() :
 //** DUMP METHODS					                                        **
 //****************************************************************************
 
-void RDRAM::dump(/*word start, word end*/) const
+void RDRAM::dump(void) const
 {
 	cout << "*** RDRAM ***" << endl;
-//	for (unsigned int i = start; i < end; i += sizeof(word))
-//		read<word>(i);
+	for (unsigned int i = 0; i < 128; i += sizeof(word))
+	{
+		word data = *((word *)(rdram + i));
+		// print address
+		char addr[8];
+		itoa(i, addr, 16);
+		cout << format_number(string(8 - strlen(addr), '0') + addr, ' ', 2) << " : ";
+		// print data
+		char mem[64];
+		itoa(data, mem, 2);
+		cout << format_number(string(sizeof(word) * 8 - strlen(mem), '0') + mem, ' ', 8) << endl;
+	}
 	cout << "*** END OF RDRAM ***"<< endl;
 }
 
 void RDRAM_REGS::dump(void) const
 {
+	/*
 	cout << "*** RDRAM REGISTERS ***" << endl;
-	cout << "	config_reg = "			<< config_reg		<< endl;
-	cout << "	device_id_reg = "		<< device_id_reg	<< endl;
-	cout << "	delay_reg = "			<< delay_reg		<< endl;
-	cout << "	mode_reg = "			<< mode_reg			<< endl;
-	cout << "	ref_interval_reg = "	<< ref_interval_reg << endl;
-	cout << "	ref_row_reg = "			<< ref_row_reg		<< endl;
-	cout << "	ras_interval_reg = "	<< ras_interval_reg << endl;
-	cout << "	min_interval_reg = "	<< min_interval_reg << endl;
-	cout << "	addr_select_reg = "		<< addr_select_reg	<< endl;
-	cout << "	device_manuf_reg = "	<< device_manuf_reg << endl;
+	cout << "	config = "			<< config		<< endl;
+	cout << "	device_id = "		<< device_id	<< endl;
+	cout << "	delay = "			<< delay		<< endl;
+	cout << "	mode = "			<< mode			<< endl;
+	cout << "	ref_interval = "	<< ref_interval << endl;
+	cout << "	ref_row = "			<< ref_row		<< endl;
+	cout << "	ras_interval = "	<< ras_interval << endl;
+	cout << "	min_interval = "	<< min_interval << endl;
+	cout << "	addr_select = "		<< addr_select	<< endl;
+	cout << "	device_manuf = "	<< device_manuf << endl;
 	cout << "*** END OF RDRAM REGISTERS ***"<< endl;
+	*/
 }
 
