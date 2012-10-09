@@ -71,131 +71,210 @@ private:
 	} data;
 };
 
-/*
-class SP
+// SP Registers
+class SP_REGS : public MEM_SEG
 {
+public:
+	SP_REGS();
+	static const word begining = 0x04000000;
+	static const word end = 0x0400FFFF;
+	void dump(void) const;
 private:
-	byte dmem[4000];
-	byte imem[4000];
-
-	word mem_addr_reg;
-	word dram_addr_reg;
-	word rd_len_reg;
-	word wr_len_reg;
-	word status_reg;
-	word dma_full_reg;
-	word dma_busy_reg;
-	word semaphore_reg;
-	word pc_reg;
-	word ibist_reg;
+	struct {
+		byte dmem[0x1000];
+		byte imem[0x1000];
+		byte unused[0x3E000];
+		word mem_addr;
+		word dram_addr;
+		word rd_len;
+		word wr_len;
+		word status;
+		word dma_full;
+		word dma_busy;
+		word semaphore;
+		byte unused2[0x3FFE0];
+		word pc;
+		word ibist;
+		byte unused3[0x7FFF8];
+	} data;
 };
 
-class DPC
+class DPC_REGS : public MEM_SEG
 {
+public:
+	DPC_REGS();
+	static const word begining = 0x04100000;
+	static const word end = 0x041FFFFF;
+	void dump(void) const;
 private:
-   word start_reg;
-   word end_reg;
-   word current_reg;
-   word status_reg;
-   word clock_reg;
-   word bufbusy_reg;
-   word pipebusy_reg;
-   word tmem_reg;
+	struct
+	{
+		word start;
+		word end;
+		word current;
+		word status;
+		word clock;
+		word bufbusy;
+		word pipebusy;
+		word tmem;
+		byte unused[0xFFFE0];
+	} data;
 };
 
-class DPS
+class DPS_REGS : MEM_SEG
 {
+public:
+	DPS_REGS();
+	static const word begining = 0x04200000;
+	static const word end = 0x042FFFFF;
+	void dump(void) const;
 private:
-   word tbist_reg;
-   word test_mode_reg;
-   word buftest_addr_reg;
-   word buftest_data_reg;
+	struct
+	{
+		word tbist;
+		word test_mode;
+		word buftest_addr;
+		word buftest_data;
+		byte unused[0xFFFF0];
+	} data;
 };
 
-class MI
+class MI_REGS : MEM_SEG
 {
+public:
+	MI_REGS();
+	static const word begining = 0x04300000;
+	static const word end = 0x043FFFFF;
+	void dump(void) const;
 private:
-   word init_mode_reg;
-   word version_reg;
-   word intr_reg;
-   word intr_mask_reg;
+	struct
+	{
+		word init_mode;
+		word version;
+		word intr;
+		word intr_mask;
+		byte unused[0xFFFF0];
+	} data;
 };
 
-class VI
+class VI_REGS : MEM_SEG
 {
+public:
+	VI_REGS();
+	static const word begining = 0x04400000;
+	static const word end = 0x044FFFFF;
+	void dump(void) const;
 private:
-   word status_reg;
-   word origin_reg;
-   word width_reg;
-   word v_intr_reg;
-   word current_reg;
-   word burst_reg;
-   word v_sync_reg;
-   word h_sync_reg;
-   word leap_reg;
-   word h_start_reg;
-   word v_start_reg;
-   word v_burst_reg;
-   word x_scale_reg;
-   word y_scale_reg;
-   //word delay_reg;
+	struct
+	{
+		word status;
+		word origin;
+		word width;
+		word v_intr;
+		word current;
+		word burst;
+		word v_sync;
+		word h_sync;
+		word leap;
+		word h_start;
+		word v_start;
+		word v_burst;
+		word x_scale;
+		word y_scale;
+		byte unused[0xFFFC8];
+	} data;
 };
 
-class AI
+class AI_REGS : MEM_SEG
 {
+public:
+	AI_REGS();
+	static const word begining = 0x04500000;
+	static const word end = 0x045FFFFF;
+	void dump(void) const;
 private:
-   word dram_addr_reg;
-   word len_reg;
-   word control_reg;
-   word status_reg;
-   word dacrate_reg;
-   word bitrate_reg;
-   word next_delay_reg;
-   word next_len_reg;
-   word current_delay_reg;
-   word current_len_reg;
+	struct
+	{
+		word dram_addr;
+		word len;
+		word control;
+		word status;
+		word dacrate;
+		word bitrate;
+		byte unused[0xFFFE8];
+	} data;
 };
 
-class PI
+class PI_REGS : MEM_SEG
 {
+public:
+	PI_REGS();
+	static const word begining = 0x04600000;
+	static const word end = 0x046FFFFF;
+	void dump(void) const;
 private:
-   word dram_addr_reg;
-   word cart_addr_reg;
-   word rd_len_reg;
-   word wr_len_reg;
-   word read_status_reg;
-   word bsd_dom1_lat_reg;
-   word bsd_dom1_pwd_reg;
-   word bsd_dom1_pgs_reg;
-   word bsd_dom1_rls_reg;
-   word bsd_dom2_lat_reg;
-   word bsd_dom2_pwd_reg;
-   word bsd_dom2_pgs_reg;
-   word bsd_dom2_rls_reg;
+	struct
+	{
+		word dram_addr;
+		word cart_addr;
+		word rd_len;
+		word wr_len;
+		word status;
+		word bsd_dom1_lat;
+		word bsd_dom1_pwd;
+		word bsd_dom1_pgs;
+		word bsd_dom1_rls;
+		word bsd_dom2_lat;
+		word bsd_dom2_pwd;
+		word bsd_dom2_pgs;
+		word bsd_dom2_rls;
+		byte unused[0xFFFCC];
+	} data;
 };
 
 // RDRAM Interface (RI) Registers
-struct ri_registers
-{	// 0x04700000
-	word mode_reg;
-	word config_reg;
-	word current_load_reg;
-	word select_reg;
-	word refresh_reg;
-	word latency_reg;
-	word error_reg;
-	word werror_reg;
+class RI_REGS : MEM_SEG
+{
+public:
+	RI_REGS();
+	static const word begining = 0x04700000;
+	static const word end = 0x047FFFFF;
+	void dump(void) const;
+private:
+	struct
+	{
+		word mode;
+		word config;
+		word current_load;
+		word select;
+		word refresh;
+		word latency;
+		word error;
+		word werror;
+		byte unused[0xFFFE0];
+	} data;
 };	// 0x047FFFFF
 
-class SI
+class SI_REGS : MEM_SEG
 {
+public:
+	SI_REGS();
+	static const word begining = 0x04800000;
+	static const word end = 0x048FFFFF;
+	void dump(void) const;
 private:
-   word dram_addr_reg;
-   word pif_addr_rd64b_reg;
-   word pif_addr_wr64b_reg;
-   word status_reg;
+	struct
+	{
+		word dram_addr;
+		word pif_addr_rd64b;
+		word reserved;
+		word reserved2;
+		word pif_addr_wr64b;
+		word reserved3;
+		word status;
+		byte unused[0xFFFE4];
+	} data;
 };
-*/
 
 //****************************************************************************
 //** MEMORY					                                                **
@@ -207,9 +286,18 @@ public:
 
 	RDRAM* rdram;
 	RDRAM_REGS* rdram_regs;
+	SP_REGS* sp_regs;
+	DPC_REGS* dpc_regs;
+	DPS_REGS* dps_regs;
+	MI_REGS* mi_regs;
+	VI_REGS* vi_regs;
+	AI_REGS* ai_regs;
+	PI_REGS* pi_regs;
+	RI_REGS* ri_regs;
+	SI_REGS* si_regs;
 	// TODO: declare the other segments
 
-	inline void* virtual_to_physical(word address);
+	inline void* virtual_to_physical(dword address);
 	template <typename Type> inline Type read(dword address);
 	template <typename Type> inline void write(Type data, dword address);
 };
@@ -239,7 +327,7 @@ inline void MEMORY::write(Type data, dword address)
 //****************************************************************************
 //** CONVERTS VIRTUAL ADDRESSES TO PHYSICAL ADDRESSES                       **
 //****************************************************************************
-inline void* MEMORY::virtual_to_physical(word address)
+inline void* MEMORY::virtual_to_physical(dword address)
 {
 	if (RDRAM::begining <= address && address <= RDRAM::end)
 	{
@@ -252,7 +340,6 @@ inline void* MEMORY::virtual_to_physical(word address)
 		return (void*) ((char*) rdram_regs->ptr + address - RDRAM_REGS::begining);
 	}
 	else
-		cout << "ERROR: Address not handled (yet)" << endl;
+		cout << endl << "ERROR: Address not handled (yet)" << endl;
 	return 0;
 }
-

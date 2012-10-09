@@ -25,12 +25,12 @@ int main(array<System::String ^> ^args)
 	RomLoader*	rom		= new RomLoader();
 	R4300i*		cpu		= new R4300i(*memory);
 	
-
-	srand(time(NULL));
+	/*
+	srand((unsigned int) time(NULL));
 	while (true)
 	{
 		int t = rand() % 4;
-		int a = RDRAM_REGS::begining + (rand() % (RDRAM_REGS::end - RDRAM_REGS::begining));
+		int a = RDRAM_REGS::begining + (rand() % (RDRAM_REGS::end - RDRAM_REGS::begining)) + ((rand() % 0x10) << 16);
 		//int a = RDRAM_REGS::end;
 		long long d = -1;
 		long long r = -1;
@@ -38,19 +38,19 @@ int main(array<System::String ^> ^args)
 		if (t == 0)
 		{
 			d = rand() % BYTE_MAX;
-			memory->write<byte>(d, a);
+			memory->write<byte>((byte) d, a);
 			r = memory->read<byte>(a);
 		}
 		else if (t == 1)
 		{
 			d = rand() % HWORD_MAX;
-			memory->write<hword>(d, a);
+			memory->write<hword>((hword) d, a);
 			r = memory->read<hword>(a);
 		}
 		else if (t == 2)
 		{
 			d = rand() % WORD_MAX;
-			memory->write<word>(d, a);
+			memory->write<word>((word) d, a);
 			r = memory->read<word>(a);
 		}
 		else if (t == 3)
@@ -68,7 +68,7 @@ int main(array<System::String ^> ^args)
 		cout << "PASSED: t=" << t << " a=0x" << hex << a << endl;
 		//getchar();
 	}
-
+	*/
 	/*
 	memory->write<dword>(0xFFFFFFFFFFFFFFFF, 0x0);
 	memory->write<dword>(0xFFFFFFFFFFFFFFFF, 0x8);
@@ -78,7 +78,7 @@ int main(array<System::String ^> ^args)
 	memory->write<hword>(memory->read<hword>(0x3), 0x16);
 	memory->rdram->dump();
 	*/
-	//cpu->boot(rom->getBootCode());
+	cpu->boot(rom->getBootCode());
 	getchar();
 	
 	/*
