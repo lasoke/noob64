@@ -55,7 +55,6 @@ RDRAM_REGS::RDRAM_REGS()
 void RDRAM::dump(void) const
 {
 	cout << "*** RDRAM ***" << endl;
-
 	for (unsigned int i = 0; i < 32; i += sizeof(word))
 	{
 		word line = binary_to_type<word>(data + i);
@@ -68,7 +67,6 @@ void RDRAM::dump(void) const
 		itoa(line, mem, 2);
 		cout << format_number(string(sizeof(word) * 8 - strlen(mem), '0') + mem, ' ', 8) << endl;
 	}
-
 	cout << "*** END OF RDRAM ***"<< endl;
 }
 
