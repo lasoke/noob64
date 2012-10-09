@@ -44,7 +44,7 @@ public:
 	static const int size = 0x800000;
 	void dump(void) const;
 private:
-	byte rdram[size];
+	byte data[size];
 };
 
 // RDRAM Registers
@@ -308,9 +308,9 @@ public:
 template <typename Type>
 inline Type MEMORY::read(dword address)
 {
-	Type dst[1];
+	byte dst[sizeof(Type)];
 	memcpy(dst, virtual_to_physical(address), sizeof(Type));
-	return dst[0];
+	return (binary_to_type<Type>(dst));
 }
 
 //****************************************************************************
@@ -320,8 +320,8 @@ template <typename Type>
 inline void MEMORY::write(Type data, dword address)
 {
 	Type *dst = (Type*) virtual_to_physical(address);
-	*dst = data;
-	//memcpy(dst, &data, sizeof(Type));
+	data = type_to_binary<Type>(data);
+	memcpy(dst, &data, sizeof(Type));
 }
 
 //****************************************************************************

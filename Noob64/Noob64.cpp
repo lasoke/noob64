@@ -24,31 +24,33 @@ int main(array<System::String ^> ^args)
 	MEMORY*		memory	= new MEMORY();
 	RomLoader*	rom		= new RomLoader();
 	R4300i*		cpu		= new R4300i(*memory);
-	/*
-	srand(time(NULL));
+	
+
+	srand((unsigned int) time(NULL));
 	while (true)
 	{
 		int t = rand() % 4;
-		int a = RDRAM_REGS::begining + rand() % (RDRAM_REGS::end - RDRAM_REGS::begining);
-		int d = -1;
-		int r = -1;
+		int a = RDRAM_REGS::begining + (rand() % (RDRAM_REGS::end - RDRAM_REGS::begining)) + ((rand() % 0x10) << 16);
+		//int a = RDRAM_REGS::end;
+		long long d = -1;
+		long long r = -1;
 		
 		if (t == 0)
 		{
 			d = rand() % BYTE_MAX;
-			memory->write<byte>(d, a);
+			memory->write<byte>((byte) d, a);
 			r = memory->read<byte>(a);
 		}
 		else if (t == 1)
 		{
 			d = rand() % HWORD_MAX;
-			memory->write<hword>(d, a);
+			memory->write<hword>((hword) d, a);
 			r = memory->read<hword>(a);
 		}
 		else if (t == 2)
 		{
 			d = rand() % WORD_MAX;
-			memory->write<word>(d, a);
+			memory->write<word>((word) d, a);
 			r = memory->read<word>(a);
 		}
 		else if (t == 3)
@@ -60,35 +62,22 @@ int main(array<System::String ^> ^args)
 
 		if (r != d)
 		{
-			cout << "FAILED: t=" << t << "\tr=" << r << "\td=" << d << "\ta=" << a << endl;
+			cout << "FAILED: t=" << t << "\tr=0x" << hex << r << "\td=0x" << hex << d << "\ta=0x" << hex << a << endl;
 			break;
 		}
-		cout << "PASSED: t=" << t << "\td=" << d << "\ta=" << a << endl;
+		cout << "PASSED: t=" << t << " a=0x" << hex << a << endl;
 		//getchar();
 	}
-	*/
 
+	/*
 	memory->write<dword>(0xFFFFFFFFFFFFFFFF, 0x0);
-	memory->write<hword>(0x00F0, 0x0);
-	cout << "@0x4 = 0x" << hex << memory->read<hword>(0x0);
-	cout << " @0x5 = 0x" << hex << memory->read<byte>(0x1) << endl;
+	memory->write<dword>(0xFFFFFFFFFFFFFFFF, 0x8);
+	memory->write<word>(0xAAF0A, 0x1);
+	cout << memory->read<dword>(0x3) << endl;
+	cout << memory->read<word>(0x0) << endl;
+	memory->write<hword>(memory->read<hword>(0x3), 0x16);
 	memory->rdram->dump();
-	memory->rdram_regs->dump();
-	memory->sp_regs->dump();
-	memory->dpc_regs->dump();
-	memory->dps_regs->dump();
-	memory->mi_regs->dump();
-	memory->vi_regs->dump();
-	memory->ai_regs->dump();
-	memory->pi_regs->dump();
-	memory->ri_regs->dump();
-	memory->si_regs->dump();
-	int a = RDRAM_REGS::begining + (rand() % (RDRAM_REGS::end - RDRAM_REGS::begining));
-	while (true)
-	{
-		a = RDRAM_REGS::begining + (rand() % (RDRAM_REGS::end - RDRAM_REGS::begining)) + ((rand() % 0xF) << 16);
-		cout << hex << "0x" << a << endl;
-	}
+	*/
 	//cpu->boot(rom->getBootCode());
 	getchar();
 	

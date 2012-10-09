@@ -29,8 +29,8 @@ MEM_SEG::MEM_SEG() :
 // RDRAM
 RDRAM::RDRAM()
 {
-	memset(rdram, 0, sizeof(rdram));
-	ptr = rdram;
+	memset(data, 0, sizeof(data));
+	ptr = data;
 }
 
 // RDRAM REGISTERS
@@ -46,21 +46,24 @@ RDRAM_REGS::RDRAM_REGS()
 //** DUMP METHODS					                                        **
 //****************************************************************************
 
+//
+
 void RDRAM::dump(void) const
 {
 	cout << "*** RDRAM ***" << endl;
 	for (unsigned int i = 0; i < 128; i += sizeof(word))
 	{
-		word data = *((word *)(rdram + i));
+		word line = binary_to_type<word>(data + i);
 		// print address
 		char addr[8];
 		_itoa_s(i, addr, 16);
 		cout << format_number(string(8 - strlen(addr), '0') + addr, ' ', 2) << " : ";
 		// print data
 		char mem[33];
-		_itoa_s(data, mem, 2);
+		_itoa_s(line, mem, 2);
 		cout << format_number(string(sizeof(word) * 8 - strlen(mem), '0') + mem, ' ', 8) << endl;
 	}
+
 	cout << "*** END OF RDRAM ***"<< endl;
 }
 
