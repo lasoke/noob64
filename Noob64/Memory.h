@@ -99,6 +99,7 @@ private:
 	} data;
 };
 
+// DP Command Registers
 class DPC_REGS : public MEM_SEG
 {
 public:
@@ -121,6 +122,7 @@ private:
 	} data;
 };
 
+// DP Span Registers
 class DPS_REGS : MEM_SEG
 {
 public:
@@ -139,6 +141,7 @@ private:
 	} data;
 };
 
+// MIPS Interface (MI) Registers
 class MI_REGS : MEM_SEG
 {
 public:
@@ -157,6 +160,7 @@ private:
 	} data;
 };
 
+// Video Interface (VI) Registers
 class VI_REGS : MEM_SEG
 {
 public:
@@ -185,6 +189,7 @@ private:
 	} data;
 };
 
+// Audio Interface (AI) Registers
 class AI_REGS : MEM_SEG
 {
 public:
@@ -205,6 +210,7 @@ private:
 	} data;
 };
 
+// Peripheral Interface (PI) Registers
 class PI_REGS : MEM_SEG
 {
 public:
@@ -253,8 +259,9 @@ private:
 		word werror;
 		byte unused[0xFFFE0];
 	} data;
-};	// 0x047FFFFF
+};
 
+// Serial Interface (SI) Registers
 class SI_REGS : MEM_SEG
 {
 public:
@@ -284,18 +291,17 @@ class MEMORY
 public:
 	MEMORY();
 
-	RDRAM* rdram;
+	RDRAM*		rdram;
 	RDRAM_REGS* rdram_regs;
-	SP_REGS* sp_regs;
-	DPC_REGS* dpc_regs;
-	DPS_REGS* dps_regs;
-	MI_REGS* mi_regs;
-	VI_REGS* vi_regs;
-	AI_REGS* ai_regs;
-	PI_REGS* pi_regs;
-	RI_REGS* ri_regs;
-	SI_REGS* si_regs;
-	// TODO: declare the other segments
+	SP_REGS*	sp_regs;
+	DPC_REGS*	dpc_regs;
+	DPS_REGS*	dps_regs;
+	MI_REGS*	mi_regs;
+	VI_REGS*	vi_regs;
+	AI_REGS*	ai_regs;
+	PI_REGS*	pi_regs;
+	RI_REGS*	ri_regs;
+	SI_REGS*	si_regs;
 
 	inline void* virtual_to_physical(dword address);
 	template <typename Type> inline Type read(dword address);
