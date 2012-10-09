@@ -69,9 +69,26 @@ int main(array<System::String ^> ^args)
 	*/
 
 	memory->write<dword>(0xFFFFFFFFFFFFFFFF, 0x0);
-	memory->write<hword>(0x57, 0x4);
+	memory->write<hword>(0x00F0, 0x0);
+	cout << "@0x4 = 0x" << hex << memory->read<hword>(0x0);
+	cout << " @0x5 = 0x" << hex << memory->read<byte>(0x1) << endl;
 	memory->rdram->dump();
-
+	memory->rdram_regs->dump();
+	memory->sp_regs->dump();
+	memory->dpc_regs->dump();
+	memory->dps_regs->dump();
+	memory->mi_regs->dump();
+	memory->vi_regs->dump();
+	memory->ai_regs->dump();
+	memory->pi_regs->dump();
+	memory->ri_regs->dump();
+	memory->si_regs->dump();
+	int a = RDRAM_REGS::begining + (rand() % (RDRAM_REGS::end - RDRAM_REGS::begining));
+	while (true)
+	{
+		a = RDRAM_REGS::begining + (rand() % (RDRAM_REGS::end - RDRAM_REGS::begining)) + ((rand() % 0xF) << 16);
+		cout << hex << "0x" << a << endl;
+	}
 	//cpu->boot(rom->getBootCode());
 	getchar();
 	
