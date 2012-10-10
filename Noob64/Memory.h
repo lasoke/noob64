@@ -44,7 +44,6 @@ public:
 	static const int size = 0x800000;
 	void dump(void) const;
 	void dump_range(word from, word to) const;
-private:
 	byte data[size];
 };
 
@@ -56,7 +55,6 @@ public:
 	static const word begining = 0x03F00000;
 	static const word end = 0x03FFFFFF;
 	void dump(void) const;
-private:
 	struct {
 		word config;
 		word device_id;
@@ -82,7 +80,6 @@ public:
 	void dump(void) const;
 	void dump_range_dmem(word from, word to) const;
 	void dump_range_imem(word from, word to) const;
-private:
 	struct {
 		byte dmem[0x1000];
 		byte imem[0x1000];
@@ -110,7 +107,6 @@ public:
 	static const word begining = 0x04100000;
 	static const word end = 0x041FFFFF;
 	void dump(void) const;
-private:
 	struct
 	{
 		word start;
@@ -133,7 +129,6 @@ public:
 	static const word begining = 0x04200000;
 	static const word end = 0x042FFFFF;
 	void dump(void) const;
-private:
 	struct
 	{
 		word tbist;
@@ -152,7 +147,6 @@ public:
 	static const word begining = 0x04300000;
 	static const word end = 0x043FFFFF;
 	void dump(void) const;
-private:
 	struct
 	{
 		word init_mode;
@@ -171,7 +165,6 @@ public:
 	static const word begining = 0x04400000;
 	static const word end = 0x044FFFFF;
 	void dump(void) const;
-private:
 	struct
 	{
 		word status;
@@ -200,7 +193,6 @@ public:
 	static const word begining = 0x04500000;
 	static const word end = 0x045FFFFF;
 	void dump(void) const;
-private:
 	struct
 	{
 		word dram_addr;
@@ -221,7 +213,6 @@ public:
 	static const word begining = 0x04600000;
 	static const word end = 0x046FFFFF;
 	void dump(void) const;
-private:
 	struct
 	{
 		word dram_addr;
@@ -249,7 +240,6 @@ public:
 	static const word begining = 0x04700000;
 	static const word end = 0x047FFFFF;
 	void dump(void) const;
-private:
 	struct
 	{
 		word mode;
@@ -272,7 +262,6 @@ public:
 	static const word begining = 0x04800000;
 	static const word end = 0x048FFFFF;
 	void dump(void) const;
-private:
 	struct
 	{
 		word dram_addr;
@@ -284,6 +273,29 @@ private:
 		word status;
 		byte unused[0xFFFE4];
 	} data;
+};
+
+// Serial Interface (SI) Registers
+class PIF_ROM : public MEM_SEG
+{
+public:
+	PIF_ROM();
+	static const word begining = 0x1FC00000;
+	static const word end = 0x1FC007BF;
+	void dump(void) const;
+	byte data[0x7C0];
+};
+
+
+// Serial Interface (SI) Registers
+class PIF_RAM : public MEM_SEG
+{
+public:
+	PIF_RAM();
+	static const word begining = 0x1FC007C0;
+	static const word end = 0x1FC007FF;
+	void dump(void) const;
+	byte data[0x40];
 };
 
 //****************************************************************************
@@ -305,10 +317,20 @@ public:
 	PI_REGS*	pi_regs;
 	RI_REGS*	ri_regs;
 	SI_REGS*	si_regs;
+	PIF_ROM*	pif_rom;
+	PIF_RAM*	pif_ram;
+	static byte SRAM[0x8000];
+	word		CIC_Chip;
 
 	inline void* virtual_to_physical(dword address);
 	template <typename Type> inline Type read(dword address);
 	template <typename Type> inline void write(Type data, dword address);
+	void dma_pi_write();
+	void dma_pi_read();
+	void dma_si_write();
+	void dma_si_read();
+	void dma_sp_write();
+	void dma_sp_read();
 };
 
 //****************************************************************************
