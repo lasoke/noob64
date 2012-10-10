@@ -43,6 +43,7 @@ public:
 	static const word end = 0x03EFFFFF;
 	static const int size = 0x800000;
 	void dump(void) const;
+	void dump_range(word from, word to) const;
 private:
 	byte data[size];
 };
@@ -79,6 +80,8 @@ public:
 	static const word begining = 0x04000000;
 	static const word end = 0x0400FFFF;
 	void dump(void) const;
+	void dump_range_dmem(word from, word to) const;
+	void dump_range_imem(word from, word to) const;
 private:
 	struct {
 		byte dmem[0x1000];
@@ -123,7 +126,7 @@ private:
 };
 
 // DP Span Registers
-class DPS_REGS : MEM_SEG
+class DPS_REGS : public MEM_SEG
 {
 public:
 	DPS_REGS();
@@ -142,7 +145,7 @@ private:
 };
 
 // MIPS Interface (MI) Registers
-class MI_REGS : MEM_SEG
+class MI_REGS : public MEM_SEG
 {
 public:
 	MI_REGS();
@@ -161,7 +164,7 @@ private:
 };
 
 // Video Interface (VI) Registers
-class VI_REGS : MEM_SEG
+class VI_REGS : public MEM_SEG
 {
 public:
 	VI_REGS();
@@ -190,7 +193,7 @@ private:
 };
 
 // Audio Interface (AI) Registers
-class AI_REGS : MEM_SEG
+class AI_REGS : public MEM_SEG
 {
 public:
 	AI_REGS();
@@ -211,7 +214,7 @@ private:
 };
 
 // Peripheral Interface (PI) Registers
-class PI_REGS : MEM_SEG
+class PI_REGS : public MEM_SEG
 {
 public:
 	PI_REGS();
@@ -239,7 +242,7 @@ private:
 };
 
 // RDRAM Interface (RI) Registers
-class RI_REGS : MEM_SEG
+class RI_REGS : public MEM_SEG
 {
 public:
 	RI_REGS();
@@ -262,7 +265,7 @@ private:
 };
 
 // Serial Interface (SI) Registers
-class SI_REGS : MEM_SEG
+class SI_REGS : public MEM_SEG
 {
 public:
 	SI_REGS();
@@ -335,6 +338,7 @@ inline void MEMORY::write(Type data, dword address)
 //****************************************************************************
 inline void* MEMORY::virtual_to_physical(dword address)
 {
+	address = (word) address;
 	if (RDRAM::begining <= address && address <= RDRAM::end)
 	{
 		//cout << "[RRDRAM]";
@@ -344,6 +348,61 @@ inline void* MEMORY::virtual_to_physical(dword address)
 	{
 		//cout << "[RRDRAM_REGS]";
 		return (void*) ((char*) rdram_regs->ptr + address - RDRAM_REGS::begining);
+	}
+	else if (SP_REGS::begining <= address && address <= SP_REGS::end)
+	{
+		//cout << "[SP_REGS]";
+		return (void*) ((char*) sp_regs->ptr + address - SP_REGS::begining);
+	}
+	else if (DPC_REGS::begining <= address && address <= DPC_REGS::end)
+	{
+		//cout << "[DPC_REGS]";
+		return (void*) ((char*) dpc_regs->ptr + address - DPC_REGS::begining);
+	}
+	else if (DPS_REGS::begining <= address && address <= DPS_REGS::end)
+	{
+		//cout << "[DPS_REGS]";
+		return (void*) ((char*) dps_regs->ptr + address - DPS_REGS::begining);
+	}
+	else if (MI_REGS::begining <= address && address <= MI_REGS::end)
+	{
+		//cout << "[MI_REGS]";
+		return (void*) ((char*) mi_regs->ptr + address - MI_REGS::begining);
+	}
+	else if (VI_REGS::begining <= address && address <= VI_REGS::end)
+	{
+		//cout << "[VI_REGS]";
+		return (void*) ((char*) vi_regs->ptr + address - VI_REGS::begining);
+	}
+	else if (AI_REGS::begining <= address && address <= AI_REGS::end)
+	{
+		//cout << "[AI_REGS]";
+		return (void*) ((char*) ai_regs->ptr + address - AI_REGS::begining);
+	}
+	else if (PI_REGS::begining <= address && address <= PI_REGS::end)
+	{
+		//cout << "[PI_REGS]";
+		return (void*) ((char*) pi_regs->ptr + address - PI_REGS::begining);
+	}
+	else if (RI_REGS::begining <= address && address <= RI_REGS::end)
+	{
+		//cout << "[RI_REGS]";
+		return (void*) ((char*) ri_regs->ptr + address - RI_REGS::begining);
+	}
+	else if (SI_REGS::begining <= address && address <= SI_REGS::end)
+	{
+		//cout << "[DPC_REGS]";
+		return (void*) ((char*) si_regs->ptr + address - SI_REGS::begining);
+	}
+	else if (0x80000000 <= address && address <= 0x9FFFFFFF)
+	{
+		//cout << "Mirror 8 of 0x0000 0000 to 0x1FFF FFFF";
+		return (virtual_to_physical (address - 0x80000000));
+	}
+	else if (0xA0000000 <= address && address <= 0xBFFFFFFF)
+	{
+		//cout << "Mirror A of 0x0000 0000 to 0x1FFF FFFF";
+		return (virtual_to_physical (address - 0xA0000000));
 	}
 	else
 		cout << endl << "ERROR: Address not handled (yet)" << endl;

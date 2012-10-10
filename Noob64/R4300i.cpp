@@ -10,6 +10,31 @@ R4300i::R4300i(MEMORY &mem) :
 		f[i] = (dword) 0;
 		cop0[i] = (word) 0;
 	}
+
+	// PIF ROM sets register values
+	Config = 0x0006e463;
+	Status = 0x34000000;
+	Random = 0x0000002F;
+	PRevID = 0x00000B00;
+	Random = 0x0000001F;
+
+	//PIF ROM writes 0x01010101 to memory address 0x0430 0004
+	memory.write<word>(0x01010101, 0x04300004);
+
+	/**
+	* The PIF ROM then copies the first 0x1000 bytes from the cartridge 
+	* (located at 0xb000 0000) to memory address 0xA400 0000.
+	* Next the PIF ROM sets the PC to 0xA400 0040. Note that this skips 
+	* the first 0x40 bytes of the program because that is where the 
+	* cartridge header is stored.
+	*/
+
+	// PIF ROM copies first 0x1000 bytes of ROM to first 0x1000 bytes of SP_MEM
+	for(int i=0; i < 0x1000; i++)
+	{
+		//memory.sp_regs.dmem[i] = memory.rom[i];
+	}
+
 }
 
 word *bootcode;

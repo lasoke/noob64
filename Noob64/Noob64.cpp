@@ -68,16 +68,10 @@ int main(array<System::String ^> ^args)
 		cout << "PASSED: t=" << t << " a=0x" << hex << a << endl;
 		//getchar();
 	}
+
+	memory->rdram->dump_range(0x000F0ACB, 0x000F0BFF);
 	*/
-	/*
-	memory->write<dword>(0xFFFFFFFFFFFFFFFF, 0x0);
-	memory->write<dword>(0xFFFFFFFFFFFFFFFF, 0x8);
-	memory->write<word>(0xAAF0A, 0x1);
-	cout << memory->read<dword>(0x3) << endl;
-	cout << memory->read<word>(0x0) << endl;
-	memory->write<hword>(memory->read<hword>(0x3), 0x16);
-	memory->rdram->dump();
-	*/
+
 	cpu->boot(rom->getBootCode());
 	getchar();
 	

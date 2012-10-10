@@ -51,19 +51,16 @@ RDRAM_REGS::RDRAM_REGS()
 void RDRAM::dump(void) const
 {
 	cout << "*** RDRAM ***" << endl;
+	dump_array(0x0, data, 0x40000);
+	cout << "*** END OF RDRAM ***"<< endl;
+}
 
-	for (unsigned int i = 0; i < 32; i += sizeof(word))
-	{
-		word line = binary_to_type<word>(data + i);
-		// print address
-		char addr[8];
-		_itoa_s(i, addr, 16);
-		cout << format_number(string(8 - strlen(addr), '0') + addr, ' ', 2) << " : ";
-		// print data
-		char mem[33];
-		_itoa_s(line, mem, 2);
-		cout << format_number(string(sizeof(word) * 8 - strlen(mem), '0') + mem, ' ', 8) << endl;
-	}
+void RDRAM::dump_range(word from, word to) const
+{
+	if (from >= to)
+		return;
+	cout << "*** RDRAM ***" << endl;
+	dump_array(0x0 + from, data, (to - from));
 	cout << "*** END OF RDRAM ***"<< endl;
 }
 
@@ -93,6 +90,10 @@ SP_REGS::SP_REGS()
 void SP_REGS::dump(void) const
 {	
 	cout << "*** SP REGISTERS ***" << endl;
+	cout << "dmem =" << endl;
+	dump_array(begining, data.dmem, 0x1000);
+	cout << "imem =" << endl;
+	dump_array(begining + 0x1000, data.imem, 0x1000);
 	cout << "mem_addr = " << data.mem_addr << endl;
 	cout << "dram_addr = " << data.dram_addr << endl;
 	cout << "rd_len = " << data.rd_len << endl;
@@ -104,6 +105,24 @@ void SP_REGS::dump(void) const
 	cout << "pc = " << data.pc << endl;
 	cout << "ibist = " << data.ibist << endl;
 	cout << "*** END OF SP REGISTERS ***" << endl;
+}
+
+void SP_REGS::dump_range_dmem(word from, word to) const
+{
+	if (from >= to)
+		return;
+	cout << "*** SP_REG->DMEM ***" << endl;
+	dump_array(begining + from, data.dmem, (to - from));
+	cout << "*** END OF SP_REG->DMEM ***"<< endl;
+}
+
+void SP_REGS::dump_range_imem(word from, word to) const
+{
+	if (from >= to)
+		return;
+	cout << "*** SP_REG->DMEM ***" << endl;
+	dump_array(begining + 0x1000 + from, data.imem, (to - from));
+	cout << "*** END OF SP_REG->DMEM ***"<< endl;
 }
 
 // DPC REGISTERS

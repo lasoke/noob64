@@ -35,3 +35,19 @@ word getWord(char **ptr)
     }
 	return value;
 }
+
+void dump_array(word start_addr, const byte *data, unsigned int size)
+{
+	for (unsigned int i = 0; i < size; i += sizeof(word))
+	{
+		word line = binary_to_type<word>(data + i);
+		// print address
+		char addr[8];
+		_itoa_s(start_addr + i, addr, 16);
+		cout << format_number(string(8 - strlen(addr), '0') + addr, ' ', 2) << " : ";
+		// print data
+		char mem[33];
+		_itoa_s(line, mem, 2);
+		cout << format_number(string(sizeof(word) * 8 - strlen(mem), '0') + mem, ' ', 8) << endl;
+	}
+}
