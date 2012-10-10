@@ -24,8 +24,11 @@ using namespace std;
 #include "Instruction.h"
 #include "ExceptionHandler.h"
 #include "Helper.h"
-#include "RomLoader.h"
+#include "Rom.h"
 #include "tlb.h"
 #include "R4300i.h"
 #include "Form1.h"
+
+// byteswap
+#include <intrin.h>
 

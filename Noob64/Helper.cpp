@@ -13,7 +13,7 @@ string format_number(string s, char c, int frequency)
 	return s;
 }
 
-word getWord(char **ptr)
+byte getByte(char **ptr)
 {
 	word value = 0;
 	char ch = **ptr;
@@ -21,7 +21,7 @@ word getWord(char **ptr)
     while (ch == ' ' || ch == '\t' || ch == '\n')
         ch = *(++*ptr);
 
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < 2; i++)
 	{
         if (ch >= '0' && ch <= '9')
             value = (value << 4) + (ch - '0');

@@ -1,23 +1,19 @@
 #include "StdAfx.h"
 
-//****************************************************************************
-//** CONSTRUCTORS					                                        **
-//****************************************************************************
-
 // MEMORY
-MEMORY::MEMORY()
+MEMORY::MEMORY() :
+	rdram		(*new RDRAM()),
+	rdram_regs	(*new RDRAM_REGS()),
+	sp_regs		(*new SP_REGS()),
+	dpc_regs	(*new DPC_REGS()),
+	dps_regs	(*new DPS_REGS()),
+	mi_regs		(*new MI_REGS()),
+	vi_regs		(*new VI_REGS()),
+	ai_regs		(*new AI_REGS()),
+	pi_regs		(*new PI_REGS()),
+	ri_regs		(*new RI_REGS()),
+	si_regs		(*new SI_REGS())
 {
-	rdram		= new RDRAM();
-	rdram_regs	= new RDRAM_REGS();
-	sp_regs		= new SP_REGS();
-	dpc_regs	= new DPC_REGS();
-	dps_regs	= new DPS_REGS();
-	mi_regs		= new MI_REGS();
-	vi_regs		= new VI_REGS();
-	ai_regs		= new AI_REGS();
-	pi_regs		= new PI_REGS();
-	ri_regs		= new RI_REGS();
-	si_regs		= new SI_REGS();
 }
 
 // MEMORY SEGMENT
@@ -26,81 +22,90 @@ MEM_SEG::MEM_SEG() :
 {
 }
 
+char* MEM_SEG::operator[] (const dword address) const
+{
+	return (char*) ptr + address;
+}
+
+//****************************************************************************
+//** SEGMENTS CONSTRUCTORS					                                **
+//****************************************************************************
+
 // RDRAM
 RDRAM::RDRAM()
 {
 	memset(data, 0, sizeof(data));
-	ptr = data;
+	ptr = (char*) data;
 }
 
 // RDRAM REGISTERS
 RDRAM_REGS::RDRAM_REGS()
 {
 	memset(&data, 0, sizeof(data));
-	ptr = &data;
+	ptr = (char*) &data;
 }
 
 // SP REGISTERS
 SP_REGS::SP_REGS()
 {
 	memset(&data, 0, sizeof(data));
-	ptr = &data;
+	ptr = (char*) &data;
 }
 
 // DPC REGISTERS
 DPC_REGS::DPC_REGS()
 {
 	memset(&data, 0, sizeof(data));
-	ptr = &data;
+	ptr = (char*) &data;
 }
 
 // DPS REGISTERS
 DPS_REGS::DPS_REGS()
 {
 	memset(&data, 0, sizeof(data));
-	ptr = &data;
+	ptr = (char*) &data;
 }
 
 // MI REGISTERS
 MI_REGS::MI_REGS()
 {
 	memset(&data, 0, sizeof(data));
-	ptr = &data;
+	ptr = (char*) &data;
 }
 
 // VI REGISTERS
 VI_REGS::VI_REGS()
 {
 	memset(&data, 0, sizeof(data));
-	ptr = &data;
+	ptr = (char*) &data;
 }
 
 // AI REGISTERS
 AI_REGS::AI_REGS()
 {
 	memset(&data, 0, sizeof(data));
-	ptr = &data;
+	ptr = (char*) &data;
 }
 
 // PI REGISTERS
 PI_REGS::PI_REGS()
 {
 	memset(&data, 0, sizeof(data));
-	ptr = &data;
+	ptr = (char*) &data;
 }
 
 // RI REGISTERS
 RI_REGS::RI_REGS()
 {
 	memset(&data, 0, sizeof(data));
-	ptr = &data;
+	ptr = (char*) &data;
 }
 
 // SI REGISTERS
 SI_REGS::SI_REGS()
 {
 	memset(&data, 0, sizeof(data));
-	ptr = &data;
+	ptr = (char*) &data;
 }
 
 
