@@ -16,16 +16,8 @@ void inline enableConsole()
 	err = freopen_s(&stream, "conout$","w", stderr);
 }
 
-[STAThreadAttribute]
-int main(array<System::String ^> ^args)
+void test(MEMORY* memory, ROM* rom, R4300i* cpu)
 {
-	enableConsole();
-
-	MEMORY*		memory	= new MEMORY();
-	RomLoader*	rom		= new RomLoader();
-	R4300i*		cpu		= new R4300i(*memory);
-	
-	/*
 	srand((unsigned int) time(NULL));
 	while (true)
 	{
@@ -69,10 +61,19 @@ int main(array<System::String ^> ^args)
 		//getchar();
 	}
 
-	memory->rdram->dump_range(0x000F0ACB, 0x000F0BFF);
-	*/
+	memory->rdram.dump_range(0x000F0ACB, 0x000F0BFF);
+}
 
-	cpu->boot(rom->getBootCode());
+[STAThreadAttribute]
+int main(array<System::String ^> ^args)
+{
+	enableConsole();
+
+	MEMORY*		memory	= new MEMORY();
+	ROM*		rom		= new ROM();
+	R4300i*		cpu		= new R4300i(memory);
+	
+	cpu->boot(rom);
 	getchar();
 	
 	/*

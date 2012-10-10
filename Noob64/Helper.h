@@ -4,30 +4,30 @@
 string format_number(string s, char c, int frequency);
 
 //returns the word contained at the address pointed by ptr
-word getWord(char **ptr);
+byte getByte(char **ptr);
 
 //print the memory contains in the array data
 void dump_array(word start_addr, const byte *data, unsigned int size);
 
 inline dword extend_sign_word(dword d)
 {
-	if (d & 0x0000000080000000LL)
+	if (d & 0x80000000LL)
 		return d |= 0xFFFFFFFF00000000LL;
 	return d &= 0xFFFFFFFF;
 }
 
 inline dword extend_sign_halfword(dword d)
 {
-	if (d & 0x80)
-		return d |= 0xFFFFFFFFFFFFFF00LL;
-	return d &= 0xFF;
+	if (d & 0x8000)
+		return d |= 0xFFFFFFFFFFFF0000LL;
+	return d &= 0xFFFF;
 }
 
 inline dword extend_sign_byte(dword d)
 {
-	if (d & 0x8000)
-		return d |= 0xFFFFFFFFFFFF0000LL;
-	return d &= 0xFFFF;
+	if (d & 0x80)
+		return d |= 0xFFFFFFFFFFFFFF00LL;
+	return d &= 0xFF;
 }
 
 //****************************************************************************

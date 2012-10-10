@@ -30,8 +30,10 @@ public:
 	static const word begining;
 	static const word end;
 	//static bool contains(word address) { return begining <= address && address <= end; };
-	const void *ptr;
+	const char *ptr;
 	virtual void dump(void) const = 0;
+
+	char* operator[] (const dword address) const;
 };
 
 //RDRAM
@@ -107,8 +109,7 @@ public:
 	static const word begining = 0x04100000;
 	static const word end = 0x041FFFFF;
 	void dump(void) const;
-	struct
-	{
+	struct {
 		word start;
 		word end;
 		word current;
@@ -129,8 +130,7 @@ public:
 	static const word begining = 0x04200000;
 	static const word end = 0x042FFFFF;
 	void dump(void) const;
-	struct
-	{
+	struct	{
 		word tbist;
 		word test_mode;
 		word buftest_addr;
@@ -147,8 +147,7 @@ public:
 	static const word begining = 0x04300000;
 	static const word end = 0x043FFFFF;
 	void dump(void) const;
-	struct
-	{
+	struct	{
 		word init_mode;
 		word version;
 		word intr;
@@ -165,8 +164,7 @@ public:
 	static const word begining = 0x04400000;
 	static const word end = 0x044FFFFF;
 	void dump(void) const;
-	struct
-	{
+	struct	{
 		word status;
 		word origin;
 		word width;
@@ -193,8 +191,7 @@ public:
 	static const word begining = 0x04500000;
 	static const word end = 0x045FFFFF;
 	void dump(void) const;
-	struct
-	{
+	struct	{
 		word dram_addr;
 		word len;
 		word control;
@@ -213,8 +210,7 @@ public:
 	static const word begining = 0x04600000;
 	static const word end = 0x046FFFFF;
 	void dump(void) const;
-	struct
-	{
+	struct	{
 		word dram_addr;
 		word cart_addr;
 		word rd_len;
@@ -240,8 +236,7 @@ public:
 	static const word begining = 0x04700000;
 	static const word end = 0x047FFFFF;
 	void dump(void) const;
-	struct
-	{
+	struct	{
 		word mode;
 		word config;
 		word current_load;
@@ -262,8 +257,7 @@ public:
 	static const word begining = 0x04800000;
 	static const word end = 0x048FFFFF;
 	void dump(void) const;
-	struct
-	{
+	struct	{
 		word dram_addr;
 		word pif_addr_rd64b;
 		word reserved;
@@ -306,20 +300,20 @@ class MEMORY
 public:
 	MEMORY();
 
-	RDRAM*		rdram;
-	RDRAM_REGS* rdram_regs;
-	SP_REGS*	sp_regs;
-	DPC_REGS*	dpc_regs;
-	DPS_REGS*	dps_regs;
-	MI_REGS*	mi_regs;
-	VI_REGS*	vi_regs;
-	AI_REGS*	ai_regs;
-	PI_REGS*	pi_regs;
-	RI_REGS*	ri_regs;
-	SI_REGS*	si_regs;
-	PIF_ROM*	pif_rom;
-	PIF_RAM*	pif_ram;
-	static byte SRAM[0x8000];
+	RDRAM		&rdram;
+	RDRAM_REGS	&rdram_regs;
+	SP_REGS		&sp_regs;
+	DPC_REGS	&dpc_regs;
+	DPS_REGS	&dps_regs;
+	MI_REGS		&mi_regs;
+	VI_REGS		&vi_regs;
+	AI_REGS		&ai_regs;
+	PI_REGS		&pi_regs;
+	RI_REGS		&ri_regs;
+	SI_REGS		&si_regs;
+	PIF_ROM		&pif_rom;
+	PIF_RAM		&pif_ram;
+	byte		SRAM[0x8000];
 	word		CIC_Chip;
 
 	inline void* virtual_to_physical(dword address);
@@ -350,7 +344,8 @@ inline Type MEMORY::read(dword address)
 template <typename Type>
 inline void MEMORY::write(Type data, dword address)
 {
-	Type *dst = (Type*) virtual_to_physical(address);
+	//Type *dst = (Type*) virtual_to_physical(address);
+	void *dst = virtual_to_physical(address);
 	data = type_to_binary<Type>(data);
 	memcpy(dst, &data, sizeof(Type));
 }
@@ -363,68 +358,68 @@ inline void* MEMORY::virtual_to_physical(dword address)
 	address = (word) address;
 	if (RDRAM::begining <= address && address <= RDRAM::end)
 	{
-		//cout << "[RRDRAM]";
-		return (void*) ((char*) rdram->ptr + address - RDRAM::begining);
+		// cout << "[RRDRAM]";
+		return (void*) (rdram[address- RDRAM::begining]);
 	}
 	else if (RDRAM_REGS::begining <= address && address <= RDRAM_REGS::end)
 	{
-		//cout << "[RRDRAM_REGS]";
-		return (void*) ((char*) rdram_regs->ptr + address - RDRAM_REGS::begining);
+		// cout << "[RRDRAM_REGS]";
+		return (void*) (rdram_regs[address - RDRAM_REGS::begining]);
 	}
 	else if (SP_REGS::begining <= address && address <= SP_REGS::end)
 	{
-		//cout << "[SP_REGS]";
-		return (void*) ((char*) sp_regs->ptr + address - SP_REGS::begining);
+		// cout << "[SP_REGS]";
+		return (void*) (sp_regs[address - SP_REGS::begining]);
 	}
 	else if (DPC_REGS::begining <= address && address <= DPC_REGS::end)
 	{
-		//cout << "[DPC_REGS]";
-		return (void*) ((char*) dpc_regs->ptr + address - DPC_REGS::begining);
+		// cout << "[DPC_REGS]";
+		return (void*) (dpc_regs[address - DPC_REGS::begining]);
 	}
 	else if (DPS_REGS::begining <= address && address <= DPS_REGS::end)
 	{
-		//cout << "[DPS_REGS]";
-		return (void*) ((char*) dps_regs->ptr + address - DPS_REGS::begining);
+		// cout << "[DPS_REGS]";
+		return (void*) (dps_regs[address - DPS_REGS::begining]);
 	}
 	else if (MI_REGS::begining <= address && address <= MI_REGS::end)
 	{
-		//cout << "[MI_REGS]";
-		return (void*) ((char*) mi_regs->ptr + address - MI_REGS::begining);
+		// cout << "[MI_REGS]";
+		return (void*) (mi_regs[address - MI_REGS::begining]);
 	}
 	else if (VI_REGS::begining <= address && address <= VI_REGS::end)
 	{
-		//cout << "[VI_REGS]";
-		return (void*) ((char*) vi_regs->ptr + address - VI_REGS::begining);
+		// cout << "[VI_REGS]";
+		return (void*) (vi_regs[address - VI_REGS::begining]);
 	}
 	else if (AI_REGS::begining <= address && address <= AI_REGS::end)
 	{
-		//cout << "[AI_REGS]";
-		return (void*) ((char*) ai_regs->ptr + address - AI_REGS::begining);
+		// cout << "[AI_REGS]";
+		return (void*) (ai_regs[address - AI_REGS::begining]);
 	}
 	else if (PI_REGS::begining <= address && address <= PI_REGS::end)
 	{
-		//cout << "[PI_REGS]";
-		return (void*) ((char*) pi_regs->ptr + address - PI_REGS::begining);
+		// cout << "[PI_REGS]";
+		return (void*) (pi_regs[address - PI_REGS::begining]);
 	}
 	else if (RI_REGS::begining <= address && address <= RI_REGS::end)
 	{
-		//cout << "[RI_REGS]";
-		return (void*) ((char*) ri_regs->ptr + address - RI_REGS::begining);
+		// cout << "[RI_REGS]";
+		return (void*) (ri_regs[address - RI_REGS::begining]);
 	}
 	else if (SI_REGS::begining <= address && address <= SI_REGS::end)
 	{
-		//cout << "[DPC_REGS]";
-		return (void*) ((char*) si_regs->ptr + address - SI_REGS::begining);
+		// cout << "[DPC_REGS]";
+		return (void*) (si_regs[address - SI_REGS::begining]);
 	}
 	else if (0x80000000 <= address && address <= 0x9FFFFFFF)
 	{
-		//cout << "Mirror 8 of 0x0000 0000 to 0x1FFF FFFF";
-		return (virtual_to_physical (address - 0x80000000));
+		// cout << "Mirror 8 of 0x0000 0000 to 0x1FFF FFFF";
+		return (virtual_to_physical(address - 0x80000000));
 	}
 	else if (0xA0000000 <= address && address <= 0xBFFFFFFF)
 	{
-		//cout << "Mirror A of 0x0000 0000 to 0x1FFF FFFF";
-		return (virtual_to_physical (address - 0xA0000000));
+		// cout << "Mirror A of 0x0000 0000 to 0x1FFF FFFF";
+		return (virtual_to_physical(address - 0xA0000000));
 	}
 	else
 		cout << endl << "ERROR: Address not handled (yet)" << endl;

@@ -32,15 +32,17 @@
 class R4300i
 {
 public:
-	R4300i(MEMORY &mem);
-	void R4300i::boot(word *bootcode);
-	void decode(const word instr);
+	R4300i(MEMORY *mem);
+	void boot(ROM *rom);
+	void reset();
 private:
-	MEMORY &memory;
+	MEMORY *memory;
 	ExceptionHandler &ehandler;
+	ROM *rom;
+
 	string print_addr();
 
-	void decode_next_instr(const dword pc);
+	void decode(const word instr);
 	void decode_r(const word instr);
 	void decode_i(const word instr);
 	void decode_cop0(const word instr);
@@ -52,11 +54,15 @@ private:
 	//****************************************************************************
 	//** Registers					                                            **
 	//****************************************************************************
-	dword r[32];									// General Purpose Registers (GPRs)
-	dword f[32];									// FP General Purpose Registers (FGRs)
-	word  cop0[32];									// Cop0 registers
-	dword pc, hi, lo, ll, fcr0, fcr31;				// Special Registers
-	word delay_slot;								// for branch instructions
+	// TODO: r[0] is always 0
+	dword	r[32];									// General Purpose Registers (GPRs)
+	dword	f[32];									// FP General Purpose Registers (FGRs)
+	word	cop0[32];								// Cop0 registers
+	dword	pc;										// Program Counter
+	dword	hi, lo;									// Multiply/Divide result
+	word	fcr0, fcr31;							// Floating Point Control Registers
+	bool	ll;										// Load/Link Register
+	word	delay_slot;								// for branch instructions
 	//****************************************************************************
 	//** OTHER																	**
 	//****************************************************************************
