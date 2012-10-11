@@ -1023,7 +1023,7 @@ void R4300i::ADDIU(int rt, int rs, int immed)
 #	if defined DEBUG
 		cout << print_addr() << "ADDIU " << dec << "r" << rt << " " << hex << "0x" << immed << dec << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = r[rs] + immed;
+	r[rt] = r[rs] + extend_sign_halfword(immed);
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -1103,7 +1103,7 @@ void R4300i::DADDIU(int rt, int rs, int immed)
 #	if defined DEBUG
 		cout << print_addr() << "DADDIU " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = r[rs] + immed;
+	r[rt] = r[rs] + extend_sign_halfword(immed);
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -2046,9 +2046,9 @@ void R4300i::BNE(int rs, int rt, int immed)
 #	endif // DEBUG
 	if (r[rs] != r[rt])
 	{
-		dword pc_tmp = pc + extend_sign_halfword(immed - 1);
 		pc += 4;
 		decode(memory->read<word>(pc));
+		dword pc_tmp = pc + (extend_sign_halfword(immed - 1) << 2);
 		pc = pc_tmp;
 	}
 	else
