@@ -422,6 +422,6 @@ inline void* MEMORY::virtual_to_physical(dword address)
 		return (virtual_to_physical(address - 0xA0000000));
 	}
 	else
-		cout << endl << "ERROR: Address not handled (yet)" << endl;
+		cout << endl << "ERROR: Address 0x" << hex << address << " not handled" << endl;
 	return 0;
 }

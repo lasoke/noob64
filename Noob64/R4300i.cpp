@@ -25,9 +25,25 @@ void R4300i::reset()
 
 	// PIF ROM Initialization
 
-	r[20]	= 0x00000001;
-    r[22]	= 0x0000003f;
-    r[29]	= 0xA0401FF0;
+	r[2]	= 0xFFFFFFFFD1731BE9;
+	r[3]	= 0xFFFFFFFFD1731BE9;
+	r[4]	= 0x0000000000001BE9;
+	r[5]	= 0xFFFFFFFFF45231E5;
+	r[6]	= 0xFFFFFFFFA4001F0C;
+	r[7]	= 0xFFFFFFFFA4001F08;
+	r[8]	= 0x00000000000000C0;
+	r[10]	= 0x0000000000000040;
+	r[11]	= 0xFFFFFFFFA4000040;
+	r[12]	= 0xFFFFFFFFD1330BC3;
+	r[13]	= 0xFFFFFFFFD1330BC3;
+	r[14]	= 0x0000000025613A26;
+	r[15]	= 0x000000002EA04317;
+	r[20]	= 0x0000000000000001;
+	r[22]	= 0x000000000000003F;
+	r[23]	= 0x0000000000000001;
+	r[25]	= 0xFFFFFFFFD73F2993;
+	r[29]	= 0xFFFFFFFFA4001FF0;
+	r[31]	= 0xFFFFFFFFA4001554;
 
 	Config	= 0x0006E463;
 	Status	= 0x34000000;
@@ -56,7 +72,10 @@ void R4300i::boot(ROM *r)
 	
 	while (true)
 	{
+		//if (pc > 0xA40000E0)
+			//getchar();
 		decode(memory->read<word>(pc));
+		getchar();
 	}
 }
 
@@ -1011,7 +1030,7 @@ void R4300i::ADDI(int rt, int rs, int immed)
 #	if defined DEBUG
 		cout << print_addr() << "ADDI " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = r[rs] + extend_sign_halfword(immed);
+	r[rt] = (sword) r[rs] + extend_sign_halfword(immed);
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -1023,7 +1042,7 @@ void R4300i::ADDIU(int rt, int rs, int immed)
 #	if defined DEBUG
 		cout << print_addr() << "ADDIU " << dec << "r" << rt << " " << hex << "0x" << immed << dec << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = r[rs] + immed;
+	r[rt] = r[rs] + extend_sign_halfword(immed);
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -1083,18 +1102,10 @@ void R4300i::DADDI(int rt, int rs, int immed)
 #	if defined DEBUG
 		cout << print_addr() << "DADDI " << dec << "r" << rt << " " << hex << "0x" << immed << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	if (DWORD_MAX - immed < r[rs])
-	{
-		//TODO: "If overflow occurs, then trap."
-		ehandler.trap();
-	}
-	else
-	{
-		r[rt] = r[rs] + extend_sign_halfword(immed);
+	r[rt] = r[rs] + extend_sign_halfword(immed);
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
-	}
 	pc += 4;;
 }
 
@@ -2023,8 +2034,8 @@ void R4300i::BLTZL(int immed, int rs)
 #	endif // DEBUG
 	if ((sdword) r[rs] < 0)
 	{
-		dword pc_tmp = pc + extend_sign_halfword(immed - 1);
-		pc += 4;;
+		dword pc_tmp = pc + (immed << 2);
+		pc += 4;
 		delay_slot = 1;
 		decode(memory->read<word>(pc));
 		delay_slot = 0;
@@ -2036,6 +2047,20 @@ void R4300i::BLTZL(int immed, int rs)
 	}
 }
 
+/*
+   local_rs = irs;
+   local_rt = irt;
+   PC++;
+   delay_slot=1;
+   PC->ops();
+   update_count();
+   delay_slot=0;
+   if (local_rs != local_rt && !skip_jump)
+     PC += (PC-2)->f.i.immediate-1;
+   last_addr = PC->addr;
+   if (next_interupt <= Count) gen_interupt();
+*/
+
 void R4300i::BNE(int rs, int rt, int immed)
 {
 #	if defined DEBUG
@@ -2044,17 +2069,14 @@ void R4300i::BNE(int rs, int rt, int immed)
 		else
 			cout << print_addr() << "BNE " << dec << "r" << rs << " " << dec << "r" << rt << " 0x" << hex << immed;
 #	endif // DEBUG
-	if (r[rs] != r[rt])
-	{
-		dword pc_tmp = pc + extend_sign_halfword(immed - 1);
-		pc += 4;
-		decode(memory->read<word>(pc));
-		pc = pc_tmp;
-	}
-	else
-	{
-		pc += 4;;
-	}
+	dword local_rs = r[rs];
+	dword local_rt = r[rt];
+	pc += 4;
+	delay_slot = 1;
+	decode(memory->read<word>(pc));
+	delay_slot = 0;
+	if (local_rs != local_rt)
+		pc += (extend_sign_halfword(immed - 1) << 2);
 }
 
 void R4300i::BNEL(int rs, int rt, int immed)
