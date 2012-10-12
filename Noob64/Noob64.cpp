@@ -1,12 +1,24 @@
-// Noob64.cpp : main project file.
+// Noob64.cpp : Defines the entry point for the application.
+//
 
 #include "stdafx.h"
-#include <time.h>
+#include "Noob64.h"
 
-using namespace Noob64;
+#define MAX_LOADSTRING 100
 
+// Global Variables:
+HINSTANCE hInst;								// current instance
+TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
+TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
+
+// Forward declarations of functions included in this code module:
+ATOM				MyRegisterClass(HINSTANCE hInstance);
+BOOL				InitInstance(HINSTANCE, int);
+LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
+
+// Helper function to dispay a console
 FILE *stream;
-
 void inline enableConsole()
 {
     errno_t err;
@@ -16,74 +28,196 @@ void inline enableConsole()
 	err = freopen_s(&stream, "conout$","w", stderr);
 }
 
-void test(MEMORY* memory, ROM* rom, R4300i* cpu)
+// Typedef for the dll function call test
+typedef UINT (CALLBACK* LPFNDLLFUNC_TEST)(DWORD,UINT);
+
+typedef void (CALLBACK* TEST)(HWND);
+
+// Main
+int APIENTRY _tWinMain(HINSTANCE hInstance,
+                     HINSTANCE hPrevInstance,
+                     LPTSTR    lpCmdLine,
+                     int       nCmdShow)
 {
-	srand((unsigned int) time(NULL));
-	while (true)
-	{
-		int t = rand() % 4;
-		int a = RDRAM_REGS::begining + (rand() % (RDRAM_REGS::end - RDRAM_REGS::begining)) + ((rand() % 0x10) << 16);
-		//int a = RDRAM_REGS::end;
-		long long d = -1;
-		long long r = -1;
-		
-		if (t == 0)
-		{
-			d = rand() % BYTE_MAX;
-			memory->write<byte>((byte) d, a);
-			r = memory->read<byte>(a);
-		}
-		else if (t == 1)
-		{
-			d = rand() % HWORD_MAX;
-			memory->write<hword>((hword) d, a);
-			r = memory->read<hword>(a);
-		}
-		else if (t == 2)
-		{
-			d = rand() % WORD_MAX;
-			memory->write<word>((word) d, a);
-			r = memory->read<word>(a);
-		}
-		else if (t == 3)
-		{
-			d = rand() % DWORD_MAX;
-			memory->write<dword>(d, a);
-			r = memory->read<dword>(a);
-		}
+	UNREFERENCED_PARAMETER(hPrevInstance);
+	UNREFERENCED_PARAMETER(lpCmdLine);
 
-		if (r != d)
-		{
-			cout << "FAILED: t=" << t << "\tr=0x" << hex << r << "\td=0x" << hex << d << "\ta=0x" << hex << a << endl;
-			break;
-		}
-		cout << "PASSED: t=" << t << " a=0x" << hex << a << endl;
-		//getchar();
-	}
+	//****************************************************************************
+	//** MAIN CODE HERE															**
+	//****************************************************************************
 
-	memory->rdram.dump_range(0x000F0ACB, 0x000F0BFF);
-}
-
-[STAThreadAttribute]
-int main(array<System::String ^> ^args)
-{
 	enableConsole();
 
 	MEMORY*		memory	= new MEMORY();
 	ROM*		rom		= new ROM();
 	R4300i*		cpu		= new R4300i(memory);
-	
+
 	cpu->boot(rom);
 	getchar();
-	
-	/*
-	// Enabling Windows XP visual effects before any controls are created
-	Application::EnableVisualStyles();
-	Application::SetCompatibleTextRenderingDefault(false); 
 
-	// Create the main window and run it
-	Application::Run(gcnew Form1());
-	*/
+	//****************************************************************************
+	//** END OF MAIN CODE														**
+	//****************************************************************************
 
+	MSG msg;
+	HACCEL hAccelTable;
+
+	// Initialize global strings
+	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
+	LoadString(hInstance, IDC_NOOB64, szWindowClass, MAX_LOADSTRING);
+	MyRegisterClass(hInstance);
+
+	// Perform application initialization:
+	if (!InitInstance (hInstance, nCmdShow))
+	{
+		return FALSE;
+	}
+
+	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_NOOB64));
+
+	// Main message loop:
+	while (GetMessage(&msg, NULL, 0, 0))
+	{
+		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
+
+	return (int) msg.wParam;
+}
+
+
+
+//
+//  FUNCTION: MyRegisterClass()
+//
+//  PURPOSE: Registers the window class.
+//
+//  COMMENTS:
+//
+//    This function and its usage are only necessary if you want this code
+//    to be compatible with Win32 systems prior to the 'RegisterClassEx'
+//    function that was added to Windows 95. It is important to call this function
+//    so that the application will get 'well formed' small icons associated
+//    with it.
+//
+ATOM MyRegisterClass(HINSTANCE hInstance)
+{
+	WNDCLASSEX wcex;
+
+	wcex.cbSize = sizeof(WNDCLASSEX);
+
+	wcex.style			= CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc	= WndProc;
+	wcex.cbClsExtra		= 0;
+	wcex.cbWndExtra		= 0;
+	wcex.hInstance		= hInstance;
+	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_NOOB64));
+	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
+	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_NOOB64);
+	wcex.lpszClassName	= szWindowClass;
+	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+
+	return RegisterClassEx(&wcex);
+}
+
+//
+//   FUNCTION: InitInstance(HINSTANCE, int)
+//
+//   PURPOSE: Saves instance handle and creates main window
+//
+//   COMMENTS:
+//
+//        In this function, we save the instance handle in a global variable and
+//        create and display the main program window.
+//
+BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
+{
+   HWND hWnd;
+
+   hInst = hInstance; // Store instance handle in our global variable
+
+   hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+
+   if (!hWnd)
+   {
+      return FALSE;
+   }
+
+   ShowWindow(hWnd, nCmdShow);
+   UpdateWindow(hWnd);
+
+   return TRUE;
+}
+
+//
+//  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
+//
+//  PURPOSE:  Processes messages for the main window.
+//
+//  WM_COMMAND	- process the application menu
+//  WM_PAINT	- Paint the main window
+//  WM_DESTROY	- post a quit message and return
+//
+//
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	int wmId, wmEvent;
+	PAINTSTRUCT ps;
+	HDC hdc;
+
+	switch (message)
+	{
+	case WM_COMMAND:
+		wmId    = LOWORD(wParam);
+		wmEvent = HIWORD(wParam);
+		// Parse the menu selections:
+		switch (wmId)
+		{
+		case IDM_ABOUT:
+			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+			break;
+		case IDM_EXIT:
+			DestroyWindow(hWnd);
+			break;
+		default:
+			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
+		break;
+	case WM_PAINT:
+		hdc = BeginPaint(hWnd, &ps);
+		// TODO: Add any drawing code here...
+		EndPaint(hWnd, &ps);
+		break;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
+	}
 	return 0;
+}
+
+// Message handler for about box.
+INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	UNREFERENCED_PARAMETER(lParam);
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		return (INT_PTR)TRUE;
+
+	case WM_COMMAND:
+		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+		{
+			EndDialog(hDlg, LOWORD(wParam));
+			return (INT_PTR)TRUE;
+		}
+		break;
+	}
+	return (INT_PTR)FALSE;
 }
