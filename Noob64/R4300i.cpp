@@ -22,6 +22,8 @@ void R4300i::reset()
 	fcr0	= 0;
 	fcr31	= 0;
 	ll		= false;
+	stop	= false;
+	CIC_Chip = 0;
 
 	// PIF ROM Initialization
 
@@ -38,8 +40,8 @@ void R4300i::reset()
 	r[13]	= 0xFFFFFFFFD1330BC3;
 	r[14]	= 0x0000000025613A26;
 	r[15]	= 0x000000002EA04317;
-	r[20]	= 0x0000000000000001;
-	r[22]	= 0x000000000000003F;
+	r[20]	= 0x0000000000000001;//rom_info.tv_sys
+	r[22]	= 0x000000000000003F;//rom_info.cic
 	r[23]	= 0x0000000000000001;
 	r[25]	= 0xFFFFFFFFD73F2993;
 	r[29]	= 0xFFFFFFFFA4001FF0;
@@ -50,13 +52,13 @@ void R4300i::reset()
 	Random	= 0x0000002F;
 	PRevID	= 0x00000B00;
 	Random	= 0x0000001F;
+
 }
 
-void R4300i::boot(ROM *r)
+void R4300i::init_crc()
 {
-	reset();
-	rom = r;
-
+	dword CRC = 0;
+	
 	/**
 	* The PIF ROM then copies the first 0x1000 bytes from the cartridge 
 	* (located at 0xb000 0000) to memory address 0xA400 0000.
@@ -69,10 +71,162 @@ void R4300i::boot(ROM *r)
 	for(int i=0; i < 0x1000; i++)
 		memory->write<byte>(*(*rom)[i], SP_REGS::begining + i);
 	pc = 0xA4000040;
-	
+
+	for (int i = 0x40 / 4; i < 0x1000 / 4; ++i)
+		CRC += ((word *) memory->sp_regs.data.dmem)[i];
+	switch(CRC) {
+	case 0x000000D0027FDF31:
+	case 0x000000CFFB631223:
+		CIC_Chip = 1;
+		break;
+	case 0x000000D057C85244:
+		CIC_Chip = 2;
+		break;
+	case 0x000000D6497E414B:
+		CIC_Chip = 3;
+		break;
+	case 0x0000011A49F60E96:
+		CIC_Chip = 5;
+		break;
+	case 0x000000D6D5BE5580:
+		CIC_Chip = 6;
+		break;
+	default:
+		CIC_Chip = 2;
+	}
+
+	switch(rom->getCountry())
+	{
+	case 0x44:
+	case 0x46:
+	case 0x49:
+	case 0x50:
+	case 0x53:
+	case 0x55:
+	case 0x58:
+	case 0x59:
+		switch (CIC_Chip) {
+		case 2:
+			r[5] = 0xFFFFFFFFC0F1D859;
+			r[14]= 0x000000002DE108EA;
+			break;
+		case 3:
+			r[5] = 0xFFFFFFFFD4646273;
+			r[14]= 0x000000001AF99984;
+			break;
+		case 5:
+			memory->write<word>(0x04001004, 0xBDA807FC);
+			r[5] = 0xFFFFFFFFDECAAAD1;
+			r[14]= 0x000000000CF85C13;
+			r[24]= 0x0000000000000002;
+			break;
+		case 6:
+			r[5] = 0xFFFFFFFFB04DC903;
+			r[14]= 0x000000001AF99984;
+			r[24]= 0x0000000000000002;
+			break;
+		}
+		r[23]= 0x0000000000000006;
+		r[31]= 0xFFFFFFFFA4001554;
+		break;
+	case 0x37:
+	case 0x41:
+	case 0x45:
+	case 0x4A:
+	default:
+		switch (CIC_Chip) {
+		case 2:
+			r[5] = 0xFFFFFFFFC95973D5;
+			r[14]= 0x000000002449A366;
+			break;
+		case 3:
+			r[5] = 0xFFFFFFFF95315A28;
+			r[14]= 0x000000005BACA1DF;
+			break;
+		case 5:
+			memory->write<word>(0x04001004, 0xBDA807FC);
+			r[5] = 0x000000005493FB9A;
+			r[14]= 0xFFFFFFFFC2C20384;
+			break;
+		case 6:
+			r[5] = 0xFFFFFFFFE067221F;
+			r[14]= 0x000000005CD2B70F;
+			break;
+		}
+		r[20]= 0x0000000000000001;
+		r[24]= 0x0000000000000003;
+		r[31]= 0xFFFFFFFFA4001550;
+	}
+	switch (CIC_Chip) {
+	case 1:
+		r[22]= 0x000000000000003F;
+		break;
+	case 2:
+		r[1] = 0x0000000000000001;
+		r[2] = 0x000000000EBDA536;
+		r[3] = 0x000000000EBDA536;
+		r[4] = 0x000000000000A536;
+		r[12]= 0xFFFFFFFFED10D0B3;
+		r[13]= 0x000000001402A4CC;
+		r[15]= 0x000000003103E121;
+		r[22]= 0x000000000000003F;
+		r[25]= 0xFFFFFFFF9DEBB54F;
+		break;
+	case 3:
+		r[1] = 0x0000000000000001;
+		r[2] = 0x0000000049A5EE96;
+		r[3] = 0x0000000049A5EE96;
+		r[4] = 0x000000000000EE96;
+		r[12]= 0xFFFFFFFFCE9DFBF7;
+		r[13]= 0xFFFFFFFFCE9DFBF7;
+		r[15]= 0x0000000018B63D28;
+		r[22]= 0x0000000000000078;
+		r[25]= 0xFFFFFFFF825B21C9;
+		break;
+	case 5:
+		memory->write<word>(0x04001000, 0x3C0DBFC0);
+		memory->write<word>(0x04001008, 0x25AD07C0);
+		memory->write<word>(0x0400100C, 0x31080080);
+		memory->write<word>(0x04001010, 0x5500FFFC);
+		memory->write<word>(0x04001014, 0x3C0DBFC0);
+		memory->write<word>(0x04001018, 0x8DA80024);
+		memory->write<word>(0x0400101C, 0x3C0BB000);
+		r[2] = 0xFFFFFFFFF58B0FBF;
+		r[3] = 0xFFFFFFFFF58B0FBF;
+		r[4] = 0x0000000000000FBF;
+		r[12]= 0xFFFFFFFF9651F81E;
+		r[13]= 0x000000002D42AAC5;
+		r[15]= 0x0000000056584D60;
+		r[22]= 0x0000000000000091;
+		r[25]= 0xFFFFFFFFCDCE565F;
+		break;
+	case 6:
+		r[2] = 0xFFFFFFFFA95930A4;
+		r[3] = 0xFFFFFFFFA95930A4;
+		r[4] = 0x00000000000030A4;
+		r[12]= 0xFFFFFFFFBCB59510;
+		r[13]= 0xFFFFFFFFBCB59510;
+		r[15]= 0x000000007A3C07F4;
+		r[22]= 0x0000000000000085;
+		r[25]= 0x00000000465E3F72;
+		break;
+	}
+}
+
+void R4300i::boot(ROM *r)
+{
+	reset();
+	rom = r;
+	init_crc();
+
 	while (true)
 	{
-		if (pc > 0xA40008B0)
+		//diff a a400 0274
+		//r[29]=a4001f90
+		//lw r9 0x4[r29]= 0x0 instead of 6886a9c1
+		if ((pc & 0xFFFF) == 0x274)
+			stop = true;
+		if (stop)
 			getchar();
 		decode(memory->read<word>(pc));
 	}
@@ -1729,13 +1883,14 @@ void R4300i::SUBU(int rd, int rs, int rt)
 	else
 		cout << print_addr() << "SUBU " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
-
+	
 	r[rd] = extend_sign_word((r[rs] - r[rt]) & 0x0000FFFF);
 
 #	if defined DEBUG
 		cout << " r" << dec << rd << hex << "=0x" << r[rd];
 #	endif // DEBUG
-	pc += 4;;
+
+	pc += 4;
 }
 
 void R4300i::XOR(int rd, int rs, int rt)

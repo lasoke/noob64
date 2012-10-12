@@ -35,6 +35,7 @@ public:
 	R4300i(MEMORY *mem);
 	void boot(ROM *rom);
 	void reset();
+	void init_crc();
 private:
 	MEMORY *memory;
 	ExceptionHandler &ehandler;
@@ -63,6 +64,8 @@ private:
 	word	fcr0, fcr31;							// Floating Point Control Registers
 	bool	ll;										// Load/Link Register
 	word	delay_slot;								// for branch instructions
+	bool	stop;									// stop to debug inst by inst
+	dword	CIC_Chip;								//
 	//****************************************************************************
 	//** OTHER																	**
 	//****************************************************************************

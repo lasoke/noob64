@@ -348,6 +348,36 @@ inline void MEMORY::write(Type data, dword address)
 	void *dst = virtual_to_physical(address);
 	data = type_to_binary<Type>(data);
 	memcpy(dst, &data, sizeof(Type));
+	if (((address == SI_REGS::begining) && (sizeof(Type) == 8)) || (address == SI_REGS::begining + 0x4))
+	{
+		dma_si_write();
+		getchar();
+	}
+	if (((address == SI_REGS::begining + 0xC) && (sizeof(Type) == 8)) || (address == SI_REGS::begining + 0x10))
+	{
+		dma_si_read();
+		getchar();
+	}
+	if (((address == SP_REGS::begining + 0x40004) && (sizeof(Type) == 8)) || (address == SP_REGS::begining + 0x40008))
+	{
+		dma_sp_read();
+		getchar();
+	}
+	if (((address == SP_REGS::begining + 0x40008) && (sizeof(Type) == 8)) || (address == SP_REGS::begining + 0x4000C))
+	{
+		dma_sp_write();
+		getchar();
+	}
+	if (((address ==PI_REGS::begining + 0x4) && (sizeof(Type) == 8)) || (address == PI_REGS::begining + 0x8))
+	{
+		dma_pi_read();
+		getchar();
+	}
+	if (((address == PI_REGS::begining + 0x8) && (sizeof(Type) == 8)) || (address == PI_REGS::begining + 0xC))
+	{
+		dma_pi_write();
+		getchar();
+	}
 }
 
 //****************************************************************************
@@ -408,7 +438,7 @@ inline void* MEMORY::virtual_to_physical(dword address)
 	}
 	else if (SI_REGS::begining <= address && address <= SI_REGS::end)
 	{
-		// cout << "[DPC_REGS]";
+		// cout << "[SI_REGS]";
 		return (void*) (si_regs[address - SI_REGS::begining]);
 	}
 	else if (0x80000000 <= address && address <= 0x9FFFFFFF)

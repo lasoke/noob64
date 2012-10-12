@@ -1,6 +1,6 @@
 #pragma once
 
-#define HEADER_SIZE		0xFFF
+#define HEADER_SIZE		0x1000
 #define BOOT_CODE_SIZE	1008
 
 class ROM : public MEM_SEG

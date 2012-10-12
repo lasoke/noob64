@@ -133,7 +133,7 @@ PIF_RAM::PIF_RAM()
 void RDRAM::dump(void) const
 {
 	cout << "*** RDRAM ***" << endl;
-	dump_array(begining, data, 0x40000);
+	dump_array(begining, data, 0x40000, 16);
 	cout << "*** END OF RDRAM ***"<< endl;
 }
 
@@ -142,7 +142,7 @@ void RDRAM::dump_range(word from, word to) const
 	if (from >= to)
 		return;
 	cout << "*** RDRAM ***" << endl;
-	dump_array(from, data + from - begining, (to - from));
+	dump_array(from, data + from - begining, (to - from), 16);
 	cout << "*** END OF RDRAM ***"<< endl;
 }
 
@@ -166,9 +166,9 @@ void SP_REGS::dump(void) const
 {	
 	cout << "*** SP REGISTERS ***"						<< endl;
 	cout << "dmem ="									<< endl;
-	dump_array(begining, data.dmem, 0x1000);
+	dump_array(begining, data.dmem, 0x1000, 16);
 	cout << "imem ="									<< endl;
-	dump_array(begining + 0x1000, data.imem, 0x1000);
+	dump_array(begining + 0x1000, data.imem, 0x1000, 16);
 	cout << "mem_addr = "	<< data.mem_addr			<< endl;
 	cout << "dram_addr = "	<< data.dram_addr			<< endl;
 	cout << "rd_len = "		<< data.rd_len				<< endl;
@@ -187,7 +187,7 @@ void SP_REGS::dump_range_dmem(word from, word to) const
 	if (from >= to)
 		return;
 	cout << "*** SP_REG->DMEM ***" << endl;
-	dump_array(from, data.dmem + from - begining, (to - from));
+	dump_array(from, data.dmem + from - begining, (to - from), 16);
 	cout << "*** END OF SP_REG->DMEM ***"<< endl;
 }
 
@@ -196,7 +196,7 @@ void SP_REGS::dump_range_imem(word from, word to) const
 	if (from >= to)
 		return;
 	cout << "*** SP_REG->DMEM ***" << endl;
-	dump_array(from, data.imem + from - begining, (to - from));
+	dump_array(from, data.imem + from - begining, (to - from), 16);
 	cout << "*** END OF SP_REG->DMEM ***"<< endl;
 }
 
@@ -315,14 +315,14 @@ void SI_REGS::dump(void) const
 void PIF_ROM::dump(void) const
 {
 	cout << "*** SI REGISTERS ***" << endl;
-	dump_array(begining, data, 0x3E);
+	dump_array(begining, data, 0x3E, 16);
 	cout << "*** END OF SI REGISTERS ***"<< endl;
 }
 
 void PIF_RAM::dump(void) const
 {
 	cout << "*** SI REGISTERS ***" << endl;
-	dump_array(begining, data, 0x2);
+	dump_array(begining, data, 0x2, 16);
 	cout << "*** END OF SI REGISTERS ***"<< endl;
 }
 
@@ -334,6 +334,7 @@ void MEMORY::dma_pi_read()
 		pi_regs.[(pi_regs.data.mem_addr_reg & 0xFFF) + i] =
 		rdram.data[(pi_regs.data.dram_addr_reg & 0xFFFFFF) + i];
 	*/
+	cout << "*** pi_read ***" << endl;
 }
 
 void MEMORY::dma_pi_write()
@@ -344,6 +345,7 @@ void MEMORY::dma_pi_write()
 		pi_regs.[(pi_regs.data.mem_addr_reg & 0xFFF) + i] =
 		rdram.data[(pi_regs.data.dram_addr_reg & 0xFFFFFF) + i];
 		*/
+	cout << "*** pi_write ***" << endl;
 }
 
 void MEMORY::dma_sp_write()
@@ -352,13 +354,21 @@ void MEMORY::dma_sp_write()
 	{
 		memcpy(sp_regs.data.imem + (sp_regs.data.mem_addr & 0xFFF),
 			rdram.data + (sp_regs.data.dram_addr & 0xFFFFFF),
-			(sp_regs.data.rd_len & 0xFFF) + 1);
+			(sp_regs.data.wr_len & 0xFFF) + 1);
+
+	cout << "*** sp_imem_write ***" << endl;
+	dump_array(sp_regs.data.dram_addr, rdram.data + (sp_regs.data.dram_addr & 0xFFFFFF), (sp_regs.data.wr_len & 0xFFF) + 1, 16);
+	cout << "*** END OF RDRAM ***"<< endl;
 	}
 	else
 	{
 		memcpy(sp_regs.data.dmem + (sp_regs.data.mem_addr & 0xFFF),
 			rdram.data + (sp_regs.data.dram_addr & 0xFFFFFF),
-			(sp_regs.data.rd_len & 0xFFF) + 1);
+			(sp_regs.data.wr_len & 0xFFF) + 1);
+
+	cout << "*** sp_dmem_write ***" << endl;
+	dump_array(sp_regs.data.dram_addr, rdram.data + (sp_regs.data.dram_addr & 0xFFFFFF), (sp_regs.data.wr_len & 0xFFF) + 1, 16);
+	cout << "*** END OF RDRAM ***"<< endl;
 	}
 }
 
@@ -368,13 +378,21 @@ void MEMORY::dma_sp_read()
 	{
 		memcpy(rdram.data + (sp_regs.data.dram_addr & 0xFFFFFF),
 			sp_regs.data.imem + (sp_regs.data.mem_addr & 0xFFF),
-			(sp_regs.data.wr_len & 0xFFF) + 1);
+			(sp_regs.data.rd_len & 0xFFF) + 1);
+
+	cout << "*** sp_imem_read ***" << endl;
+	dump_array(sp_regs.data.mem_addr, sp_regs.data.imem + (sp_regs.data.mem_addr & 0xFFF), (sp_regs.data.rd_len & 0xFFF) + 1, 16);
+	cout << "*** END OF RDRAM ***"<< endl;
 	}
 	else
 	{
 		memcpy(rdram.data + (sp_regs.data.dram_addr & 0xFFFFFF),
 			sp_regs.data.dmem + (sp_regs.data.mem_addr & 0xFFF),
-			(sp_regs.data.wr_len & 0xFFF) + 1);
+			(sp_regs.data.rd_len & 0xFFF) + 1);
+
+	cout << "*** sp_dmem_read ***" << endl;
+	dump_array(sp_regs.data.mem_addr, sp_regs.data.dmem + (sp_regs.data.mem_addr & 0xFFF), (sp_regs.data.rd_len & 0xFFF) + 1, 16);
+	cout << "*** END OF RDRAM ***"<< endl;
 	}
 }
 
@@ -385,7 +403,11 @@ void MEMORY::dma_si_write()
 		cout << "unknown SI use" << endl;
 	}
 
-	memcpy(pif_ram.data, rdram.data + si_regs.data.dram_addr, 64);
+	memcpy(pif_ram.data + si_regs.data.pif_addr_wr64b, rdram.data + si_regs.data.dram_addr, 64);
+
+	cout << "*** si_write ***" << endl;
+	dump_array(si_regs.data.dram_addr, rdram.data + si_regs.data.dram_addr, 64, 16);
+	cout << "*** END OF RDRAM ***"<< endl;
 }
 
 void MEMORY::dma_si_read()
@@ -395,5 +417,9 @@ void MEMORY::dma_si_read()
 		cout << "unknown SI use" << endl;
 	}
 
-	memcpy(rdram.data + si_regs.data.dram_addr, pif_ram.data, 64);
+	memcpy(rdram.data + si_regs.data.dram_addr, pif_ram.data + si_regs.data.pif_addr_rd64b, 64);
+	
+	cout << "*** si_read ***" << endl;
+	dump_array(si_regs.data.pif_addr_rd64b, pif_ram.data + si_regs.data.pif_addr_rd64b, 64, 16);
+	cout << "*** END OF RDRAM ***"<< endl;
 }

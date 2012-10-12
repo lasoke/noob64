@@ -7,7 +7,7 @@ string format_number(string s, char c, int frequency);
 byte getByte(char **ptr);
 
 //print the memory contains in the array data
-void dump_array(word start_addr, const byte *data, unsigned int size);
+void dump_array(word start_addr, const byte *data, unsigned int size, int type);
 
 inline dword extend_sign_word(dword d)
 {
