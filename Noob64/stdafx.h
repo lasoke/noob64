@@ -5,21 +5,14 @@
 
 #define DEBUG true
 
-// DEBUG
-#include <typeinfo>
-#include <stdio.h>
 #include <stdlib.h>
-
 #include <iostream>
 #include <string>
-#include <sstream>
-#include <vector>
 #include <windows.h>
 
 using namespace std;
 
 // TODO: reference additional headers your program requires here
-#include "cop0.h"
 #include "Memory.h"
 #include "Instruction.h"
 #include "ExceptionHandler.h"
