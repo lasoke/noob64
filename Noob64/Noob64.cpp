@@ -29,9 +29,7 @@ void inline enableConsole()
 }
 
 // Typedef for the dll function call test
-typedef UINT (CALLBACK* LPFNDLLFUNC_TEST)(DWORD,UINT);
-
-typedef void (CALLBACK* TEST)(HWND);
+typedef void (_cdecl* FUNC_TEST)(PLUGIN_INFO*);
 
 // Main
 int APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -48,12 +46,34 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	enableConsole();
 
-	MEMORY*		memory	= new MEMORY();
-	ROM*		rom		= new ROM();
-	R4300i*		cpu		= new R4300i(memory);
+	HINSTANCE hDLL;			// Handle to DLL
+	FUNC_TEST lpfnDllTest;	// Function pointer
 
-	cpu->boot(rom);
-	getchar();
+	PLUGIN_INFO *info = (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
+	
+	hDLL = LoadLibrary(_T("E:\\Documents\\Games\\Project 64 1.7.0.9\\Plugin\\RSP\\mupen64_rsp_hle.dll"));
+	if (hDLL != NULL)
+	{
+	   lpfnDllTest = (FUNC_TEST) GetProcAddress(hDLL, "GetDllInfo");
+	   if (!lpfnDllTest)
+	   {
+		  // handle the error
+		  FreeLibrary(hDLL);
+		  return -1;
+	   }
+	   else
+	   {
+		  // call the function
+		  lpfnDllTest(info);
+	   }
+	}
+
+	//MEMORY*		memory	= new MEMORY();
+	//ROM*		rom		= new ROM();
+	//R4300i*		cpu		= new R4300i(memory);
+
+	//cpu->boot(rom);
+	//getchar();
 
 	//****************************************************************************
 	//** END OF MAIN CODE														**
