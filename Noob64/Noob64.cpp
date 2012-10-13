@@ -28,9 +28,6 @@ void inline enableConsole()
 	err = freopen_s(&stream, "conout$","w", stderr);
 }
 
-// Typedef for the dll function call test
-typedef void (_cdecl* FUNC_TEST)(PLUGIN_INFO*);
-
 // Main
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -46,27 +43,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	enableConsole();
 
-	HINSTANCE hDLL;			// Handle to DLL
-	FUNC_TEST lpfnDllTest;	// Function pointer
-
-	PLUGIN_INFO *info = (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
-	
-	hDLL = LoadLibrary(_T("E:\\Documents\\Games\\Project 64 1.7.0.9\\Plugin\\RSP\\mupen64_rsp_hle.dll"));
-	if (hDLL != NULL)
-	{
-	   lpfnDllTest = (FUNC_TEST) GetProcAddress(hDLL, "GetDllInfo");
-	   if (!lpfnDllTest)
-	   {
-		  // handle the error
-		  FreeLibrary(hDLL);
-		  return -1;
-	   }
-	   else
-	   {
-		  // call the function
-		  lpfnDllTest(info);
-	   }
-	}
+	RSP *rsp = new RSP(_T("C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll"));
 
 	//MEMORY*		memory	= new MEMORY();
 	//ROM*		rom		= new ROM();

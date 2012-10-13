@@ -39,3 +39,4 @@ using namespace std;
 #include "tlb.h"
 #include "R4300i.h"
 #include "Rsp.h"
+#include "Plugin.h"

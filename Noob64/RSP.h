@@ -1,25 +1,6 @@
-#if defined(__cplusplus)
-extern "C" {
-#endif
+#pragma once
 
-/* Note: bool, byte, hword, word, TRUE, FALSE are defined in windows.h */
-
-#define PLUGIN_TYPE_RSP				1
-#define PLUGIN_TYPE_GFX				2
-#define PLUGIN_TYPE_AUDIO			3
-#define PLUGIN_TYPE_CONTROLLER		4
-
-typedef struct {
-	hword Version;        /* Should be set to 0x0101 */
-	hword Type;           /* Set to PLUGIN_TYPE_RSP */
-	char Name[100];      /* Name of the DLL */
-
-	/* If DLL supports memory these memory options then set them to TRUE or FALSE
-	   if it does not support it */
-	bool NormalMemory;   /* a normal byte array */ 
-	bool MemoryBswaped;  /* a normal byte array where the memory has been pre
-	                          bswap on a dword (32 bits) boundry */
-} PLUGIN_INFO;
+#include "Plugin.h"
 
 typedef struct {
 	HINSTANCE hInst;
@@ -91,109 +72,35 @@ typedef struct {
 	void (*Enter_Memory_Window)( void );
 } DEBUG_INFO;
 
-/******************************************************************
-  Function: CloseDLL
-  Purpose:  This function is called when the emulator is closing
-            down allowing the dll to de-initialise.
-  input:    none
-  output:   none
-*******************************************************************/ 
-__declspec(dllexport) void CloseDLL (void);
+typedef word (_cdecl* DORSPCYCLES)(word);
+typedef void (_cdecl* GETRSPDEBUGINFO)(RSPDEBUG_INFO*);
+typedef void (_cdecl* INITIATERSP)(RSP_INFO, word*);
+typedef void (_cdecl* INITIATERSPDEBUGGER)(DEBUG_INFO);
 
-/******************************************************************
-  Function: DllAbout
-  Purpose:  This function is optional function that is provided
-            to give further information about the DLL.
-  input:    a handle to the window that calls this function
-  output:   none
-*******************************************************************/ 
-__declspec(dllexport) void DllAbout ( HWND hParent );
 
-/******************************************************************
-  Function: DllConfig
-  Purpose:  This function is optional function that is provided
-            to allow the user to configure the dll
-  input:    a handle to the window that calls this function
-  output:   none
-*******************************************************************/ 
-__declspec(dllexport) void DllConfig ( HWND hParent );
+class RSP : public PLUGIN
+{
+public:
+	RSP(wstring filename);
+	~RSP();
 
-/******************************************************************
-  Function: DllTest
-  Purpose:  This function is optional function that is provided
-            to allow the user to test the dll
-  input:    a handle to the window that calls this function
-  output:   none
-*******************************************************************/ 
-__declspec(dllexport) void DllTest ( HWND hParent );
+	word DoRspCycles(word);
+	void GetRspDebugInfo(RSPDEBUG_INFO*);
+	void InitiateRSP(RSP_INFO, word*);
+	void InitiateRSPDebugger(DEBUG_INFO);
+	
+	const RSP_INFO getRspInfo();
+	const RSPDEBUG_INFO getRspDebugInfo();
+	const DEBUG_INFO getDebugInfo();
 
-/******************************************************************
-  Function: DoRspCycles
-  Purpose:  This function is to allow the RSP to run in parrel with
-            the r4300 switching control back to the r4300 once the
-			function ends.
-  input:    The number of cylces that is meant to be executed
-  output:   The number of cycles that was executed. This value can
-            be greater than the number of cycles that the RSP 
-			should have performed.
-			(this value is ignored if the RSP is stoped)
-*******************************************************************/ 
-__declspec(dllexport) word DoRspCycles ( word Cycles );
+private:
+	DORSPCYCLES				DoRspCycles_;
+	GETRSPDEBUGINFO			GetRspDebugInfo_;
+	INITIATERSP				InitiateRSP_;
+	INITIATERSPDEBUGGER		InitiateRSPDebugger_;
+	
+	RSP_INFO				*rsp_info;
+	RSPDEBUG_INFO			*rspdebug_info;
+	DEBUG_INFO				*debug_info;
+};
 
-/******************************************************************
-  Function: GetDllInfo
-  Purpose:  This function allows the emulator to gather information
-            about the dll by filling in the PluginInfo structure.
-  input:    a pointer to a PLUGIN_INFO stucture that needs to be
-            filled by the function. (see def above)
-  output:   none
-*******************************************************************/ 
-__declspec(dllexport) void GetDllInfo ( PLUGIN_INFO * PluginInfo );
-
-/******************************************************************
-  Function: GetRspDebugInfo
-  Purpose:  This function allows the emulator to gather information
-            about the debug capabilities of the dll by filling in
-			the DebugInfo structure.
-  input:    a pointer to a RSPDEBUG_INFO stucture that needs to be
-            filled by the function. (see def above)
-  output:   none
-*******************************************************************/ 
-__declspec(dllexport) void GetRspDebugInfo ( RSPDEBUG_INFO * RSPDebugInfo );
-
-/******************************************************************
-  Function: InitiateRSP
-  Purpose:  This function is called when the DLL is started to give
-            information from the emulator that the n64 RSP 
-			interface needs
-  input:    Rsp_Info is passed to this function which is defined
-            above.
-			CycleCount is the number of cycles between switching
-			control between the RSP and r4300i core.
-  output:   none
-*******************************************************************/ 
-__declspec(dllexport) void InitiateRSP ( RSP_INFO Rsp_Info, word * CycleCount);
-
-/******************************************************************
-  Function: InitiateRSPDebugger
-  Purpose:  This function is called when the DLL is started to give
-            information from the emulator that the n64 RSP 
-			interface needs to intergrate the debugger with the
-			rest of the emulator.
-  input:    DebugInfo is passed to this function which is defined
-            above.
-  output:   none
-*******************************************************************/ 
-__declspec(dllexport) void InitiateRSPDebugger ( DEBUG_INFO DebugInfo);
-
-/******************************************************************
-  Function: RomClosed
-  Purpose:  This function is called when a rom is closed.
-  input:    none
-  output:   none
-*******************************************************************/ 
-__declspec(dllexport) void RomClosed (void);
-
-#if defined(__cplusplus)
-}
-#endif
