@@ -73,7 +73,7 @@ void R4300i::init_crc()
 	pc = 0xA4000040;
 
 	for (int i = 0x40 / 4; i < 0x1000 / 4; ++i)
-		CRC += ((word *) memory->sp_regs.data.dmem)[i];
+		CRC += ((word *) memory->sp_regs.ptr)[i];
 	switch(CRC) {
 	case 0x000000D0027FDF31:
 	case 0x000000CFFB631223:
@@ -221,13 +221,6 @@ void R4300i::boot(ROM *r)
 
 	while (true)
 	{
-		//diff a a400 0274
-		//r[29]=a4001f90
-		//lw r9 0x4[r29]= 0x0 instead of 6886a9c1
-		if ((pc & 0xFFFF) == 0x274)
-			stop = true;
-		if (stop)
-			getchar();
 		decode(memory->read<word>(pc));
 	}
 }

@@ -31,11 +31,11 @@ typedef struct {
 	word * DPC_PIPEBUSY_REG;
 	word * DPC_TMEM_REG;
 
-	void (*CheckInterrupts)( void );
-	void (*ProcessDlistList)( void );
-	void (*ProcessAlistList)( void );
-	void (*ProcessRdpList)( void );
-	void (*ShowCFB)( void );
+	void (*CheckInterrupts)(void);
+	void (*ProcessDlistList)(void);
+	void (*ProcessAlistList)(void);
+	void (*ProcessRdpList)(void);
+	void (*ShowCFB)(void);
 } RSP_INFO;
 
 typedef struct {
@@ -47,29 +47,29 @@ typedef struct {
 	/* Break Points */
 	bool UseBPoints;
 	char BPPanelName[20];
-	void (*Add_BPoint)      ( void );
-	void (*CreateBPPanel)   ( HWND hDlg, RECT rcBox );
-	void (*HideBPPanel)     ( void );
-	void (*PaintBPPanel)    ( PAINTSTRUCT ps );
-	void (*ShowBPPanel)     ( void );
-	void (*RefreshBpoints)  ( HWND hList );
-	void (*RemoveBpoint)    ( HWND hList, int index );
-	void (*RemoveAllBpoint) ( void );
+	void (*Add_BPoint)      (void);
+	void (*CreateBPPanel)   (HWND hDlg, RECT rcBox);
+	void (*HideBPPanel)     (void);
+	void (*PaintBPPanel)    (PAINTSTRUCT ps);
+	void (*ShowBPPanel)     (void);
+	void (*RefreshBpoints)  (HWND hList);
+	void (*RemoveBpoint)    (HWND hList, int index);
+	void (*RemoveAllBpoint) (void);
 	
 	/* RSP command Window */
-	void (*Enter_RSP_Commands_Window) ( void );
+	void (*Enter_RSP_Commands_Window) (void );
 
 } RSPDEBUG_INFO;
 
 typedef struct {
-	void (*UpdateBreakPoints)( void );
-	void (*UpdateMemory)( void );
-	void (*UpdateR4300iRegisters)( void );
-	void (*Enter_BPoint_Window)( void );
-	void (*Enter_R4300i_Commands_Window)( void );
-	void (*Enter_R4300i_Register_Window)( void );
-	void (*Enter_RSP_Commands_Window) ( void );
-	void (*Enter_Memory_Window)( void );
+	void (*UpdateBreakPoints)(void);
+	void (*UpdateMemory)(void);
+	void (*UpdateR4300iRegisters)(void);
+	void (*Enter_BPoint_Window)(void);
+	void (*Enter_R4300i_Commands_Window)(void);
+	void (*Enter_R4300i_Register_Window)(void);
+	void (*Enter_RSP_Commands_Window) (void);
+	void (*Enter_Memory_Window)(void);
 } DEBUG_INFO;
 
 typedef word (_cdecl* DORSPCYCLES)(word);
@@ -81,23 +81,21 @@ typedef void (_cdecl* INITIATERSPDEBUGGER)(DEBUG_INFO);
 class RSP : public PLUGIN
 {
 public:
-	RSP(wstring filename);
+	RSP(wstring filename, MEMORY *mem);
 	~RSP();
 
-	word DoRspCycles(word);
-	void GetRspDebugInfo(RSPDEBUG_INFO*);
-	void InitiateRSP(RSP_INFO, word*);
-	void InitiateRSPDebugger(DEBUG_INFO);
-	
-	const RSP_INFO getRspInfo();
-	const RSPDEBUG_INFO getRspDebugInfo();
-	const DEBUG_INFO getDebugInfo();
+	word doRspCycles(word);
+	void getRspDebugInfo();
+	void initiateRSP(word*);
+	void initiateRSPDebugger();
 
 private:
-	DORSPCYCLES				DoRspCycles_;
-	GETRSPDEBUGINFO			GetRspDebugInfo_;
-	INITIATERSP				InitiateRSP_;
-	INITIATERSPDEBUGGER		InitiateRSPDebugger_;
+	MEMORY					*memory;
+
+	DORSPCYCLES				doRspCycles_;
+	GETRSPDEBUGINFO			getRspDebugInfo_;
+	INITIATERSP				initiateRSP_;
+	INITIATERSPDEBUGGER		initiateRSPDebugger_;
 	
 	RSP_INFO				*rsp_info;
 	RSPDEBUG_INFO			*rspdebug_info;

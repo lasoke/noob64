@@ -12,14 +12,15 @@ PLUGIN::PLUGIN(wstring filename)
 		return;
 	}
 
-	CloseDLL_				= (CLOSEDLL) GetProcAddress(hDLL, "CloseDLL");
-	DllAbout_				= (DLLABOUT) GetProcAddress(hDLL, "DllAbout");
-	DllConfig_				= (DLLCONFIG) GetProcAddress(hDLL, "DllConfig");
-	DllTest_				= (DLLTEST)	GetProcAddress(hDLL, "DllTest");
-	GetDllInfo_				= (GETDLLINFO) GetProcAddress(hDLL, "GetDllInfo");
-	RomClosed_				= (ROMCLOSED) GetProcAddress(hDLL, "RomClosed");
+	closeDLL_				= (CLOSEDLL) GetProcAddress(hDLL, "CloseDLL");
+	dllAbout_				= (DLLABOUT) GetProcAddress(hDLL, "DllAbout");
+	dllConfig_				= (DLLCONFIG) GetProcAddress(hDLL, "DllConfig");
+	dllTest_				= (DLLTEST)	GetProcAddress(hDLL, "DllTest");
+	getDllInfo_				= (GETDLLINFO) GetProcAddress(hDLL, "GetDllInfo");
+	romClosed_				= (ROMCLOSED) GetProcAddress(hDLL, "RomClosed");
 
 	plugin_info				= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
+	getDllInfo_(plugin_info);
 }
 
 
@@ -27,38 +28,28 @@ PLUGIN::~PLUGIN(void)
 {
 }
 
-void PLUGIN::CloseDLL()
+void PLUGIN::closeDLL()
 {
-	return CloseDLL_();
+	return closeDLL_();
 }
 
-void PLUGIN::DllAbout(HWND h)
+void PLUGIN::dllAbout(HWND h)
 {
-	return DllAbout_(h);
+	return dllAbout_(h);
 }
 
-void PLUGIN::DllConfig(HWND h)
+void PLUGIN::dllConfig(HWND h)
 {
-	return DllConfig_(h);
+	return dllConfig_(h);
 }
 
-void PLUGIN::DllTest(HWND h)
+void PLUGIN::dllTest(HWND h)
 {
-	return DllTest_(h);
+	return dllTest_(h);
 }
 
-void PLUGIN::GetDllInfo()
+void PLUGIN::romClosed()
 {
-	return GetDllInfo_(plugin_info);
-}
-
-void PLUGIN::RomClosed()
-{
-	return RomClosed_();
-}
-
-const PLUGIN_INFO PLUGIN::getPluginInfo()
-{
-	return *plugin_info;
+	return romClosed_();
 }
 

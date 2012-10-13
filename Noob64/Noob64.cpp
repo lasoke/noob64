@@ -42,15 +42,22 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	//****************************************************************************
 
 	enableConsole();
+	wstring rsp_path = _T("C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll");
 
-	RSP *rsp = new RSP(_T("C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll"));
+	MEMORY*	mem	= new MEMORY();
+	ROM*	rom	= new ROM();
+	R4300i*	cpu	= new R4300i(mem);
+	RSP*	rsp	= new RSP(rsp_path, mem);
 
-	//MEMORY*		memory	= new MEMORY();
-	//ROM*		rom		= new ROM();
-	//R4300i*		cpu		= new R4300i(memory);
+	/*
+	word cycles[1];
+	cycles[0] = 1000;
+	rsp->initiateRSP(cycles);
+	rsp->doRspCycles(1000);
+	*/
 
-	//cpu->boot(rom);
-	//getchar();
+	cpu->boot(rom);
+	getchar();
 
 	//****************************************************************************
 	//** END OF MAIN CODE														**

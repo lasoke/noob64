@@ -30,24 +30,21 @@ public:
 	PLUGIN(wstring filename);
 	~PLUGIN();
 
-	void CloseDLL();
-	void DllAbout(HWND);
-	void DllConfig(HWND);
-	void DllTest(HWND);
-	void GetDllInfo();
-	void RomClosed();
-
-	const PLUGIN_INFO getPluginInfo();
+	void closeDLL();
+	void dllAbout(HWND);
+	void dllConfig(HWND);
+	void dllTest(HWND);
+	void romClosed();
 
 protected:
 	HINSTANCE				hDLL;
 
-	CLOSEDLL				CloseDLL_;
-	DLLABOUT				DllAbout_;
-	DLLCONFIG				DllConfig_;
-	DLLTEST					DllTest_;
-	GETDLLINFO				GetDllInfo_;
-	ROMCLOSED				RomClosed_;
+	CLOSEDLL				closeDLL_;
+	DLLABOUT				dllAbout_;
+	DLLCONFIG				dllConfig_;
+	DLLTEST					dllTest_;
+	GETDLLINFO				getDllInfo_;
+	ROMCLOSED				romClosed_;
 
 	PLUGIN_INFO				*plugin_info;
 };
