@@ -20,7 +20,7 @@
 
 // TODO: reference additional headers your program requires here
 
-#define DEBUG true
+//#define DEBUG true
 
 #include <iostream>
 #include <stdio.h>

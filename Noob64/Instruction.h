@@ -1,5 +1,26 @@
 #pragma once
 
+inline dword extend_sign_word(dword d)
+{
+	if (d & 0x80000000LL)
+		return d |= 0xFFFFFFFF00000000LL;
+	return d &= 0xFFFFFFFF;
+}
+
+inline dword extend_sign_halfword(dword d)
+{
+	if (d & 0x8000)
+		return d |= 0xFFFFFFFFFFFF0000LL;
+	return d &= 0xFFFF;
+}
+
+inline dword extend_sign_byte(dword d)
+{
+	if (d & 0x80)
+		return d |= 0xFFFFFFFFFFFFFF00LL;
+	return d &= 0xFF;
+}
+
 //getOpCode retreives the Op code from an instruction
 inline int getOpCode(word instr)
 {
@@ -37,7 +58,7 @@ inline int getFunct(word instr)
 }
 
 //getImmediate retreives the immediate from the instruction
-inline int getImmediate(word instr)
+inline dword getImmediate(word instr)
 {
 	return instr & 0xffff;
 }
