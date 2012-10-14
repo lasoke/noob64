@@ -26,9 +26,6 @@
 #include <fstream>
 #include <stdio.h>
 #include <string>
-#include <sstream>
-#include <typeinfo>
-#include <vector>
 
 using namespace std;
 

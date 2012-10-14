@@ -7,6 +7,7 @@ R4300i::R4300i(MEMORY *mem) :
 
 void R4300i::reset()
 {
+	memory->setRom(NULL);
 	rom = NULL;
 
 	for (int i = 0; i < 32; i++)
