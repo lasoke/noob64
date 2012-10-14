@@ -43,6 +43,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	enableConsole();
 	wstring rsp_path = _T("C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll");
+//	wstring rsp_path = _T("C:\\Users\\quentin\\Downloads\\n64\\Mupen64K 0.8\\Mupen64K 0.8\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll");
 
 	MEMORY*	mem	= new MEMORY();
 	ROM*	rom	= new ROM();

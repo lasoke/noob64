@@ -87,6 +87,17 @@ void R4300i::init_crc()
 		memory->write<byte>(*(*rom)[i], SP_REGS::begining + i);
 	pc = 0xA4000040;
 
+	memory->write<word>(0xBDA807FC, 0x04001004);
+	memory->write<word>(0x3C0DBFC0, 0x04001000);
+	memory->write<word>(0x25AD07C0, 0x04001008);
+	memory->write<word>(0x31080080, 0x0400100C);
+	memory->write<word>(0x5500FFFC, 0x04001010);
+	memory->write<word>(0x3C0DBFC0, 0x04001014);
+	memory->write<word>(0x8DA80024, 0x04001018);
+	memory->write<word>(0x3C0BB000, 0x0400101C);
+	memory->write<word>(0x6886A9C1, 0x04001F94);
+	memory->write<word>(0x915F5B7E, 0x04001F90);
+
 	/*
 	for (int i = 0x40 / 4; i < 0x1000 / 4; i++)
 		CRC += ((word *) memory->sp_regs.ptr)[i];
@@ -239,6 +250,11 @@ void R4300i::boot(ROM *r)
 
 	while (true)
 	{
+		//diff a a400 0274
+		//r[29]=a4001f90
+		//lw r9 0x4[r29]= 0x0 instead of 6886a9c1
+		if ((pc & 0xFFFF) == 0x0018)
+			stop = true;
 		decode(memory->read<word>(pc));
 	}
 }
@@ -2379,7 +2395,7 @@ void R4300i::TLTI(int rs, int immed)
 #	if defined DEBUG
 		cout << print_addr() << "TLTI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
-	if ((sdword) r[rs] < extend_sign_halfword(immed))
+	if ((sdword) r[rs] < (sdword) extend_sign_halfword(immed))
 		ehandler.trap();
 	pc += 4;
 }
@@ -3185,7 +3201,7 @@ void R4300i::SWC1(int ft, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "SWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs;
 #	endif // DEBUG
-	memory->write<word>((word) r[rs] + extend_sign_halfword(immed), f[ft]);
+	memory->write<word>((r[rs] + extend_sign_halfword(immed) & 0xFFFFFFFF), f[ft]);
 	pc += 4;
 }
 
