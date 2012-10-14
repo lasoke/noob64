@@ -270,10 +270,6 @@ string R4300i::print_addr()
 
 void R4300i::decode(const word i)
 {
-	if (i == (word) 0x80000110)
-	{
-		cout << "";
-	}
 	switch(getOpCode(i)) {
 	case 0:
 		decode_r(i);
@@ -321,10 +317,6 @@ void R4300i::decode(const word i)
 		XORI(getRt(i), getRs(i), getImmediate(i));
 		break;
 	case 15:
-		//if (getRt(i) == 15)
-		//{
-		//	cout << "";
-		//}
 		LUI(getRt(i), getImmediate(i));
 		break;
 	case 16:

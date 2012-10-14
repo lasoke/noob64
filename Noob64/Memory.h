@@ -45,8 +45,8 @@ public:
 class ROM : public MEM_SEG
 {
 public:
-	ROM(void);
-	ROM(char* filename);
+	ROM(string);
+	~ROM();
 	static const word begining = 0x10000000;
 	static const word end = 0x1FBFFFFF;
 	void dump(void) const;
@@ -62,7 +62,10 @@ public:
 	hword getCountry();
 
 private:
-	struct { // ROM Header
+	ifstream	file;
+	char		*data;
+
+	typedef struct {
 	   byte		PI_BSD_DOM1_LAT_REG;
 	   byte		PI_BSD_DOM1_PWD_REG;
 	   byte		PI_BSD_DOM1_PGS_REG;
@@ -79,7 +82,9 @@ private:
 	   hword	cartridge;
 	   hword	country;
 	   word		bootcode[ROM_BOOT_CODE_SIZE];
-	} header;
+	} ROM_HEADER;
+
+	ROM_HEADER	*header;
 };
 
 //****************************************************************************
@@ -554,49 +559,22 @@ inline void MEMORY::write(Type data, dword address)
 inline void MEMORY::checkDMA(dword address)
 {
 	address = (word) address;
-	if (address == 0x040008) //SP_RD_LEN_REG
-	{
-		// SP read DMA length
+	if (address == 0x04040008) //SP_RD_LEN_REG
 		dma_sp_read();
-
-	}
 	else if (address == 0x0404000C) // SP_WR_LEN_REG
-	{
-		// SP write DMA length
 		dma_sp_write();
-
-	}
 	else if (address == 0x04600008) // PI_RD_LEN_REG
-	{
-		// PI read length
 		dma_pi_read();
-
-	}
 	else if (address == 0x0460000C) // PI_WR_LEN_REG
-	{
-		// PI write length
 		dma_pi_write();
-	}
 	else if (address == 0x04800004) // SI_PIF_ADDR_RD64B_REG
-	{
-		// SI address read 64B
 		dma_si_read();
-	}
 	else if (address == 0x04800010) // SI_PIF_ADDR_WR64B_REG
-	{
-		// SI address write 64B
 		dma_si_write();
-	}
 	else if (0x80000000 <= address && address <= 0x9FFFFFFF)
-	{
-		// cout << "Mirror 8 of 0x0000 0000 to 0x1FFF FFFF";
-		return checkDMA(address - 0x80000000);
-	}
+		return checkDMA(address - 0x80000000); // "Mirror 8 of 0x0000 0000 to 0x1FFF FFFF"
 	else if (0xA0000000 <= address && address <= 0xBFFFFFFF)
-	{
-		// cout << "Mirror A of 0x0000 0000 to 0x1FFF FFFF";
-		return checkDMA(address - 0xA0000000);
-	}
+		return checkDMA(address - 0xA0000000); // "Mirror A of 0x0000 0000 to 0x1FFF FFFF";
 }
 
 //****************************************************************************
@@ -606,77 +584,35 @@ inline void* MEMORY::virtual_to_physical(dword address)
 {
 	address = (word) address;
 	if (RDRAM::begining <= address && address <= RDRAM::end)
-	{
-		// cout << "[RRDRAM]";
 		return (void*) (rdram[address- RDRAM::begining]);
-	}
 	else if (RDRAM_REGS::begining <= address && address <= RDRAM_REGS::end)
-	{
-		// cout << "[RRDRAM_REGS]";
 		return (void*) (rdram_regs[address - RDRAM_REGS::begining]);
-	}
 	else if (SP_REGS::begining <= address && address <= SP_REGS::end)
-	{
-		// cout << "[SP_REGS]";
 		return (void*) (sp_regs[address - SP_REGS::begining]);
-	}
 	else if (DPC_REGS::begining <= address && address <= DPC_REGS::end)
-	{
-		// cout << "[DPC_REGS]";
 		return (void*) (dpc_regs[address - DPC_REGS::begining]);
-	}
 	else if (DPS_REGS::begining <= address && address <= DPS_REGS::end)
-	{
-		// cout << "[DPS_REGS]";
 		return (void*) (dps_regs[address - DPS_REGS::begining]);
-	}
 	else if (MI_REGS::begining <= address && address <= MI_REGS::end)
-	{
-		// cout << "[MI_REGS]";
 		return (void*) (mi_regs[address - MI_REGS::begining]);
-	}
 	else if (VI_REGS::begining <= address && address <= VI_REGS::end)
-	{
-		// cout << "[VI_REGS]";
 		return (void*) (vi_regs[address - VI_REGS::begining]);
-	}
 	else if (AI_REGS::begining <= address && address <= AI_REGS::end)
-	{
-		// cout << "[AI_REGS]";
 		return (void*) (ai_regs[address - AI_REGS::begining]);
-	}
 	else if (PI_REGS::begining <= address && address <= PI_REGS::end)
-	{
-		// cout << "[PI_REGS]";
 		return (void*) (pi_regs[address - PI_REGS::begining]);
-	}
 	else if (RI_REGS::begining <= address && address <= RI_REGS::end)
-	{
-		// cout << "[RI_REGS]";
 		return (void*) (ri_regs[address - RI_REGS::begining]);
-	}
 	else if (SI_REGS::begining <= address && address <= SI_REGS::end)
-	{
-		// cout << "[SI_REGS]";
 		return (void*) (si_regs[address - SI_REGS::begining]);
-	}
 	else if (ROM::begining <= address && address <= ROM::end)
-	{
-		// cout << "[ROM]";
 		return (void*) ((*rom)[address - ROM::begining]);
-	}
-	else if (0x80000000 <= address && address <= 0x9FFFFFFF)
-	{
-		// cout << "Mirror 8 of 0x0000 0000 to 0x1FFF FFFF";
+	else if (0x80000000 <= address && address <= 0x9FFFFFFF) // Mirror 8 of 0x0000 0000 to 0x1FFF FFFF
 		return (virtual_to_physical(address - 0x80000000));
-	}
-	else if (0xA0000000 <= address && address <= 0xBFFFFFFF)
-	{
-		// cout << "Mirror A of 0x0000 0000 to 0x1FFF FFFF";
+	else if (0xA0000000 <= address && address <= 0xBFFFFFFF) // Mirror A of 0x0000 0000 to 0x1FFF FFFF
 		return (virtual_to_physical(address - 0xA0000000));
-	}
 	else
-		cout << endl << "ERROR: Address 0x" << hex << address << " not handled" << endl;
+		cerr << endl << "ERROR: Address 0x" << hex << address << " not handled" << endl;
 	return 0;
 }
 

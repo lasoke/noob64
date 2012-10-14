@@ -23,6 +23,7 @@
 //#define DEBUG true
 
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <string>
 #include <sstream>
