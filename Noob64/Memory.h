@@ -558,6 +558,7 @@ inline void MEMORY::write(Type data, dword address)
 
 inline void MEMORY::checkDMA(dword address)
 {
+	address = (word) address;
 	if (address == 0x04040008) //SP_RD_LEN_REG
 		dma_sp_read();
 	else if (address == 0x0404000C) // SP_WR_LEN_REG
@@ -570,6 +571,10 @@ inline void MEMORY::checkDMA(dword address)
 		dma_si_read();
 	else if (address == 0x04800010) // SI_PIF_ADDR_WR64B_REG
 		dma_si_write();
+	else if (0x80000000 <= address && address <= 0x9FFFFFFF)
+		return checkDMA(address - 0x80000000); // "Mirror 8 of 0x0000 0000 to 0x1FFF FFFF"
+	else if (0xA0000000 <= address && address <= 0xBFFFFFFF)
+		return checkDMA(address - 0xA0000000); // "Mirror A of 0x0000 0000 to 0x1FFF FFFF";
 }
 
 //****************************************************************************

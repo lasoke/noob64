@@ -58,7 +58,7 @@ inline int getFunct(word instr)
 }
 
 //getImmediate retreives the immediate from the instruction
-inline dword getImmediate(word instr)
+inline int getImmediate(word instr)
 {
 	return instr & 0xffff;
 }

@@ -42,7 +42,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	//****************************************************************************
 
 	wstring rsp_path = _T("C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll");
+//	wstring rsp_path = _T("C:\\Users\\quentin\\Downloads\\n64\\Mupen64K 0.8\\Mupen64K 0.8\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll");
 	string  rom_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
+//	string  rom_path = "C:\\Users\\quentin\\Downloads\\Super Mario 64.z64";
 
 	enableConsole();
 
