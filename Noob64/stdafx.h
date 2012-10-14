@@ -35,7 +35,6 @@ using namespace std;
 #include "Instruction.h"
 #include "ExceptionHandler.h"
 #include "Helper.h"
-#include "Rom.h"
 #include "tlb.h"
 #include "R4300i.h"
 #include "Rsp.h"

@@ -5,6 +5,9 @@
 #define WORD_MAX			4294967295
 #define DWORD_MAX			18446744073709551615
 
+#define ROM_HEADER_SIZE		0x1000
+#define ROM_BOOT_CODE_SIZE	1008
+
 typedef unsigned __int8		byte;
 typedef unsigned __int16	hword;
 typedef unsigned __int32	word;
@@ -21,7 +24,7 @@ typedef long				w; // Word				Fixed-Point Format:		[31:sign;30-0:int]
 typedef long long int		l; // Longword			Fixed-Point Format:		[63:sign;62-0:int]
 
 //****************************************************************************
-//** MEMORY SEGMENTS					                                    **
+//** MEMORY SEGMENT															**
 //****************************************************************************
 class MEM_SEG
 {
@@ -35,7 +38,54 @@ public:
 	char* operator[] (const dword address) const;
 };
 
-//RDRAM
+//****************************************************************************
+//** ROM																	**
+//****************************************************************************
+
+class ROM : public MEM_SEG
+{
+public:
+	ROM(void);
+	ROM(char* filename);
+	static const word begining = 0x10000000;
+	static const word end = 0x1FBFFFFF;
+	void dump(void) const;
+
+	word getClock();
+	word getPc();
+	word getRelease();
+	word getCRC1();
+	word getCRC2();
+	string getName();
+	word getManufacturer();
+	hword getCartridge();
+	hword getCountry();
+
+private:
+	struct { // ROM Header
+	   byte		PI_BSD_DOM1_LAT_REG;
+	   byte		PI_BSD_DOM1_PWD_REG;
+	   byte		PI_BSD_DOM1_PGS_REG;
+	   byte		PI_BSD_DOM1_RLS_REG;
+	   word		clock;
+	   word		pc;
+	   word		release;
+	   word		CRC1;
+	   word		CRC2;
+	   word		Unknown[2];
+	   byte		name[20];
+	   word		unknown;
+	   word		manufacturer;
+	   hword	cartridge;
+	   hword	country;
+	   word		bootcode[ROM_BOOT_CODE_SIZE];
+	} header;
+};
+
+//****************************************************************************
+//** RDRAM																	**
+//****************************************************************************
+
 class RDRAM : public MEM_SEG
 {
 public:
@@ -49,7 +99,10 @@ private:
 	byte data[size];
 };
 
-// RDRAM Registers
+//****************************************************************************
+//** RDRAM Registers														**
+//****************************************************************************
+
 class RDRAM_REGS : public MEM_SEG
 {
 public:
@@ -73,13 +126,17 @@ private:
 	} data;
 };
 
-// SP Registers
+
+//****************************************************************************
+//** SP Registers															**
+//****************************************************************************
+
 class SP_REGS : public MEM_SEG
 {
 public:
 	SP_REGS();
 	static const word begining = 0x04000000;
-	static const word end = 0x0400FFFF;
+	static const word end = 0x040FFFFF;
 	void dump(void) const;
 	void dump_range_dmem(word from, word to) const;
 	void dump_range_imem(word from, word to) const;
@@ -117,7 +174,10 @@ private:
 	} data;
 };
 
-// DP Command Registers
+//****************************************************************************
+//** DP Command Registers													**
+//****************************************************************************
+
 class DPC_REGS : public MEM_SEG
 {
 public:
@@ -149,7 +209,10 @@ private:
 	} data;
 };
 
-// DP Span Registers
+//****************************************************************************
+//** DP Span Registers														**
+//****************************************************************************
+
 class DPS_REGS : public MEM_SEG
 {
 public:
@@ -173,7 +236,10 @@ private:
 	} data;
 };
 
-// MIPS Interface (MI) Registers
+//****************************************************************************
+//** MIPS Interface (MI) Registers											**
+//****************************************************************************
+
 class MI_REGS : public MEM_SEG
 {
 public:
@@ -197,7 +263,10 @@ private:
 	} data;
 };
 
-// Video Interface (VI) Registers
+//****************************************************************************
+//** Video Interface (VI) Registers											**
+//****************************************************************************
+
 class VI_REGS : public MEM_SEG
 {
 public:
@@ -241,7 +310,10 @@ private:
 	} data;
 };
 
-// Audio Interface (AI) Registers
+//****************************************************************************
+//** Audio Interface (AI) Registers											**
+//****************************************************************************
+
 class AI_REGS : public MEM_SEG
 {
 public:
@@ -269,7 +341,10 @@ private:
 	} data;
 };
 
-// Peripheral Interface (PI) Registers
+//****************************************************************************
+//** Peripheral Interface (PI) Registers									**
+//****************************************************************************
+
 class PI_REGS : public MEM_SEG
 {
 public:
@@ -311,7 +386,10 @@ private:
 	} data;
 };
 
-// RDRAM Interface (RI) Registers
+//****************************************************************************
+//** RDRAM Interface (RI) Registers											**
+//****************************************************************************
+
 class RI_REGS : public MEM_SEG
 {
 public:
@@ -343,7 +421,10 @@ private:
 	} data;
 };
 
-// Serial Interface (SI) Registers
+//****************************************************************************
+//** Serial Interface (SI) Registers										**
+//****************************************************************************
+
 class SI_REGS : public MEM_SEG
 {
 public:
@@ -370,7 +451,10 @@ private:
 	} data;
 };
 
-// Serial Interface (SI) Registers
+//****************************************************************************
+//** Serial Interface (SI) Registers										**
+//****************************************************************************
+
 class PIF_ROM : public MEM_SEG
 {
 public:
@@ -384,7 +468,10 @@ private:
 };
 
 
-// Serial Interface (SI) Registers
+//****************************************************************************
+//** PIF RAM																**
+//****************************************************************************
+
 class PIF_RAM : public MEM_SEG
 {
 public:
@@ -400,6 +487,7 @@ private:
 //****************************************************************************
 //** MEMORY					                                                **
 //****************************************************************************
+
 class MEMORY
 {
 public:
@@ -424,19 +512,26 @@ public:
 	inline void* virtual_to_physical(dword address);
 	template <typename Type> inline Type read(dword address);
 	template <typename Type> inline void write(Type data, dword address);
+
+	inline void checkDMA(dword address);
 	void dma_pi_write();
 	void dma_pi_read();
 	void dma_si_write();
 	void dma_si_read();
 	void dma_sp_write();
 	void dma_sp_read();
+
+	inline void setRom(ROM *r) { rom = r; };
+
+private:
+	ROM	*rom;
 };
 
 //****************************************************************************
-//** READ					                                                **
+//** MEMORY::READ															**
 //****************************************************************************
 template <typename Type>
-inline Type MEMORY::read(dword address)
+Type MEMORY::read(dword address)
 {
 	byte dst[sizeof(Type)];
 	memcpy(dst, virtual_to_physical(address), sizeof(Type));
@@ -444,49 +539,57 @@ inline Type MEMORY::read(dword address)
 }
 
 //****************************************************************************
-//** WRITE					                                                **
+//** MEMORY::WRITE															**
 //****************************************************************************
 template <typename Type>
 inline void MEMORY::write(Type data, dword address)
 {
-	//Type *dst = (Type*) virtual_to_physical(address);
 	void *dst = virtual_to_physical(address);
 	data = type_to_binary<Type>(data);
 	memcpy(dst, &data, sizeof(Type));
-	if (((address == SI_REGS::begining) && (sizeof(Type) == 8)) || (address == SI_REGS::begining + 0x4))
+
+	checkDMA(address);
+}
+
+inline void MEMORY::checkDMA(dword address)
+{
+	if (address == 0x04040008) //SP_RD_LEN_REG
 	{
-		dma_si_write();
-		getchar();
-	}
-	if (((address == SI_REGS::begining + 0xC) && (sizeof(Type) == 8)) || (address == SI_REGS::begining + 0x10))
-	{
-		dma_si_read();
-		getchar();
-	}
-	if (((address == SP_REGS::begining + 0x40004) && (sizeof(Type) == 8)) || (address == SP_REGS::begining + 0x40008))
-	{
+		// SP read DMA length
 		dma_sp_read();
-		getchar();
+
 	}
-	if (((address == SP_REGS::begining + 0x40008) && (sizeof(Type) == 8)) || (address == SP_REGS::begining + 0x4000C))
+	else if (address == 0x0404000C) // SP_WR_LEN_REG
 	{
+		// SP write DMA length
 		dma_sp_write();
-		getchar();
+
 	}
-	if (((address ==PI_REGS::begining + 0x4) && (sizeof(Type) == 8)) || (address == PI_REGS::begining + 0x8))
+	else if (address == 0x04600008) // PI_RD_LEN_REG
 	{
+		// PI read length
 		dma_pi_read();
-		getchar();
+
 	}
-	if (((address == PI_REGS::begining + 0x8) && (sizeof(Type) == 8)) || (address == PI_REGS::begining + 0xC))
+	else if (address == 0x0460000C) // PI_WR_LEN_REG
 	{
+		// PI write length
 		dma_pi_write();
-		getchar();
+	}
+	else if (address == 0x04800004) // SI_PIF_ADDR_RD64B_REG
+	{
+		// SI address read 64B
+		dma_si_read();
+	}
+	else if (address == 0x04800010) // SI_PIF_ADDR_WR64B_REG
+	{
+		// SI address write 64B
+		dma_si_write();
 	}
 }
 
 //****************************************************************************
-//** CONVERTS VIRTUAL ADDRESSES TO PHYSICAL ADDRESSES                       **
+//** MEMORY::VIRTUAL TO PHYSICAL											**
 //****************************************************************************
 inline void* MEMORY::virtual_to_physical(dword address)
 {
@@ -546,6 +649,11 @@ inline void* MEMORY::virtual_to_physical(dword address)
 		// cout << "[SI_REGS]";
 		return (void*) (si_regs[address - SI_REGS::begining]);
 	}
+	else if (ROM::begining <= address && address <= ROM::end)
+	{
+		// cout << "[ROM]";
+		return (void*) ((*rom)[address - ROM::begining]);
+	}
 	else if (0x80000000 <= address && address <= 0x9FFFFFFF)
 	{
 		// cout << "Mirror 8 of 0x0000 0000 to 0x1FFF FFFF";
@@ -560,3 +668,4 @@ inline void* MEMORY::virtual_to_physical(dword address)
 		cout << endl << "ERROR: Address 0x" << hex << address << " not handled" << endl;
 	return 0;
 }
+

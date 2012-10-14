@@ -1,6 +1,35 @@
 #include "StdAfx.h"
 #include "Rsp.h"
 
+void checkInterrupts_temp(void)
+{
+	cout << "CheckInterrupts" << endl;
+	getchar();
+}
+
+void processDlistList_temp(void)
+{
+	cout << "ProcessDlistList" << endl;
+	getchar();
+}
+
+void processAlistList_temp(void)
+{
+	cout << "ProcessAlistList" << endl;
+	getchar();
+}
+
+void processRdpList_temp(void)
+{
+	cout << "ProcessRdpList" << endl;
+	getchar();
+}
+
+void showCFB_temp(void)
+{
+	cout << "ShowCFB" << endl;
+	getchar();
+}
 
 RSP::RSP(wstring filename, MEMORY *mem) : PLUGIN(filename)
 {
@@ -42,12 +71,16 @@ RSP::RSP(wstring filename, MEMORY *mem) : PLUGIN(filename)
 	rsp_info->DPC_PIPEBUSY_REG	= (word*) memory->dpc_regs.ptr + 0x18;
 	rsp_info->DPC_TMEM_REG		= (word*) memory->dpc_regs.ptr + 0x1C;
 
-	// TODO: ?
-	void (*CheckInterrupts)(void);
-	void (*ProcessDlistList)(void);
-	void (*ProcessAlistList)(void);
-	void (*ProcessRdpList)(void);
-	void (*ShowCFB)(void);
+	// FIXME:
+	rsp_info->CheckInterrupts	= checkInterrupts_temp;
+	rsp_info->ProcessDlistList  = processDlistList_temp;
+	rsp_info->ProcessAlistList  = processAlistList_temp;
+	rsp_info->ProcessRdpList	= processRdpList_temp;
+	rsp_info->ShowCFB			= showCFB_temp;
+
+	int cycles;
+	initiateRSP((word*)&cycles);
+
 }
 
 RSP::~RSP(void)

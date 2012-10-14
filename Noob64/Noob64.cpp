@@ -49,13 +49,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	R4300i*	cpu	= new R4300i(mem);
 	RSP*	rsp	= new RSP(rsp_path, mem);
 
-	/*
-	word cycles[1];
-	cycles[0] = 1000;
-	rsp->initiateRSP(cycles);
-	rsp->doRspCycles(1000);
-	*/
-
 	cpu->boot(rom);
 	getchar();
 
