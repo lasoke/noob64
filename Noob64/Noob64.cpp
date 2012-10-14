@@ -41,11 +41,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	//** MAIN CODE HERE															**
 	//****************************************************************************
 
-	enableConsole();
 	wstring rsp_path = _T("C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll");
+	string  rom_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
+
+	enableConsole();
 
 	MEMORY*	mem	= new MEMORY();
-	ROM*	rom	= new ROM();
+	ROM*	rom	= new ROM(rom_path);
 	R4300i*	cpu	= new R4300i(mem);
 	RSP*	rsp	= new RSP(rsp_path, mem);
 
