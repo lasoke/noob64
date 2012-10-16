@@ -13,6 +13,14 @@ string format_number(string s, char c, int frequency)
 	return s;
 }
 
+string print_addr(dword address)
+{
+	char addr[16];
+	memset(addr, 0, 16);
+	_itoa_s(address, addr, 16, 16);
+	return "\n" + format_number(string(8 - strlen(addr), '0') + addr, ' ', 4) + " : ";
+}
+
 byte getByte(char **ptr)
 {
 	word value = 0;

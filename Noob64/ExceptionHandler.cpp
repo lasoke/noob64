@@ -1,25 +1,35 @@
 #include "StdAfx.h"
+#include "ExceptionHandler.h"
 
-ExceptionHandler::ExceptionHandler(void)
+void R4300i::handle_exception(void)
 {
+	disable_interrupts();
+	save_context();
+	//EPC <- delay_slot ? address of the branch instruction immediately preceding the delay slot : address of the instruction that causes the exception
+
 }
 
-void ExceptionHandler::interruption(void)
+void R4300i::disable_interrupts(void)
 {
-	cerr << "Interruption" << endl;
+	// TODO
 }
 
-void ExceptionHandler::trap(void)
+/*
+	The handler saves the context of the processor,
+	including the contents of the program counter,
+	the current operating mode (User or	Supervisor),
+	and the status of the interrupts (enabled or disabled).
+	This context is saved so it can be restored when
+	the exception has been serviced.
+*/
+void R4300i::save_context(void)
 {
-	cerr << "Trap" << endl;
+	// TODO
 }
 
-void ExceptionHandler::syscall(void)
-{
-	cerr << "Syscall" << endl;
-}
 
-void ExceptionHandler::unknownInstruction(word i)
+/*
+void R4300i::unknown_instruction(word i)
 {
 	char mem[64];
 	_itoa_s(i, mem, 64, 2);
@@ -27,3 +37,4 @@ void ExceptionHandler::unknownInstruction(word i)
 	getchar();
 	exit(0);
 }
+*/

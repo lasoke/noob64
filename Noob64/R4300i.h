@@ -35,25 +35,39 @@ public:
 	R4300i(MEMORY *mem);
 	void boot(ROM *rom);
 	void reset();
-	void init_crc();
 private:
-	MEMORY *memory;
-	ExceptionHandler &ehandler;
-	ROM *rom;
+	MEMORY	*memory;
+	ROM		*rom;
 
-	string print_addr();
+	void init_crc();
 
-	void decode(const word instr);
-	void decode_r(const word instr);
-	void decode_i(const word instr);
-	void decode_cop0(const word instr);
-	void decode_tlb(const word instr);
-	void decode_cop1(const word instr);
-	void decode_bc1(const word instr);
-	template<typename Type>
-	void decode_fpu(const word instr);
 	//****************************************************************************
-	//** Registers					                                            **
+	//** EXCEPTION RELATED METHODS AND FIELDS									**
+	//****************************************************************************
+	void handle_exception(); // temp
+	void handle_exception(Exception);
+
+	bool			mode64b;
+	ExceptionVector *vectors;			
+										
+	void disable_interrupts(void);
+	void enable_interrupts(void);
+	void save_context(void);
+	void restore_context(void);
+	//****************************************************************************
+	//** DECODING RELATING METHODS				                                **
+	//****************************************************************************
+	void		decode(const word instr);
+	inline void decode_r(const word instr);
+	inline void decode_i(const word instr);
+	inline void decode_cop0(const word instr);
+	inline void decode_tlb(const word instr);
+	inline void decode_cop1(const word instr);
+	inline void decode_bc1(const word instr);
+	template<typename Type>
+	inline void decode_fpu(const word instr);
+	//****************************************************************************
+	//** REGISTERS					                                            **
 	//****************************************************************************
 	// TODO: r[0] is always 0
 	dword	r[32];									// General Purpose Registers (GPRs)
@@ -63,18 +77,18 @@ private:
 	dword	hi, lo;									// Multiply/Divide result
 	word	fcr0, fcr31;							// Floating Point Control Registers
 	bool	ll;										// Load/Link Register
-	word	delay_slot;								// for branch instructions
-	bool	stop;									// stop to debug inst by inst
-	dword	CIC_Chip;								//
+	bool	delay_slot;								// for branch instructions
+	bool	running;								// Status of the CPU
+	dword	cic_chip;								//
 	//****************************************************************************
 	//** OTHER																	**
 	//****************************************************************************
-	char invalid_code[0x100000];					// Invalid tlb code
-	word tlb_LUT_r[0x100000];
-	word tlb_LUT_w[0x100000];
-	tlb tlb_e[32];									// TLB
+	char	invalid_code[0x100000];					// Invalid tlb code
+	word	tlb_lut_r[0x100000];
+	word	tlb_lut_w[0x100000];
+	TLB		tlb_e[32];								// TLB
 	//****************************************************************************
-	//** Load and Store Instructions                                            **
+	//** LOAD AND STORE INSTRUCTIONS                                            **
 	//****************************************************************************
 	void LB           (int rt, int immed, int rs);	//  Load Byte
 	void LBU          (int rt, int immed, int rs);	//  Load Byte Unsigned
@@ -101,7 +115,7 @@ private:
 	void SWR          (int rt, int immed, int rs);	//  Store Word Right
 	void SYNC         (void);						//	SYNChronize shared memory
 	//****************************************************************************
-	//** Atithmetic Instructions                                                **
+	//** ATITHMETIC INSTRUCTIONS                                                **
 	//****************************************************************************
 	void ADD          (int rd, int rs, int rt);		//	ADD word
 	void ADDI         (int rt, int rs, int immed);	//	ADD immediate word
@@ -155,7 +169,7 @@ private:
 	void XOR          (int rd, int rs, int rt);		//	eXclusive OR
 	void XORI         (int rt, int rs, int immed);	//	eXclusive OR immediate
 	//****************************************************************************
-	//** Jump and Branch Instructions                                           **
+	//** JUMP AND BRANCH INSTRUCTIONS                                           **
 	//****************************************************************************
 	void BEQ          (int rs, int rt, int immed);	//	Branch on =
 	void BEQL         (int rs, int rt, int immed);	//	Branch on EQual Likely
@@ -178,12 +192,12 @@ private:
 	void JALR         (int rs, int rd);				//	Jump And Link Register
 	void JR           (int rs);						//	Jump Register
 	//****************************************************************************
-	//** Special Instructions                                                   **
+	//** SPECIAL INSTRUCTIONS                                                   **
 	//****************************************************************************
 	void BREAK        (int immed);					//	BREAKpoint
 	void SYSCALL      (int immed);					//	SYStem CALL
 	//****************************************************************************
-	//** Exception Instructions                                                 **
+	//** EXCEPTION INSTRUCTIONS                                                 **
 	//****************************************************************************
 	void TEQ          (int rs, int rt);				//	Trap if =
 	void TEQI         (int rs, int immed);			//	Trap if = immediate
@@ -198,7 +212,7 @@ private:
 	void TNE          (int rs, int rt);				//	Trap if <>
 	void TNEI         (int rs, int immed);				//	Trap if <> immediate
 	//****************************************************************************
-	//** System Control Processor (COP0); Instructions                          **
+	//** SYSTEM CONTROL PROCESSOR (COP0) INSTRUCTIONS                          **
 	//****************************************************************************
 	void CACHE        (int rt, int immed, int rs);	//	CACHE
 	void ERET		  (void);						//	Return from Exception
@@ -209,7 +223,7 @@ private:
 	void TLBWI		  (void);						//	Write Indexed TLB Entry
 	void TLBWR		  (void);						//	Write Random TLB Entry
 	//****************************************************************************
-	//** Floating-point Unit, FPU (COP1); instructions                          **
+	//** FLOATING-POINT UNIT, FPU (COP1) INSTRUCTIONS                          **
 	//****************************************************************************
 	template<typename Type>
 	void ABS		  (int fd, int fs);				//	floating-point ABSolute value
@@ -254,7 +268,7 @@ private:
 	template<typename Type, typename toType>
 	void TRUNC		  (int fd, int fs);				//	floating-point TRUNCate to Long fixed-point
 	//****************************************************************************
-	//** Conditions		                                                        **
+	//** CONDITIONS		                                                        **
 	//****************************************************************************
 	template<typename Type>
 	void F(Type a, Type b);		// False

@@ -512,7 +512,7 @@ public:
 	PIF_ROM		&pif_rom;
 	PIF_RAM		&pif_ram;
 	byte		SRAM[0x8000];
-	word		CIC_Chip;
+	word		cic_chip;
 
 	inline void* virtual_to_physical(dword address);
 	template <typename Type> inline Type read(dword address);

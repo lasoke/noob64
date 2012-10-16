@@ -19,7 +19,7 @@ MEMORY::MEMORY() :
 	pif_ram		(*new PIF_RAM())
 {
 	memset(SRAM, 0, sizeof(SRAM));
-	CIC_Chip = 0;
+	cic_chip = 0;
 }
 
 // MEMORY SEGMENT

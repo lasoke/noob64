@@ -1,9 +1,12 @@
 #pragma once
 
-//format a number
+// Format a number
 string format_number(string s, char c, int frequency);
 
-//returns the word contained at the address pointed by ptr
+// Prints an address in the standard representation
+string print_addr(dword address);
+
+// Returns the word contained at the address pointed by ptr
 byte getByte(char **ptr);
 
 //print the memory contains in the array data
