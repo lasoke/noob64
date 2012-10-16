@@ -21,7 +21,7 @@ void R4300i::reset()
 	hi		= 0;
 	lo		= 0;
 	fcr0	= 0;
-	fcr31	= 0;
+	fcr31	= 0x01000800;
 	ll		= false;
 	stop	= false;
 	CIC_Chip = 0;
@@ -251,10 +251,8 @@ void R4300i::boot(ROM *r)
 
 	while (true)
 	{
-		//diff a a400 0274
-		//r[29]=a4001f90
-		//lw r9 0x4[r29]= 0x0 instead of 6886a9c1
-		if ((pc & 0xFFFF) == 0x0018)
+		//main loop of the game 80322DF0
+		if ((pc & 0xFFFF) == 0x2DF0)
 			stop = true;
 		decode(memory->read<word>(pc));
 	}
@@ -958,7 +956,7 @@ void R4300i::LHU(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LHU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = memory->read<hword>(r[rs] + extend_sign_halfword(immed));
+	r[rt] = extend_sign_halfword(memory->read<hword>(r[rs] + extend_sign_halfword(immed)));
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -1042,7 +1040,7 @@ void R4300i::LWU(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LWU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = memory->read<word>(r[rs] + extend_sign_halfword(immed));
+	r[rt] = extend_sign_word(memory->read<word>(r[rs] + extend_sign_halfword(immed)));
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -1200,7 +1198,7 @@ void R4300i::ADD(int rd, int rs, int rt)
 	else
 		cout << print_addr() << "ADD " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
-	r[rd] = r[rs] + r[rt];
+	r[rd] = extend_sign_word(r[rs] + r[rt]);
 #	if defined DEBUG
 		cout << " r" << dec << rd << hex << "=0x" << r[rd];
 #	endif // DEBUG
@@ -1212,7 +1210,7 @@ void R4300i::ADDI(int rt, int rs, int immed)
 #	if defined DEBUG
 		cout << print_addr() << "ADDI " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = (sword) r[rs] + extend_sign_halfword(immed);
+	r[rt] = extend_sign_word(r[rs] + extend_sign_halfword(immed));
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -1224,7 +1222,7 @@ void R4300i::ADDIU(int rt, int rs, int immed)
 #	if defined DEBUG
 		cout << print_addr() << "ADDIU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << dec << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = r[rs] + extend_sign_halfword(immed);
+	r[rt] = extend_sign_word(r[rs] + extend_sign_halfword(immed));
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -1236,7 +1234,7 @@ void R4300i::ADDU(int rd, int rs, int rt)
 #	if defined DEBUG
 		cout << print_addr() << "ADDU " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
-	r[rd] = r[rs] + r[rt];
+	r[rd] = extend_sign_word(r[rs] + r[rt]);
 #	if defined DEBUG
 		cout << " r" << dec << rd << hex << "=0x" << r[rd];
 #	endif // DEBUG
@@ -1897,7 +1895,7 @@ void R4300i::SUB(int rd, int rs, int rt)
 	else
 		cout << print_addr() << "SUB " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
-		r[rd] = extend_sign_word((r[rs] - r[rt]) & 0x0000FFFF);
+		r[rd] = extend_sign_word(r[rs] - r[rt]);
 #	if defined DEBUG
 		cout << " r" << dec << rd << hex << "=0x" << r[rd];
 #	endif // DEBUG
@@ -1913,7 +1911,7 @@ void R4300i::SUBU(int rd, int rs, int rt)
 		cout << print_addr() << "SUBU " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	
-	r[rd] = extend_sign_word((r[rs] - r[rt]) & 0x0000FFFF);
+	r[rd] = extend_sign_word(r[rs] - r[rt]);
 
 #	if defined DEBUG
 		cout << " r" << dec << rd << hex << "=0x" << r[rd];
@@ -2063,7 +2061,7 @@ void R4300i::BGEZL(int immed, int rs)
 		pc += 8;
 }
 
-void R4300i::BGTZ(int immed, int rs)
+void R4300i::BGTZ(int rs, int immed)
 {
 #	if defined DEBUG
 		cout << print_addr() << "BGTZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
@@ -2097,7 +2095,7 @@ void R4300i::BGTZL(int immed, int rs)
 		pc += 8;
 }
 
-void R4300i::BLEZ(int immed, int rs)
+void R4300i::BLEZ(int rs, int immed)
 {
 #	if defined DEBUG
 		cout << print_addr() << "BLEZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
@@ -2264,7 +2262,7 @@ void R4300i::JAL(int address)
 	delay_slot = 1;
 	decode(memory->read<word>(pc));
 	delay_slot = 0;
-	r[31] = pc;
+	r[31] = extend_sign_word(pc);
 	pc = (pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2);
 }
 
@@ -2279,7 +2277,7 @@ void R4300i::JALR(int rs, int rd)
 	delay_slot = 1;
 	decode(memory->read<word>(pc));
 	delay_slot = 0;
-	r[rd] = pc;
+	r[rd] = extend_sign_word(pc);
 	pc = local_rs;
 }
 
@@ -2944,11 +2942,14 @@ void R4300i::CEIL(int fd, int fs)
 void R4300i::CFC1(int rt, int fs)
 {
 #	if defined DEBUG
-		cout << print_addr() << "CFC1 " << dec << "r" << rt << " " << dec << "f" << fs;
+	cout << print_addr() << "CFC1 " << dec << "r" << rt << " " << dec << "f" << fs;
 #	endif // DEBUG
-	r[rt] = extend_sign_word(f[fs]);
+	if (fs == 0)
+		r[rt] = extend_sign_word(fcr0);
+	else
+		r[rt] = extend_sign_word(fcr31);
 #	if defined DEBUG
-		cout << " r" << dec << rt << hex << "=0x" << r[rt];
+	cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2956,11 +2957,14 @@ void R4300i::CFC1(int rt, int fs)
 void R4300i::CTC1(int rt, int fs)
 {
 #	if defined DEBUG
-		cout << print_addr() << "CTC1 " << dec << "r" << rt << " " << dec << "f" << fs;
+	cout << print_addr() << "CTC1 " << dec << "r" << rt << " " << dec << "f" << fs;
 #	endif // DEBUG
-	f[fs] = r[rt] & 0xFFFFFFFF;
+	if (fs == 0)
+		fcr0 = r[rt] & 0xFFFFFFFF;
+	else
+		fcr31 = r[rt] & 0xFFFFFFFF;
 #	if defined DEBUG
-		cout << print_addr() << " f" << dec << fs << hex << "=0x" << f[fs];
+	cout << print_addr() << " f" << dec << fs << hex << "=0x" << f[fs];
 #	endif // DEBUG
 	pc += 4;
 }
