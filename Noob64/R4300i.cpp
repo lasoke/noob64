@@ -15,6 +15,34 @@ void R4300i::reset()
 		r[i]	= (dword) 0;
 		f[i]	= (dword) 0;
 		cop0[i] = (word)  0;
+		// --------------tlb------------------------
+		tlb_e[i].mask=0;
+		tlb_e[i].vpn2=0;
+		tlb_e[i].g=0;
+		tlb_e[i].asid=0;
+		tlb_e[i].pfn_even=0;
+		tlb_e[i].c_even=0;
+		tlb_e[i].d_even=0;
+		tlb_e[i].v_even=0;
+		tlb_e[i].pfn_odd=0;
+		tlb_e[i].c_odd=0;
+		tlb_e[i].d_odd=0;
+		tlb_e[i].v_odd=0;
+		tlb_e[i].r=0;
+		//tlb_e[i].check_parity_mask=0x1000;
+
+		tlb_e[i].start_even=0;
+		tlb_e[i].end_even=0;
+		tlb_e[i].phys_even=0;
+		tlb_e[i].start_odd=0;
+		tlb_e[i].end_odd=0;
+		tlb_e[i].phys_odd=0;
+	}
+
+	for (int i=0; i < 0x100000; i++)
+	{ 
+		tlb_LUT_r[i] = 0;
+		tlb_LUT_w[i] = 0;
 	}
 
 	pc		= 0;
@@ -252,7 +280,7 @@ void R4300i::boot(ROM *r)
 	while (true)
 	{
 		//main loop of the game 80322DF0
-		if ((pc & 0xFFFF) == 0x2DF0)
+		if ((pc & 0xFFFF) == 0x7D88)
 			stop = true;
 		decode(memory->read<word>(pc));
 	}
@@ -2554,18 +2582,19 @@ void R4300i::TLBP(void)
 		cout << print_addr() << "TLBP";
 #	endif // DEBUG
    int i;
-   Index |= 0x80000000;
-   for (i=0; i<32; i++)
+   Index = 0x80000000;
+ /*  for (i=0; i<32; i++)
      {
 	if (((tlb_e[i].vpn2 & (~tlb_e[i].mask)) ==
 	     (((EntryHi & 0xFFFFE000) >> 13) & (~tlb_e[i].mask))) &&
 	    ((tlb_e[i].g) ||
 	     (tlb_e[i].asid == (EntryHi & 0xFF))))
 	  {
+		  cout << hex << "vpn2 " << tlb_e[i].vpn2 << " ~mask " << (~tlb_e[i].mask) << " EntryHi " << ((EntryHi & 0xFFFFE000) >> 13) << " g " << (tlb_e[i].g) << " asid " << tlb_e[i].asid << endl;
 	     Index = i;
 	     break;
 	  }
-     }
+     }*/
    pc += 4;
 }
 
