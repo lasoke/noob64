@@ -43,7 +43,7 @@ inline Type type_to_binary(Type data)
 }
 
 //****************************************************************************
-//** SET A BIT TO THE GIVEN VALUE IN A DWORD								**
+//** SETS THE MASKED BIT OF A DWORD TO THE GIVEN VALUE								**
 //****************************************************************************
 inline dword set_bit(dword d, dword mask, bool value)
 {
