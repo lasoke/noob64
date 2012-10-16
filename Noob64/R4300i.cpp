@@ -999,7 +999,7 @@ void R4300i::LW(int rt, int immed, int rs)
 #	if defined DEBUG
 		cout << print_addr() << "LW " << dec << "r" << rt << " 0x" << hex << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = memory->read<sword>(r[rs] + extend_sign_halfword(immed));
+	r[rt] = extend_sign_word(memory->read<sword>(r[rs] + extend_sign_halfword(immed)));
 #	if defined DEBUG
 		cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
