@@ -567,6 +567,8 @@ inline void MEMORY::checkDMA(dword address)
 		dma_pi_read();
 	else if (address == 0x0460000C) // PI_WR_LEN_REG
 		dma_pi_write();
+	else if (address == 0xA4600010) // PI_STATUS
+		write<word>(0x0, 0x04600010);
 	else if (address == 0x04800004) // SI_PIF_ADDR_RD64B_REG
 		dma_si_read();
 	else if (address == 0x04800010) // SI_PIF_ADDR_WR64B_REG
@@ -607,6 +609,10 @@ inline void* MEMORY::virtual_to_physical(dword address)
 		return (void*) (si_regs[address - SI_REGS::begining]);
 	else if (ROM::begining <= address && address <= ROM::end)
 		return (void*) ((*rom)[address - ROM::begining]);
+	else if (PIF_ROM::begining <= address && address <= PIF_ROM::end)
+		return (void*) (pif_rom[address - PIF_ROM::begining]);
+	else if (PIF_RAM::begining <= address && address <= PIF_RAM::end)
+		return (void*) (pif_ram[address - PIF_RAM::begining]);
 	else if (0x80000000 <= address && address <= 0x9FFFFFFF) // Mirror 8 of 0x0000 0000 to 0x1FFF FFFF
 		return (virtual_to_physical(address - 0x80000000));
 	else if (0xA0000000 <= address && address <= 0xBFFFFFFF) // Mirror A of 0x0000 0000 to 0x1FFF FFFF

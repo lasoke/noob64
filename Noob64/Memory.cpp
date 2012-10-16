@@ -349,10 +349,10 @@ void MEMORY::dma_pi_write()
 
 	memcpy(rdram[0] + (invDramAddr & 0xFFFFFFF),
 		(*rom)[0] + (invCartAddr & 0xFFFFFFF),
-		(invWrLen & 0xFFF) + 1);
+		(invWrLen & 0xFFFFFFF) + 1);
 
 	cout << "*** pi_write ***" << endl;
-	//dump_array(invDramAddr, (const byte *) rdram[0] + (invDramAddr & 0xFFFFFF), (invWrLen & 0xFFF) + 1, 16);
+	//dump_array(invDramAddr, (const byte *) rdram[0] + (invDramAddr & 0xFFFFFF) + 0xFFF1000, (invWrLen & 0xFFF) + 1, 16);
 	//cout << "*** END OF RDRAM ***"<< endl;
 }
 
