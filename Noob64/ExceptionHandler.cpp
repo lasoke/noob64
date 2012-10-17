@@ -21,7 +21,6 @@ void R4300i::handle_exception(Exception e)
 	disable_interrupts();
 	save_context();
 
-	dword			vector_offset;
 	ExceptionType	type = OTHER;//= getExceptionType(e);
 	int				FaultingCopNumber = 0;//= getCoprocessorNumber();
 
@@ -29,15 +28,18 @@ void R4300i::handle_exception(Exception e)
 	{
 		EPC = delay_slot ? pc - 4 : pc;
 		Cause = set_bit(Cause, CAUSE_BD, delay_slot ? true : false);
-		if (type == TLB_REFILL)
-			vector_offset = 0x000;
-		else if (type == /* Interrupt */ OTHER /* ? */  && Cause & 0x10)
-			vector_offset = 0x200;
-		else
-			vector_offset = 0x180;
+
+		if (type == RESET_NMI)
+			pc = vectors[RESET_NMI].getVector(Status);
+		else if (type == TLB_REFILL)
+			pc = vectors[TLB_REFILL].getVector(Status);
+		else if (type == XTLB_REFILL)
+			pc = vectors[XTLB_REFILL].getVector(Status);
+		else if (OTHER)
+			pc = vectors[OTHER].getVector(Status);
 	}
 	else
-		vector_offset = 0x180;
+		pc = vectors[OTHER].getVector(Status);
 
 	//Cause.CE <- FaultingCoprocessorNumber;
 	Cause = set_bit(Cause, CAUSE_CE, false);
@@ -50,9 +52,7 @@ void R4300i::handle_exception(Exception e)
 	//
 
 	Status = set_bit(Status, STATUS_EXL, true);
-	pc = vector_offset + (Status & STATUS_BEV) ? 0xBFC00200 : 0x80000000;
 
-	// execute exception:
 	// decode(pc);
 
 	restore_context();
@@ -79,15 +79,3 @@ void R4300i::restore_context(void)
 {
 	// TODO
 }
-
-
-/*
-void R4300i::unknown_instruction(word i)
-{
-	char mem[64];
-	_itoa_s(i, mem, 64, 2);
-	cerr << endl << "Unknown instruction: " << format_number(string(32 - strlen(mem), '0') + mem, ' ', 4) << endl;
-	getchar();
-	exit(0);
-}
-*/

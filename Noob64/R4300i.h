@@ -47,9 +47,9 @@ private:
 	void handle_exception(); // temp
 	void handle_exception(Exception);
 
-	bool			mode64b;
-	ExceptionVector *vectors;			
-										
+	//queue<int>		interrupts;
+	ExceptionVector *vectors;
+	
 	void disable_interrupts(void);
 	void enable_interrupts(void);
 	void save_context(void);

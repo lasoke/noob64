@@ -28,9 +28,9 @@
 
 enum ExceptionType
 {
-	RESET_NMI,
-	TLB_REFILL,
-	XTLB_REFILL,
+	RESET_NMI,		// RESET, SOFT RESET, NON-MASKABLE INTERRUPT
+	TLB_REFILL,		// TLB REFILL
+	XTLB_REFILL,	// XTLB REFILL
 	OTHER
 };
 
@@ -62,12 +62,10 @@ enum Exception // Order matters: Reset has the highest priority while Interrupt 
 class ExceptionVector
 {
 public:
-	ExceptionVector(int off, dword vec) : offset(off), bev(0), vector(vec)  {};
-	inline void		setBev(bool b)	{ bev = b; };
-	inline dword	getVector()		{ return bev ? vector + 0x200 : vector; };
+	ExceptionVector(int off, dword vec) : offset(off), vector(vec)  {};
+	inline dword	getVector(dword status)	{ return status & STATUS_BEV ? vector + 0x200 : vector; };
 private:
 	int				offset;		// Vector Offset
-	bool			bev;		// Boot Exception Vector
 	dword			vector;		// Exception Vector
 };
 
