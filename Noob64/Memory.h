@@ -622,3 +622,4 @@ inline void* MEMORY::virtual_to_physical(dword address)
 	return 0;
 }
 
+bool is_address_defined(dword address);

@@ -3,12 +3,6 @@
 
 R4300i::R4300i(MEMORY *mem) : memory(mem)
 {
-	// INITIALIZING EXCEPTION HANDLER
-	vectors					= (ExceptionVector*) malloc(4 * sizeof(ExceptionVector));
-	vectors[RESET_NMI]		= *new ExceptionVector(0x000, 0xFFFFFFFFBFC00000);
-	vectors[TLB_REFILL]		= *new ExceptionVector(0x000, 0xFFFFFFFF80000000);
-	vectors[XTLB_REFILL]	= *new ExceptionVector(0x080, 0xFFFFFFFF80000080);
-	vectors[OTHER]			= *new ExceptionVector(0x180, 0xFFFFFFFF80000180);
 }
 
 void R4300i::reset()
@@ -60,6 +54,9 @@ void R4300i::reset()
 	delay_slot	= false;
 	running		= true;
 	cic_chip	= 0;
+
+	interrupt_detected	= false;
+	current_coprocessor = CPU;
 }
 
 void R4300i::init_crc()

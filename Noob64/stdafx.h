@@ -26,13 +26,12 @@
 #include <fstream>
 #include <stdio.h>
 #include <string>
-#include <queue>
 
 using namespace std;
 
 #include "Memory.h"
 #include "Instruction.h"
-#include "ExceptionHandler.h"
+#include "Exception.h"
 #include "Helper.h"
 #include "Tlb.h"
 #include "R4300i.h"
