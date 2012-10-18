@@ -171,7 +171,7 @@ void R4300i::decode(const word i)
 		SD(getRt(i), getImmediate(i), getRs(i));
 		break;
 	default:
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	}
 }
 
@@ -335,7 +335,7 @@ inline void R4300i::decode_r(word i)
 		DSRA32(getRd(i), getRt(i), getSa(i));
 		break;
 	default:
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	}
 }
 
@@ -385,12 +385,14 @@ inline void R4300i::decode_i(word i)
 		BGEZALL(getImmediate(i), getRs(i));
 		break;
 	default:
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	}
 }
 
 inline void R4300i::decode_cop0(word i)
 {
+	current_coprocessor = COP0;
+
 	switch(getRs(i)) {
 	case 0:
 		MFC0(getRt(i), getRd(i));
@@ -402,8 +404,10 @@ inline void R4300i::decode_cop0(word i)
 		decode_tlb(i);
 		break;
 	default:
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	}
+
+	current_coprocessor = CPU;
 }
 
 inline void R4300i::decode_tlb(word i)
@@ -425,12 +429,14 @@ inline void R4300i::decode_tlb(word i)
 		ERET();
 		break;
 	default:
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	}
 }
 
 inline void R4300i::decode_cop1(const word i)
 {
+	current_coprocessor = COP1;
+
 	switch(getRs(i)) {
 	case 0:
 		MFC1(getRt(i), getRd(i));
@@ -466,8 +472,10 @@ inline void R4300i::decode_cop1(const word i)
 		decode_fpu<l>(i);
 		break;
 	default:
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	}
+
+	current_coprocessor = CPU;
 }
 
 inline void R4300i::decode_bc1(const word i)
@@ -486,7 +494,7 @@ inline void R4300i::decode_bc1(const word i)
 		BC1TL(getImmediate(i));
 		break;
 	default:
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	}
 }
 
@@ -603,7 +611,7 @@ inline void R4300i::decode_fpu(const word i)
 		C<Type>(getRd(i), getRt(i), getCond(i));
 		break;
 	default:
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	}
 }
 
@@ -1050,7 +1058,7 @@ void R4300i::DADDU(int rd, int rs, int rt)
 	if (DWORD_MAX - r[rt] < r[rs])
 	{
 		//TODO: "If overflow occurs, then trap."
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	}
 	else
 	{
@@ -1070,7 +1078,7 @@ void R4300i::DDIV(int rs, int rt)
 	if (r[rt] == 0)
 	{
 		//TODO: "If overflow occurs, then trap."
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	}
 	else
 	{
@@ -1091,7 +1099,7 @@ void R4300i::DDIVU(int rs, int rt)
 	if (r[rt] == 0)
 	{
 		//TODO: "If overflow occurs, then trap."
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	}
 	else
 	{
@@ -1112,7 +1120,7 @@ void R4300i::DIV(int rs, int rt)
 	if (r[rt] == 0)
 	{
 		//TODO: "If overflow occurs, then trap."
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	}
 	else
 	{
@@ -1133,7 +1141,7 @@ void R4300i::DIVU(int rs, int rt)
 	if (r[rt] == 0)
 	{
 		//TODO: "If overflow occurs, then trap."
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	}
 	else
 	{
@@ -2061,7 +2069,7 @@ void R4300i::BREAK(int immed)
 #	if defined DEBUG
 	cout << print_addr(pc) << "SYSCALL " << extend_sign_halfword(immed);
 #	endif // DEBUG
-	handle_exception();
+	/* TODO : HANDLE EXCEPTION */;
 }
 
 void R4300i::SYSCALL(int immed)
@@ -2069,7 +2077,7 @@ void R4300i::SYSCALL(int immed)
 #	if defined DEBUG
 	cout << print_addr(pc) << "SYSCALL " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
-	handle_exception();
+	/* TODO : HANDLE EXCEPTION */;
 }
 
 void R4300i::TEQ(int rs, int rt)
@@ -2078,7 +2086,7 @@ void R4300i::TEQ(int rs, int rt)
 	cout << print_addr(pc) << "TEQ " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	if (r[rt] == r[rs])
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2088,7 +2096,7 @@ void R4300i::TEQI(int rs, int immed)
 	cout << print_addr(pc) << "TEQI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	if (r[rs] == extend_sign_halfword(immed))
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2098,7 +2106,7 @@ void R4300i::TGE(int rs, int rt)
 	cout << print_addr(pc) << "TGE " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	if (r[rs] >= r[rt])
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2108,7 +2116,7 @@ void R4300i::TGEI(int rs, int immed)
 	cout << print_addr(pc) << "TGEI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	if (r[rs] >= extend_sign_halfword(immed))
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2118,7 +2126,7 @@ void R4300i::TGEIU(int rs, int immed)
 	cout << print_addr(pc) << "TGEIU " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	if (r[rs] >= extend_sign_halfword(immed))
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2128,7 +2136,7 @@ void R4300i::TGEU(int rs, int rt)
 	cout << print_addr(pc) << "TGEU " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	if (r[rs] >= r[rt])
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2138,7 +2146,7 @@ void R4300i::TLT(int rs, int rt)
 	cout << print_addr(pc) << "TLT " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	if (r[rs] < r[rt])
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2148,7 +2156,7 @@ void R4300i::TLTI(int rs, int immed)
 	cout << print_addr(pc) << "TLTI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	if ((sdword) r[rs] < (sdword) extend_sign_halfword(immed))
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2158,7 +2166,7 @@ void R4300i::TLTIU(int rs, int immed)
 	cout << print_addr(pc) << "TLTIU " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	if (r[rs] < extend_sign_halfword(immed))
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2168,7 +2176,7 @@ void R4300i::TLTU(int rs, int rt)
 	cout << print_addr(pc) << "TLTU " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	if (r[rs] < r[rt])
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2178,7 +2186,7 @@ void R4300i::TNE(int rs, int rt)
 	cout << print_addr(pc) << "TNE " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	if (r[rs] != r[rt])
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2188,7 +2196,7 @@ void R4300i::TNEI(int rs, int immed)
 	cout << print_addr(pc) << "TNEI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	if (r[rs] != extend_sign_halfword(immed))
-		handle_exception();
+		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 

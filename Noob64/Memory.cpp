@@ -467,3 +467,20 @@ void MEMORY::dma_si_read()
 	//dump_array(si_regs.getPifAddrRd64b(), (byte*) pif_ram.ptr + si_regs.getPifAddrRd64b(), 64, 16);
 	//cout << "*** END OF RDRAM ***"<< endl;
 }
+
+bool is_address_defined(dword address)
+{
+	if (0x80000000 <= address && address <= 0xBFFFFFFF)
+		return true;
+	/*
+	dword i;
+	for (i = 0; i < 64; i++)
+	{
+		if (FastTlb[i].ValidEntry == false)
+			continue;
+		if (address >= FastTlb[i].VSTART && address <= FastTlb[i].VEND)
+			return true;
+	}
+	*/
+	return false; 
+}

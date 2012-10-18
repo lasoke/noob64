@@ -1,5 +1,9 @@
 #pragma once
 
+#define CPU			-1
+#define COP0		0
+#define COP1		1
+
 //Cop0 Macros
 //Each entry of the co processor 0 have a signification
 //So we can rename each entry to have a better understanding of the code
@@ -44,19 +48,19 @@ private:
 	//****************************************************************************
 	//** EXCEPTION RELATED METHODS AND FIELDS									**
 	//****************************************************************************
-	void handle_exception(); // temp
-	void handle_exception(Exception);
+	bool interrupt_detected;
 
-	bool			mode64b;
-	ExceptionVector *vectors;			
-										
-	void disable_interrupts(void);
-	void enable_interrupts(void);
-	void save_context(void);
-	void restore_context(void);
+	void check_interrupt(void);
+	void trigger_address_error(dword address, bool from_read);
+	void trigger_break_exception();
+	void trigger_copunusable_exception();
+	void trigger_intr_exception();
+	void trigger_tlb_miss(dword address);
+	void trigger_syscall_exception();
 	//****************************************************************************
 	//** DECODING RELATING METHODS				                                **
 	//****************************************************************************
+	int			current_coprocessor;
 	void		decode(const word instr);
 	inline void decode_r(const word instr);
 	inline void decode_i(const word instr);
