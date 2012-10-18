@@ -85,7 +85,7 @@ void R4300i::init_crc()
 	r[25]	= 0xFFFFFFFFD73F2993;
 	r[29]	= 0xFFFFFFFFA4001FF0;
 	r[31]	= 0xFFFFFFFFA4001554;
-
+	
 	Config	= 0x0006E463;
 	Status	= 0x34000000;
 	PRevID	= 0x00000B00;
@@ -122,6 +122,7 @@ void R4300i::init_crc()
 	for(int i = 0; i < 0x1000; i++)
 		memory->write<byte>(*(*rom)[i], SP_REGS::begining + i);
 	pc = 0xA4000040;
+	next_interrupt = 624999;
 
 	memory->write<word>(0xBDA807FC, 0x04001004);
 	memory->write<word>(0x3C0DBFC0, 0x04001000);
@@ -286,6 +287,9 @@ void R4300i::boot(ROM *r)
 
 	while (running)
 	{
+		++Count;
+		if ((pc & 0xFFFF) == 0x00AC)
+			pc = pc;
 		decode(memory->read<word>(pc));
 	}
 }

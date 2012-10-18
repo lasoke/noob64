@@ -74,12 +74,13 @@ private:
 	dword	f[32];									// FP General Purpose Registers (FGRs)
 	word	cop0[32];								// Cop0 registers
 	dword	pc;										// Program Counter
+	word	next_interrupt;							// 
 	dword	hi, lo;									// Multiply/Divide result
 	word	fcr0, fcr31;							// Floating Point Control Registers
 	bool	ll;										// Load/Link Register
 	bool	delay_slot;								// for branch instructions
 	bool	running;								// Status of the CPU
-	dword	cic_chip;								//
+	dword	cic_chip;								// To Hack the security of the n64
 	//****************************************************************************
 	//** OTHER																	**
 	//****************************************************************************
