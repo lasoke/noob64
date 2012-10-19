@@ -101,19 +101,19 @@
 #define SI_PIF_ADDR_WR64B_REG	0x04800010
 #define SI_STATUS_REG			0x04800018
 
-#define PI_BSD_DOM1_LAT_REG		0x10000000                 
-#define PI_BSD_DOM1_PWD_REG		0x10000001                 
-#define PI_BSD_DOM1_PGS_REG		0x10000002                 
-#define PI_BSD_DOM1_RLS_REG		0x10000003                 
-#define CLOCK_RATE				0x10000004  
-#define BOOT_ADDRESS_OFFSET		0x10000008  
-#define RELEASE_OFFSET			0x1000000C  
-#define CRC1					0x10000010  
-#define CRC2					0x10000014  
-#define IMAGE_NAME				0x10000020  
-#define MANUFACTURER_ID			0x1000003B  
-#define CARTRIDGE_ID			0x1000003C 
-#define COUNTRY_CODE			0x1000003E  
+#define PI_BSD_DOM1_LAT_REG		0x10000000
+#define PI_BSD_DOM1_PWD_REG		0x10000001
+#define PI_BSD_DOM1_PGS_REG		0x10000002
+#define PI_BSD_DOM1_RLS_REG		0x10000003
+#define CLOCK_RATE				0x10000004
+#define BOOT_ADDRESS_OFFSET		0x10000008
+#define RELEASE_OFFSET			0x1000000C
+#define CRC1					0x10000010
+#define CRC2					0x10000014
+#define IMAGE_NAME				0x10000020
+#define MANUFACTURER_ID			0x1000003B
+#define CARTRIDGE_ID			0x1000003C
+#define COUNTRY_CODE			0x1000003E
 
 #define KSEG0					0x80000000
 #define KSEG1					0xA0000000
@@ -237,8 +237,8 @@ public:
 	inline void setMode(word);
 	inline word getRefInterval()	{ return data.ref_interval; };
 	inline void setRefInterval(word);
-	inline word getRefNow()			{ return data.ref_row; };
-	inline void setRefNow(word);
+	inline word getRefRow()			{ return data.ref_row; };
+	inline void setRefRow(word);
 	inline word getRasInterval()	{ return data.ras_interval; };
 	inline void setRasInterval(word);
 	inline word getMinInterval()	{ return data.min_interval; };
@@ -289,7 +289,7 @@ public:
 	inline word getRdLen()		{ return data.rd_len; };
 	inline void setRdLen(word);
 	inline word getWrLen()		{ return data.wr_len; };
-	inline void set(word);
+	inline void setWrLen(word);
 	inline word getStatus()		{ return data.status; };
 	inline void setStatus(word);
 	inline word getDmaFull()	{ return data.dma_full; };
@@ -385,7 +385,7 @@ public:
 	inline word getBufTestAddr()	{ return data.buftest_addr; };
 	inline void setBufTestAddr(word);
 	inline word getBufTestData()	{ return data.buftest_data; };
-	inline void setBuftestData(word);
+	inline void setBufTestData(word);
 
 private:
 	struct	{
@@ -551,7 +551,7 @@ public:
 		inline word getBsdDom1Lat()	{ return data.bsd_dom1_lat; };
 		inline void setBsdDom1Lat(word);
 		inline word getBsdDom1Pwd()	{ return data.bsd_dom1_pwd; };
-		inline void setBsdDom1pwd(word);
+		inline void setBsdDom1Pwd(word);
 		inline word getBsdDom1Pgs()	{ return data.bsd_dom1_pgs; };
 		inline void setBsdDom1Pgs(word);
 		inline word getBsdDom1Rls()	{ return data.bsd_dom1_rls; };
@@ -608,8 +608,8 @@ public:
 		inline void setRefresh(word);
 		inline word getLatency()		{ return data.latency; };
 		inline void setLatency(word);
-		inline word getError()			{ return data.error; };
-		inline void setError(word);
+		inline word getRerror()			{ return data.rerror; };
+		inline void setRerror(word);
 		inline word getWerror()			{ return data.werror; };
 		inline void setWerror(word);
 
@@ -621,7 +621,7 @@ private:
 		word select;
 		word refresh;
 		word latency;
-		word error;
+		word rerror;
 		word werror;
 		byte unused[0xFFFE0];
 	} data;
@@ -720,9 +720,15 @@ public:
 	word		cic_chip;
 
 	inline void* virtual_to_physical(dword address);
-	template <typename Type> inline Type read(dword address);
-	template <typename Type> inline void write(Type data, dword address);
+	template <typename Type>
+	inline Type read(dword address);
+	template <typename Type>
+	inline void write(Type data, dword address);
 
+	inline void setRom(ROM *r) { rom = r; };
+
+private:
+	inline bool MEMORY::write_in_register(word data, dword address);
 	inline void checkDMA(dword address);
 	void dma_pi_write();
 	void dma_pi_read();
@@ -731,9 +737,6 @@ public:
 	void dma_sp_write();
 	void dma_sp_read();
 
-	inline void setRom(ROM *r) { rom = r; };
-
-private:
 	ROM	*rom;
 };
 
@@ -754,11 +757,192 @@ Type MEMORY::read(dword address)
 template <typename Type>
 inline void MEMORY::write(Type data, dword address)
 {
+	//if (typeid(Type) == typeid(word) && write_in_register((word) data, address))
+	//	return;
+
 	void *dst = virtual_to_physical(address);
 	data = type_to_binary<Type>(data);
 	memcpy(dst, &data, sizeof(Type));
 
 	checkDMA(address);
+}
+
+inline bool MEMORY::write_in_register(word data, dword address)
+{
+	if (address == RDRAM_CONFIG_REG)
+		rdram_regs.setConfig(data);
+	else if (address == RDRAM_DEVICE_ID_REG)
+		rdram_regs.setDeviceId(data);
+	else if (address == RDRAM_DELAY_REG)
+		rdram_regs.setDelay(data);
+	else if (address == RDRAM_MODE_REG)
+		rdram_regs.setMode(data);
+	else if (address == RDRAM_REF_INTERVAL_REG)
+		rdram_regs.setRefInterval(data);
+	else if (address == RDRAM_REF_ROW_REG)
+		rdram_regs.setRefRow(data);
+	else if (address == RDRAM_RAS_INTERVAL_REG)
+		rdram_regs.setConfig(data);
+	else if (address == RDRAM_MIN_INTERVAL_REG)
+		rdram_regs.setConfig(data);
+	else if (address == RDRAM_ADDR_SELECT_REG)
+		rdram_regs.setConfig(data);
+	else if (address == RDRAM_DEVICE_MANUF_REG)
+		rdram_regs.setConfig(data);
+
+	else if (address == SP_MEM_ADDR_REG)
+		sp_regs.setMemAddr(data);
+	else if (address == SP_DRAM_ADDR_REG)
+		sp_regs.setDramAddr(data);
+	else if (address == SP_RD_LEN_REG)
+		sp_regs.setRdLen(data);
+	else if (address == SP_WR_LEN_REG)
+		sp_regs.setWrLen(data);
+	else if (address == SP_STATUS_REG)
+		sp_regs.setStatus(data);
+	else if (address == SP_DMA_FULL_REG)
+		sp_regs.setDmaFull(data);
+	else if (address == SP_DMA_BUSY_REG)
+		sp_regs.setDmaBusy(data);
+	else if (address == SP_SEMAPHORE_REG)
+		sp_regs.setSemaphore(data);
+	else if (address == SP_PC_REG)
+		sp_regs.setPc(data);
+	else if (address == SP_IBIST_REG)
+		sp_regs.setIbist(data);
+
+	else if (address == DPC_START_REG)
+		dpc_regs.setStart(data);
+	else if (address == DPC_END_REG)
+		dpc_regs.setEnd(data);
+	else if (address == DPC_CURRENT_REG)
+		dpc_regs.setCurrent(data);
+	else if (address == DPC_STATUS_REG)
+		dpc_regs.setStatus(data);
+	else if (address == DPC_CLOCK_REG)
+		dpc_regs.setClock(data);
+	else if (address == DPC_BUFBUSY_REG)
+		dpc_regs.setBufBusy(data);
+	else if (address == DPC_PIPEBUSY_REG)
+		dpc_regs.setPipeBusy(data);
+	else if (address == DPC_TMEM_REG)
+		dpc_regs.setTmem(data);
+
+	else if (address == DPS_TBIST_REG)
+		dps_regs.setTbist(data);
+	else if (address == DPS_TEST_MODE_REG)
+		dps_regs.setTestMode(data);
+	else if (address == DPS_BUFTEST_ADDR_REG)
+		dps_regs.setBufTestAddr(data);
+	else if (address == DPS_BUFTEST_DATA_REG)
+		dps_regs.setBufTestData(data);
+
+	else if (address == MI_INIT_MODE_REG)
+		mi_regs.setInitMode(data);
+	else if (address == MI_VERSION_REG)
+		mi_regs.setVersion(data);
+	else if (address == MI_INTR_REG)
+		mi_regs.setIntr(data);
+	else if (address == MI_INTR_MASK_REG)
+		mi_regs.setIntrMask(data);
+
+	else if (address == VI_STATUS_REG)
+		vi_regs.setStatus(data);
+	else if (address == VI_ORIGIN_REG)
+		vi_regs.setOrigin(data);
+	else if (address == VI_WIDTH_REG)
+		vi_regs.setWidth(data);
+	else if (address == VI_INTR_REG)
+		vi_regs.setVintr(data);
+	else if (address == VI_CURRENT_REG)
+		vi_regs.setCurrent(data);
+	else if (address == VI_BURST_REG)
+		vi_regs.setBurst(data);
+	else if (address == VI_V_SYNC_REG)
+		vi_regs.setVsync(data);
+	else if (address == VI_H_SYNC_REG)
+		vi_regs.setHsync(data);
+	else if (address == VI_LEAP_REG)
+		vi_regs.setLeap(data);
+	else if (address == VI_H_START_REG)
+		vi_regs.setHstart(data);
+	else if (address == VI_V_START_REG)
+		vi_regs.setVstart(data);
+	else if (address == VI_V_BURST_REG)
+		vi_regs.setVburst(data);
+	else if (address == VI_X_SCALE_REG)
+		vi_regs.setXscale(data);
+	else if (address == VI_Y_SCALE_REG)
+		vi_regs.setYscale(data);
+
+	else if (address == AI_DRAM_ADDR_REG)
+		ai_regs.setDramAddr(data);
+	else if (address == AI_LEN_REG)
+		ai_regs.setLen(data);
+	else if (address == AI_CONTROL_REG)
+		ai_regs.setControl(data);
+	else if (address == AI_STATUS_REG)
+		ai_regs.setStatus(data);
+	else if (address == AI_DACRATE_REG)
+		ai_regs.setDacrate(data);
+	else if (address == AI_BITRATE_REG)
+		ai_regs.setBitrate(data);
+
+	else if (address == PI_DRAM_ADDR_REG)
+		pi_regs.setDramAddr(data);
+	else if (address == PI_CART_ADDR_REG)
+		pi_regs.setCartAddr(data);
+	else if (address == PI_RD_LEN_REG)
+		pi_regs.setRdLen(data);
+	else if (address == PI_WR_LEN_REG)
+		pi_regs.setWrLen(data);
+	else if (address == PI_STATUS_REG)
+		pi_regs.setStatus(data);
+	else if (address == PI_BSD_DOM1_LAT_REG)
+		pi_regs.setBsdDom1Lat(data);
+	else if (address == PI_BSD_DOM1_PWD_REG)
+		pi_regs.setBsdDom1Pwd(data);
+	else if (address == PI_BSD_DOM1_PGS_REG)
+		pi_regs.setBsdDom1Pgs(data);
+	else if (address == PI_BSD_DOM1_RLS_REG)
+		pi_regs.setBsdDom1Rls(data);
+	else if (address == PI_BSD_DOM2_LAT_REG)
+		pi_regs.setBsdDom2Lat(data);
+	else if (address == PI_BSD_DOM2_PWD_REG)
+		pi_regs.setBsdDom2Pwd(data);
+	else if (address == PI_BSD_DOM2_PGS_REG)
+		pi_regs.setBsdDom2Pgs(data);
+	else if (address == PI_BSD_DOM2_RLS_REG)
+		pi_regs.setBsdDom2Rls(data);
+
+	else if (address == RI_MODE_REG)
+		ri_regs.setMode(data);
+	else if (address == RI_CONFIG_REG)
+		ri_regs.setConfig(data);
+	else if (address == RI_CURRENT_LOAD_REG)
+		ri_regs.setCurrentLoad(data);
+	else if (address == RI_SELECT_REG)
+		ri_regs.setSelect(data);
+	else if (address == RI_REFRESH_REG)
+		ri_regs.setRefresh(data);
+	else if (address == RI_LATENCY_REG)
+		ri_regs.setLatency(data);
+	else if (address == RI_RERROR_REG)
+		ri_regs.setRerror(data);
+	else if (address == RI_WERROR_REG)
+		ri_regs.setWerror(data);
+
+	else if (address == SI_DRAM_ADDR_REG)
+		si_regs.setDramAddr(data);
+	else if (address == SI_PIF_ADDR_RD64B_REG)
+		si_regs.setPifAddrRd64b(data);
+	else if (address == SI_PIF_ADDR_WR64B_REG)
+		si_regs.setPifAddrWr64b(data);
+	else if (address == SI_STATUS_REG)
+		si_regs.setStatus(data);
+	else
+		return false;
+	return true;
 }
 
 inline void MEMORY::checkDMA(dword address)
