@@ -46,30 +46,30 @@ RSP::RSP(wstring filename, MEMORY *mem) : PLUGIN(filename)
 
 	rsp_info->hInst				= hDLL; // FIXME?
 	rsp_info->MemoryBswaped		= plugin_info->MemoryBswaped;
-	rsp_info->RDRAM				= (byte*) memory->rdram[0];
+	rsp_info->rdram				= (byte*) memory->rdram[0];
 
-	rsp_info->MI_INTR_REG		= (word*) memory->mi_regs[0x8];
+	rsp_info->mi_intr_reg		= (word*) memory->mi_regs[0x8];
 
-	rsp_info->DMEM				= (byte*) memory->sp_regs[0x00000];
-	rsp_info->IMEM				= (byte*) memory->sp_regs[0x01000];
-	rsp_info->SP_MEM_ADDR_REG	= (word*) memory->sp_regs[0x40000];
-	rsp_info->SP_DRAM_ADDR_REG	= (word*) memory->sp_regs[0x40004];
-	rsp_info->SP_RD_LEN_REG		= (word*) memory->sp_regs[0x40008];
-	rsp_info->SP_WR_LEN_REG		= (word*) memory->sp_regs[0x4000C];
-	rsp_info->SP_STATUS_REG		= (word*) memory->sp_regs[0x40010];
-	rsp_info->SP_DMA_FULL_REG	= (word*) memory->sp_regs[0x40014];
-	rsp_info->SP_DMA_BUSY_REG	= (word*) memory->sp_regs[0x40018];
-	rsp_info->SP_SEMAPHORE_REG	= (word*) memory->sp_regs[0x4001C];
-	rsp_info->SP_PC_REG			= (word*) memory->sp_regs[0x80000];
+	rsp_info->dmem				= (byte*) memory->sp_regs[0x00000];
+	rsp_info->imem				= (byte*) memory->sp_regs[0x01000];
+	rsp_info->sp_mem_addr_reg	= (word*) memory->sp_regs[0x40000];
+	rsp_info->sp_dram_addr_reg	= (word*) memory->sp_regs[0x40004];
+	rsp_info->sp_rd_len_reg		= (word*) memory->sp_regs[0x40008];
+	rsp_info->sp_wr_len_reg		= (word*) memory->sp_regs[0x4000C];
+	rsp_info->sp_status_reg		= (word*) memory->sp_regs[0x40010];
+	rsp_info->sp_dma_full_reg	= (word*) memory->sp_regs[0x40014];
+	rsp_info->sp_dma_busy_reg	= (word*) memory->sp_regs[0x40018];
+	rsp_info->sp_semaphore_reg	= (word*) memory->sp_regs[0x4001C];
+	rsp_info->sp_pc_reg			= (word*) memory->sp_regs[0x80000];
 
-	rsp_info->DPC_START_REG		= (word*) memory->dpc_regs[0x00];
-	rsp_info->DPC_END_REG		= (word*) memory->dpc_regs[0x04];
-	rsp_info->DPC_CURRENT_REG	= (word*) memory->dpc_regs[0x08];
-	rsp_info->DPC_STATUS_REG	= (word*) memory->dpc_regs[0x0C];
-	rsp_info->DPC_CLOCK_REG		= (word*) memory->dpc_regs[0x10];
-	rsp_info->DPC_BUFBUSY_REG	= (word*) memory->dpc_regs[0x14];
-	rsp_info->DPC_PIPEBUSY_REG	= (word*) memory->dpc_regs[0x18];
-	rsp_info->DPC_TMEM_REG		= (word*) memory->dpc_regs[0x1C];
+	rsp_info->dpc_start_reg		= (word*) memory->dpc_regs[0x00];
+	rsp_info->dpc_end_reg		= (word*) memory->dpc_regs[0x04];
+	rsp_info->dpc_current_reg	= (word*) memory->dpc_regs[0x08];
+	rsp_info->dpc_status_reg	= (word*) memory->dpc_regs[0x0C];
+	rsp_info->dpc_clock_reg		= (word*) memory->dpc_regs[0x10];
+	rsp_info->dpc_bufbusy_reg	= (word*) memory->dpc_regs[0x14];
+	rsp_info->dpc_pipebusy_reg	= (word*) memory->dpc_regs[0x18];
+	rsp_info->dpc_tmem_reg		= (word*) memory->dpc_regs[0x1C];
 
 	// FIXME:
 	rsp_info->CheckInterrupts	= checkInterrupts_temp;

@@ -6,30 +6,30 @@ typedef struct {
 	HINSTANCE hInst;
 	bool MemoryBswaped;    /* If this is set to TRUE, then the memory has been pre
 	                          bswap on a dword (32 bits) boundry */
-	byte * RDRAM;
-	byte * DMEM;
-	byte * IMEM;
+	byte * rdram;
+	byte * dmem;
+	byte * imem;
 
-	word * MI_INTR_REG;
+	word * mi_intr_reg;
 
-	word * SP_MEM_ADDR_REG;
-	word * SP_DRAM_ADDR_REG;
-	word * SP_RD_LEN_REG;
-	word * SP_WR_LEN_REG;
-	word * SP_STATUS_REG;
-	word * SP_DMA_FULL_REG;
-	word * SP_DMA_BUSY_REG;
-	word * SP_PC_REG;
-	word * SP_SEMAPHORE_REG;
+	word * sp_mem_addr_reg;
+	word * sp_dram_addr_reg;
+	word * sp_rd_len_reg;
+	word * sp_wr_len_reg;
+	word * sp_status_reg;
+	word * sp_dma_full_reg;
+	word * sp_dma_busy_reg;
+	word * sp_pc_reg;
+	word * sp_semaphore_reg;
 
-	word * DPC_START_REG;
-	word * DPC_END_REG;
-	word * DPC_CURRENT_REG;
-	word * DPC_STATUS_REG;
-	word * DPC_CLOCK_REG;
-	word * DPC_BUFBUSY_REG;
-	word * DPC_PIPEBUSY_REG;
-	word * DPC_TMEM_REG;
+	word * dpc_start_reg;
+	word * dpc_end_reg;
+	word * dpc_current_reg;
+	word * dpc_status_reg;
+	word * dpc_clock_reg;
+	word * dpc_bufbusy_reg;
+	word * dpc_pipebusy_reg;
+	word * dpc_tmem_reg;
 
 	void (*CheckInterrupts)(void);
 	void (*ProcessDlistList)(void);

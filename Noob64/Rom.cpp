@@ -39,12 +39,12 @@ word ROM::getRelease()
 
 word ROM::getCRC1()
 {
-	return header->CRC1;
+	return header->crc1;
 }
 
 word ROM::getCRC2()
 {
-	return header->CRC2;
+	return header->crc2;
 }
 
 string ROM::getName()
