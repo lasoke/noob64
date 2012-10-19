@@ -2,8 +2,8 @@
 #include "Exception.h"
 
 #define UPDATE_REGS()													\
-		EPC = delay_slot ? pc - 4 : pc;									\
-		Cause = delay_slot ? Cause | CAUSE_BD : Cause & ~CAUSE_BD;		\
+		EPC = (word) (delay_slot ? pc - 4 : pc);									\
+		Cause = (word) (delay_slot ? Cause | CAUSE_BD : Cause & ~CAUSE_BD);		\
 		Status |= STATUS_EXL;											\
 		pc = 0x80000180;
 
@@ -20,7 +20,7 @@ void R4300i::check_interrupt(void)
 		Cause |= CAUSE_IP2;											// Sets the IP2 bit (ExcCode mask should be clear at this point!).
 	else
 		Cause &= ~CAUSE_IP2;										// Clears the IP2 bit.
-	if (Cause & Status & STATUS_IM == 0 || Status & 7 != 1)			// Conditions to take an interrupt.
+	if ((Cause & Status & STATUS_IM) == 0 || (Status & 7) != 1)			// Conditions to take an interrupt.
 		return;
 	interrupt_detected = true;										// We detected an interrupt, we now notify the handler
 }
@@ -29,7 +29,7 @@ void R4300i::trigger_address_error(dword address, bool from_read)
 {
 	PRINT_EXC("AddressError");
 	Cause = from_read ? ADDRESS_ERROR_INSTRUCTION_FETCH : ADDRESS_ERROR_DATA_ACCESS;
-    BadVAddr = address;
+    BadVAddr = (word) address;
 	UPDATE_REGS();
 }
 
@@ -50,7 +50,7 @@ void R4300i::trigger_copunusable_exception()
 
 void R4300i::trigger_intr_exception()
 {
-	if (Status & 7 != 1)
+	if ((Status & 7) != 1)
 		return;
     //Cause = FAKE_Cause;
     Cause |= INTERRUPT;
@@ -60,7 +60,7 @@ void R4300i::trigger_intr_exception()
 void R4300i::trigger_tlb_miss(dword address)
 {
     Cause = TLB_INVALID_INSTRUCTION_FETCH;
-    BadVAddr = address;
+    BadVAddr = (word) address;
     Context &= 0xFF80000F;
     Context |= (address >> 9) & 0x007FFFF0;
     EntryHi = (address & 0xFFFFE000);

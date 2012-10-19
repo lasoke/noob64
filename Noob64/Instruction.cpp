@@ -622,7 +622,7 @@ inline void R4300i::decode_fpu(const word i)
 void R4300i::LB(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LB " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "LB " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	r[rt] = extend_sign_byte(memory->read<sbyte>(r[rs] + extend_sign_halfword(immed)));
 #	if defined DEBUG
@@ -634,7 +634,7 @@ void R4300i::LB(int rt, int immed, int rs)
 void R4300i::LBU(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LBU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "LBU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	r[rt] = memory->read<byte>(r[rs] + extend_sign_halfword(immed));
 #	if defined DEBUG
@@ -646,7 +646,7 @@ void R4300i::LBU(int rt, int immed, int rs)
 void R4300i::LD(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "LD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	r[rt] = memory->read<dword>(r[rs] + extend_sign_halfword(immed));
 #	if defined DEBUG
@@ -658,7 +658,7 @@ void R4300i::LD(int rt, int immed, int rs)
 void R4300i::LDL(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LDL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "LDL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	dword tmp = memory->read<dword>(r[rs] + extend_sign_halfword(immed));
 	r[rt] |= (tmp << ((r[rs] + extend_sign_halfword(immed)) & 7) * 8);
@@ -671,7 +671,7 @@ void R4300i::LDL(int rt, int immed, int rs)
 void R4300i::LDR(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LDR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "LDR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	dword tmp = memory->read<dword>(r[rs] + extend_sign_halfword(immed));
 	r[rt] |= (tmp >> (( 7 - (r[rs] + extend_sign_halfword(immed)) & 7)) * 8);
@@ -684,7 +684,7 @@ void R4300i::LDR(int rt, int immed, int rs)
 void R4300i::LH(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LH " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "LH " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	r[rt] = extend_sign_halfword(memory->read<shword>(r[rs] + extend_sign_halfword(immed)));
 #	if defined DEBUG
@@ -696,7 +696,7 @@ void R4300i::LH(int rt, int immed, int rs)
 void R4300i::LHU(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LHU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "LHU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	r[rt] = extend_sign_halfword(memory->read<hword>(r[rs] + extend_sign_halfword(immed)));
 #	if defined DEBUG
@@ -708,7 +708,7 @@ void R4300i::LHU(int rt, int immed, int rs)
 void R4300i::LL(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "LL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	r[rt] = extend_sign_word(memory->read<sword>(r[rs] + extend_sign_halfword(immed)));
 #	if defined DEBUG
@@ -721,7 +721,7 @@ void R4300i::LL(int rt, int immed, int rs)
 void R4300i::LLD(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LLD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "LLD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	r[rt] = memory->read<sdword>(r[rs] + extend_sign_halfword(immed));
 #	if defined DEBUG
@@ -734,7 +734,7 @@ void R4300i::LLD(int rt, int immed, int rs)
 void R4300i::LW(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LW " << dec << "r" << rt << " 0x" << hex << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "LW " << dec << "r" << rt << " 0x" << hex << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	r[rt] = extend_sign_word(memory->read<sword>(r[rs] + extend_sign_halfword(immed)));
 #	if defined DEBUG
@@ -746,7 +746,7 @@ void R4300i::LW(int rt, int immed, int rs)
 void R4300i::LWL(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LWL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "LWL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	word tmp = memory->read<word>(r[rs] + extend_sign_halfword(immed));
 	r[rt] |= (tmp << (3 - (r[rs] + extend_sign_halfword(immed)) & 3) * 8);
@@ -760,7 +760,7 @@ void R4300i::LWL(int rt, int immed, int rs)
 void R4300i::LWR(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LWR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "LWR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	word tmp = memory->read<word>(r[rs] + extend_sign_halfword(immed));
 	r[rt] |= (tmp >> ((3 - (r[rs] + extend_sign_halfword(immed)) & 3)) * 8);
@@ -774,7 +774,7 @@ void R4300i::LWR(int rt, int immed, int rs)
 void R4300i::LWU(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LWU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "LWU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	r[rt] = extend_sign_word(memory->read<word>(r[rs] + extend_sign_halfword(immed)));
 #	if defined DEBUG
@@ -786,7 +786,7 @@ void R4300i::LWU(int rt, int immed, int rs)
 void R4300i::SB(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SB " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "SB " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	memory->write<byte>(r[rt] & 0xFF, r[rs] + extend_sign_halfword(immed));
 	pc += 4;
@@ -797,7 +797,7 @@ void R4300i::SC(int rt, int immed, int rs)
 	if (ll)
 	{
 #	if defined DEBUG
-		cout << print_addr(pc) << "SC " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+		cout << print_addr((word) pc) << "SC " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 		memory->write<word>(r[rt] & 0xFFFFFFFF, r[rs] + extend_sign_halfword(immed));
 		//maybe something to do here...
@@ -806,7 +806,7 @@ void R4300i::SC(int rt, int immed, int rs)
 	else
 	{
 #	if defined DEBUG
-		cout << print_addr(pc) << "SC " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]  no ll was done before";
+		cout << print_addr((word) pc) << "SC " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]  no ll was done before";
 #	endif // DEBUG
 	}
 	pc += 4;
@@ -817,7 +817,7 @@ void R4300i::SCD(int rt, int immed, int rs)
 	if (ll)
 	{
 #	if defined DEBUG
-		cout << print_addr(pc) << "SCD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+		cout << print_addr((word) pc) << "SCD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 		memory->write<dword>(r[rt], r[rs] + extend_sign_halfword(immed));
 		//maybe something to do here...
@@ -826,7 +826,7 @@ void R4300i::SCD(int rt, int immed, int rs)
 	else
 	{
 #	if defined DEBUG
-		cout << print_addr(pc) << "SCD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]  no ll was done before";
+		cout << print_addr((word) pc) << "SCD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]  no ll was done before";
 #	endif // DEBUG
 	}
 	pc += 4;
@@ -835,7 +835,7 @@ void R4300i::SCD(int rt, int immed, int rs)
 void R4300i::SD(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "SD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	memory->write<dword>(r[rt], r[rs] + extend_sign_halfword(immed));
 	pc += 4;
@@ -845,7 +845,7 @@ void R4300i::SDL(int rt, int immed, int rs)
 {
 	dword old_word = 0;
 #	if defined DEBUG
-	cout << print_addr(pc) << "SDL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "SDL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	old_word = memory->read<dword>(r[rs] + extend_sign_halfword(immed));
 	old_word = (r[rt] >> (8 * (r[rs] + extend_sign_halfword(immed)) & 7)) | old_word;
@@ -857,7 +857,7 @@ void R4300i::SDR(int rt, int immed, int rs)
 {
 	dword old_word = 0;
 #	if defined DEBUG
-	cout << print_addr(pc) << "SDR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "SDR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	old_word = memory->read<dword>(r[rs] + extend_sign_halfword(immed));
 	old_word = (r[rt] << (8 * (7 - (r[rs] + extend_sign_halfword(immed)) & 7))) | old_word;
@@ -868,7 +868,7 @@ void R4300i::SDR(int rt, int immed, int rs)
 void R4300i::SH(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SH " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "SH " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	memory->write<hword>(r[rt] & 0xFFFF, r[rs] + extend_sign_halfword(immed));
 	pc += 4;
@@ -877,7 +877,7 @@ void R4300i::SH(int rt, int immed, int rs)
 void R4300i::SW(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SW " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "SW " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	memory->write<word>(r[rt] & 0xFFFFFFFF, r[rs] + extend_sign_halfword(immed));
 	pc += 4;
@@ -887,7 +887,7 @@ void R4300i::SWL(int rt, int immed, int rs)
 {
 	word old_word = 0;
 #	if defined DEBUG
-	cout << print_addr(pc) << "SWL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "SWL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	old_word = memory->read<word>(r[rs] + extend_sign_halfword(immed));
 	old_word = (r[rt] >> (8 * (r[rs] + extend_sign_halfword(immed)) & 3)) & 0xFFFFFFFF | old_word;
@@ -899,7 +899,7 @@ void R4300i::SWR(int rt, int immed, int rs)
 {
 	word old_word = 0;
 #	if defined DEBUG
-	cout << print_addr(pc) << "SWR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "SWR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	old_word = memory->read<word>(r[rs] + extend_sign_halfword(immed));
 	old_word = (r[rt] << (8 * (3 - (r[rs] + extend_sign_halfword(immed)) & 3))) & 0xFFFFFFFF | old_word;
@@ -910,7 +910,7 @@ void R4300i::SWR(int rt, int immed, int rs)
 void R4300i::SYNC(void)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SYNC TO DO MAYBE";
+	cout << print_addr((word) pc) << "SYNC TO DO MAYBE";
 #	endif // DEBUG
 	pc += 4;
 }
@@ -919,9 +919,9 @@ void R4300i::ADD(int rd, int rs, int rt)
 {
 #	if defined DEBUG
 	if (rt == 0)
-		cout << print_addr(pc) << "MOVE " << dec << "r" << rd << ", " << dec << "r" << rs;
+		cout << print_addr((word) pc) << "MOVE " << dec << "r" << rd << ", " << dec << "r" << rs;
 	else
-		cout << print_addr(pc) << "ADD " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
+		cout << print_addr((word) pc) << "ADD " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	r[rd] = extend_sign_word(r[rs] + r[rt]);
 #	if defined DEBUG
@@ -933,7 +933,7 @@ void R4300i::ADD(int rd, int rs, int rt)
 void R4300i::ADDI(int rt, int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "ADDI " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "ADDI " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	r[rt] = extend_sign_word(r[rs] + extend_sign_halfword(immed));
 #	if defined DEBUG
@@ -945,7 +945,7 @@ void R4300i::ADDI(int rt, int rs, int immed)
 void R4300i::ADDIU(int rt, int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "ADDIU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << dec << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "ADDIU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << dec << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	r[rt] = extend_sign_word(r[rs] + extend_sign_halfword(immed));
 #	if defined DEBUG
@@ -957,7 +957,7 @@ void R4300i::ADDIU(int rt, int rs, int immed)
 void R4300i::ADDU(int rd, int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "ADDU " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "ADDU " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	r[rd] = extend_sign_word(r[rs] + r[rt]);
 #	if defined DEBUG
@@ -969,7 +969,7 @@ void R4300i::ADDU(int rd, int rs, int rt)
 void R4300i::AND(int rd, int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "AND " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "AND " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	r[rd] = r[rs] & r[rt];
 #	if defined DEBUG
@@ -981,7 +981,7 @@ void R4300i::AND(int rd, int rs, int rt)
 void R4300i::ANDI(int rt, int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "ANDI " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "ANDI " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	r[rt] = r[rs] & immed;
 #	if defined DEBUG
@@ -993,7 +993,7 @@ void R4300i::ANDI(int rt, int rs, int immed)
 void R4300i::DADD(int rd, int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DADD " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "DADD " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	r[rd] = r[rs] + r[rt];
 #	if defined DEBUG
@@ -1005,7 +1005,7 @@ void R4300i::DADD(int rd, int rs, int rt)
 void R4300i::DADDI(int rt, int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DADDI " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "DADDI " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	r[rt] = r[rs] + extend_sign_halfword(immed);
 #	if defined DEBUG
@@ -1017,7 +1017,7 @@ void R4300i::DADDI(int rt, int rs, int immed)
 void R4300i::DADDIU(int rt, int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DADDIU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
+	cout << print_addr((word) pc) << "DADDIU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
 	r[rt] = r[rs] + extend_sign_halfword(immed);
 #	if defined DEBUG
@@ -1029,7 +1029,7 @@ void R4300i::DADDIU(int rt, int rs, int immed)
 void R4300i::DADDU(int rd, int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DADDU " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "DADDU " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	r[rd] = r[rs] + r[rt];
 #	if defined DEBUG
@@ -1041,12 +1041,12 @@ void R4300i::DADDU(int rd, int rs, int rt)
 void R4300i::DDIV(int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DDIV " << dec << "r" << rs << ", " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "DDIV " << dec << "r" << rs << ", " << dec << "r" << rt;
 #	endif // DEBUG
 	lo = (sdword) r[rs] / (sdword) r[rt];
 	hi = (sdword) r[rs] % (sdword) r[rt];
 #	if defined DEBUG
-		cout << print_addr(pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+		cout << print_addr((word) pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
 #	endif // DEBUG
 	pc += 4;
 }
@@ -1054,12 +1054,12 @@ void R4300i::DDIV(int rs, int rt)
 void R4300i::DDIVU(int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DDIVU " << dec << "r" << rs << ", " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "DDIVU " << dec << "r" << rs << ", " << dec << "r" << rt;
 #	endif // DEBUG
 	lo = r[rs] / r[rt];
 	hi = r[rs] % r[rt];
 #	if defined DEBUG
-		cout << print_addr(pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+		cout << print_addr((word) pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
 #	endif // DEBUG
 	pc += 4;
 }
@@ -1067,12 +1067,12 @@ void R4300i::DDIVU(int rs, int rt)
 void R4300i::DIV(int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DIV " << dec << "r" << rs << ", " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "DIV " << dec << "r" << rs << ", " << dec << "r" << rt;
 #	endif // DEBUG
 	lo = extend_sign_word(r[rs] / r[rt]);
 	hi = extend_sign_word(r[rs] % r[rt]);
 #	if defined DEBUG
-		cout << print_addr(pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+		cout << print_addr((word) pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
 #	endif // DEBUG
 	pc += 4;
 }
@@ -1080,12 +1080,12 @@ void R4300i::DIV(int rs, int rt)
 void R4300i::DIVU(int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DIVU " << dec << "r" << rs << ", " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "DIVU " << dec << "r" << rs << ", " << dec << "r" << rt;
 #	endif // DEBUG
 	lo = extend_sign_word(r[rs] / r[rt]);
 	hi = extend_sign_word(r[rs] % r[rt]);
 #	if defined DEBUG
-		cout << print_addr(pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+		cout << print_addr((word) pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
 #	endif // DEBUG
 	pc += 4;
 }
@@ -1093,7 +1093,7 @@ void R4300i::DIVU(int rs, int rt)
 void R4300i::DMULT(int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DMULT " << dec << "r" << rs << ", " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "DMULT " << dec << "r" << rs << ", " << dec << "r" << rt;
 #	endif // DEBUG
 	dword op1, op2, op3, op4;
 	dword result1, result2, result3, result4;
@@ -1141,7 +1141,7 @@ void R4300i::DMULT(int rs, int rt)
 			lo = ~lo + 1;
 	}
 #	if defined DEBUG
-	cout << print_addr(pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+	cout << print_addr((word) pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
 #	endif // DEBUG
 	pc += 4;
 }
@@ -1149,7 +1149,7 @@ void R4300i::DMULT(int rs, int rt)
 void R4300i::DMULTU(int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DMULTU " << dec << "r" << rs << ", " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "DMULTU " << dec << "r" << rs << ", " << dec << "r" << rt;
 #	endif // DEBUG
 	dword op1, op2, op3, op4;
 	dword result1, result2, result3, result4;
@@ -1173,7 +1173,7 @@ void R4300i::DMULTU(int rs, int rt)
 	lo = result1 | (result2 << 32);
 	hi = (result3 & 0xFFFFFFFF) | (result4 << 32);
 #	if defined DEBUG
-	cout << print_addr(pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+	cout << print_addr((word) pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
 #	endif // DEBUG
 	pc += 4;
 }
@@ -1181,7 +1181,7 @@ void R4300i::DMULTU(int rs, int rt)
 void R4300i::DSLL(int rd, int rt, int sa)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DSLL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
+	cout << print_addr((word) pc) << "DSLL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
 #	endif // DEBUG
 	r[rd] = r[rt] << sa;
 #	if defined DEBUG
@@ -1193,7 +1193,7 @@ void R4300i::DSLL(int rd, int rt, int sa)
 void R4300i::DSLL32(int rd, int rt, int sa)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DSLL32 " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
+	cout << print_addr((word) pc) << "DSLL32 " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
 #	endif // DEBUG
 	r[rd] = r[rt] << (sa + 32);
 #	if defined DEBUG
@@ -1205,7 +1205,7 @@ void R4300i::DSLL32(int rd, int rt, int sa)
 void R4300i::DSLLV(int rd, int rt, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DSLLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
+	cout << print_addr((word) pc) << "DSLLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
 #	endif // DEBUG
 	r[rd] = r[rt] << r[rs];
 #	if defined DEBUG
@@ -1217,7 +1217,7 @@ void R4300i::DSLLV(int rd, int rt, int rs)
 void R4300i::DSRA(int rd, int rt, int sa)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DSRA " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
+	cout << print_addr((word) pc) << "DSRA " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
 #	endif // DEBUG
 	r[rd] = r[rt] >> sa;
 #	if defined DEBUG
@@ -1229,7 +1229,7 @@ void R4300i::DSRA(int rd, int rt, int sa)
 void R4300i::DSRA32(int rd, int rt, int sa)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DSRA32 " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
+	cout << print_addr((word) pc) << "DSRA32 " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
 #	endif // DEBUG
 	r[rd] = r[rt] >> (sa + 32);
 #	if defined DEBUG
@@ -1241,7 +1241,7 @@ void R4300i::DSRA32(int rd, int rt, int sa)
 void R4300i::DSRAV(int rd, int rt, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DSRAV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
+	cout << print_addr((word) pc) << "DSRAV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
 #	endif // DEBUG
 	r[rd] = r[rt] >> r[rs];
 #	if defined DEBUG
@@ -1253,7 +1253,7 @@ void R4300i::DSRAV(int rd, int rt, int rs)
 void R4300i::DSRL(int rd, int rt, int sa)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DSRL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
+	cout << print_addr((word) pc) << "DSRL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
 #	endif // DEBUG
 	r[rd] = r[rt] >> sa;
 #	if defined DEBUG
@@ -1265,7 +1265,7 @@ void R4300i::DSRL(int rd, int rt, int sa)
 void R4300i::DSRL32(int rd, int rt, int sa)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DSRL32 " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
+	cout << print_addr((word) pc) << "DSRL32 " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
 #	endif // DEBUG
 	r[rd] = r[rt] >> (sa + 32);
 #	if defined DEBUG
@@ -1277,7 +1277,7 @@ void R4300i::DSRL32(int rd, int rt, int sa)
 void R4300i::DSRLV(int rd, int rt, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DSRLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
+	cout << print_addr((word) pc) << "DSRLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
 #	endif // DEBUG
 	r[rd] = r[rt] >> r[rs];
 #	if defined DEBUG
@@ -1289,7 +1289,7 @@ void R4300i::DSRLV(int rd, int rt, int rs)
 void R4300i::DSUB(int rd, int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DSUB " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "DSUB " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	r[rd] = (sdword) r[rs] - (sdword) r[rt];
 #	if defined DEBUG
@@ -1301,7 +1301,7 @@ void R4300i::DSUB(int rd, int rs, int rt)
 void R4300i::DSUBU(int rd, int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DSUBU " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "DSUBU " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	r[rd] = r[rs] - r[rt];
 #	if defined DEBUG
@@ -1313,7 +1313,7 @@ void R4300i::DSUBU(int rd, int rs, int rt)
 void R4300i::LUI(int rt, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LUI " << dec << "r" << rt << " 0x" << hex << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "LUI " << dec << "r" << rt << " 0x" << hex << extend_sign_halfword(immed);
 #	endif // DEBUG
 	r[rt] = extend_sign_word(extend_sign_halfword(immed) << 16);
 #	if defined DEBUG
@@ -1325,7 +1325,7 @@ void R4300i::LUI(int rt, int immed)
 void R4300i::MFHI(int rd)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "MFHI " << dec << "r" << rd;
+	cout << print_addr((word) pc) << "MFHI " << dec << "r" << rd;
 #	endif // DEBUG
 	r[rd] = hi;
 #	if defined DEBUG
@@ -1337,7 +1337,7 @@ void R4300i::MFHI(int rd)
 void R4300i::MFLO(int rd)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "MFLO " << dec << "r" << rd;
+	cout << print_addr((word) pc) << "MFLO " << dec << "r" << rd;
 #	endif // DEBUG
 	r[rd] = lo;
 #	if defined DEBUG
@@ -1349,11 +1349,11 @@ void R4300i::MFLO(int rd)
 void R4300i::MTHI(int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "MTHI " << dec << "r" << rs;
+	cout << print_addr((word) pc) << "MTHI " << dec << "r" << rs;
 #	endif // DEBUG
 	hi = r[rs];
 #	if defined DEBUG
-	cout << print_addr(pc) << " hi" << hex << "=0x" << hi;
+	cout << print_addr((word) pc) << " hi" << hex << "=0x" << hi;
 #	endif // DEBUG
 	pc += 4;
 }
@@ -1361,11 +1361,11 @@ void R4300i::MTHI(int rs)
 void R4300i::MTLO(int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "MTLO " << dec << "r" << rs;
+	cout << print_addr((word) pc) << "MTLO " << dec << "r" << rs;
 #	endif // DEBUG
 	lo = r[rs];
 #	if defined DEBUG
-	cout << print_addr(pc) << " lo" << hex << "=0x" << lo;
+	cout << print_addr((word) pc) << " lo" << hex << "=0x" << lo;
 #	endif // DEBUG
 	pc += 4;
 }
@@ -1373,13 +1373,13 @@ void R4300i::MTLO(int rs)
 void R4300i::MULT(int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "MULT " << dec << "r" << rs << ", " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "MULT " << dec << "r" << rs << ", " << dec << "r" << rt;
 #	endif // DEBUG
 	sdword temp = r[rs] * r[rt];
 	hi = extend_sign_word(temp >> 32);
 	lo = extend_sign_word(temp);
 #	if defined DEBUG
-	cout << print_addr(pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+	cout << print_addr((word) pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
 #	endif // DEBUG
 	pc += 4;
 }
@@ -1387,13 +1387,13 @@ void R4300i::MULT(int rs, int rt)
 void R4300i::MULTU(int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DMULTU " << dec << "r" << rs << ", " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "DMULTU " << dec << "r" << rs << ", " << dec << "r" << rt;
 #	endif // DEBUG
 	dword temp = r[rs] * r[rt];
 	hi = extend_sign_word(temp >> 32);
 	lo = extend_sign_word(temp);
 #	if defined DEBUG
-	cout << print_addr(pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
+	cout << print_addr((word) pc) << " lo" << hex << "=0x" << lo << " hi" << hex << "=0x" << hi;
 #	endif // DEBUG
 	pc += 4;
 }
@@ -1401,7 +1401,7 @@ void R4300i::MULTU(int rs, int rt)
 void R4300i::NOR(int rd, int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "NOR " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "NOR " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	r[rd] = ~(r[rs] | r[rt]);
 #	if defined DEBUG
@@ -1413,7 +1413,7 @@ void R4300i::NOR(int rd, int rs, int rt)
 void R4300i::OR(int rd, int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "OR " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "OR " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	r[rd] = r[rs] | r[rt];
 #	if defined DEBUG
@@ -1425,7 +1425,7 @@ void R4300i::OR(int rd, int rs, int rt)
 void R4300i::ORI(int rt, int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "ORI " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "ORI " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	r[rt] = r[rs] | immed;
 #	if defined DEBUG
@@ -1438,9 +1438,9 @@ void R4300i::SLL(int rd, int rt, int sa)
 {
 #	if defined DEBUG
 	if (rd == 0 && rt == 0 && sa == 0)
-		cout << print_addr(pc) << "NOP";
+		cout << print_addr((word) pc) << "NOP";
 	else
-		cout << print_addr(pc) << "SLL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
+		cout << print_addr((word) pc) << "SLL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
 #	endif // DEBUG
 
 	r[rd] = extend_sign_word((word) r[rt] << sa);
@@ -1455,7 +1455,7 @@ void R4300i::SLL(int rd, int rt, int sa)
 void R4300i::SLLV(int rd, int rt, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SLLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
+	cout << print_addr((word) pc) << "SLLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
 #	endif // DEBUG
 	r[rd] = extend_sign_word((word) r[rt] << (r[rs]&0x1F));
 #	if defined DEBUG
@@ -1467,7 +1467,7 @@ void R4300i::SLLV(int rd, int rt, int rs)
 void R4300i::SLT(int rd, int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SLT " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "SLT " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	if ((sword) r[rs] < (sword) r[rt])
 		r[rd] = 1;
@@ -1482,7 +1482,7 @@ void R4300i::SLT(int rd, int rs, int rt)
 void R4300i::SLTI(int rt, int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SLTI " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "SLTI " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	if ((sword) r[rs] < extend_sign_halfword(immed))
 		r[rt] = 1;
@@ -1497,7 +1497,7 @@ void R4300i::SLTI(int rt, int rs, int immed)
 void R4300i::SLTIU(int rt, int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SLTIU " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "SLTIU " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	if (r[rs] < extend_sign_halfword(immed))
 		r[rt] = 1;
@@ -1512,7 +1512,7 @@ void R4300i::SLTIU(int rt, int rs, int immed)
 void R4300i::SLTU(int rd, int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SLTU " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "SLTU " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	if (r[rs] < r[rt])
 		r[rd] = 1;
@@ -1527,7 +1527,7 @@ void R4300i::SLTU(int rd, int rs, int rt)
 void R4300i::SRA(int rd, int rt, int sa)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SRA " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
+	cout << print_addr((word) pc) << "SRA " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
 #	endif // DEBUG
 	r[rd] = extend_sign_word((sword) r[rt] >> sa);
 #	if defined DEBUG
@@ -1539,7 +1539,7 @@ void R4300i::SRA(int rd, int rt, int sa)
 void R4300i::SRAV(int rd, int rt, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SRAV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
+	cout << print_addr((word) pc) << "SRAV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
 #	endif // DEBUG
 	r[rd] = extend_sign_word((sword) r[rt] >> (r[rs]&0x1F));
 #	if defined DEBUG
@@ -1551,7 +1551,7 @@ void R4300i::SRAV(int rd, int rt, int rs)
 void R4300i::SRL(int rd, int rt, int sa)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SRL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
+	cout << print_addr((word) pc) << "SRL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa;
 #	endif // DEBUG
 	r[rd] = extend_sign_word((word) r[rt] >> sa);
 #	if defined DEBUG
@@ -1563,7 +1563,7 @@ void R4300i::SRL(int rd, int rt, int sa)
 void R4300i::SRLV(int rd, int rt, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SRLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
+	cout << print_addr((word) pc) << "SRLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs;
 #	endif // DEBUG
 	r[rd] = extend_sign_word((word) r[rt] >> (r[rs]&0x1F));
 #	if defined DEBUG
@@ -1576,9 +1576,9 @@ void R4300i::SUB(int rd, int rs, int rt)
 {
 #	if defined DEBUG
 	if (rs == 0)
-		cout << print_addr(pc) << "NEG " << dec << "r" << rd << " " << dec << "r" << rt;
+		cout << print_addr((word) pc) << "NEG " << dec << "r" << rd << " " << dec << "r" << rt;
 	else
-		cout << print_addr(pc) << "SUB " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
+		cout << print_addr((word) pc) << "SUB " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	r[rd] = extend_sign_word(r[rs] - r[rt]);
 #	if defined DEBUG
@@ -1591,9 +1591,9 @@ void R4300i::SUBU(int rd, int rs, int rt)
 {
 #	if defined DEBUG
 	if (rs == 0)
-		cout << print_addr(pc) << "NEGU " << dec << "r" << rd << " " << dec << "r" << rt;
+		cout << print_addr((word) pc) << "NEGU " << dec << "r" << rd << " " << dec << "r" << rt;
 	else
-		cout << print_addr(pc) << "SUBU " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
+		cout << print_addr((word) pc) << "SUBU " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 
 	r[rd] = extend_sign_word(r[rs] - r[rt]);
@@ -1608,7 +1608,7 @@ void R4300i::SUBU(int rd, int rs, int rt)
 void R4300i::XOR(int rd, int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "XOR " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "XOR " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	r[rd] = r[rs] ^ r[rt];
 #	if defined DEBUG
@@ -1620,7 +1620,7 @@ void R4300i::XOR(int rd, int rs, int rt)
 void R4300i::XORI(int rt, int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "XORI " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "XORI " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	r[rt] = r[rs] ^ immed;
 #	if defined DEBUG
@@ -1633,11 +1633,11 @@ void R4300i::BEQ(int rs, int rt, int immed)
 {
 #	if defined DEBUG
 	if (rt == 0 && rs == 0)
-		cout << print_addr(pc) << "B";
+		cout << print_addr((word) pc) << "B";
 	else if (rt == 0)
-		cout << print_addr(pc) << "BEQZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+		cout << print_addr((word) pc) << "BEQZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 	else
-		cout << print_addr(pc) << "BEQ " << dec << "r" << rs << " " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed);
+		cout << print_addr((word) pc) << "BEQ " << dec << "r" << rs << " " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
@@ -1655,9 +1655,9 @@ void R4300i::BEQL(int rs, int rt, int immed)
 {
 #	if defined DEBUG
 	if ( rt == 0)
-		cout << print_addr(pc) << "BEQLZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+		cout << print_addr((word) pc) << "BEQLZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 	else
-		cout << print_addr(pc) << "BEQL " << dec << "r" << rs << " " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed);
+		cout << print_addr((word) pc) << "BEQL " << dec << "r" << rs << " " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
@@ -1678,7 +1678,7 @@ void R4300i::BEQL(int rs, int rt, int immed)
 void R4300i::BGEZ(int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "BGEZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "BGEZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
@@ -1695,9 +1695,9 @@ void R4300i::BGEZAL(int immed, int rs)
 {
 #	if defined DEBUG
 	if (rs == 0)
-		cout << print_addr(pc) << "BAL";
+		cout << print_addr((word) pc) << "BAL";
 	else
-		cout << print_addr(pc) << "BGEZAL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+		cout << print_addr((word) pc) << "BGEZAL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
@@ -1714,7 +1714,7 @@ void R4300i::BGEZAL(int immed, int rs)
 void R4300i::BGEZALL(int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "BGEZALL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "BGEZALL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
@@ -1735,7 +1735,7 @@ void R4300i::BGEZALL(int immed, int rs)
 void R4300i::BGEZL(int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "BGEZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "BGEZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
@@ -1755,7 +1755,7 @@ void R4300i::BGEZL(int immed, int rs)
 void R4300i::BGTZ(int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "BGTZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "BGTZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
@@ -1771,7 +1771,7 @@ void R4300i::BGTZ(int rs, int immed)
 void R4300i::BGTZL(int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "BGTZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "BGTZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
@@ -1791,7 +1791,7 @@ void R4300i::BGTZL(int immed, int rs)
 void R4300i::BLEZ(int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "BLEZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "BLEZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
@@ -1807,7 +1807,7 @@ void R4300i::BLEZ(int rs, int immed)
 void R4300i::BLEZL(int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "BLEZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "BLEZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
@@ -1827,7 +1827,7 @@ void R4300i::BLEZL(int immed, int rs)
 void R4300i::BLTZ(int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "BLTZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "BLTZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
@@ -1843,7 +1843,7 @@ void R4300i::BLTZ(int immed, int rs)
 void R4300i::BLTZAL(int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "BLTZAL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "BLTZAL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
@@ -1860,7 +1860,7 @@ void R4300i::BLTZAL(int immed, int rs)
 void R4300i::BLTZALL(int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "BLTZALL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "BLTZALL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
@@ -1881,7 +1881,7 @@ void R4300i::BLTZALL(int immed, int rs)
 void R4300i::BLTZL(int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "BLTZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "BLTZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
@@ -1902,9 +1902,9 @@ void R4300i::BNE(int rs, int rt, int immed)
 {
 #	if defined DEBUG
 	if (rt == 0)
-		cout << print_addr(pc) << "BNEZ " << dec << "r" << rs << " 0x" << hex << extend_sign_halfword(immed);
+		cout << print_addr((word) pc) << "BNEZ " << dec << "r" << rs << " 0x" << hex << extend_sign_halfword(immed);
 	else
-		cout << print_addr(pc) << "BNE " << dec << "r" << rs << " " << dec << "r" << rt << " 0x" << hex << extend_sign_halfword(immed);
+		cout << print_addr((word) pc) << "BNE " << dec << "r" << rs << " " << dec << "r" << rt << " 0x" << hex << extend_sign_halfword(immed);
 #	endif // DEBUG
 	dword local_rs = r[rs];
 	dword local_rt = r[rt];
@@ -1921,9 +1921,9 @@ void R4300i::BNEL(int rs, int rt, int immed)
 {
 #	if defined DEBUG
 	if (rt == 0)
-		cout << print_addr(pc) << "BNELZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+		cout << print_addr((word) pc) << "BNELZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 	else
-		cout << print_addr(pc) << "BNEL " << dec << "r" << rs << " " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed);
+		cout << print_addr((word) pc) << "BNEL " << dec << "r" << rs << " " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 
 	dword local_rs = r[rs];
@@ -1944,7 +1944,7 @@ void R4300i::BNEL(int rs, int rt, int immed)
 void R4300i::J(int address)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "J " << address;
+	cout << print_addr((word) pc) << "J " << address;
 #	endif // DEBUG
 
 	pc += 4;
@@ -1958,7 +1958,7 @@ void R4300i::J(int address)
 void R4300i::JAL(int address)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "JAL " << address;
+	cout << print_addr((word) pc) << "JAL " << address;
 #	endif // DEBUG
 	pc += 4;
 	delay_slot = true;
@@ -1972,7 +1972,7 @@ void R4300i::JAL(int address)
 void R4300i::JALR(int rs, int rd)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "JALR " << dec << "r" << rs << " " << dec << "r" << rd;
+	cout << print_addr((word) pc) << "JALR " << dec << "r" << rs << " " << dec << "r" << rd;
 #	endif // DEBUG
 
 	dword local_rs = r[rs];
@@ -1988,7 +1988,7 @@ void R4300i::JALR(int rs, int rd)
 void R4300i::JR(int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "JR " << dec << "r" << rs;
+	cout << print_addr((word) pc) << "JR " << dec << "r" << rs;
 #	endif // DEBUG
 
 	dword local_rs = r[rs];
@@ -2003,7 +2003,7 @@ void R4300i::JR(int rs)
 void R4300i::BREAK(int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SYSCALL " << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "SYSCALL " << extend_sign_halfword(immed);
 #	endif // DEBUG
 	trigger_break_exception();
 }
@@ -2011,7 +2011,7 @@ void R4300i::BREAK(int immed)
 void R4300i::SYSCALL(int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SYSCALL " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "SYSCALL " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	trigger_syscall_exception();
 }
@@ -2019,7 +2019,7 @@ void R4300i::SYSCALL(int immed)
 void R4300i::TEQ(int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TEQ " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "TEQ " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	if (r[rt] == r[rs])
 		/* TODO : HANDLE EXCEPTION */;
@@ -2029,7 +2029,7 @@ void R4300i::TEQ(int rs, int rt)
 void R4300i::TEQI(int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TEQI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "TEQI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	if (r[rs] == extend_sign_halfword(immed))
 		/* TODO : HANDLE EXCEPTION */;
@@ -2039,7 +2039,7 @@ void R4300i::TEQI(int rs, int immed)
 void R4300i::TGE(int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TGE " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "TGE " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	if (r[rs] >= r[rt])
 		/* TODO : HANDLE EXCEPTION */;
@@ -2049,7 +2049,7 @@ void R4300i::TGE(int rs, int rt)
 void R4300i::TGEI(int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TGEI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "TGEI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	if (r[rs] >= extend_sign_halfword(immed))
 		/* TODO : HANDLE EXCEPTION */;
@@ -2059,7 +2059,7 @@ void R4300i::TGEI(int rs, int immed)
 void R4300i::TGEIU(int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TGEIU " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "TGEIU " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	if (r[rs] >= extend_sign_halfword(immed))
 		/* TODO : HANDLE EXCEPTION */;
@@ -2069,7 +2069,7 @@ void R4300i::TGEIU(int rs, int immed)
 void R4300i::TGEU(int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TGEU " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "TGEU " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	if (r[rs] >= r[rt])
 		/* TODO : HANDLE EXCEPTION */;
@@ -2079,7 +2079,7 @@ void R4300i::TGEU(int rs, int rt)
 void R4300i::TLT(int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TLT " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "TLT " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	if (r[rs] < r[rt])
 		/* TODO : HANDLE EXCEPTION */;
@@ -2089,7 +2089,7 @@ void R4300i::TLT(int rs, int rt)
 void R4300i::TLTI(int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TLTI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "TLTI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	if ((sdword) r[rs] < (sdword) extend_sign_halfword(immed))
 		/* TODO : HANDLE EXCEPTION */;
@@ -2099,7 +2099,7 @@ void R4300i::TLTI(int rs, int immed)
 void R4300i::TLTIU(int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TLTIU " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "TLTIU " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	if (r[rs] < extend_sign_halfword(immed))
 		/* TODO : HANDLE EXCEPTION */;
@@ -2109,7 +2109,7 @@ void R4300i::TLTIU(int rs, int immed)
 void R4300i::TLTU(int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TLTU " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "TLTU " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	if (r[rs] < r[rt])
 		/* TODO : HANDLE EXCEPTION */;
@@ -2119,7 +2119,7 @@ void R4300i::TLTU(int rs, int rt)
 void R4300i::TNE(int rs, int rt)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TNE " << dec << "r" << rs << " " << dec << "r" << rt;
+	cout << print_addr((word) pc) << "TNE " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
 	if (r[rs] != r[rt])
 		/* TODO : HANDLE EXCEPTION */;
@@ -2129,7 +2129,7 @@ void R4300i::TNE(int rs, int rt)
 void R4300i::TNEI(int rs, int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TNEI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "TNEI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	if (r[rs] != extend_sign_halfword(immed))
 		/* TODO : HANDLE EXCEPTION */;
@@ -2139,7 +2139,7 @@ void R4300i::TNEI(int rs, int immed)
 void R4300i::CACHE(int rt, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "CACHE " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs;
+	cout << print_addr((word) pc) << "CACHE " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs;
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2150,12 +2150,12 @@ void R4300i::ERET(void)
 {
 	++Count;
 #	if defined DEBUG
-	cout << print_addr(pc) << "ERET";
+	cout << print_addr((word) pc) << "ERET";
 #	endif // DEBUG
 	if (Status & 0x4)
 	{
 #	if defined DEBUG
-		cout << print_addr(pc) << " : ERROR IN ERET";
+		cout << print_addr((word) pc) << " : ERROR IN ERET";
 #	endif // DEBUG
 	}
 	else
@@ -2170,7 +2170,7 @@ void R4300i::ERET(void)
 void R4300i::MFC0(int rt, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "MFC0 " << dec << "r" << rt << " " << dec << "cop0" << fs;
+	cout << print_addr((word) pc) << "MFC0 " << dec << "r" << rt << " " << dec << "cop0" << fs;
 #	endif // DEBUG
 	r[rt] = extend_sign_word(cop0[fs]);
 #	if defined DEBUG
@@ -2182,7 +2182,7 @@ void R4300i::MFC0(int rt, int fs)
 void R4300i::MTC0(int rt, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "MTC0 " << dec << "r" << rt << " " << dec << "cop0" << fs;
+	cout << print_addr((word) pc) << "MTC0 " << dec << "r" << rt << " " << dec << "cop0" << fs;
 #	endif // DEBUG
 
 	switch(fs)
@@ -2190,7 +2190,7 @@ void R4300i::MTC0(int rt, int fs)
 	case 0:    // Index
 		Index = r[rt] & 0x8000003F;
 		if ((Index & 0x3F) > 31) 
-			cout << print_addr(pc) << " il y a plus de 32 TLB";
+			cout << print_addr((word) pc) << " il y a plus de 32 TLB";
 		break;
 	case 1:    // Random
 		break;
@@ -2234,7 +2234,7 @@ void R4300i::MTC0(int rt, int fs)
 		break;
 	case 13:   // Cause
 		if (r[rt] != 0)
-			cout << print_addr(pc) << " écriture dans Cause";
+			cout << print_addr((word) pc) << " écriture dans Cause";
 		else Cause = r[rt] & 0xFFFFFFFF;
 		break;
 	case 14:   // EPC
@@ -2268,7 +2268,7 @@ void R4300i::MTC0(int rt, int fs)
 void R4300i::TLBP(void)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TLBP";
+	cout << print_addr((word) pc) << "TLBP";
 #	endif // DEBUG
 //	int i;
 	Index = 0x80000000;
@@ -2290,7 +2290,7 @@ void R4300i::TLBP(void)
 void R4300i::TLBR(void)
 {  
 #	if defined DEBUG
-	cout << print_addr(pc) << "TLBR";
+	cout << print_addr((word) pc) << "TLBR";
 #	endif // DEBUG
 	int index;
 	index = Index & 0x1F;
@@ -2308,7 +2308,7 @@ void R4300i::TLBR(void)
 void R4300i::TLBWI(void)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TLBWI";
+	cout << print_addr((word) pc) << "TLBWI";
 #	endif // DEBUG
 	unsigned int i;
 	if (tlb_e[Index&0x3F].v_even)
@@ -2395,7 +2395,7 @@ void R4300i::TLBWI(void)
 void R4300i::TLBWR(void)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TLBWR";
+	cout << print_addr((word) pc) << "TLBWR";
 #	endif // DEBUG
 	unsigned int i;
 	++Count;
@@ -2485,11 +2485,11 @@ template<typename Type>
 void R4300i::ABS(int fd, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "ABS " << dec << "f" << fd << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "ABS " << dec << "f" << fd << " " << dec << "f" << fs;
 #	endif // DEBUG
 	f[fd] = (dword) abs((Type) f[fs]);
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fd << hex << "=0x" << f[fd];
+	cout << print_addr((word) pc) << " f" << dec << fd << hex << "=0x" << f[fd];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2498,11 +2498,11 @@ template<typename Type>
 void R4300i::ADD(int fd, int fs, int ft)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "ADD " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft;
+	cout << print_addr((word) pc) << "ADD " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft;
 #	endif // DEBUG
 	f[fd] = (dword) ((Type) f[fs] + (Type) f[ft]);
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fd << hex << "=0x" << f[fd];
+	cout << print_addr((word) pc) << " f" << dec << fd << hex << "=0x" << f[fd];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2510,7 +2510,7 @@ void R4300i::ADD(int fd, int fs, int ft)
 void R4300i::BC1F(int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "BC1F " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "BC1F " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	dword pc_tmp = pc + extend_sign_halfword(immed);
 	pc += 4;
@@ -2529,7 +2529,7 @@ void R4300i::BC1F(int immed)
 void R4300i::BC1FL(int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "BC1FL " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "BC1FL " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	dword pc_tmp = pc + extend_sign_halfword(immed);
 	pc += 4;
@@ -2548,7 +2548,7 @@ void R4300i::BC1FL(int immed)
 void R4300i::BC1T(int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "BC1T " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "BC1T " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	dword pc_tmp = pc + extend_sign_halfword(immed);
 	pc += 4;
@@ -2567,7 +2567,7 @@ void R4300i::BC1T(int immed)
 void R4300i::BC1TL(int immed)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "BC1TL " << hex << "0x" << extend_sign_halfword(immed);
+	cout << print_addr((word) pc) << "BC1TL " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
 	dword pc_tmp = pc + extend_sign_halfword(immed);
 	pc += 4;
@@ -2585,7 +2585,7 @@ template<typename Type>
 void R4300i::C(int fs, int ft, int cond)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "C " << dec << "f" << fs << " " << dec << "f" << ft << " " << dec << "cond " << cond;
+	cout << print_addr((word) pc) << "C " << dec << "f" << fs << " " << dec << "f" << ft << " " << dec << "cond " << cond;
 #	endif // DEBUG
 	switch (cond) {
 	case 0:
@@ -2647,11 +2647,11 @@ template<typename Type, typename toType>
 void R4300i::CEIL(int fd, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "CEIL " << dec << "f" << fd << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "CEIL " << dec << "f" << fd << " " << dec << "f" << fs;
 #	endif // DEBUG
 	f[fd] = (toType) ((Type) f[fs]);
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fd << hex << "=0x" << f[fd];
+	cout << print_addr((word) pc) << " f" << dec << fd << hex << "=0x" << f[fd];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2659,7 +2659,7 @@ void R4300i::CEIL(int fd, int fs)
 void R4300i::CFC1(int rt, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "CFC1 " << dec << "r" << rt << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "CFC1 " << dec << "r" << rt << " " << dec << "f" << fs;
 #	endif // DEBUG
 	if (fs == 0)
 		r[rt] = extend_sign_word(fcr0);
@@ -2674,14 +2674,14 @@ void R4300i::CFC1(int rt, int fs)
 void R4300i::CTC1(int rt, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "CTC1 " << dec << "r" << rt << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "CTC1 " << dec << "r" << rt << " " << dec << "f" << fs;
 #	endif // DEBUG
 	if (fs == 0)
 		fcr0 = r[rt] & 0xFFFFFFFF;
 	else
 		fcr31 = r[rt] & 0xFFFFFFFF;
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fs << hex << "=0x" << f[fs];
+	cout << print_addr((word) pc) << " f" << dec << fs << hex << "=0x" << f[fs];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2690,11 +2690,11 @@ template<typename Type, typename toType>
 void R4300i::CVT(int fd, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "CVT " << dec << "f" << fd << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "CVT " << dec << "f" << fd << " " << dec << "f" << fs;
 #	endif // DEBUG
 	f[fd] = (dword) ((toType) ((Type) f[fs]));
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fd << hex << "=0x" << f[fd];
+	cout << print_addr((word) pc) << " f" << dec << fd << hex << "=0x" << f[fd];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2703,11 +2703,11 @@ template<typename Type>
 void R4300i::DIV(int fd, int fs, int ft)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DIV " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft;
+	cout << print_addr((word) pc) << "DIV " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft;
 #	endif // DEBUG
 	f[fd] = (dword) ((Type) f[fs] / (Type) f[ft]);
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fd << hex << "=0x" << f[fd];
+	cout << print_addr((word) pc) << " f" << dec << fd << hex << "=0x" << f[fd];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2715,7 +2715,7 @@ void R4300i::DIV(int fd, int fs, int ft)
 void R4300i::DMFC1(int rt, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DMFC1 " << dec << "r" << rt << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "DMFC1 " << dec << "r" << rt << " " << dec << "f" << fs;
 #	endif // DEBUG
 	r[rt] = f[fs];
 #	if defined DEBUG
@@ -2727,11 +2727,11 @@ void R4300i::DMFC1(int rt, int fs)
 void R4300i::DMTC1(int rt, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "DMTC1 " << dec << "r" << rt << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "DMTC1 " << dec << "r" << rt << " " << dec << "f" << fs;
 #	endif // DEBUG
 	f[fs] = r[rt];
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fs << hex << "=0x" << f[fs];
+	cout << print_addr((word) pc) << " f" << dec << fs << hex << "=0x" << f[fs];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2740,11 +2740,11 @@ template<typename Type, typename toType>
 void R4300i::FLOOR(int fd, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "FLOOR " << dec << "f" << fd << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "FLOOR " << dec << "f" << fd << " " << dec << "f" << fs;
 #	endif // DEBUG
 	f[fd] = (toType) ((Type) f[fs]);
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fd << hex << "=0x" << f[fd];
+	cout << print_addr((word) pc) << " f" << dec << fd << hex << "=0x" << f[fd];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2752,11 +2752,11 @@ void R4300i::FLOOR(int fd, int fs)
 void R4300i::LDC1(int ft, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LDC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs;
+	cout << print_addr((word) pc) << "LDC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs;
 #	endif // DEBUG
 	f[ft] = memory->read<dword>(r[rs] + extend_sign_halfword(immed) * sizeof(dword));
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << ft << hex << "=0x" << f[ft];
+	cout << print_addr((word) pc) << " f" << dec << ft << hex << "=0x" << f[ft];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2764,11 +2764,11 @@ void R4300i::LDC1(int ft, int immed, int rs)
 void R4300i::LWC1(int ft, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "LWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs;
+	cout << print_addr((word) pc) << "LWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs;
 #	endif // DEBUG
 	f[ft] = memory->read<word>(r[rs] + extend_sign_halfword(immed));
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << ft << hex << "=0x" << f[ft];
+	cout << print_addr((word) pc) << " f" << dec << ft << hex << "=0x" << f[ft];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2776,7 +2776,7 @@ void R4300i::LWC1(int ft, int immed, int rs)
 void R4300i::MFC1(int rt, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "MFC1 " << dec << "r" << rt << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "MFC1 " << dec << "r" << rt << " " << dec << "f" << fs;
 #	endif // DEBUG
 	r[rt] = extend_sign_word(f[fs]);
 #	if defined DEBUG
@@ -2789,11 +2789,11 @@ template<typename Type>
 void R4300i::MOV(int fd, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "MOV " << dec << "f" << fd << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "MOV " << dec << "f" << fd << " " << dec << "f" << fs;
 #	endif // DEBUG
 	f[fd] = (dword) ((Type) f[fs]);
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fd << hex << "=0x" << f[fd];
+	cout << print_addr((word) pc) << " f" << dec << fd << hex << "=0x" << f[fd];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2801,11 +2801,11 @@ void R4300i::MOV(int fd, int fs)
 void R4300i::MTC1(int rt, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "MTC1 " << dec << "r" << rt << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "MTC1 " << dec << "r" << rt << " " << dec << "f" << fs;
 #	endif // DEBUG
 	f[fs] = r[rt] & 0xFFFFFFFF;
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fs << hex << "=0x" << f[fs];
+	cout << print_addr((word) pc) << " f" << dec << fs << hex << "=0x" << f[fs];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2814,11 +2814,11 @@ template<typename Type>
 void R4300i::MUL(int fd, int fs, int ft)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "MUL " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft;
+	cout << print_addr((word) pc) << "MUL " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft;
 #	endif // DEBUG
 	f[fd] = (dword) ((Type) f[fs] * (Type) f[ft]);
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fd << hex << "=0x" << f[fd];
+	cout << print_addr((word) pc) << " f" << dec << fd << hex << "=0x" << f[fd];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2827,11 +2827,11 @@ template<typename Type>
 void R4300i::NEG(int fd, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "NEG " << dec << "f" << fd << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "NEG " << dec << "f" << fd << " " << dec << "f" << fs;
 #	endif // DEBUG
 	f[fd] = (dword) (- (Type) f[fs]);
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fd << hex << "=0x" << f[fd];
+	cout << print_addr((word) pc) << " f" << dec << fd << hex << "=0x" << f[fd];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2840,11 +2840,11 @@ template<typename Type, typename toType>
 void R4300i::ROUND(int fd, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "ROUND " << dec << "f" << fd << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "ROUND " << dec << "f" << fd << " " << dec << "f" << fs;
 #	endif // DEBUG
 	f[fd] = (toType) ((Type) f[fs]);
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fd << hex << "=0x" << f[fd];
+	cout << print_addr((word) pc) << " f" << dec << fd << hex << "=0x" << f[fd];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2852,7 +2852,7 @@ void R4300i::ROUND(int fd, int fs)
 void R4300i::SDC1(int ft, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SDC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs;
+	cout << print_addr((word) pc) << "SDC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs;
 #	endif // DEBUG
 	memory->write<dword>(r[rs] + extend_sign_halfword(immed) * sizeof(dword), f[ft]);
 	pc += 4;
@@ -2862,11 +2862,11 @@ template<>
 void R4300i::SQRT<w>(int fd, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SQRT " << dec << "f" << fd << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "SQRT " << dec << "f" << fd << " " << dec << "f" << fs;
 #	endif // DEBUG
 	f[fd] = (dword) sqrt((double)f[fs]);
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fd << hex << "=0x" << f[fd];
+	cout << print_addr((word) pc) << " f" << dec << fd << hex << "=0x" << f[fd];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2875,11 +2875,11 @@ template<>
 void R4300i::SQRT<l>(int fd, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SQRT " << dec << "f" << fd << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "SQRT " << dec << "f" << fd << " " << dec << "f" << fs;
 #	endif // DEBUG
 	f[fd] = (dword) sqrt((double)f[fs]);
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fd << hex << "=0x" << f[fd];
+	cout << print_addr((word) pc) << " f" << dec << fd << hex << "=0x" << f[fd];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2888,11 +2888,11 @@ template<typename Type>
 void R4300i::SQRT(int fd, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SQRT " << dec << "f" << fd << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "SQRT " << dec << "f" << fd << " " << dec << "f" << fs;
 #	endif // DEBUG
 	f[fd] = (dword) sqrt((Type)f[fs]);
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fd << hex << "=0x" << f[fd];
+	cout << print_addr((word) pc) << " f" << dec << fd << hex << "=0x" << f[fd];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2901,11 +2901,11 @@ template<typename Type>
 void R4300i::SUB(int fd, int fs, int ft)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SUB " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft;
+	cout << print_addr((word) pc) << "SUB " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft;
 #	endif // DEBUG
 	f[fd] = (dword) ((Type) f[fs] - (Type) f[ft]);
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fd << hex << "=0x" << f[fd];
+	cout << print_addr((word) pc) << " f" << dec << fd << hex << "=0x" << f[fd];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -2913,7 +2913,7 @@ void R4300i::SUB(int fd, int fs, int ft)
 void R4300i::SWC1(int ft, int immed, int rs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "SWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs;
+	cout << print_addr((word) pc) << "SWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs;
 #	endif // DEBUG
 	memory->write<word>((r[rs] + extend_sign_halfword(immed) & 0xFFFFFFFF), f[ft]);
 	pc += 4;
@@ -2923,11 +2923,11 @@ template<typename Type, typename toType>
 void R4300i::TRUNC(int fd, int fs)
 {
 #	if defined DEBUG
-	cout << print_addr(pc) << "TRUNC " << dec << "f" << fd << " " << dec << "f" << fs;
+	cout << print_addr((word) pc) << "TRUNC " << dec << "f" << fd << " " << dec << "f" << fs;
 #	endif // DEBUG
 	f[fd] = (toType) ((Type) f[fs]);
 #	if defined DEBUG
-	cout << print_addr(pc) << " f" << dec << fd << hex << "=0x" << f[fd];
+	cout << print_addr((word) pc) << " f" << dec << fd << hex << "=0x" << f[fd];
 #	endif // DEBUG
 	pc += 4;
 }
@@ -3006,7 +3006,7 @@ void R4300i::SF(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
-		cout << print_addr(pc) << " Invalid operation exception in C opcode";
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
 	fcr31 &= ~0x800000;
 }
@@ -3016,7 +3016,7 @@ void R4300i::NGLE(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
-		cout << print_addr(pc) << " Invalid operation exception in C opcode";
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
 	fcr31 &= ~0x800000;
 }
@@ -3027,7 +3027,7 @@ void R4300i::SEQ(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
-		cout << print_addr(pc) << " Invalid operation exception in C opcode";
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
 	if (a == b)
 		fcr31 |= 0x800000;
@@ -3040,7 +3040,7 @@ void R4300i::NGL(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
-		cout << print_addr(pc) << " Invalid operation exception in C opcode";
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
 	if (a == b)
 		fcr31 |= 0x800000;
@@ -3053,7 +3053,7 @@ void R4300i::LT(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
-		cout << print_addr(pc) << " Invalid operation exception in C opcode";
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
 	if (a < b)
 		fcr31 |= 0x800000;
@@ -3066,7 +3066,7 @@ void R4300i::NGE(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
-		cout << print_addr(pc) << " Invalid operation exception in C opcode";
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
 	if (a < b)
 		fcr31 |= 0x800000;
@@ -3079,7 +3079,7 @@ void R4300i::LE(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
-		cout << print_addr(pc) << " Invalid operation exception in C opcode";
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
 	if (a <= b)
 		fcr31 |= 0x800000;
@@ -3092,7 +3092,7 @@ void R4300i::NGT(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
-		cout << print_addr(pc) << " Invalid operation exception in C opcode";
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
 	if (a <= b)
 		fcr31 |= 0x800000;

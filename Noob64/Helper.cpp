@@ -13,7 +13,7 @@ string format_number(string s, char c, int frequency)
 	return s;
 }
 
-string print_addr(dword address)
+string print_addr(word address)
 {
 	char addr[16];
 	memset(addr, 0, 16);
