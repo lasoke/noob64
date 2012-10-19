@@ -4,7 +4,7 @@
 string format_number(string s, char c, int frequency);
 
 // Prints an address in the standard representation
-string print_addr(dword address);
+string print_addr(word address);
 
 // Returns the word contained at the address pointed by ptr
 byte getByte(char **ptr);
