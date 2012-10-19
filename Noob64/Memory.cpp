@@ -297,7 +297,7 @@ void RI_REGS::dump(void) const
 	cout << "select = "			<< data.select			<< endl;
 	cout << "refresh = "		<< data.refresh			<< endl;
 	cout << "latency = "		<< data.latency			<< endl;
-	cout << "error = "			<< data.error			<< endl;
+	cout << "error = "			<< data.rerror			<< endl;
 	cout << "werror = "			<< data.werror			<< endl;
 	cout << "*** END OF RI REGISTERS ***"				<< endl;
 }
