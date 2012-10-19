@@ -2021,8 +2021,6 @@ void R4300i::TEQ(int rs, int rt)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "TEQ " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
-	if (r[rt] == r[rs])
-		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2031,8 +2029,6 @@ void R4300i::TEQI(int rs, int immed)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "TEQI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
-	if (r[rs] == extend_sign_halfword(immed))
-		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2041,8 +2037,6 @@ void R4300i::TGE(int rs, int rt)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "TGE " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
-	if (r[rs] >= r[rt])
-		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2051,8 +2045,6 @@ void R4300i::TGEI(int rs, int immed)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "TGEI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
-	if (r[rs] >= extend_sign_halfword(immed))
-		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2061,8 +2053,6 @@ void R4300i::TGEIU(int rs, int immed)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "TGEIU " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
-	if (r[rs] >= extend_sign_halfword(immed))
-		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2071,8 +2061,6 @@ void R4300i::TGEU(int rs, int rt)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "TGEU " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
-	if (r[rs] >= r[rt])
-		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2081,8 +2069,6 @@ void R4300i::TLT(int rs, int rt)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "TLT " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
-	if (r[rs] < r[rt])
-		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2091,8 +2077,6 @@ void R4300i::TLTI(int rs, int immed)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "TLTI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
-	if ((sdword) r[rs] < (sdword) extend_sign_halfword(immed))
-		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2101,8 +2085,6 @@ void R4300i::TLTIU(int rs, int immed)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "TLTIU " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
-	if (r[rs] < extend_sign_halfword(immed))
-		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2111,8 +2093,6 @@ void R4300i::TLTU(int rs, int rt)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "TLTU " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
-	if (r[rs] < r[rt])
-		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2121,8 +2101,6 @@ void R4300i::TNE(int rs, int rt)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "TNE " << dec << "r" << rs << " " << dec << "r" << rt;
 #	endif // DEBUG
-	if (r[rs] != r[rt])
-		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 
@@ -2131,8 +2109,6 @@ void R4300i::TNEI(int rs, int immed)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "TNEI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed);
 #	endif // DEBUG
-	if (r[rs] != extend_sign_halfword(immed))
-		/* TODO : HANDLE EXCEPTION */;
 	pc += 4;
 }
 

@@ -793,6 +793,7 @@ inline void MEMORY::write(Type data, dword address)
 
 inline bool MEMORY::write_in_register(word data, dword address)
 {
+	address = address & 0x0FFFFFFF;
 	if (address == RDRAM_CONFIG_REG)
 		rdram_regs.setConfig(data);
 	else if (address == RDRAM_DEVICE_ID_REG)

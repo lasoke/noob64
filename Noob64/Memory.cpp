@@ -670,13 +670,9 @@ void SI_REGS::setStatus(word arg)
 
 void MEMORY::dma_pi_read()
 {
-	word invDramAddr = type_to_binary<word>(pi_regs.getDramAddr());
-	word invCartAddr = type_to_binary<word>(pi_regs.getCartAddr());
-	word invRdLen = type_to_binary<word>(pi_regs.getRdLen());
-
-	memcpy((*rom)[0] + (invCartAddr & 0xFFFFFFF),
-		rdram[0] + (invDramAddr & 0xFFFFFFF),
-		(invRdLen & 0xFFFFFFF) + 1);
+	memcpy((*rom)[0] + (pi_regs.getCartAddr() & 0xFFFFFFF),
+		rdram[0] + (pi_regs.getDramAddr() & 0xFFFFFFF),
+		(pi_regs.getRdLen() & 0xFFFFFFF) + 1);
 	
 	write<word>(pi_regs.getStatus() & ~PI_STATUS_DMA_BUSY, 0x04600010);
 	write<word>(mi_regs.getIntr() | MI_INTR_PI, 0x04300008);
@@ -687,34 +683,26 @@ void MEMORY::dma_pi_read()
 
 void MEMORY::dma_pi_write()
 {
-	word invDramAddr = type_to_binary<word>(pi_regs.getDramAddr());
-	word invCartAddr = type_to_binary<word>(pi_regs.getCartAddr());
-	word invWrLen = type_to_binary<word>(pi_regs.getWrLen());
-
-	memcpy(rdram[0] + (invDramAddr & 0xFFFFFFF),
-		(*rom)[0] + (invCartAddr & 0xFFFFFFF),
-		(invWrLen & 0xFFFFFFF) + 1);
+	memcpy(rdram[0] + (pi_regs.getDramAddr() & 0xFFFFFFF),
+		(*rom)[0] + (pi_regs.getCartAddr() & 0xFFFFFFF),
+		(pi_regs.getWrLen() & 0xFFFFFFF) + 1);
 	
 	write<word>(pi_regs.getStatus() & ~PI_STATUS_DMA_BUSY, 0x04600010);
 	write<word>(mi_regs.getIntr() | MI_INTR_PI, 0x04300008);
 	check_intr = true;
 
 	cout << "*** pi_write ***" << endl;
-	//dump_array(invDramAddr, (const byte *) rdram[0] + (invDramAddr & 0xFFFFFF) + 0xFFF1000, (invWrLen & 0xFFF) + 1, 16);
+	//dump_array(pi_regs.getDramAddr(), (const byte *) rdram[0] + (pi_regs.getDramAddr() & 0xFFFFFF) + 0xFFF1000, (pi_regs.getWrLen() & 0xFFF) + 1, 16);
 	//cout << "*** END OF RDRAM ***"<< endl;
 }
 
 void MEMORY::dma_sp_write()
 {
-	word invMemAddr = type_to_binary<word>(sp_regs.getMemAddr());
-	word invDramAddr = type_to_binary<word>(sp_regs.getDramAddr());
-	word invWrLen = type_to_binary<word>(sp_regs.getWrLen());
-
-	if ((invWrLen & 0x1000) > 0)
+	if ((sp_regs.getWrLen() & 0x1000) > 0)
 	{
-		memcpy(rdram[0] + (invDramAddr & 0xFFFFFFF),
-			(sp_regs.getImem()) + (invMemAddr & 0xFFF),
-			(invWrLen & 0xFFF) + 1);
+		memcpy(rdram[0] + (sp_regs.getDramAddr() & 0xFFFFFFF),
+			(sp_regs.getImem()) + (sp_regs.getMemAddr() & 0xFFF),
+			(sp_regs.getWrLen() & 0xFFF) + 1);
 
 		cout << "*** sp_imem_write ***" << endl;
 		//dump_array(sp_regs.getDramAddr(), (const byte*) rdram.ptr + (sp_regs.getDramAddr() & 0xFFFFFF), (sp_regs.getWrLen() & 0xFFF) + 1, 16);
@@ -722,9 +710,9 @@ void MEMORY::dma_sp_write()
 	}
 	else
 	{
-		memcpy(rdram[0] + (invDramAddr & 0xFFFFFFF),
-			sp_regs.getDmem() + (invMemAddr & 0xFFF),
-			(invWrLen & 0xFFF) + 1);
+		memcpy(rdram[0] + (sp_regs.getDramAddr() & 0xFFFFFFF),
+			sp_regs.getDmem() + (sp_regs.getMemAddr() & 0xFFF),
+			(sp_regs.getWrLen() & 0xFFF) + 1);
 
 		cout << "*** sp_dmem_write ***" << endl;
 		//dump_array(sp_regs.getDramAddr(), (const byte*) rdram.ptr + (sp_regs.getDramAddr() & 0xFFFFFF), (sp_regs.getWrLen() & 0xFFF) + 1, 16);
@@ -737,15 +725,11 @@ void MEMORY::dma_sp_write()
 
 void MEMORY::dma_sp_read()
 {
-	word invMemAddr = type_to_binary<word>(sp_regs.getMemAddr());
-	word invDramAddr = type_to_binary<word>(sp_regs.getDramAddr());
-	word invWrLen = type_to_binary<word>(sp_regs.getWrLen());
-
-	if ((invWrLen & 0x1000) > 0)
+	if ((sp_regs.getRdLen() & 0x1000) > 0)
 	{
-		memcpy((sp_regs.getImem()) + (invMemAddr & 0xFFF),
-			rdram.ptr + (invDramAddr & 0xFFFFFFF),
-			(invWrLen & 0xFFF) + 1);
+		memcpy((sp_regs.getImem()) + (sp_regs.getMemAddr() & 0xFFF),
+			rdram.ptr + (sp_regs.getDramAddr() & 0xFFFFFFF),
+			(sp_regs.getRdLen() & 0xFFF) + 1);
 
 		cout << "*** sp_imem_read ***" << endl;
 		//dump_array(sp_regs.getMemAddr(), sp_regs.getImem() + (sp_regs.getMemAddr() & 0xFFF), (sp_regs.getRdLen() & 0xFFF) + 1, 16);
@@ -753,9 +737,9 @@ void MEMORY::dma_sp_read()
 	}
 	else
 	{
-		memcpy(sp_regs.getDmem() + (invMemAddr & 0xFFF),
-			rdram.ptr + (invDramAddr & 0xFFFFFFF),
-			(invWrLen & 0xFFF) + 1);
+		memcpy(sp_regs.getDmem() + (sp_regs.getMemAddr() & 0xFFF),
+			rdram.ptr + (sp_regs.getDramAddr() & 0xFFFFFFF),
+			(sp_regs.getRdLen() & 0xFFF) + 1);
 
 		cout << "*** sp_dmem_read ***" << endl;
 		//dump_array(sp_regs.getMemAddr(), sp_regs.getDmem() + (sp_regs.getMemAddr() & 0xFFF), (sp_regs.getRdLen() & 0xFFF) + 1, 16);
@@ -768,15 +752,12 @@ void MEMORY::dma_sp_read()
 
 void MEMORY::dma_si_write()
 {
-	word invDramAddr = type_to_binary<word>(si_regs.getDramAddr());
-	word invPifAddrWr64b = type_to_binary<word>(si_regs.getPifAddrWr64b());
-
 	if (si_regs.getPifAddrWr64b() != 0x1FC007C0)
 	{
 		cout << "unknown SI use" << endl;
 	}
 
-	memcpy(rdram[0] + (invDramAddr & 0xFFFFFFF), pif_ram[0] + (invPifAddrWr64b & 0xFF), 64);
+	memcpy(rdram[0] + (si_regs.getDramAddr() & 0xFFFFFFF), pif_ram[0] + (si_regs.getPifAddrWr64b() & 0xFF), 64);
 
 	write<word>(mi_regs.getIntr() | MI_INTR_SI, 0x04300008);
 	write<word>(si_regs.getStatus() | SI_STATUS_INTERRUPT, 0x04800018);
@@ -789,15 +770,12 @@ void MEMORY::dma_si_write()
 
 void MEMORY::dma_si_read()
 {
-	word invDramAddr = type_to_binary<word>(si_regs.getDramAddr());
-	word invPifAddrRd64b = type_to_binary<word>(si_regs.getPifAddrRd64b());
-
 	if (si_regs.getPifAddrRd64b() != 0x1FC007C0)
 	{
 		cout << "unknown SI use" << endl;
 	}
 
-	memcpy(pif_ram[0] + (invPifAddrRd64b & 0xFF), rdram[0] + (invDramAddr & 0xFFFFFFF), 64);
+	memcpy(pif_ram[0] + (si_regs.getPifAddrRd64b() & 0xFF), rdram[0] + (si_regs.getDramAddr() & 0xFFFFFFF), 64);
 	
 	write<word>(mi_regs.getIntr() | MI_INTR_SI, 0x04300008);
 	write<word>(si_regs.getStatus() | SI_STATUS_INTERRUPT, 0x04800018);
