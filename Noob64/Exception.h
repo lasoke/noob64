@@ -35,6 +35,13 @@
 #define CAUSE_IP6		0x00004000
 #define CAUSE_IP7		0x00008000
 
+#define MI_INTR_SP		0x01		/* Bit 0: SP intr */
+#define MI_INTR_SI		0x02		/* Bit 1: SI intr */
+#define MI_INTR_AI		0x04		/* Bit 2: AI intr */
+#define MI_INTR_VI		0x08		/* Bit 3: VI intr */
+#define MI_INTR_PI		0x10		/* Bit 4: PI intr */
+#define MI_INTR_DP		0x20		/* Bit 5: DP intr */
+
 enum Exception
 {
 	INTERRUPT						= 0,

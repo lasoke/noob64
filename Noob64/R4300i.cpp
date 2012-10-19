@@ -284,6 +284,12 @@ void R4300i::boot(ROM *r)
 
 	while (running)
 	{
+		if (memory->check_intr)
+		{
+			check_interrupt();
+			memory->check_intr = false;
+
+		}
 		++Count;
 		if ((pc & 0xFFFF) == 0x00AC)
 			pc = pc;

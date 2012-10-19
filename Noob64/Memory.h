@@ -8,6 +8,31 @@
 #define ROM_HEADER_SIZE		0x1000
 #define ROM_BOOT_CODE_SIZE	1008
 
+#define	SI_STATUS_DMA_BUSY		0x0001
+#define	SI_STATUS_RD_BUSY		0x0002
+#define	SI_STATUS_DMA_ERROR		0x0008
+#define	SI_STATUS_INTERRUPT		0x1000
+
+#define	PI_STATUS_DMA_BUSY		0x01
+#define	PI_STATUS_IO_BUSY		0x02
+#define	PI_STATUS_ERROR			0x04
+
+#define SP_STATUS_HALT			0x001
+#define SP_STATUS_BROKE			0x002
+#define SP_STATUS_DMA_BUSY		0x004
+#define SP_STATUS_DMA_FULL		0x008
+#define SP_STATUS_IO_FULL		0x010
+#define SP_STATUS_SSTEP			0x020
+#define SP_STATUS_INTR_BREAK	0x040
+#define SP_STATUS_SIG0			0x080
+#define SP_STATUS_SIG1			0x100
+#define SP_STATUS_SIG2			0x200
+#define SP_STATUS_SIG3			0x400
+#define SP_STATUS_SIG4			0x800
+#define SP_STATUS_SIG5	       0x1000
+#define SP_STATUS_SIG6	       0x2000
+#define SP_STATUS_SIG7	       0x4000
+
 typedef unsigned __int8		byte;
 typedef unsigned __int16	hword;
 typedef unsigned __int32	word;
@@ -513,6 +538,7 @@ public:
 	PIF_RAM		&pif_ram;
 	byte		SRAM[0x8000];
 	word		cic_chip;
+	bool		check_intr;
 
 	inline void* virtual_to_physical(dword address);
 	template <typename Type> inline Type read(dword address);

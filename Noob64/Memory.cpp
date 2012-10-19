@@ -20,6 +20,7 @@ MEMORY::MEMORY() :
 {
 	memset(SRAM, 0, sizeof(SRAM));
 	cic_chip = 0;
+	check_intr = false;
 }
 
 // MEMORY SEGMENT
@@ -338,9 +339,9 @@ void MEMORY::dma_pi_read()
 		rdram[0] + (invDramAddr & 0xFFFFFFF),
 		(invRdLen & 0xFFFFFFF) + 1);
 	
-	//PI_STATUS_REG &= ~PI_STATUS_DMA_BUSY;
-	//MI_INTR_REG |= MI_INTR_PI;
-	//CheckInterrupts();
+	write<word>(pi_regs.getStatus() & ~PI_STATUS_DMA_BUSY, 0x04600010);
+	write<word>(mi_regs.getIntr() | MI_INTR_PI, 0x04300008);
+	check_intr = true;
 
 	cout << "*** pi_read ***" << endl;
 }
@@ -354,10 +355,10 @@ void MEMORY::dma_pi_write()
 	memcpy(rdram[0] + (invDramAddr & 0xFFFFFFF),
 		(*rom)[0] + (invCartAddr & 0xFFFFFFF),
 		(invWrLen & 0xFFFFFFF) + 1);
-
-	//PI_STATUS_REG &= ~PI_STATUS_DMA_BUSY;
-	//MI_INTR_REG |= MI_INTR_PI;
-	//CheckInterrupts();
+	
+	write<word>(pi_regs.getStatus() & ~PI_STATUS_DMA_BUSY, 0x04600010);
+	write<word>(mi_regs.getIntr() | MI_INTR_PI, 0x04300008);
+	check_intr = true;
 
 	cout << "*** pi_write ***" << endl;
 	//dump_array(invDramAddr, (const byte *) rdram[0] + (invDramAddr & 0xFFFFFF) + 0xFFF1000, (invWrLen & 0xFFF) + 1, 16);
@@ -391,8 +392,8 @@ void MEMORY::dma_sp_write()
 		//cout << "*** END OF RDRAM ***"<< endl;
 	}
 	
-	//SP_DMA_BUSY_REG = 0;
-	//SP_STATUS_REG  &= ~SP_STATUS_DMA_BUSY;
+	write<word>(0, 0x04040018);
+	write<word>(si_regs.getStatus() & ~SP_STATUS_DMA_BUSY, 0x04040010);
 }
 
 void MEMORY::dma_sp_read()
@@ -422,8 +423,8 @@ void MEMORY::dma_sp_read()
 		//cout << "*** END OF RDRAM ***"<< endl;
 	}
 			
-	//SP_DMA_BUSY_REG = 0;
-	//SP_STATUS_REG  &= ~SP_STATUS_DMA_BUSY;
+	write<word>(0, 0x04040018);
+	write<word>(si_regs.getStatus() & ~SP_STATUS_DMA_BUSY, 0x04040010);
 }
 
 void MEMORY::dma_si_write()
@@ -438,9 +439,9 @@ void MEMORY::dma_si_write()
 
 	memcpy(rdram[0] + (invDramAddr & 0xFFFFFFF), pif_ram[0] + (invPifAddrWr64b & 0xFF), 64);
 
-	//MI_INTR_REG |= MI_INTR_SI;
-	//SI_STATUS_REG |= SI_STATUS_INTERRUPT;
-	//CheckInterrupts();
+	write<word>(mi_regs.getIntr() | MI_INTR_SI, 0x04300008);
+	write<word>(si_regs.getStatus() | SI_STATUS_INTERRUPT, 0x04800018);
+	check_intr = true;
 
 	cout << "*** si_write ***" << endl;
 	//dump_array(si_regs.getDramAddr(), (const byte*) rdram.ptr + si_regs.getDramAddr(), 64, 16);
@@ -458,10 +459,10 @@ void MEMORY::dma_si_read()
 	}
 
 	memcpy(pif_ram[0] + (invPifAddrRd64b & 0xFF), rdram[0] + (invDramAddr & 0xFFFFFFF), 64);
-
-	//MI_INTR_REG |= MI_INTR_SI;
-	//SI_STATUS_REG |= SI_STATUS_INTERRUPT;
-	//CheckInterrupts();
+	
+	write<word>(mi_regs.getIntr() | MI_INTR_SI, 0x04300008);
+	write<word>(si_regs.getStatus() | SI_STATUS_INTERRUPT, 0x04800018);
+	check_intr = true;
 
 	cout << "*** si_read ***" << endl;
 	//dump_array(si_regs.getPifAddrRd64b(), (byte*) pif_ram.ptr + si_regs.getPifAddrRd64b(), 64, 16);
