@@ -752,16 +752,16 @@ public:
 	inline void write(Type data, dword address);
 
 	inline void setRom(ROM *r) { rom = r; };
-
-private:
-	inline bool MEMORY::write_in_register(word data, dword address);
-	inline void checkDMA(dword address);
 	void dma_pi_write();
 	void dma_pi_read();
 	void dma_si_write();
 	void dma_si_read();
 	void dma_sp_write();
 	void dma_sp_read();
+
+private:
+	inline bool MEMORY::write_in_register(word data, dword address);
+	inline void checkDMA(dword address);
 
 	ROM	*rom;
 };
@@ -789,8 +789,6 @@ inline void MEMORY::write(Type data, dword address)
 	void *dst = virtual_to_physical(address);
 	data = type_to_binary<Type>(data);
 	memcpy(dst, &data, sizeof(Type));
-
-	checkDMA(address);
 }
 
 inline bool MEMORY::write_in_register(word data, dword address)
@@ -821,9 +819,15 @@ inline bool MEMORY::write_in_register(word data, dword address)
 	else if (address == SP_DRAM_ADDR_REG)
 		sp_regs.setDramAddr(data);
 	else if (address == SP_RD_LEN_REG)
+	{
 		sp_regs.setRdLen(data);
+		dma_sp_read();
+	}
 	else if (address == SP_WR_LEN_REG)
+	{
 		sp_regs.setWrLen(data);
+		dma_sp_write();
+	}
 	else if (address == SP_STATUS_REG)
 		sp_regs.setStatus(data);
 	else if (address == SP_DMA_FULL_REG)
@@ -919,11 +923,20 @@ inline bool MEMORY::write_in_register(word data, dword address)
 	else if (address == PI_CART_ADDR_REG)
 		pi_regs.setCartAddr(data);
 	else if (address == PI_RD_LEN_REG)
+	{
 		pi_regs.setRdLen(data);
+		dma_pi_read();
+	}
 	else if (address == PI_WR_LEN_REG)
+	{
 		pi_regs.setWrLen(data);
+		dma_pi_write();
+	}
 	else if (address == PI_STATUS_REG)
+	{
 		pi_regs.setStatus(data);
+		//write<word>(0x0, 0x04600010);
+	}
 	else if (address == PI_BSD_DOM1_LAT_REG)
 		pi_regs.setBsdDom1Lat(data);
 	else if (address == PI_BSD_DOM1_PWD_REG)
@@ -961,37 +974,20 @@ inline bool MEMORY::write_in_register(word data, dword address)
 	else if (address == SI_DRAM_ADDR_REG)
 		si_regs.setDramAddr(data);
 	else if (address == SI_PIF_ADDR_RD64B_REG)
+	{
 		si_regs.setPifAddrRd64b(data);
+		dma_si_read();
+	}
 	else if (address == SI_PIF_ADDR_WR64B_REG)
+	{
 		si_regs.setPifAddrWr64b(data);
+		dma_si_write();
+	}
 	else if (address == SI_STATUS_REG)
 		si_regs.setStatus(data);
 	else
 		return false;
 	return true;
-}
-
-inline void MEMORY::checkDMA(dword address)
-{
-	address = (word) address;
-	if (address == 0x04040008) //SP_RD_LEN_REG
-		dma_sp_read();
-	else if (address == 0x0404000C) // SP_WR_LEN_REG
-		dma_sp_write();
-	else if (address == 0x04600008) // PI_RD_LEN_REG
-		dma_pi_read();
-	else if (address == 0x0460000C) // PI_WR_LEN_REG
-		dma_pi_write();
-	else if (address == 0xA4600010) // PI_STATUS
-		write<word>(0x0, 0x04600010);
-	else if (address == 0x04800004) // SI_PIF_ADDR_RD64B_REG
-		dma_si_read();
-	else if (address == 0x04800010) // SI_PIF_ADDR_WR64B_REG
-		dma_si_write();
-	else if (0x80000000 <= address && address <= 0x9FFFFFFF)
-		return checkDMA(address - 0x80000000); // "Mirror 8 of 0x0000 0000 to 0x1FFF FFFF"
-	else if (0xA0000000 <= address && address <= 0xBFFFFFFF)
-		return checkDMA(address - 0xA0000000); // "Mirror A of 0x0000 0000 to 0x1FFF FFFF";
 }
 
 //****************************************************************************
