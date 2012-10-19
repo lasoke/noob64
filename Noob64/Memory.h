@@ -783,8 +783,8 @@ Type MEMORY::read(dword address)
 template <typename Type>
 inline void MEMORY::write(Type data, dword address)
 {
-	//if (typeid(Type) == typeid(word) && write_in_register((word) data, address))
-	//	return;
+	if (typeid(Type) == typeid(word) && write_in_register((word) data, address))
+		return;
 
 	void *dst = virtual_to_physical(address);
 	data = type_to_binary<Type>(data);

@@ -386,7 +386,7 @@ void SP_REGS::setRdLen(word arg)
 {
 	data.rd_len = arg;
 }
-void SP_REGS::setWrlen(word arg)
+void SP_REGS::setWrLen(word arg)
 {
 	data.wr_len = arg;
 }
@@ -460,7 +460,7 @@ void DPS_REGS::setBufTestAddr(word arg)
 {
 	data.buftest_addr = arg;
 }
-void DPS_REGS::setBuftestData(word arg)
+void DPS_REGS::setBufTestData(word arg)
 {
 	data.buftest_data = arg;
 }
@@ -588,7 +588,7 @@ void PI_REGS::setBsdDom1Lat(word arg)
 {
 	data.bsd_dom1_lat = arg;
 }
-void PI_REGS::setBsdDom1pwd(word arg)
+void PI_REGS::setBsdDom1Pwd(word arg)
 {
 	data.bsd_dom1_pwd = arg;
 }
@@ -641,9 +641,9 @@ void RI_REGS::setLatency(word arg)
 {
 	data.latency = arg;
 }
-void RI_REGS::setError(word arg)
+void RI_REGS::setRerror(word arg)
 {
-	data.error = arg;
+	data.rerror = arg;
 }
 void RI_REGS::setWerror(word arg)
 {
