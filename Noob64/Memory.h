@@ -262,8 +262,8 @@ public:
 	inline void setMode(word);
 	inline word getRefInterval()	{ return data.ref_interval; };
 	inline void setRefInterval(word);
-	inline word getRefNow()			{ return data.ref_row; };
-	inline void setRefNow(word);
+	inline word getRefRow()			{ return data.ref_row; };
+	inline void setRefRow(word);
 	inline word getRasInterval()	{ return data.ras_interval; };
 	inline void setRasInterval(word);
 	inline word getMinInterval()	{ return data.min_interval; };
@@ -314,7 +314,7 @@ public:
 	inline word getRdLen()		{ return data.rd_len; };
 	inline void setRdLen(word);
 	inline word getWrLen()		{ return data.wr_len; };
-	inline void set(word);
+	inline void setWrLen(word);
 	inline word getStatus()		{ return data.status; };
 	inline void setStatus(word);
 	inline word getDmaFull()	{ return data.dma_full; };
