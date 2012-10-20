@@ -329,353 +329,14 @@ void PIF_RAM::dump(void) const
 	cout << "*** END OF SI REGISTERS ***"<< endl;
 }
 
-//****************************************************************************
-//** SET METHODS					                                        **
-//****************************************************************************
-
-void RDRAM_REGS::setConfig(word arg)
-{
-	data.config = arg;
-}
-void RDRAM_REGS::setDeviceId(word arg)
-{
-	data.device_id = arg;
-}
-void RDRAM_REGS::setDelay(word arg)
-{
-	data.delay = arg;
-}
-void RDRAM_REGS::setMode(word arg)
-{
-	data.mode = arg;
-}
-void RDRAM_REGS::setRefInterval(word arg)
-{
-	data.ref_interval = arg;
-}
-void RDRAM_REGS::setRefRow(word arg)
-{
-	data.ref_row = arg;
-}
-void RDRAM_REGS::setRasInterval(word arg)
-{
-	data.ras_interval = arg;
-}
-void RDRAM_REGS::setMinInterval(word arg)
-{
-	data.min_interval = arg;
-}
-void RDRAM_REGS::setAddrSelect(word arg)
-{
-	data.addr_select = arg;
-}
-void RDRAM_REGS::setDeviceManuf(word arg)
-{
-	data.device_manuf = arg;
-}
-
-void SP_REGS::setMemAddr(word arg)
-{
-	data.mem_addr = arg;
-}
-void SP_REGS::setDramAddr(word arg)
-{
-	data.dram_addr = arg;
-}
-void SP_REGS::setRdLen(word arg)
-{
-	data.rd_len = arg;
-}
-void SP_REGS::setWrLen(word arg)
-{
-	data.wr_len = arg;
-}
-void SP_REGS::setStatus(word arg)
-{
-	data.status = arg;
-}
-void SP_REGS::setDmaFull(word arg)
-{
-	data.dma_full = arg;
-}
-void SP_REGS::setDmaBusy(word arg)
-{
-	data.dma_busy = arg;
-}
-void SP_REGS::setSemaphore(word arg)
-{
-	data.semaphore = arg;
-}
-void SP_REGS::setPc(word arg)
-{
-	data.pc = arg;
-}
-void SP_REGS::setIbist(word arg)
-{
-	data.ibist = arg;
-}
-
-void DPC_REGS::setStart(word arg)
-{
-	data.start = arg;
-}
-void DPC_REGS::setEnd(word arg)
-{
-	data.end = arg;
-}
-void DPC_REGS::setCurrent(word arg)
-{
-	data.current = arg;
-}
-void DPC_REGS::setStatus(word arg)
-{
-	data.status = arg;
-}
-void DPC_REGS::setClock(word arg)
-{
-	data.clock = arg;
-}
-void DPC_REGS::setBufBusy(word arg)
-{
-	data.bufbusy = arg;
-}
-void DPC_REGS::setPipeBusy(word arg)
-{
-	data.pipebusy = arg;
-}
-void DPC_REGS::setTmem(word arg)
-{
-	data.tmem = arg;
-}
-
-void DPS_REGS::setTbist(word arg)
-{
-	data.tbist = arg;
-}
-void DPS_REGS::setTestMode(word arg)
-{
-	data.test_mode = arg;
-}
-void DPS_REGS::setBufTestAddr(word arg)
-{
-	data.buftest_addr = arg;
-}
-void DPS_REGS::setBufTestData(word arg)
-{
-	data.buftest_data = arg;
-}
-
-void MI_REGS::setInitMode(word arg)
-{
-	data.init_mode = arg;
-}
-void MI_REGS::setVersion(word arg)
-{
-	data.version = arg;
-}
-void MI_REGS::setIntr(word arg)
-{
-	data.intr = arg;
-}
-void MI_REGS::setIntrMask(word arg)
-{
-	data.intr_mask = arg;
-}
-
-void VI_REGS::setStatus(word arg)
-{
-	data.status = arg;
-}
-void VI_REGS::setOrigin(word arg)
-{
-	data.origin = arg;
-}
-void VI_REGS::setWidth(word arg)
-{
-	data.width = arg;
-}
-void VI_REGS::setVintr(word arg)
-{
-	data.v_intr = arg;
-}
-void VI_REGS::setCurrent(word arg)
-{
-	data.current = arg;
-}
-void VI_REGS::setBurst(word arg)
-{
-	data.burst = arg;
-}
-void VI_REGS::setVsync(word arg)
-{
-	data.v_sync = arg;
-}
-void VI_REGS::setHsync(word arg)
-{
-	data.h_sync = arg;
-}
-void VI_REGS::setLeap(word arg)
-{
-	data.leap = arg;
-}
-void VI_REGS::setHstart(word arg)
-{
-	data.h_start = arg;
-}
-void VI_REGS::setVstart(word arg)
-{
-	data.v_start = arg;
-}
-void VI_REGS::setVburst(word arg)
-{
-	data.v_burst = arg;
-}
-void VI_REGS::setXscale(word arg)
-{
-	data.x_scale = arg;
-}
-void VI_REGS::setYscale(word arg)
-{
-	data.y_scale = arg;
-}
-
-void AI_REGS::setDramAddr(word arg)
-{
-	data.dram_addr = arg;
-}
-void AI_REGS::setLen(word arg)
-{
-	data.len = arg;
-}
-void AI_REGS::setControl(word arg)
-{
-	data.control = arg;
-}
-void AI_REGS::setStatus(word arg)
-{
-	data.status = arg;
-}
-void AI_REGS::setDacrate(word arg)
-{
-	data.dacrate = arg;
-}
-void AI_REGS::setBitrate(word arg)
-{
-	data.bitrate = arg;
-}
-
-void PI_REGS::setDramAddr(word arg)
-{
-	data.dram_addr = arg;
-}
-void PI_REGS::setCartAddr(word arg)
-{
-	data.cart_addr = arg;
-}
-void PI_REGS::setRdLen(word arg)
-{
-	data.rd_len = arg;
-}
-void PI_REGS::setWrLen(word arg)
-{
-	data.wr_len = arg;
-}
-void PI_REGS::setStatus(word arg)
-{
-	data.status = arg;
-}
-void PI_REGS::setBsdDom1Lat(word arg)
-{
-	data.bsd_dom1_lat = arg;
-}
-void PI_REGS::setBsdDom1Pwd(word arg)
-{
-	data.bsd_dom1_pwd = arg;
-}
-void PI_REGS::setBsdDom1Pgs(word arg)
-{
-	data.bsd_dom1_pgs = arg;
-}
-void PI_REGS::setBsdDom1Rls(word arg)
-{
-	data.bsd_dom1_rls = arg;
-}
-void PI_REGS::setBsdDom2Lat(word arg)
-{
-	data.bsd_dom2_lat = arg;
-}
-void PI_REGS::setBsdDom2Pwd(word arg)
-{
-	data.bsd_dom2_pwd = arg;
-}
-void PI_REGS::setBsdDom2Pgs(word arg)
-{
-	data.bsd_dom2_pgs = arg;
-}
-void PI_REGS::setBsdDom2Rls(word arg)
-{
-	data.bsd_dom2_rls = arg;
-}
-
-void RI_REGS::setMode(word arg)
-{
-	data.mode = arg;
-}
-void RI_REGS::setConfig(word arg)
-{
-	data.config = arg;
-}
-void RI_REGS::setCurrentLoad(word arg)
-{
-	data.current_load = arg;
-}
-void RI_REGS::setSelect(word arg)
-{
-	data.select = arg;
-}
-void RI_REGS::setRefresh(word arg)
-{
-	data.refresh = arg;
-}
-void RI_REGS::setLatency(word arg)
-{
-	data.latency = arg;
-}
-void RI_REGS::setRerror(word arg)
-{
-	data.rerror = arg;
-}
-void RI_REGS::setWerror(word arg)
-{
-	data.werror = arg;
-}
-
-void SI_REGS::setDramAddr(word arg)
-{
-	data.dram_addr = arg;
-}
-void SI_REGS::setPifAddrRd64b(word arg)
-{
-	data.pif_addr_rd64b = arg;
-}
-void SI_REGS::setPifAddrWr64b(word arg)
-{
-	data.pif_addr_wr64b = arg;
-}
-void SI_REGS::setStatus(word arg)
-{
-	data.status = arg;
-}
-
-
 void MEMORY::dma_pi_read()
 {
 	memcpy((*rom)[0] + (pi_regs.getCartAddr() & 0xFFFFFFF),
 		rdram[0] + (pi_regs.getDramAddr() & 0xFFFFFFF),
 		(pi_regs.getRdLen() & 0xFFFFFFF) + 1);
 	
-	write<word>(pi_regs.getStatus() & ~PI_STATUS_DMA_BUSY, 0x04600010);
-	write<word>(mi_regs.getIntr() | MI_INTR_PI, 0x04300008);
+//	mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_PI);
+//	pi_regs.setStatus(pi_regs.getStatus() & ~PI_STATUS_DMA_BUSY);
 	check_intr = true;
 
 	cout << "*** pi_read ***" << endl;
@@ -687,8 +348,8 @@ void MEMORY::dma_pi_write()
 		(*rom)[0] + (pi_regs.getCartAddr() & 0xFFFFFFF),
 		(pi_regs.getWrLen() & 0xFFFFFFF) + 1);
 	
-	write<word>(pi_regs.getStatus() & ~PI_STATUS_DMA_BUSY, 0x04600010);
-	write<word>(mi_regs.getIntr() | MI_INTR_PI, 0x04300008);
+//	mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_PI);
+//	pi_regs.setStatus(pi_regs.getStatus() & ~PI_STATUS_DMA_BUSY);
 	check_intr = true;
 
 	cout << "*** pi_write ***" << endl;
@@ -719,8 +380,8 @@ void MEMORY::dma_sp_write()
 		//cout << "*** END OF RDRAM ***"<< endl;
 	}
 	
-	write<word>(0, 0x04040018);
-	write<word>(si_regs.getStatus() & ~SP_STATUS_DMA_BUSY, 0x04040010);
+//	sp_regs.setDmaBusy(0);
+//	sp_regs.setStatus(sp_regs.getStatus() & ~SP_STATUS_DMA_BUSY);
 }
 
 void MEMORY::dma_sp_read()
@@ -746,8 +407,8 @@ void MEMORY::dma_sp_read()
 		//cout << "*** END OF RDRAM ***"<< endl;
 	}
 			
-	write<word>(0, 0x04040018);
-	write<word>(si_regs.getStatus() & ~SP_STATUS_DMA_BUSY, 0x04040010);
+//	sp_regs.setDmaBusy(0);
+//	sp_regs.setStatus(sp_regs.getStatus() & ~SP_STATUS_DMA_BUSY);
 }
 
 void MEMORY::dma_si_write()
@@ -758,9 +419,9 @@ void MEMORY::dma_si_write()
 	}
 
 	memcpy(rdram[0] + (si_regs.getDramAddr() & 0xFFFFFFF), pif_ram[0] + (si_regs.getPifAddrWr64b() & 0xFF), 64);
-
-	write<word>(mi_regs.getIntr() | MI_INTR_SI, 0x04300008);
-	write<word>(si_regs.getStatus() | SI_STATUS_INTERRUPT, 0x04800018);
+	
+//	mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_SI);
+//	si_regs.setStatus(si_regs.getStatus() | SI_STATUS_INTERRUPT);
 	check_intr = true;
 
 	cout << "*** si_write ***" << endl;
@@ -777,8 +438,8 @@ void MEMORY::dma_si_read()
 
 	memcpy(pif_ram[0] + (si_regs.getPifAddrRd64b() & 0xFF), rdram[0] + (si_regs.getDramAddr() & 0xFFFFFFF), 64);
 	
-	write<word>(mi_regs.getIntr() | MI_INTR_SI, 0x04300008);
-	write<word>(si_regs.getStatus() | SI_STATUS_INTERRUPT, 0x04800018);
+//	mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_SI);
+//	si_regs.setStatus(si_regs.getStatus() | SI_STATUS_INTERRUPT);
 	check_intr = true;
 
 	cout << "*** si_read ***" << endl;

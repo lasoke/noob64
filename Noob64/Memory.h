@@ -145,6 +145,113 @@
 #define SP_STATUS_SIG6	       0x2000
 #define SP_STATUS_SIG7	       0x4000
 
+#define SP_CLR_HALT				0x00001
+#define SP_SET_HALT				0x00002
+#define SP_CLR_BROKE			0x00004
+#define SP_CLR_INTR				0x00008
+#define SP_SET_INTR				0x00010
+#define SP_CLR_SSTEP			0x00020
+#define SP_SET_SSTEP			0x00040
+#define SP_CLR_INTR_BREAK		0x00080
+#define SP_SET_INTR_BREAK		0x00100
+#define SP_CLR_SIG0				0x00200
+#define SP_SET_SIG0				0x00400
+#define SP_CLR_SIG1				0x00800
+#define SP_SET_SIG1				0x01000
+#define SP_CLR_SIG2				0x02000
+#define SP_SET_SIG2				0x04000
+#define SP_CLR_SIG3				0x08000
+#define SP_SET_SIG3				0x10000
+#define SP_CLR_SIG4				0x20000
+#define SP_SET_SIG4				0x40000	
+#define SP_CLR_SIG5				0x80000
+#define SP_SET_SIG5				0x100000
+#define SP_CLR_SIG6				0x200000
+#define SP_SET_SIG6				0x400000
+#define SP_CLR_SIG7				0x800000
+#define SP_SET_SIG7				0x1000000
+
+#define SP_STATUS_HALT			0x001
+#define SP_STATUS_BROKE			0x002
+#define SP_STATUS_DMA_BUSY		0x004
+#define SP_STATUS_DMA_FULL		0x008
+#define SP_STATUS_IO_FULL		0x010
+#define SP_STATUS_SSTEP			0x020
+#define SP_STATUS_INTR_BREAK	0x040
+#define SP_STATUS_SIG0			0x080
+#define SP_STATUS_SIG1			0x100
+#define SP_STATUS_SIG2			0x200
+#define SP_STATUS_SIG3			0x400
+#define SP_STATUS_SIG4			0x800
+#define SP_STATUS_SIG5	       0x1000
+#define SP_STATUS_SIG6	       0x2000
+#define SP_STATUS_SIG7	       0x4000
+
+#define DPC_CLR_XBUS_DMEM_DMA	0x0001
+#define DPC_SET_XBUS_DMEM_DMA	0x0002
+#define DPC_CLR_FREEZE			0x0004
+#define DPC_SET_FREEZE			0x0008
+#define DPC_CLR_FLUSH			0x0010
+#define DPC_SET_FLUSH			0x0020
+#define DPC_CLR_TMEM_CTR		0x0040
+#define DPC_CLR_PIPE_CTR		0x0080
+#define DPC_CLR_CMD_CTR			0x0100
+#define DPC_CLR_CLOCK_CTR		0x0200
+
+#define DPC_STATUS_XBUS_DMEM_DMA	0x001
+#define DPC_STATUS_FREEZE			0x002
+#define DPC_STATUS_FLUSH			0x004
+#define DPC_STATUS_START_GCLK		0x008
+#define DPC_STATUS_TMEM_BUSY		0x010
+#define DPC_STATUS_PIPE_BUSY		0x020
+#define DPC_STATUS_CMD_BUSY			0x040
+#define DPC_STATUS_CBUF_READY		0x080
+#define DPC_STATUS_DMA_BUSY			0x100
+#define DPC_STATUS_END_VALID		0x200
+#define DPC_STATUS_START_VALID		0x400
+
+#define MI_CLR_INIT				0x0080
+#define MI_SET_INIT				0x0100
+#define MI_CLR_EBUS				0x0200
+#define MI_SET_EBUS				0x0400
+#define MI_CLR_DP_INTR			0x0800
+#define MI_CLR_RDRAM			0x1000
+#define MI_SET_RDRAM			0x2000
+
+#define MI_MODE_INIT			0x0080
+#define MI_MODE_EBUS			0x0100
+#define MI_MODE_RDRAM			0x0200
+
+#define MI_INTR_MASK_CLR_SP		0x0001
+#define MI_INTR_MASK_SET_SP		0x0002
+#define MI_INTR_MASK_CLR_SI		0x0004
+#define MI_INTR_MASK_SET_SI		0x0008
+#define MI_INTR_MASK_CLR_AI		0x0010
+#define MI_INTR_MASK_SET_AI		0x0020
+#define MI_INTR_MASK_CLR_VI		0x0040
+#define MI_INTR_MASK_SET_VI		0x0080
+#define MI_INTR_MASK_CLR_PI		0x0100
+#define MI_INTR_MASK_SET_PI		0x0200
+#define MI_INTR_MASK_CLR_DP		0x0400
+#define MI_INTR_MASK_SET_DP		0x0800
+
+#define MI_INTR_MASK_SP			0x01
+#define MI_INTR_MASK_SI			0x02
+#define MI_INTR_MASK_AI			0x04
+#define MI_INTR_MASK_VI			0x08
+#define MI_INTR_MASK_PI			0x10
+#define MI_INTR_MASK_DP			0x20
+
+#define MI_INTR_SP				0x01
+#define MI_INTR_SI				0x02
+#define MI_INTR_AI				0x04
+#define MI_INTR_VI				0x08
+#define MI_INTR_PI				0x10
+#define MI_INTR_DP				0x20
+
+#define	PI_SET_RESET			0x01
+#define	PI_CLR_INTR				0x02
+
 typedef unsigned __int8			byte;
 typedef unsigned __int16		hword;
 typedef unsigned __int32		word;
@@ -830,7 +937,22 @@ inline bool MEMORY::write_in_register(word data, dword address)
 		dma_sp_write();
 	}
 	else if (address == SP_STATUS_REG)
+	{
 		sp_regs.setStatus(data);
+		if (data & SP_SET_SIG0) 
+		{
+			mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_SP);
+			check_intr = true;
+		}
+		if (data & SP_CLR_INTR)
+		{ 
+			mi_regs.setIntr(mi_regs.getIntr() & ~MI_INTR_SP);
+			//	RunRsp();
+			check_intr = true;
+		}
+		else
+			;//	RunRsp();
+	}
 	else if (address == SP_DMA_FULL_REG)
 		sp_regs.setDmaFull(data);
 	else if (address == SP_DMA_BUSY_REG)
@@ -884,7 +1006,11 @@ inline bool MEMORY::write_in_register(word data, dword address)
 	else if (address == VI_WIDTH_REG)
 		vi_regs.setWidth(data);
 	else if (address == VI_INTR_REG)
+	{
 		vi_regs.setVintr(data);
+		mi_regs.setIntr(mi_regs.getIntr() & ~MI_INTR_VI);
+		check_intr = true;
+	}
 	else if (address == VI_CURRENT_REG)
 		vi_regs.setCurrent(data);
 	else if (address == VI_BURST_REG)
@@ -913,7 +1039,11 @@ inline bool MEMORY::write_in_register(word data, dword address)
 	else if (address == AI_CONTROL_REG)
 		ai_regs.setControl(data);
 	else if (address == AI_STATUS_REG)
+	{
 		ai_regs.setStatus(data);
+		mi_regs.setIntr(mi_regs.getIntr() & ~MI_INTR_AI);
+		check_intr = true;
+	}
 	else if (address == AI_DACRATE_REG)
 		ai_regs.setDacrate(data);
 	else if (address == AI_BITRATE_REG)
@@ -935,8 +1065,8 @@ inline bool MEMORY::write_in_register(word data, dword address)
 	}
 	else if (address == PI_STATUS_REG)
 	{
-		pi_regs.setStatus(data);
-		//write<word>(0x0, 0x04600010);
+		mi_regs.setIntr(mi_regs.getIntr() & ~MI_INTR_PI);
+		check_intr = true;
 	}
 	else if (address == PI_BSD_DOM1_LAT_REG)
 		pi_regs.setBsdDom1Lat(data);
@@ -985,7 +1115,11 @@ inline bool MEMORY::write_in_register(word data, dword address)
 		dma_si_write();
 	}
 	else if (address == SI_STATUS_REG)
+	{
 		si_regs.setStatus(data);
+		mi_regs.setIntr(mi_regs.getIntr() & ~MI_INTR_SI);
+		check_intr = true;
+	}
 	else
 		return false;
 	return true;
@@ -1035,3 +1169,426 @@ inline void* MEMORY::virtual_to_physical(dword address)
 }
 
 bool is_address_defined(dword address);
+
+//****************************************************************************
+//** SET METHODS					                                        **
+//****************************************************************************
+
+inline void RDRAM_REGS::setConfig(word arg)
+{
+	data.config = arg;
+}
+inline void RDRAM_REGS::setDeviceId(word arg)
+{
+	data.device_id = arg;
+}
+inline void RDRAM_REGS::setDelay(word arg)
+{
+	data.delay = arg;
+}
+inline void RDRAM_REGS::setMode(word arg)
+{
+	data.mode = arg;
+}
+inline void RDRAM_REGS::setRefInterval(word arg)
+{
+	data.ref_interval = arg;
+}
+inline void RDRAM_REGS::setRefRow(word arg)
+{
+	data.ref_row = arg;
+}
+inline void RDRAM_REGS::setRasInterval(word arg)
+{
+	data.ras_interval = arg;
+}
+inline void RDRAM_REGS::setMinInterval(word arg)
+{
+	data.min_interval = arg;
+}
+inline void RDRAM_REGS::setAddrSelect(word arg)
+{
+	data.addr_select = arg;
+}
+inline void RDRAM_REGS::setDeviceManuf(word arg)
+{
+	data.device_manuf = arg;
+}
+
+inline void SP_REGS::setMemAddr(word arg)
+{
+	data.mem_addr = arg;
+}
+inline void SP_REGS::setDramAddr(word arg)
+{
+	data.dram_addr = arg;
+}
+inline void SP_REGS::setRdLen(word arg)
+{
+	data.rd_len = arg;
+}
+inline void SP_REGS::setWrLen(word arg)
+{
+	data.wr_len = arg;
+}
+inline void SP_REGS::setStatus(word arg)
+{
+	if (arg & SP_CLR_HALT)
+		data.status &= ~SP_STATUS_HALT;
+	if (arg & SP_CLR_BROKE)
+		data.status &= ~SP_STATUS_BROKE;
+	if (arg & SP_CLR_SSTEP)
+		data.status &= ~SP_STATUS_SSTEP;
+	if (arg & SP_CLR_INTR_BREAK)
+		data.status &= ~SP_STATUS_INTR_BREAK;
+	if (arg & SP_CLR_SIG0)
+		data.status &= ~SP_STATUS_SIG0;
+	if (arg & SP_CLR_SIG1)
+		data.status &= ~SP_STATUS_SIG1;
+	if (arg & SP_CLR_SIG2)
+		data.status &= ~SP_STATUS_SIG2;
+	if (arg & SP_CLR_SIG3)
+		data.status &= ~SP_STATUS_SIG3;
+	if (arg & SP_CLR_SIG4)
+		data.status &= ~SP_STATUS_SIG4;
+	if (arg & SP_CLR_SIG5)
+		data.status &= ~SP_STATUS_SIG5;
+	if (arg & SP_CLR_SIG6)
+		data.status &= ~SP_STATUS_SIG6;
+	if (arg & SP_CLR_SIG7)
+		data.status &= ~SP_STATUS_SIG7;
+
+	if (arg & SP_SET_HALT)
+		data.status |= SP_STATUS_HALT;
+	if (arg & SP_SET_SSTEP)
+		data.status |= SP_STATUS_SSTEP;
+	if (arg & SP_SET_INTR_BREAK)
+		data.status |= SP_STATUS_INTR_BREAK;
+	if (arg & SP_SET_SIG0)
+		data.status |= SP_STATUS_SIG0;
+	if (arg & SP_SET_SIG1)
+		data.status |= SP_STATUS_SIG1;
+	if (arg & SP_SET_SIG2)
+		data.status |= SP_STATUS_SIG2;
+	if (arg & SP_SET_SIG3)
+		data.status |= SP_STATUS_SIG3;
+	if (arg & SP_SET_SIG4)
+		data.status |= SP_STATUS_SIG4;
+	if (arg & SP_SET_SIG5)
+		data.status |= SP_STATUS_SIG5;
+	if (arg & SP_SET_SIG6)
+		data.status |= SP_STATUS_SIG6;
+	if (arg & SP_SET_SIG7)
+		data.status |= SP_STATUS_SIG7;
+}
+inline void SP_REGS::setDmaFull(word arg)
+{
+	data.dma_full = arg;
+}
+inline void SP_REGS::setDmaBusy(word arg)
+{
+	data.dma_busy = arg;
+}
+inline void SP_REGS::setSemaphore(word arg)
+{
+	data.semaphore = 0;
+}
+inline void SP_REGS::setPc(word arg)
+{
+	data.pc = arg & 0xFFC;
+}
+inline void SP_REGS::setIbist(word arg)
+{
+	data.ibist = arg;
+}
+
+inline void DPC_REGS::setStart(word arg)
+{
+	data.start = arg;
+}
+inline void DPC_REGS::setEnd(word arg)
+{
+	data.end = arg;
+}
+inline void DPC_REGS::setCurrent(word arg)
+{
+	data.current = arg;
+}
+inline void DPC_REGS::setStatus(word arg)
+{
+	data.status = arg;
+}
+inline void DPC_REGS::setClock(word arg)
+{
+	data.clock = arg;
+}
+inline void DPC_REGS::setBufBusy(word arg)
+{
+	data.bufbusy = arg;
+}
+inline void DPC_REGS::setPipeBusy(word arg)
+{
+	data.pipebusy = arg;
+}
+inline void DPC_REGS::setTmem(word arg)
+{
+	data.tmem = arg;
+}
+
+inline void DPS_REGS::setTbist(word arg)
+{
+	data.tbist = arg;
+}
+inline void DPS_REGS::setTestMode(word arg)
+{
+	data.test_mode = arg;
+}
+inline void DPS_REGS::setBufTestAddr(word arg)
+{
+	data.buftest_addr = arg;
+}
+inline void DPS_REGS::setBufTestData(word arg)
+{
+	data.buftest_data = arg;
+}
+
+inline void MI_REGS::setInitMode(word arg)
+{
+	if (arg & MI_CLR_INIT)
+		data.init_mode &= ~MI_MODE_INIT;
+	if (arg & MI_CLR_EBUS)
+		data.init_mode &= ~MI_MODE_EBUS;
+	if (arg & MI_CLR_RDRAM)
+		data.init_mode &= ~MI_MODE_RDRAM;
+
+	if (arg & MI_SET_INIT)
+		data.init_mode |= MI_MODE_INIT;
+	if (arg & MI_SET_EBUS)
+		data.init_mode |= MI_MODE_EBUS;
+	if (arg & MI_SET_RDRAM)
+		data.init_mode |= MI_MODE_RDRAM;
+
+	if (arg & MI_CLR_DP_INTR)
+		data.intr &= ~MI_INTR_DP;
+}
+inline void MI_REGS::setVersion(word arg)
+{
+	data.version = arg;
+}
+inline void MI_REGS::setIntr(word arg)
+{
+	data.intr = arg;
+}
+inline void MI_REGS::setIntrMask(word arg)
+{
+				if (arg & MI_INTR_MASK_CLR_SP )
+					data.intr_mask &= ~MI_INTR_MASK_SP;
+				if (arg & MI_INTR_MASK_CLR_SI )
+					data.intr_mask &= ~MI_INTR_MASK_SI;
+				if (arg & MI_INTR_MASK_CLR_AI )
+					data.intr_mask &= ~MI_INTR_MASK_AI;
+				if (arg & MI_INTR_MASK_CLR_VI )
+					data.intr_mask &= ~MI_INTR_MASK_VI;
+				if (arg & MI_INTR_MASK_CLR_PI )
+					data.intr_mask &= ~MI_INTR_MASK_PI;
+				if (arg & MI_INTR_MASK_CLR_DP )
+					data.intr_mask &= ~MI_INTR_MASK_DP;
+
+				if (arg & MI_INTR_MASK_SET_SP )
+					data.intr_mask |= MI_INTR_MASK_SP;
+				if (arg & MI_INTR_MASK_SET_SI )
+					data.intr_mask |= MI_INTR_MASK_SI;
+				if (arg & MI_INTR_MASK_SET_AI )
+					data.intr_mask |= MI_INTR_MASK_AI;
+				if (arg & MI_INTR_MASK_SET_VI )
+					data.intr_mask |= MI_INTR_MASK_VI;
+				if (arg & MI_INTR_MASK_SET_PI )
+					data.intr_mask |= MI_INTR_MASK_PI;
+				if (arg & MI_INTR_MASK_SET_DP )
+					data.intr_mask |= MI_INTR_MASK_DP;
+}
+
+inline void VI_REGS::setStatus(word arg)
+{
+	data.status = arg;
+	//ViStatusChanged
+}
+inline void VI_REGS::setOrigin(word arg)
+{
+	data.origin = arg;
+}
+inline void VI_REGS::setWidth(word arg)
+{
+	data.width = arg;
+	//ViWidthChanged
+}
+inline void VI_REGS::setVintr(word arg)
+{
+}
+inline void VI_REGS::setCurrent(word arg)
+{
+	data.current = arg;
+}
+inline void VI_REGS::setBurst(word arg)
+{
+	data.burst = arg;
+}
+inline void VI_REGS::setVsync(word arg)
+{
+	data.v_sync = arg;
+}
+inline void VI_REGS::setHsync(word arg)
+{
+	data.h_sync = arg;
+}
+inline void VI_REGS::setLeap(word arg)
+{
+	data.leap = arg;
+}
+inline void VI_REGS::setHstart(word arg)
+{
+	data.h_start = arg;
+}
+inline void VI_REGS::setVstart(word arg)
+{
+	data.v_start = arg;
+}
+inline void VI_REGS::setVburst(word arg)
+{
+	data.v_burst = arg;
+}
+inline void VI_REGS::setXscale(word arg)
+{
+	data.x_scale = arg;
+}
+inline void VI_REGS::setYscale(word arg)
+{
+	data.y_scale = arg;
+}
+
+inline void AI_REGS::setDramAddr(word arg)
+{
+	data.dram_addr = arg;
+}
+inline void AI_REGS::setLen(word arg)
+{
+	data.len = arg;
+	//AiLenChanged
+}
+inline void AI_REGS::setControl(word arg)
+{
+	data.control = arg & 0x1;
+}
+inline void AI_REGS::setStatus(word arg)
+{
+}
+inline void AI_REGS::setDacrate(word arg)
+{
+	data.dacrate = arg;
+}
+inline void AI_REGS::setBitrate(word arg)
+{
+	data.bitrate = arg;
+}
+
+inline void PI_REGS::setDramAddr(word arg)
+{
+	data.dram_addr = arg;
+}
+inline void PI_REGS::setCartAddr(word arg)
+{
+	data.cart_addr = arg;
+}
+inline void PI_REGS::setRdLen(word arg)
+{
+	data.rd_len = arg;
+}
+inline void PI_REGS::setWrLen(word arg)
+{
+	data.wr_len = arg;
+}
+inline void PI_REGS::setStatus(word arg)
+{
+	data.status = arg;
+}
+inline void PI_REGS::setBsdDom1Lat(word arg)
+{
+	data.bsd_dom1_lat = arg;
+}
+inline void PI_REGS::setBsdDom1Pwd(word arg)
+{
+	data.bsd_dom1_pwd = arg;
+}
+inline void PI_REGS::setBsdDom1Pgs(word arg)
+{
+	data.bsd_dom1_pgs = arg;
+}
+inline void PI_REGS::setBsdDom1Rls(word arg)
+{
+	data.bsd_dom1_rls = arg;
+}
+inline void PI_REGS::setBsdDom2Lat(word arg)
+{
+	data.bsd_dom2_lat = arg;
+}
+inline void PI_REGS::setBsdDom2Pwd(word arg)
+{
+	data.bsd_dom2_pwd = arg;
+}
+inline void PI_REGS::setBsdDom2Pgs(word arg)
+{
+	data.bsd_dom2_pgs = arg;
+}
+inline void PI_REGS::setBsdDom2Rls(word arg)
+{
+	data.bsd_dom2_rls = arg;
+}
+
+inline void RI_REGS::setMode(word arg)
+{
+	data.mode = arg;
+}
+inline void RI_REGS::setConfig(word arg)
+{
+	data.config = arg;
+}
+inline void RI_REGS::setCurrentLoad(word arg)
+{
+	data.current_load = arg;
+}
+inline void RI_REGS::setSelect(word arg)
+{
+	data.select = arg;
+}
+inline void RI_REGS::setRefresh(word arg)
+{
+	data.refresh = arg;
+}
+inline void RI_REGS::setLatency(word arg)
+{
+	data.latency = arg;
+}
+inline void RI_REGS::setRerror(word arg)
+{
+	data.rerror = arg;
+}
+inline void RI_REGS::setWerror(word arg)
+{
+	data.werror = arg;
+}
+
+inline void SI_REGS::setDramAddr(word arg)
+{
+	data.dram_addr = arg;
+}
+inline void SI_REGS::setPifAddrRd64b(word arg)
+{
+	data.pif_addr_rd64b = arg;
+}
+inline void SI_REGS::setPifAddrWr64b(word arg)
+{
+	data.pif_addr_wr64b = arg;
+}
+inline void SI_REGS::setStatus(word arg)
+{
+}
