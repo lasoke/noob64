@@ -24,16 +24,19 @@
 
 #pragma once
 
+//extend the negative bit to a dword if 1 in word
 inline dword extend_sign_word(dword d)
 {
 	return d & 0x80000000 ? d |= 0xFFFFFFFF00000000 : d &= 0xFFFFFFFF;
 }
 
+//extend the negative bit to a dword if 1 in halfword
 inline dword extend_sign_halfword(dword d)
 {
 	return d & 0x8000 ? d |= 0xFFFFFFFFFFFF0000 : d &= 0xFFFF;
 }
 
+//extend the negative bit to a dword if 1 in byte
 inline dword extend_sign_byte(dword d)
 {
 	return d & 0x80 ? d |= 0xFFFFFFFFFFFFFF00 : d &= 0xFF;

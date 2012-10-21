@@ -24,6 +24,11 @@
 
 #pragma once
 
+/* 
+** This structure is used for the TLB, it allow
+** quick translation between virtual to physical
+** address
+*/
 typedef struct {
    short			mask;
    long				vpn2;

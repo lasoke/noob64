@@ -29,6 +29,10 @@
 #define PLUGIN_TYPE_AUDIO			3
 #define PLUGIN_TYPE_CONTROLLER		4
 
+/*
+** The PLUGIN_INFO structure is common to every plugin and contains
+** general info on it
+*/
 typedef struct {
 	hword Version;        /* Should be set to 0x0101 */
 	hword Type;           /* Set to PLUGIN_TYPE_RSP */
@@ -48,6 +52,10 @@ typedef void (_cdecl* DLLTEST)(HWND);
 typedef void (_cdecl* GETDLLINFO)(PLUGIN_INFO*);
 typedef void (_cdecl* ROMCLOSED)(void);
 
+/*
+** The Class PLUGIN will be used by the class of every plugin
+** it contains methods and structure define in every plugins
+*/
 class PLUGIN
 {
 public:

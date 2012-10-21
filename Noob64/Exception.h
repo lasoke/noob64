@@ -24,6 +24,8 @@
 
 #pragma once
 
+// The next defines are extract from the MIPS 
+// http://doc.kodewerx.org/documents/mips32_vol3.pdf
 #define STATUS_IE		0x00000000
 #define STATUS_EXL		0x00000002
 #define STATUS_ERL		0x00000004
@@ -59,13 +61,7 @@
 #define CAUSE_IP6		0x00004000
 #define CAUSE_IP7		0x00008000
 
-#define MI_INTR_SP		0x01		/* Bit 0: SP intr */
-#define MI_INTR_SI		0x02		/* Bit 1: SI intr */
-#define MI_INTR_AI		0x04		/* Bit 2: AI intr */
-#define MI_INTR_VI		0x08		/* Bit 3: VI intr */
-#define MI_INTR_PI		0x10		/* Bit 4: PI intr */
-#define MI_INTR_DP		0x20		/* Bit 5: DP intr */
-
+// The enum Exception, useful to identify the exception triggered
 enum Exception
 {
 	INTERRUPT						= 0,

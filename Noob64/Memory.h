@@ -24,14 +24,17 @@
 
 #pragma once
 
+// Define the max of each type
 #define BYTE_MAX				255
 #define HWORD_MAX				65535
 #define WORD_MAX				4294967295
 #define DWORD_MAX				18446744073709551615
 
+// define some useful size in the ROM
 #define ROM_HEADER_SIZE			0x1000
 #define ROM_BOOT_CODE_SIZE		1008
 
+// define the virtual address of the rdram registers
 #define RDRAM_CONFIG_REG		0x03F00000
 #define RDRAM_DEVICE_ID_REG     0x03F00004
 #define RDRAM_DELAY_REG			0x03F00008
@@ -43,6 +46,7 @@
 #define RDRAM_ADDR_SELECT_REG	0x03F00020
 #define RDRAM_DEVICE_MANUF_REG	0x03F00024
 
+// define the virtual address of the sp registers
 #define SP_DMEM					0x04000000
 #define SP_IMEM					0x04001000
 #define SP_MEM_ADDR_REG			0x04040000
@@ -56,6 +60,7 @@
 #define SP_PC_REG				0x04080000
 #define SP_IBIST_REG			0x04080004
 
+//define the virtual address of the dpc registers
 #define DPC_START_REG			0x04100000
 #define DPC_END_REG				0x04100004
 #define DPC_CURRENT_REG			0x04100008
@@ -65,16 +70,19 @@
 #define DPC_PIPEBUSY_REG		0x04100018
 #define DPC_TMEM_REG			0x0410001C
 
+//define the virtual address of the dps registers
 #define DPS_TBIST_REG			0x04200000
 #define DPS_TEST_MODE_REG		0x04200004
 #define DPS_BUFTEST_ADDR_REG	0x04200008
 #define DPS_BUFTEST_DATA_REG	0x0420000C
 
+//define the virtual address of the mi registers
 #define MI_INIT_MODE_REG		0x04300000
 #define MI_VERSION_REG			0x04300004
 #define MI_INTR_REG				0x04300008
 #define MI_INTR_MASK_REG		0x0430000C
 
+//define the virtual address of the vi registers
 #define VI_STATUS_REG			0x04400000
 #define VI_ORIGIN_REG			0x04400004
 #define VI_WIDTH_REG			0x04400008
@@ -90,6 +98,7 @@
 #define VI_X_SCALE_REG			0x04400030
 #define VI_Y_SCALE_REG			0x04400034
 
+//define the virtual address of the ai registers
 #define AI_DRAM_ADDR_REG		0x04500000
 #define AI_LEN_REG				0x04500004
 #define AI_CONTROL_REG			0x04500008
@@ -97,6 +106,7 @@
 #define AI_DACRATE_REG			0x04500010
 #define AI_BITRATE_REG			0x04500014
 
+//define the virtual address of the pi registers
 #define PI_DRAM_ADDR_REG		0x04600000
 #define PI_CART_ADDR_REG		0x04600004
 #define PI_RD_LEN_REG			0x04600008
@@ -111,6 +121,7 @@
 #define PI_BSD_DOM2_PGS_REG		0x0460002C
 #define PI_BSD_DOM2_RLS_REG		0x04600030
 
+//define the virtual address of the ri registers
 #define RI_MODE_REG				0x04700000
 #define RI_CONFIG_REG			0x04700004
 #define RI_CURRENT_LOAD_REG		0x04700008
@@ -120,11 +131,13 @@
 #define RI_RERROR_REG			0x04700018
 #define RI_WERROR_REG			0x0470001C
 
+//define the virtual address of the si registers
 #define SI_DRAM_ADDR_REG		0x04800000
 #define SI_PIF_ADDR_RD64B_REG	0x04800004
 #define SI_PIF_ADDR_WR64B_REG	0x04800010
 #define SI_STATUS_REG			0x04800018
 
+//define the virtual address of the ROM registerss
 #define INIT_BSD_DOM1_LAT_REG	0x10000000
 #define INIT_BSD_DOM1_PWD_REG	0x10000001
 #define INIT_BSD_DOM1_PGS_REG	0x10000002
@@ -139,20 +152,24 @@
 #define CARTRIDGE_ID			0x1000003C
 #define COUNTRY_CODE			0x1000003E
 
+//define the virtual address of the kind of memory store
 #define KSEG0					0x80000000
 #define KSEG1					0xA0000000
 #define KSEG2					0xC0000000
 #define KSEG3					0xE0000000
 
+//define the state in which can be the status register of si
 #define	SI_STATUS_DMA_BUSY		0x0001
 #define	SI_STATUS_RD_BUSY		0x0002
 #define	SI_STATUS_DMA_ERROR		0x0008
 #define	SI_STATUS_INTERRUPT		0x1000
 
+//define the state in which can be the status register of pi
 #define	PI_STATUS_DMA_BUSY		0x01
 #define	PI_STATUS_IO_BUSY		0x02
 #define	PI_STATUS_ERROR			0x04
 
+//define the state in which can be the status register of sp
 #define SP_STATUS_HALT			0x001
 #define SP_STATUS_BROKE			0x002
 #define SP_STATUS_DMA_BUSY		0x004
@@ -169,6 +186,7 @@
 #define SP_STATUS_SIG6	       0x2000
 #define SP_STATUS_SIG7	       0x4000
 
+//define the what bit do what for updating the status register of sp
 #define SP_CLR_HALT				0x00001
 #define SP_SET_HALT				0x00002
 #define SP_CLR_BROKE			0x00004
@@ -195,6 +213,7 @@
 #define SP_CLR_SIG7				0x800000
 #define SP_SET_SIG7				0x1000000
 
+//define the state in which can be the status register of sp
 #define SP_STATUS_HALT			0x001
 #define SP_STATUS_BROKE			0x002
 #define SP_STATUS_DMA_BUSY		0x004
@@ -211,6 +230,7 @@
 #define SP_STATUS_SIG6	       0x2000
 #define SP_STATUS_SIG7	       0x4000
 
+//define the what bit do what for updating the status register of dpc
 #define DPC_CLR_XBUS_DMEM_DMA	0x0001
 #define DPC_SET_XBUS_DMEM_DMA	0x0002
 #define DPC_CLR_FREEZE			0x0004
@@ -222,6 +242,7 @@
 #define DPC_CLR_CMD_CTR			0x0100
 #define DPC_CLR_CLOCK_CTR		0x0200
 
+//define the what bit do what for updating the status register of sp
 #define DPC_STATUS_XBUS_DMEM_DMA	0x001
 #define DPC_STATUS_FREEZE			0x002
 #define DPC_STATUS_FLUSH			0x004
@@ -234,6 +255,7 @@
 #define DPC_STATUS_END_VALID		0x200
 #define DPC_STATUS_START_VALID		0x400
 
+//define the what bit do what for updating the status register of mi
 #define MI_CLR_INIT				0x0080
 #define MI_SET_INIT				0x0100
 #define MI_CLR_EBUS				0x0200
@@ -242,10 +264,12 @@
 #define MI_CLR_RDRAM			0x1000
 #define MI_SET_RDRAM			0x2000
 
+//define the what bit do what for updating the mode register of mi
 #define MI_MODE_INIT			0x0080
 #define MI_MODE_EBUS			0x0100
 #define MI_MODE_RDRAM			0x0200
 
+//define the what bit do what for updating the interrupt register of mi
 #define MI_INTR_MASK_CLR_SP		0x0001
 #define MI_INTR_MASK_SET_SP		0x0002
 #define MI_INTR_MASK_CLR_SI		0x0004
@@ -259,6 +283,7 @@
 #define MI_INTR_MASK_CLR_DP		0x0400
 #define MI_INTR_MASK_SET_DP		0x0800
 
+//define the what bit do what for updating the interrupt mask register of mi
 #define MI_INTR_MASK_SP			0x01
 #define MI_INTR_MASK_SI			0x02
 #define MI_INTR_MASK_AI			0x04
@@ -266,6 +291,7 @@
 #define MI_INTR_MASK_PI			0x10
 #define MI_INTR_MASK_DP			0x20
 
+//define the what bit do what for updating the interrupt register of mi
 #define MI_INTR_SP				0x01
 #define MI_INTR_SI				0x02
 #define MI_INTR_AI				0x04
@@ -273,6 +299,7 @@
 #define MI_INTR_PI				0x10
 #define MI_INTR_DP				0x20
 
+//define the what bit do what for updating the status register of pi
 #define	PI_SET_RESET			0x01
 #define	PI_CLR_INTR				0x02
 
@@ -435,6 +462,7 @@ public:
 	void dump_range_dmem(word from, word to) const;
 	void dump_range_imem(word from, word to) const;
 
+	//contains the instruction of the RSP
 	inline byte *getDmem()		{ return data.dmem; };
 	inline byte *getImem()		{ return data.imem; };
 
@@ -927,6 +955,7 @@ inline void MEMORY::write(Type data, dword address)
 	memcpy(dst, &data, sizeof(Type));
 }
 
+// Get the value contains in the registes
 inline bool MEMORY::read_from_register(word *data, dword address)
 {
 	address = address & 0x0FFFFFFF;
@@ -1112,6 +1141,7 @@ inline bool MEMORY::read_from_register(word *data, dword address)
 	return true;
 }
 
+// Set the value of the registers
 inline bool MEMORY::write_in_register(word data, dword address)
 {
 	address = address & 0x0FFFFFFF;
@@ -1611,31 +1641,31 @@ inline void MI_REGS::setIntr(word arg)
 }
 inline void MI_REGS::setIntrMask(word arg)
 {
-				if (arg & MI_INTR_MASK_CLR_SP )
-					data.intr_mask &= ~MI_INTR_MASK_SP;
-				if (arg & MI_INTR_MASK_CLR_SI )
-					data.intr_mask &= ~MI_INTR_MASK_SI;
-				if (arg & MI_INTR_MASK_CLR_AI )
-					data.intr_mask &= ~MI_INTR_MASK_AI;
-				if (arg & MI_INTR_MASK_CLR_VI )
-					data.intr_mask &= ~MI_INTR_MASK_VI;
-				if (arg & MI_INTR_MASK_CLR_PI )
-					data.intr_mask &= ~MI_INTR_MASK_PI;
-				if (arg & MI_INTR_MASK_CLR_DP )
-					data.intr_mask &= ~MI_INTR_MASK_DP;
+	if (arg & MI_INTR_MASK_CLR_SP )
+		data.intr_mask &= ~MI_INTR_MASK_SP;
+	if (arg & MI_INTR_MASK_CLR_SI )
+		data.intr_mask &= ~MI_INTR_MASK_SI;
+	if (arg & MI_INTR_MASK_CLR_AI )
+		data.intr_mask &= ~MI_INTR_MASK_AI;
+	if (arg & MI_INTR_MASK_CLR_VI )
+		data.intr_mask &= ~MI_INTR_MASK_VI;
+	if (arg & MI_INTR_MASK_CLR_PI )
+		data.intr_mask &= ~MI_INTR_MASK_PI;
+	if (arg & MI_INTR_MASK_CLR_DP )
+		data.intr_mask &= ~MI_INTR_MASK_DP;
 
-				if (arg & MI_INTR_MASK_SET_SP )
-					data.intr_mask |= MI_INTR_MASK_SP;
-				if (arg & MI_INTR_MASK_SET_SI )
-					data.intr_mask |= MI_INTR_MASK_SI;
-				if (arg & MI_INTR_MASK_SET_AI )
-					data.intr_mask |= MI_INTR_MASK_AI;
-				if (arg & MI_INTR_MASK_SET_VI )
-					data.intr_mask |= MI_INTR_MASK_VI;
-				if (arg & MI_INTR_MASK_SET_PI )
-					data.intr_mask |= MI_INTR_MASK_PI;
-				if (arg & MI_INTR_MASK_SET_DP )
-					data.intr_mask |= MI_INTR_MASK_DP;
+	if (arg & MI_INTR_MASK_SET_SP )
+		data.intr_mask |= MI_INTR_MASK_SP;
+	if (arg & MI_INTR_MASK_SET_SI )
+		data.intr_mask |= MI_INTR_MASK_SI;
+	if (arg & MI_INTR_MASK_SET_AI )
+		data.intr_mask |= MI_INTR_MASK_AI;
+	if (arg & MI_INTR_MASK_SET_VI )
+		data.intr_mask |= MI_INTR_MASK_VI;
+	if (arg & MI_INTR_MASK_SET_PI )
+		data.intr_mask |= MI_INTR_MASK_PI;
+	if (arg & MI_INTR_MASK_SET_DP )
+		data.intr_mask |= MI_INTR_MASK_DP;
 }
 
 inline void VI_REGS::setStatus(word arg)

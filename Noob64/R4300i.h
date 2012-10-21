@@ -57,16 +57,23 @@
 #define TagHi		cop0[29]
 #define ErrorEPC	cop0[30]
 
+/*
+** The main class of the emulator, contains functions and variables
+** useful to emulate the main micro-processor of the Nintendo 64
+*/
 class R4300i
 {
 public:
 	R4300i(MEMORY *mem);
+	// initialize the R4300i and enter in the main loop
 	void boot(ROM *rom);
+	// set every variables
 	void reset();
 private:
 	MEMORY	*memory;
 	ROM		*rom;
 
+	// Useful to hack the Crc chip which prevent a fake game from loading
 	void init_crc();
 
 	//****************************************************************************
@@ -74,12 +81,19 @@ private:
 	//****************************************************************************
 	bool interrupt_detected;
 
+	// Check weather an interrupt is needed or not
 	void check_interrupt(void);
+	// Trigger an address error exception
 	void trigger_address_error(dword address, bool from_read);
+	// Trigger a break exception
 	void trigger_break_exception();
+	// Trigger a COP unusable exception
 	void trigger_copunusable_exception();
+	// Trigger an interruption exception
 	void trigger_intr_exception();
+	// Trigger a TLB missed exception
 	void trigger_tlb_miss(dword address);
+	// Trigger a syscall exception
 	void trigger_syscall_exception();
 	//****************************************************************************
 	//** DECODING RELATING METHODS				                                **
@@ -102,7 +116,7 @@ private:
 	dword	f[32];									// FP General Purpose Registers (FGRs)
 	word	cop0[32];								// Cop0 registers
 	dword	pc;										// Program Counter
-	word	next_interrupt;							// 
+	word	next_interrupt;							// Next interrupt
 	dword	hi, lo;									// Multiply/Divide result
 	word	fcr0, fcr31;							// Floating Point Control Registers
 	bool	ll;										// Load/Link Register
