@@ -867,6 +867,7 @@ public:
 	void dma_sp_read();
 
 private:
+	inline bool MEMORY::read_from_register(word *data, dword address);
 	inline bool MEMORY::write_in_register(word data, dword address);
 	inline void checkDMA(dword address);
 
@@ -879,9 +880,13 @@ private:
 template <typename Type>
 Type MEMORY::read(dword address)
 {
+	Type res;
+	if (typeid(Type) == typeid(word) && read_from_register((word *) &res, address))
+		return res;
 	byte dst[sizeof(Type)];
 	memcpy(dst, virtual_to_physical(address), sizeof(Type));
-	return (binary_to_type<Type>(dst));
+	res = binary_to_type<Type>(dst);
+	return res;
 }
 
 //****************************************************************************
@@ -896,6 +901,191 @@ inline void MEMORY::write(Type data, dword address)
 	void *dst = virtual_to_physical(address);
 	data = type_to_binary<Type>(data);
 	memcpy(dst, &data, sizeof(Type));
+}
+
+inline bool MEMORY::read_from_register(word *data, dword address)
+{
+	address = address & 0x0FFFFFFF;
+	if (address == RDRAM_CONFIG_REG)
+		*data = rdram_regs.getConfig();
+	else if (address == RDRAM_DEVICE_ID_REG)
+		*data = rdram_regs.getDeviceId();
+	else if (address == RDRAM_DELAY_REG)
+		*data = rdram_regs.getDelay();
+	else if (address == RDRAM_MODE_REG)
+		*data = rdram_regs.getMode();
+	else if (address == RDRAM_REF_INTERVAL_REG)
+		*data = rdram_regs.getRefInterval();
+	else if (address == RDRAM_REF_ROW_REG)
+		*data = rdram_regs.getRefRow();
+	else if (address == RDRAM_RAS_INTERVAL_REG)
+		*data = rdram_regs.getConfig();
+	else if (address == RDRAM_MIN_INTERVAL_REG)
+		*data = rdram_regs.getConfig();
+	else if (address == RDRAM_ADDR_SELECT_REG)
+		*data = rdram_regs.getConfig();
+	else if (address == RDRAM_DEVICE_MANUF_REG)
+		*data = rdram_regs.getConfig();
+
+	else if (address == SP_MEM_ADDR_REG)
+		*data = sp_regs.getMemAddr();
+	else if (address == SP_DRAM_ADDR_REG)
+		*data = sp_regs.getDramAddr();
+	else if (address == SP_RD_LEN_REG)
+		*data = sp_regs.getRdLen();
+	else if (address == SP_WR_LEN_REG)
+		*data = sp_regs.getWrLen();
+	else if (address == SP_STATUS_REG)
+		*data = sp_regs.getStatus();
+	else if (address == SP_DMA_FULL_REG)
+		*data = sp_regs.getDmaFull();
+	else if (address == SP_DMA_BUSY_REG)
+		*data = sp_regs.getDmaBusy();
+	else if (address == SP_SEMAPHORE_REG)
+		*data = sp_regs.getSemaphore();
+	else if (address == SP_PC_REG)
+		*data = sp_regs.getPc();
+	else if (address == SP_IBIST_REG)
+		*data = sp_regs.getIbist();
+
+	else if (address == DPC_START_REG)
+		*data = dpc_regs.getStart();
+	else if (address == DPC_END_REG)
+		*data = dpc_regs.getEnd();
+	else if (address == DPC_CURRENT_REG)
+		*data = dpc_regs.getCurrent();
+	else if (address == DPC_STATUS_REG)
+		*data = dpc_regs.getStatus();
+	else if (address == DPC_CLOCK_REG)
+		*data = dpc_regs.getClock();
+	else if (address == DPC_BUFBUSY_REG)
+		*data = dpc_regs.getBufBusy();
+	else if (address == DPC_PIPEBUSY_REG)
+		*data = dpc_regs.getPipeBusy();
+	else if (address == DPC_TMEM_REG)
+		*data = dpc_regs.getTmem();
+
+	else if (address == DPS_TBIST_REG)
+		*data = dps_regs.getTbist();
+	else if (address == DPS_TEST_MODE_REG)
+		*data = dps_regs.getTestMode();
+	else if (address == DPS_BUFTEST_ADDR_REG)
+		*data = dps_regs.getBufTestAddr();
+	else if (address == DPS_BUFTEST_DATA_REG)
+		*data = dps_regs.getBufTestData();
+
+	else if (address == MI_INIT_MODE_REG)
+		*data = mi_regs.getInitMode();
+	else if (address == MI_VERSION_REG)
+		*data = mi_regs.getVersion();
+	else if (address == MI_INTR_REG)
+		*data = mi_regs.getIntr();
+	else if (address == MI_INTR_MASK_REG)
+		*data = mi_regs.getIntrMask();
+
+	else if (address == VI_STATUS_REG)
+		*data = vi_regs.getStatus();
+	else if (address == VI_ORIGIN_REG)
+		*data = vi_regs.getOrigin();
+	else if (address == VI_WIDTH_REG)
+		*data = vi_regs.getWidth();
+	else if (address == VI_INTR_REG)
+		*data = vi_regs.getVintr();
+	else if (address == VI_CURRENT_REG)
+	{
+		*data = vi_regs.getCurrent();
+		//UpdateCurrentHalfLine();
+	}
+	else if (address == VI_BURST_REG)
+		*data = vi_regs.getBurst();
+	else if (address == VI_V_SYNC_REG)
+		*data = vi_regs.getVsync();
+	else if (address == VI_H_SYNC_REG)
+		*data = vi_regs.getHsync();
+	else if (address == VI_LEAP_REG)
+		*data = vi_regs.getLeap();
+	else if (address == VI_H_START_REG)
+		*data = vi_regs.getHstart();
+	else if (address == VI_V_START_REG)
+		*data = vi_regs.getVstart();
+	else if (address == VI_V_BURST_REG)
+		*data = vi_regs.getVburst();
+	else if (address == VI_X_SCALE_REG)
+		*data = vi_regs.getXscale();
+	else if (address == VI_Y_SCALE_REG)
+		*data = vi_regs.getYscale();
+
+	else if (address == AI_DRAM_ADDR_REG)
+		*data = ai_regs.getDramAddr();
+	else if (address == AI_LEN_REG)
+	{
+		*data = ai_regs.getLen();
+		//res = AiReadLength();
+	}
+	else if (address == AI_CONTROL_REG)
+		*data = ai_regs.getControl();
+	else if (address == AI_STATUS_REG)
+		*data = ai_regs.getStatus();
+	else if (address == AI_DACRATE_REG)
+		*data = ai_regs.getDacrate();
+	else if (address == AI_BITRATE_REG)
+		*data = ai_regs.getBitrate();
+
+	else if (address == PI_DRAM_ADDR_REG)
+		*data = pi_regs.getDramAddr();
+	else if (address == PI_CART_ADDR_REG)
+		*data = pi_regs.getCartAddr();
+	else if (address == PI_RD_LEN_REG)
+		*data = pi_regs.getRdLen();
+	else if (address == PI_WR_LEN_REG)
+		*data = pi_regs.getWrLen();
+	else if (address == PI_STATUS_REG)
+		*data = pi_regs.getStatus();
+	else if (address == PI_BSD_DOM1_LAT_REG)
+		*data = pi_regs.getBsdDom1Lat();
+	else if (address == PI_BSD_DOM1_PWD_REG)
+		*data = pi_regs.getBsdDom1Pwd();
+	else if (address == PI_BSD_DOM1_PGS_REG)
+		*data = pi_regs.getBsdDom1Pgs();
+	else if (address == PI_BSD_DOM1_RLS_REG)
+		*data = pi_regs.getBsdDom1Rls();
+	else if (address == PI_BSD_DOM2_LAT_REG)
+		*data = pi_regs.getBsdDom2Lat();
+	else if (address == PI_BSD_DOM2_PWD_REG)
+		*data = pi_regs.getBsdDom2Pwd();
+	else if (address == PI_BSD_DOM2_PGS_REG)
+		*data = pi_regs.getBsdDom2Pgs();
+	else if (address == PI_BSD_DOM2_RLS_REG)
+		*data = pi_regs.getBsdDom2Rls();
+
+	else if (address == RI_MODE_REG)
+		*data = ri_regs.getMode();
+	else if (address == RI_CONFIG_REG)
+		*data = ri_regs.getConfig();
+	else if (address == RI_CURRENT_LOAD_REG)
+		*data = ri_regs.getCurrentLoad();
+	else if (address == RI_SELECT_REG)
+		*data = ri_regs.getSelect();
+	else if (address == RI_REFRESH_REG)
+		*data = ri_regs.getRefresh();
+	else if (address == RI_LATENCY_REG)
+		*data = ri_regs.getLatency();
+	else if (address == RI_RERROR_REG)
+		*data = ri_regs.getRerror();
+	else if (address == RI_WERROR_REG)
+		*data = ri_regs.getWerror();
+
+	else if (address == SI_DRAM_ADDR_REG)
+		*data = si_regs.getDramAddr();
+	else if (address == SI_PIF_ADDR_RD64B_REG)
+		*data = si_regs.getPifAddrRd64b();
+	else if (address == SI_PIF_ADDR_WR64B_REG)
+		*data = si_regs.getPifAddrWr64b();
+	else if (address == SI_STATUS_REG)
+		*data = si_regs.getStatus();
+	else
+		return false;
+	return true;
 }
 
 inline bool MEMORY::write_in_register(word data, dword address)
@@ -929,12 +1119,16 @@ inline bool MEMORY::write_in_register(word data, dword address)
 	else if (address == SP_RD_LEN_REG)
 	{
 		sp_regs.setRdLen(data);
-		dma_sp_read();
+		dma_sp_read();	
+		sp_regs.setDmaBusy(0);
+		sp_regs.setStatus(sp_regs.getStatus() & ~SP_STATUS_DMA_BUSY);
 	}
 	else if (address == SP_WR_LEN_REG)
 	{
 		sp_regs.setWrLen(data);
 		dma_sp_write();
+		sp_regs.setDmaBusy(0);
+		sp_regs.setStatus(sp_regs.getStatus() & ~SP_STATUS_DMA_BUSY);
 	}
 	else if (address == SP_STATUS_REG)
 	{
@@ -1057,11 +1251,17 @@ inline bool MEMORY::write_in_register(word data, dword address)
 	{
 		pi_regs.setRdLen(data);
 		dma_pi_read();
+		mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_PI);
+		pi_regs.setStatus(pi_regs.getStatus() & ~PI_STATUS_DMA_BUSY);
+		check_intr = true;
 	}
 	else if (address == PI_WR_LEN_REG)
 	{
 		pi_regs.setWrLen(data);
 		dma_pi_write();
+		mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_PI);
+		pi_regs.setStatus(pi_regs.getStatus() & ~PI_STATUS_DMA_BUSY);
+		check_intr = true;
 	}
 	else if (address == PI_STATUS_REG)
 	{
@@ -1108,11 +1308,17 @@ inline bool MEMORY::write_in_register(word data, dword address)
 	{
 		si_regs.setPifAddrRd64b(data);
 		dma_si_read();
+		mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_SI);
+		si_regs.setStatus(si_regs.getStatus() | SI_STATUS_INTERRUPT);
+		check_intr = true;
 	}
 	else if (address == SI_PIF_ADDR_WR64B_REG)
 	{
 		si_regs.setPifAddrWr64b(data);
 		dma_si_write();
+		mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_SI);
+		si_regs.setStatus(si_regs.getStatus() | SI_STATUS_INTERRUPT);
+		check_intr = true;
 	}
 	else if (address == SI_STATUS_REG)
 	{
