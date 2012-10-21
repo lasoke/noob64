@@ -20,7 +20,7 @@ void R4300i::check_interrupt(void)
 		Cause |= CAUSE_IP2;											// Sets the IP2 bit (ExcCode mask should be clear at this point!).
 	else
 		Cause &= ~CAUSE_IP2;										// Clears the IP2 bit.
-	if ((Cause & Status & STATUS_IM) == 0 || (Status & 7) != 1)			// Conditions to take an interrupt.
+	if ((Cause & Status & STATUS_IM) == 0 || (Status & 7) != 1)		// Conditions to take an interrupt.
 		return;
 	interrupt_detected = true;										// We detected an interrupt, we now notify the handler
 }
