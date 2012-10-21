@@ -1,3 +1,27 @@
+/*
+ * Noob64 - A Nintendo 64 emulator.
+ *
+ * (c) Copyright 2012 Quentin Metzler and 
+ * Romain Richard.
+ *
+ * Permission to use, copy, modify and distribute Noob64 in both binary and
+ * source form, for non-commercial purposes, is hereby granted without fee,
+ * providing that this license information and copyright notice appear with
+ * all copies and any derived work.
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event shall the authors be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Noob64 is freeware for PERSONAL USE only. Commercial users should
+ * seek permission of the copyright holders first. Commercial use includes
+ * charging money for Noob64 or software derived from Noob64.
+ *
+ * The copyright holders request that bug fixes and improvements to the code
+ * should be forwarded to them so if they want them.
+ *
+ */
+
 #pragma once
 
 #define CPU			-1
@@ -33,16 +57,23 @@
 #define TagHi		cop0[29]
 #define ErrorEPC	cop0[30]
 
+/*
+** The main class of the emulator, contains functions and variables
+** useful to emulate the main micro-processor of the Nintendo 64
+*/
 class R4300i
 {
 public:
 	R4300i(MEMORY *mem);
+	// initialize the R4300i and enter in the main loop
 	void boot(ROM *rom);
+	// set every variables
 	void reset();
 private:
 	MEMORY	*memory;
 	ROM		*rom;
 
+	// Useful to hack the Crc chip which prevent a fake game from loading
 	void init_crc();
 
 	//****************************************************************************
@@ -50,12 +81,19 @@ private:
 	//****************************************************************************
 	bool interrupt_detected;
 
+	// Check weather an interrupt is needed or not
 	void check_interrupt(void);
+	// Trigger an address error exception
 	void trigger_address_error(dword address, bool from_read);
+	// Trigger a break exception
 	void trigger_break_exception();
+	// Trigger a COP unusable exception
 	void trigger_copunusable_exception();
+	// Trigger an interruption exception
 	void trigger_intr_exception();
+	// Trigger a TLB missed exception
 	void trigger_tlb_miss(dword address);
+	// Trigger a syscall exception
 	void trigger_syscall_exception();
 	//****************************************************************************
 	//** DECODING RELATING METHODS				                                **
@@ -78,7 +116,7 @@ private:
 	dword	f[32];									// FP General Purpose Registers (FGRs)
 	word	cop0[32];								// Cop0 registers
 	dword	pc;										// Program Counter
-	word	next_interrupt;							// 
+	word	next_interrupt;							// Next interrupt
 	dword	hi, lo;									// Multiply/Divide result
 	word	fcr0, fcr31;							// Floating Point Control Registers
 	bool	ll;										// Load/Link Register

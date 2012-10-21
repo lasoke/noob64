@@ -1,5 +1,31 @@
-﻿#pragma once
+﻿/*
+ * Noob64 - A Nintendo 64 emulator.
+ *
+ * (c) Copyright 2012 Quentin Metzler and 
+ * Romain Richard.
+ *
+ * Permission to use, copy, modify and distribute Noob64 in both binary and
+ * source form, for non-commercial purposes, is hereby granted without fee,
+ * providing that this license information and copyright notice appear with
+ * all copies and any derived work.
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event shall the authors be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Noob64 is freeware for PERSONAL USE only. Commercial users should
+ * seek permission of the copyright holders first. Commercial use includes
+ * charging money for Noob64 or software derived from Noob64.
+ *
+ * The copyright holders request that bug fixes and improvements to the code
+ * should be forwarded to them so if they want them.
+ *
+ */
 
+#pragma once
+
+// The next defines are extract from the MIPS 
+// http://doc.kodewerx.org/documents/mips32_vol3.pdf
 #define STATUS_IE		0x00000000
 #define STATUS_EXL		0x00000002
 #define STATUS_ERL		0x00000004
@@ -35,13 +61,7 @@
 #define CAUSE_IP6		0x00004000
 #define CAUSE_IP7		0x00008000
 
-#define MI_INTR_SP		0x01		/* Bit 0: SP intr */
-#define MI_INTR_SI		0x02		/* Bit 1: SI intr */
-#define MI_INTR_AI		0x04		/* Bit 2: AI intr */
-#define MI_INTR_VI		0x08		/* Bit 3: VI intr */
-#define MI_INTR_PI		0x10		/* Bit 4: PI intr */
-#define MI_INTR_DP		0x20		/* Bit 5: DP intr */
-
+// The enum Exception, useful to identify the exception triggered
 enum Exception
 {
 	INTERRUPT						= 0,
