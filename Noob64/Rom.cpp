@@ -39,6 +39,26 @@ ROM::ROM(string filename)
 	file.close();
 	ptr = data;
 	header = (ROM_HEADER*) data;
+
+	if (((word*) data)[0] == 0x80371240)
+	{
+		// BIG ENDIAN 
+	}
+	else if (((word*) data)[0] == 0x12408037)
+	{
+		// MIDDLE ENDIAN 
+		for (int i = 0; i < size - 1; i += 2)
+		{
+			char temp = data[i];
+			data[i] = data[i+1];
+			data[i+1] = temp;
+		}
+	}
+	else
+	{
+		// TODO: error
+		return;
+	}
 }
 
 ROM::~ROM()

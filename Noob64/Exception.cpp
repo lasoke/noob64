@@ -25,16 +25,16 @@
 #include "StdAfx.h"
 #include "Exception.h"
 
-#define UPDATE_REGS()													\
-		EPC = (word) (delay_slot ? pc - 4 : pc);									\
+#define UPDATE_REGS()															\
+		EPC = (word) (delay_slot ? pc - 4 : pc);								\
 		Cause = (word) (delay_slot ? Cause | CAUSE_BD : Cause & ~CAUSE_BD);		\
-		Status |= STATUS_EXL;											\
+		Status |= STATUS_EXL;													\
 		pc = 0x80000180;
 
-#define PRINT_EXC(NAME)													\
-		if (Status & STATUS_EXL)										\
-			cerr << "EXL set in " << NAME << " Exception" << endl;		\
-        if (Status & STATUS_ERL)										\
+#define PRINT_EXC(NAME)															\
+		if (Status & STATUS_EXL)												\
+			cerr << "EXL set in " << NAME << " Exception" << endl;				\
+        if (Status & STATUS_ERL)												\
 			cerr << "ERL set in " << NAME << " Exception" << endl;
 
 
