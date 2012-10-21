@@ -2854,7 +2854,7 @@ void R4300i::SDC1(int ft, int immed, int rs)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "SDC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs;
 #	endif // DEBUG
-	memory->write<dword>(r[rs] + extend_sign_halfword(immed) * sizeof(dword), f[ft]);
+	memory->write<dword>(f[ft], r[rs] + extend_sign_halfword(immed) * sizeof(dword));
 	pc += 4;
 }
 
@@ -2915,7 +2915,7 @@ void R4300i::SWC1(int ft, int immed, int rs)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "SWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs;
 #	endif // DEBUG
-	memory->write<word>((r[rs] + extend_sign_halfword(immed) & 0xFFFFFFFF), f[ft]);
+	memory->write<word>(f[ft], (r[rs] + extend_sign_halfword(immed) & 0xFFFFFFFF));
 	pc += 4;
 }
 

@@ -312,10 +312,14 @@ void R4300i::boot(ROM *r)
 		{
 			check_interrupt();
 			memory->check_intr = false;
-
+			if (interrupt_detected)
+			{
+				trigger_intr_exception();
+				interrupt_detected = false;
+			}
 		}
 		++Count;
-		if ((pc & 0xFFFF) == 0x2DF0)
+		if ((pc & 0xFFFFFFFF) == 0x803228B0)
 			pc = pc;
 		decode(memory->read<word>(pc));
 	}
