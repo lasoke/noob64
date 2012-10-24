@@ -367,8 +367,10 @@ void MEMORY::dma_pi_write()
 	memcpy(rdram[0] + (pi_regs.getDramAddr() & 0xFFFFFFF),
 		(*rom)[0] + (pi_regs.getCartAddr() & 0xFFFFFFF),
 		(pi_regs.getWrLen() & 0xFFFFFFF) + 1);
-	
-	cout << "*** pi_write ***" << endl;
+#	if defined DEBUG
+		cout << "*** pi_write ***" << endl;
+#	endif // DEBUG
+
 	//dump_array(pi_regs.getDramAddr(), (const byte *) rdram[0] + (pi_regs.getDramAddr() & 0xFFFFFF) + 0xFFF1000, (pi_regs.getWrLen() & 0xFFF) + 1, 16);
 	//cout << "*** END OF RDRAM ***"<< endl;
 }
@@ -380,8 +382,10 @@ void MEMORY::dma_sp_write()
 		memcpy(rdram[0] + (sp_regs.getDramAddr() & 0xFFFFFFF),
 			(sp_regs.getImem()) + (sp_regs.getMemAddr() & 0xFFF),
 			(sp_regs.getWrLen() & 0xFFF) + 1);
-
-		cout << "*** sp_imem_write ***" << endl;
+#		if defined DEBUG
+			cout << "*** sp_imem_write ***" << endl;
+#		endif // DEBUG
+		
 		//dump_array(sp_regs.getDramAddr(), (const byte*) rdram.ptr + (sp_regs.getDramAddr() & 0xFFFFFF), (sp_regs.getWrLen() & 0xFFF) + 1, 16);
 		//cout << "*** END OF RDRAM ***"<< endl;
 	}
