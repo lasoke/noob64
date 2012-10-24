@@ -722,7 +722,7 @@ void R4300i::LHU(int rt, int immed, int rs)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "LHU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = extend_sign_halfword(memory->read<hword>(r[rs] + extend_sign_halfword(immed)));
+	r[rt] = memory->read<hword>(r[rs] + extend_sign_halfword(immed));
 #	if defined DEBUG
 	cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
@@ -800,7 +800,7 @@ void R4300i::LWU(int rt, int immed, int rs)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "LWU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]";
 #	endif // DEBUG
-	r[rt] = extend_sign_word(memory->read<word>(r[rs] + extend_sign_halfword(immed)));
+	r[rt] = memory->read<word>(r[rs] + extend_sign_halfword(immed));
 #	if defined DEBUG
 	cout << " r" << dec << rt << hex << "=0x" << r[rt];
 #	endif // DEBUG
