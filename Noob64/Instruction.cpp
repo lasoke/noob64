@@ -639,6 +639,33 @@ inline void R4300i::decode_fpu(const word i)
 	}
 }
 
+int R4300i::probe_nop(dword address)
+{
+	word a;
+	address = (word) address;
+	if (address < 0x80000000 || address > 0xc0000000)
+	{
+		if (tlb_lut_r[address >> 12])
+			a = (tlb_lut_r[address >> 12] & 0xFFFFF000) | (address & 0xFFF);
+		else
+			return 0;
+	}
+	else
+		a = (word) address;
+
+	if (a >= 0xa4000000 && a < 0xa4001000)
+	{
+		if (!memory->read<word>(a)) return 1;
+		else return 0;
+	}
+	else if (a >= 0x80000000 && a < 0x80800000)
+	{
+		if (!memory->read<word>(a)) return 1;
+		else return 0;
+	}
+	else return 0;
+}
+
 //****************************************************************************
 //** INSTRUCTIONS															**
 //****************************************************************************
@@ -1666,6 +1693,24 @@ void R4300i::BEQ(int rs, int rt, int immed)
 
 	sdword local_rs = r[rs];
 	sdword local_rt = r[rt];
+	if ((word) (pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == (word) pc)
+	{
+		if (memory->sp_regs.getStatus() & 0x1)
+		{
+			if (local_rs == local_rt)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
+		}
+	}
 	pc += 4;
 	delay_slot = true;
 	decode(memory->read<word>(pc));
@@ -1686,6 +1731,24 @@ void R4300i::BEQL(int rs, int rt, int immed)
 
 	sdword local_rs = r[rs];
 	sdword local_rt = r[rt];
+	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
+	{
+		if (memory->sp_regs.getStatus() & 0x1)
+		{
+			if (local_rs == local_rt)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
+		}
+	}
 	if (local_rs == local_rt)
 	{
 		pc += 4;
@@ -1706,6 +1769,20 @@ void R4300i::BGEZ(int immed, int rs)
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
+	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
+		if (memory->sp_regs.getStatus() & 0x1)
+			if (local_rs >= 0)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
 	pc += 4;
 	delay_slot = true;
 	decode(memory->read<word>(pc));
@@ -1725,6 +1802,20 @@ void R4300i::BGEZAL(int immed, int rs)
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
+	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
+		if (memory->sp_regs.getStatus() & 0x1)
+			if (local_rs >= 0)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
 	pc += 4;
 	delay_slot = true;
 	decode(memory->read<word>(pc));
@@ -1742,6 +1833,20 @@ void R4300i::BGEZALL(int immed, int rs)
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
+	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
+		if (memory->sp_regs.getStatus() & 0x1)
+			if (local_rs >= 0)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
 	if (local_rs >= 0)
 	{
 		pc += 4;
@@ -1763,6 +1868,20 @@ void R4300i::BGEZL(int immed, int rs)
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
+	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
+		if (memory->sp_regs.getStatus() & 0x1)
+			if (local_rs >= 0)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
 	if (local_rs >= 0)
 	{
 		pc += 4;
@@ -1783,6 +1902,24 @@ void R4300i::BGTZ(int rs, int immed)
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
+	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
+	{
+		if (memory->sp_regs.getStatus() & 0x1)
+		{
+			if (local_rs > 0)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
+		}
+	}
 	pc += 4;
 	delay_slot = true;
 	decode(memory->read<word>(pc));
@@ -1799,6 +1936,24 @@ void R4300i::BGTZL(int immed, int rs)
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
+	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
+	{
+		if (memory->sp_regs.getStatus() & 0x1)
+		{
+			if (local_rs > 0)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
+		}
+	}
 	if (local_rs > 0)
 	{
 		pc += 4;
@@ -1819,6 +1974,24 @@ void R4300i::BLEZ(int rs, int immed)
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
+	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
+	{
+		if (memory->sp_regs.getStatus() & 0x1)
+		{
+			if (local_rs <= 0)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
+		}
+	}
 	pc += 4;
 	delay_slot = true;
 	decode(memory->read<word>(pc));
@@ -1835,6 +2008,24 @@ void R4300i::BLEZL(int immed, int rs)
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
+	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
+	{
+		if (memory->sp_regs.getStatus() & 0x1)
+		{
+			if (local_rs <= 0)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
+		}
+	}
 	if (local_rs <= 0)
 	{
 		pc += 4;
@@ -1855,6 +2046,20 @@ void R4300i::BLTZ(int immed, int rs)
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
+	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
+		if (memory->sp_regs.getStatus() & 0x1)
+			if (local_rs < 0)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
 	pc += 4;
 	delay_slot = true;
 	decode(memory->read<word>(pc));
@@ -1871,6 +2076,20 @@ void R4300i::BLTZAL(int immed, int rs)
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
+	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
+		if (memory->sp_regs.getStatus() & 0x1)
+			if (local_rs < 0)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
 	pc += 4;
 	delay_slot = true;
 	decode(memory->read<word>(pc));
@@ -1888,6 +2107,20 @@ void R4300i::BLTZALL(int immed, int rs)
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
+	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
+		if (memory->sp_regs.getStatus() & 0x1)
+			if (local_rs < 0)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
 	if (local_rs < 0)
 	{
 		pc += 4;
@@ -1909,6 +2142,20 @@ void R4300i::BLTZL(int immed, int rs)
 #	endif // DEBUG
 
 	sdword local_rs = r[rs];
+	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
+		if (memory->sp_regs.getStatus() & 0x1)
+			if (local_rs < 0)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
 	if (local_rs < 0)
 	{
 		pc += 4;
@@ -1932,6 +2179,24 @@ void R4300i::BNE(int rs, int rt, int immed)
 #	endif // DEBUG
 	dword local_rs = r[rs];
 	dword local_rt = r[rt];
+	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
+	{
+		if (memory->sp_regs.getStatus() & 0x1)
+		{
+			if (local_rs != local_rt)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
+		}
+	}
 	pc += 4;
 	delay_slot = true;
 	decode(memory->read<word>(pc));
@@ -1952,6 +2217,24 @@ void R4300i::BNEL(int rs, int rt, int immed)
 
 	dword local_rs = r[rs];
 	dword local_rt = r[rt];
+	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
+	{
+		if (memory->sp_regs.getStatus() & 0x1)
+		{
+			if (local_rs != local_rt)
+			{
+				if (probe_nop(pc+4))
+				{
+					skip = next_interrupt - Count;
+					if (skip >= 3) 
+					{
+						Count += (skip & 0xFFFFFFFC);
+						return;
+					}
+				}
+			}
+		}
+	}
 	if (local_rs != local_rt)
 	{
 		pc += 4;
@@ -1971,6 +2254,21 @@ void R4300i::J(int address)
 	cout << print_addr((word) pc) << "J " << address;
 #	endif // DEBUG
 
+	if (((pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2)) == pc)
+	{
+		if (memory->sp_regs.getStatus() & 0x1)
+		{
+			if (probe_nop(pc+4))
+			{
+				skip = next_interrupt - Count;
+				if (skip >= 3) 
+				{
+					Count += (skip & 0xFFFFFFFC);
+					return;
+				}
+			}
+		}
+	}
 	pc += 4;
 	delay_slot = true;
 	decode(memory->read<word>(pc));
@@ -1984,6 +2282,22 @@ void R4300i::JAL(int address)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "JAL " << address;
 #	endif // DEBUG
+	
+	if (((pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2)) == pc)
+	{
+		if (memory->sp_regs.getStatus() & 0x1)
+		{
+			if (probe_nop(pc+4))
+			{
+				skip = next_interrupt - Count;
+				if (skip >= 3) 
+				{
+					Count += (skip & 0xFFFFFFFC);
+					return;
+				}
+			}
+		}
+	}
 	pc += 4;
 	delay_slot = true;
 	decode(memory->read<word>(pc));
@@ -2000,6 +2314,21 @@ void R4300i::JALR(int rs, int rd)
 #	endif // DEBUG
 
 	dword local_rs = r[rs];
+	if (local_rs == pc)
+	{
+		if (memory->sp_regs.getStatus() & 0x1)
+		{
+			if (probe_nop(pc+4))
+			{
+				skip = next_interrupt - Count;
+				if (skip >= 3) 
+				{
+					Count += (skip & 0xFFFFFFFC);
+					return;
+				}
+			}
+		}
+	}
 	pc += 4;
 	delay_slot = true;
 	decode(memory->read<word>(pc));
@@ -2016,6 +2345,21 @@ void R4300i::JR(int rs)
 #	endif // DEBUG
 
 	dword local_rs = r[rs];
+	if (local_rs == pc)
+	{
+		if (memory->sp_regs.getStatus() & 0x1)
+		{
+			if (probe_nop(pc+4))
+			{
+				skip = next_interrupt - Count;
+				if (skip >= 3) 
+				{
+					Count += (skip & 0xFFFFFFFC);
+					return;
+				}
+			}
+		}
+	}
 	pc += 4;
 	delay_slot = true;
 	decode(memory->read<word>(pc));
@@ -2915,7 +3259,7 @@ void R4300i::SWC1(int ft, int immed, int rs)
 #	if defined DEBUG
 	cout << print_addr((word) pc) << "SWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs;
 #	endif // DEBUG
-	memory->write<word>(f[ft], (r[rs] + extend_sign_halfword(immed) & 0xFFFFFFFF));
+	memory->write<word>((word) f[ft], (r[rs] + extend_sign_halfword(immed) & 0xFFFFFFFF));
 	pc += 4;
 }
 

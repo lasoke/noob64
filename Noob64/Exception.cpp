@@ -43,10 +43,13 @@ void R4300i::check_interrupt(void)
 	if (memory->mi_regs.getIntr() & memory->mi_regs.getIntrMask())	// An interrupt is detected.
 		Cause |= CAUSE_IP2;											// Sets the IP2 bit (ExcCode mask should be clear at this point!).
 	else
-		Cause &= ~CAUSE_IP2;										// Clears the IP2 bit.
+		Cause &= ~CAUSE_IP2;										// Clears the IP2 bit
+    if (Status & Cause & 0xFF00)
+		next_interrupt = Count;
 	if ((Cause & Status & STATUS_IM) == 0 || (Status & 7) != 1)		// Conditions to take an interrupt.
 		return;
 	interrupt_detected = true;										// We detected an interrupt, we now notify the handler
+
 }
 
 void R4300i::trigger_address_error(dword address, bool from_read)

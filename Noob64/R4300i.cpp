@@ -78,6 +78,7 @@ void R4300i::reset()
 	delay_slot	= false;
 	running		= true;
 	cic_chip	= 0;
+	next_interrupt = 5000;
 
 	interrupt_detected	= false;
 	current_coprocessor = CPU;
@@ -301,6 +302,7 @@ void R4300i::init_crc()
 
 void R4300i::boot(ROM *r)
 {
+	int i = 0;
 	reset();
 	rom = r;
 	memory->setRom(rom);
@@ -308,7 +310,7 @@ void R4300i::boot(ROM *r)
 
 	while (running)
 	{
-		if (memory->check_intr)
+		if (memory->check_intr || next_interrupt <= Count)
 		{
 			check_interrupt();
 			memory->check_intr = false;
@@ -319,8 +321,8 @@ void R4300i::boot(ROM *r)
 			}
 		}
 		++Count;
-		if ((pc & 0xFFFFFFFF) == 0x803228B0)
-			pc = pc;
+		if ((pc & 0xFFFFFFFF) == 0x80246dd8)
+			++i;
 		decode(memory->read<word>(pc));
 	}
 }
