@@ -195,7 +195,7 @@ void R4300i::decode(const word i)
 		SD(getRt(i), getImmediate(i), getRs(i));
 		break;
 	default:
-		/* TODO : HANDLE EXCEPTION */;
+		trigger_address_error(i, true);
 	}
 }
 
@@ -359,7 +359,7 @@ inline void R4300i::decode_r(word i)
 		DSRA32(getRd(i), getRt(i), getSa(i));
 		break;
 	default:
-		/* TODO : HANDLE EXCEPTION */;
+		trigger_address_error(i, true);
 	}
 }
 
@@ -409,7 +409,7 @@ inline void R4300i::decode_i(word i)
 		BGEZALL(getImmediate(i), getRs(i));
 		break;
 	default:
-		/* TODO : HANDLE EXCEPTION */;
+		trigger_address_error(i, true);
 	}
 }
 
@@ -428,7 +428,7 @@ inline void R4300i::decode_cop0(word i)
 		decode_tlb(i);
 		break;
 	default:
-		/* TODO : HANDLE EXCEPTION */;
+		trigger_address_error(i, true);
 	}
 
 	current_coprocessor = CPU;
@@ -453,7 +453,7 @@ inline void R4300i::decode_tlb(word i)
 		ERET();
 		break;
 	default:
-		/* TODO : HANDLE EXCEPTION */;
+		trigger_address_error(i, true);
 	}
 }
 
@@ -496,7 +496,7 @@ inline void R4300i::decode_cop1(const word i)
 		decode_fpu<l>(i);
 		break;
 	default:
-		/* TODO : HANDLE EXCEPTION */;
+		trigger_address_error(i, true);
 	}
 
 	current_coprocessor = CPU;
@@ -518,7 +518,7 @@ inline void R4300i::decode_bc1(const word i)
 		BC1TL(getImmediate(i));
 		break;
 	default:
-		/* TODO : HANDLE EXCEPTION */;
+		trigger_address_error(i, true);
 	}
 }
 
@@ -635,7 +635,7 @@ inline void R4300i::decode_fpu(const word i)
 		C<Type>(getRd(i), getRt(i), getCond(i));
 		break;
 	default:
-		/* TODO : HANDLE EXCEPTION */;
+		trigger_address_error(i, true);
 	}
 }
 

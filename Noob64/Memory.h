@@ -941,24 +941,10 @@ Type MEMORY::read(dword address)
 	return res;
 }
 
-//****************************************************************************
-//** MEMORY::WRITE															**
-//****************************************************************************
-template <typename Type>
-inline void MEMORY::write(Type data, dword address)
-{
-	if (typeid(Type) == typeid(word) && write_in_register((word) data, address))
-		return;
-
-	void *dst = virtual_to_physical(address);
-	data = type_to_binary<Type>(data);
-	memcpy(dst, &data, sizeof(Type));
-}
-
 // Get the value contains in the registes
 inline bool MEMORY::read_from_register(word *data, dword address)
 {
-	address = address & 0x0FFFFFFF;
+	address &= 0x0FFFFFFF;
 	if (address == RDRAM_CONFIG_REG)
 		*data = rdram_regs.getConfig();
 	else if (address == RDRAM_DEVICE_ID_REG)
@@ -1141,10 +1127,24 @@ inline bool MEMORY::read_from_register(word *data, dword address)
 	return true;
 }
 
+//****************************************************************************
+//** MEMORY::WRITE															**
+//****************************************************************************
+template <typename Type>
+inline void MEMORY::write(Type data, dword address)
+{
+	if (typeid(Type) == typeid(word) && write_in_register((word) data, address))
+		return;
+
+	void *dst = virtual_to_physical(address);
+	data = type_to_binary<Type>(data);
+	memcpy(dst, &data, sizeof(Type));
+}
+
 // Set the value of the registers
 inline bool MEMORY::write_in_register(word data, dword address)
 {
-	address = address & 0x0FFFFFFF;
+	address &= 0x0FFFFFFF;
 	if (address == RDRAM_CONFIG_REG)
 		rdram_regs.setConfig(data);
 	else if (address == RDRAM_DEVICE_ID_REG)
