@@ -25,11 +25,9 @@
 #include "StdAfx.h"
 #include "Plugin.h"
 
-PLUGIN::PLUGIN(wstring filename)
+PLUGIN::PLUGIN(wstring filename, MEMORY *mem)
 {
-	hDLL = LoadLibrary(filename.c_str());
-
-	if (hDLL == NULL)
+	if ((hDLL = LoadLibrary(filename.c_str())) == NULL)
 	{
 		// TODO: throw an exception so that new RSP() returns NULL
 		return;
@@ -44,6 +42,8 @@ PLUGIN::PLUGIN(wstring filename)
 
 	plugin_info				= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
 	getDllInfo_(plugin_info);
+
+	memory					= mem;
 }
 
 

@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "Gfx.h"
+
 #define CPU			-1
 #define COP0		0
 #define COP1		1
@@ -66,12 +68,13 @@ class R4300i
 public:
 	R4300i(MEMORY *mem);
 	// initialize the R4300i and enter in the main loop
-	void boot(ROM *rom);
-	// set every variables
+	void boot(GFX *gfx, ROM *rom);
+	// sets every bit to 0;
 	void reset();
+	// Check if an interrupt has been triggered
+	void check_interrupt(void);
 private:
 	MEMORY	*memory;
-	ROM		*rom;
 
 	// Useful to hack the Crc chip which prevent a fake game from loading
 	void init_crc();
@@ -80,9 +83,6 @@ private:
 	//** EXCEPTION RELATED METHODS AND FIELDS									**
 	//****************************************************************************
 	bool interrupt_detected;
-
-	// Check weather an interrupt is needed or not
-	void check_interrupt(void);
 	// Trigger an address error exception
 	void trigger_address_error(dword address, bool from_read);
 	// Trigger a break exception

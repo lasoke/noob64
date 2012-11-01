@@ -26,6 +26,7 @@
 
 // The next defines are extract from the MIPS 
 // http://doc.kodewerx.org/documents/mips32_vol3.pdf
+
 #define STATUS_IE		0x00000000
 #define STATUS_EXL		0x00000002
 #define STATUS_ERL		0x00000004

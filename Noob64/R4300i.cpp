@@ -31,8 +31,7 @@ R4300i::R4300i(MEMORY *mem) : memory(mem)
 
 void R4300i::reset()
 {
-	memory->setRom(NULL);
-	rom = NULL;
+	memory->rom = NULL;
 
 	for (int i = 0; i < 32; i++)
 	{
@@ -141,7 +140,7 @@ void R4300i::init_crc()
 
 	// PIF ROM copies first 0x1000 bytes of ROM to first 0x1000 bytes of SP_MEM
 	for(int i = 0; i < 0x1000; i++)
-		memory->write<byte>(*(*rom)[i], SP_REGS::begining + i);
+		memory->write<byte>(*(*memory->rom)[i], SP_REGS::begining + i);
 	pc = 0xA4000040;
 	next_interrupt = 624999;
 
@@ -299,12 +298,13 @@ void R4300i::init_crc()
 	*/
 }
 
-void R4300i::boot(ROM *r)
+void R4300i::boot(GFX *gfx, ROM *r)
 {
 	reset();
-	rom = r;
-	memory->setRom(rom);
+	memory->rom = r;
 	init_crc();
+
+	gfx->init(memory->rom);
 
 	while (running)
 	{

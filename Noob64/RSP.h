@@ -33,32 +33,32 @@
 */
 typedef struct {
 	HINSTANCE hInst;
-	bool MemoryBswaped;    /* If this is set to TRUE, then the memory has been pre
+	int memoryBswaped;    /* If this is set to TRUE, then the memory has been pre
 	                          bswap on a dword (32 bits) boundry */
-	byte * rdram;
-	byte * dmem;
-	byte * imem;
+	byte *rdram;
+	byte *dmem;
+	byte *imem;
 
-	word * mi_intr_reg;
+	word *mi_intr_reg;
 
-	word * sp_mem_addr_reg;
-	word * sp_dram_addr_reg;
-	word * sp_rd_len_reg;
-	word * sp_wr_len_reg;
-	word * sp_status_reg;
-	word * sp_dma_full_reg;
-	word * sp_dma_busy_reg;
-	word * sp_pc_reg;
-	word * sp_semaphore_reg;
+	word *sp_mem_addr_reg;
+	word *sp_dram_addr_reg;
+	word *sp_rd_len_reg;
+	word *sp_wr_len_reg;
+	word *sp_status_reg;
+	word *sp_dma_full_reg;
+	word *sp_dma_busy_reg;
+	word *sp_pc_reg;
+	word *sp_semaphore_reg;
 
-	word * dpc_start_reg;
-	word * dpc_end_reg;
-	word * dpc_current_reg;
-	word * dpc_status_reg;
-	word * dpc_clock_reg;
-	word * dpc_bufbusy_reg;
-	word * dpc_pipebusy_reg;
-	word * dpc_tmem_reg;
+	word *dpc_start_reg;
+	word *dpc_end_reg;
+	word *dpc_current_reg;
+	word *dpc_status_reg;
+	word *dpc_clock_reg;
+	word *dpc_bufbusy_reg;
+	word *dpc_pipebusy_reg;
+	word *dpc_tmem_reg;
 
 	void (*CheckInterrupts)(void);
 	void (*ProcessDlistList)(void);
@@ -74,22 +74,22 @@ typedef struct {
 	/* Menu */
 	/* Items should have an ID between 5001 and 5100 */
 	HMENU hRSPMenu;
-	void (*ProcessMenuItem) ( int ID );
+	void (*ProcessMenuItem) (int ID);
 
 	/* Break Points */
-	bool UseBPoints;
+	int	 UseBPoints;
 	char BPPanelName[20];
-	void (*Add_BPoint)      (void);
-	void (*CreateBPPanel)   (HWND hDlg, RECT rcBox);
-	void (*HideBPPanel)     (void);
-	void (*PaintBPPanel)    (PAINTSTRUCT ps);
-	void (*ShowBPPanel)     (void);
-	void (*RefreshBpoints)  (HWND hList);
-	void (*RemoveBpoint)    (HWND hList, int index);
-	void (*RemoveAllBpoint) (void);
+	void (*Add_BPoint)(void);
+	void (*CreateBPPanel)(HWND hDlg, RECT rcBox);
+	void (*HideBPPanel)(void);
+	void (*PaintBPPanel)(PAINTSTRUCT ps);
+	void (*ShowBPPanel)(void);
+	void (*RefreshBpoints)(HWND hList);
+	void (*RemoveBpoint)(HWND hList, int index);
+	void (*RemoveAllBpoint)(void);
 	
 	/* RSP command Window */
-	void (*Enter_RSP_Commands_Window) (void );
+	void (*Enter_RSP_Commands_Window) (void);
 
 } RSPDEBUG_INFO;
 
@@ -122,19 +122,17 @@ class RSP : public PLUGIN
 public:
 	RSP(wstring filename, MEMORY *mem);
 	~RSP();
-	
-	// The main loop of the RSP, execute his instructions
+
+	// Allows the RSP to run in parrel with the CPU
 	word doRspCycles(word);
 	// To retreive the debug info of the RSP
-	void getRspDebugInfo();
+	void getRspDebugInfo(void);
 	// To initialize the value of the RSP variables
 	void initiateRSP(word*);
 	// To initialize the value of the RSP debugger variables
-	void initiateRSPDebugger();
+	void initiateRSPDebugger(void);
 
 private:
-	MEMORY					*memory;
-
 	DORSPCYCLES				doRspCycles_;
 	GETRSPDEBUGINFO			getRspDebugInfo_;
 	INITIATERSP				initiateRSP_;

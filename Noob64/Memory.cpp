@@ -267,7 +267,7 @@ void VI_REGS::dump(void) const
 	cout << "status = "		<< data.status				<< endl;
 	cout << "origin = "		<< data.origin				<< endl;
 	cout << "width = "		<< data.width				<< endl;
-	cout << "v_intr = "		<< data.v_intr				<< endl;
+	cout << "intr = "		<< data.intr				<< endl;
 	cout << "current = "	<< data.current				<< endl;
 	cout << "burst = "		<< data.burst				<< endl;
 	cout << "v_sync = "		<< data.v_sync				<< endl;

@@ -52,7 +52,7 @@ void R4300i::check_interrupt(void)
 void R4300i::trigger_address_error(dword address, bool from_read)
 {
 	PRINT_EXC("AddressError");
-	Cause = from_read ? ADDRESS_ERROR_INSTRUCTION_FETCH : ADDRESS_ERROR_DATA_ACCESS;
+	Cause = from_read ? ADDRESS_ERROR_INSTRUCTION_FETCH << 2 : ADDRESS_ERROR_DATA_ACCESS << 2;
     BadVAddr = (word) address;
 	UPDATE_REGS();
 }
@@ -60,14 +60,14 @@ void R4300i::trigger_address_error(dword address, bool from_read)
 void R4300i::trigger_break_exception()
 {
 	PRINT_EXC("Break");
-    Cause = BREAKPOINT;
+    Cause = BREAKPOINT << 2;
 	UPDATE_REGS();
 }
 
 void R4300i::trigger_copunusable_exception()
 {
 	PRINT_EXC("CopUnusable");
-    Cause = COPROCESSOR_UNUSABLE;
+    Cause = COPROCESSOR_UNUSABLE << 2;
     Cause |= current_coprocessor == 1 ? 0x10000000 : 0;
 	UPDATE_REGS();
 }
@@ -77,13 +77,13 @@ void R4300i::trigger_intr_exception()
 	if ((Status & 7) != 1)
 		return;
     //Cause = FAKE_Cause;
-    Cause |= INTERRUPT;
+    Cause |= INTERRUPT << 2;
     UPDATE_REGS();
 }
 
 void R4300i::trigger_tlb_miss(dword address)
 {
-    Cause = TLB_INVALID_INSTRUCTION_FETCH;
+    Cause = TLB_INVALID_INSTRUCTION_FETCH << 2;
     BadVAddr = (word) address;
     Context &= 0xFF80000F;
     Context |= (address >> 9) & 0x007FFFF0;
@@ -104,6 +104,6 @@ void R4300i::trigger_tlb_miss(dword address)
 void R4300i::trigger_syscall_exception()
 {
 	PRINT_EXC("SysCall");
-    Cause = SYSTEM_CALL;
+    Cause = SYSTEM_CALL << 2;
 	UPDATE_REGS();
 }

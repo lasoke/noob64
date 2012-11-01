@@ -630,7 +630,7 @@ public:
 	inline void setOrigin(word);
 	inline word getWidth()		{ return data.width; };
 	inline void setWidth(word);
-	inline word getVintr()		{ return data.v_intr; };
+	inline word getIntr()		{ return data.intr; };
 	inline void setVintr(word);
 	inline word getCurrent()	{ return data.current; };
 	inline void setCurrent(word);
@@ -658,7 +658,7 @@ private:
 		word status;
 		word origin;
 		word width;
-		word v_intr;
+		word intr;
 		word current;
 		word burst;
 		word v_sync;
@@ -887,6 +887,7 @@ class MEMORY
 public:
 	MEMORY();
 
+	ROM			*rom;
 	RDRAM		&rdram;
 	RDRAM_REGS	&rdram_regs;
 	SP_REGS		&sp_regs;
@@ -900,17 +901,15 @@ public:
 	SI_REGS		&si_regs;
 	PIF_ROM		&pif_rom;
 	PIF_RAM		&pif_ram;
+
 	byte		SRAM[0x8000];
 	word		cic_chip;
 	bool		check_intr;
 
 	inline void* virtual_to_physical(dword address);
-	template <typename Type>
-	inline Type read(dword address);
-	template <typename Type>
-	inline void write(Type data, dword address);
+	template <typename Type> inline Type read(dword address);
+	template <typename Type> inline void write(Type data, dword address);
 
-	inline void setRom(ROM *r) { rom = r; };
 	void dma_pi_write();
 	void dma_pi_read();
 	void dma_si_write();
@@ -922,8 +921,6 @@ private:
 	inline bool MEMORY::read_from_register(word *data, dword address);
 	inline bool MEMORY::write_in_register(word data, dword address);
 	inline void checkDMA(dword address);
-
-	ROM	*rom;
 };
 
 //****************************************************************************
@@ -1029,7 +1026,7 @@ inline bool MEMORY::read_from_register(word *data, dword address)
 	else if (address == VI_WIDTH_REG)
 		*data = vi_regs.getWidth();
 	else if (address == VI_INTR_REG)
-		*data = vi_regs.getVintr();
+		*data = vi_regs.getIntr();
 	else if (address == VI_CURRENT_REG)
 	{
 		*data = vi_regs.getCurrent();

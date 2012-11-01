@@ -52,6 +52,31 @@ void inline enableConsole()
 	err = freopen_s(&stream, "conout$","w", stderr);
 }
 
+MEMORY*	mem;
+ROM*	rom;
+R4300i*	cpu;
+RSP*	rsp;
+GFX*	gfx;
+
+void play(HWND hWnd)
+{
+	//enableConsole();
+
+	wstring rsp_path = _T("C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll");
+	wstring gfx_path = _T("E:\\Documents\\Games\\Project 64 1.7.0.9\\Plugin\\GFX\\Jabo_Direct3D8.dll");
+	string  rom_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
+	
+	mem	= new MEMORY();
+	rom	= new ROM(rom_path);
+	cpu	= new R4300i(mem);
+	rsp	= new RSP(rsp_path, mem);
+	gfx	= new GFX(gfx_path, mem, hWnd);
+
+	cpu->boot(gfx, rom);
+
+	//getchar();
+}
+
 // Main
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -65,20 +90,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	//** MAIN CODE HERE															**
 	//****************************************************************************
 
-	wstring rsp_path = _T("C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll");
-//	wstring rsp_path = _T("C:\\Users\\quentin\\Downloads\\n64\\Mupen64K 0.8\\Mupen64K 0.8\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll");
-	string  rom_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
-//	string  rom_path = "C:\\Users\\quentin\\Downloads\\Super Mario 64.z64";
-
-	enableConsole();
-
-	MEMORY*	mem	= new MEMORY();
-	ROM*	rom	= new ROM(rom_path);
-	R4300i*	cpu	= new R4300i(mem);
-	RSP*	rsp	= new RSP(rsp_path, mem);
-
-	cpu->boot(rom);
-	getchar();
 
 	//****************************************************************************
 	//** END OF MAIN CODE														**
@@ -203,6 +214,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// Parse the menu selections:
 		switch (wmId)
 		{
+		case ID_FILE_PLAY:
+			play(hWnd);
+			break;
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 			break;
@@ -216,6 +230,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		// TODO: Add any drawing code here...
+		if (gfx)
+		{
+			gfx->drawScreen();
+		}
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_DESTROY:

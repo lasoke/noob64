@@ -59,5 +59,6 @@ using namespace std;
 #include "Helper.h"
 #include "Tlb.h"
 #include "R4300i.h"
-#include "Rsp.h"
 #include "Plugin.h"
+#include "Rsp.h"
+#include "Gfx.h"

@@ -25,40 +25,8 @@
 #include "StdAfx.h"
 #include "Rsp.h"
 
-void checkInterrupts_temp(void)
+RSP::RSP(wstring filename, MEMORY *mem) : PLUGIN(filename, mem)
 {
-	cout << "CheckInterrupts" << endl;
-	getchar();
-}
-
-void processDlistList_temp(void)
-{
-	cout << "ProcessDlistList" << endl;
-	getchar();
-}
-
-void processAlistList_temp(void)
-{
-	cout << "ProcessAlistList" << endl;
-	getchar();
-}
-
-void processRdpList_temp(void)
-{
-	cout << "ProcessRdpList" << endl;
-	getchar();
-}
-
-void showCFB_temp(void)
-{
-	cout << "ShowCFB" << endl;
-	getchar();
-}
-
-RSP::RSP(wstring filename, MEMORY *mem) : PLUGIN(filename)
-{
-	memory						= mem;
-
 	doRspCycles_				= (DORSPCYCLES) GetProcAddress(hDLL, "DoRspCycles");
 	getRspDebugInfo_			= (GETRSPDEBUGINFO) GetProcAddress(hDLL, "GetRspDebugInfo");
 	initiateRSP_				= (INITIATERSP) GetProcAddress(hDLL, "InitiateRSP");
@@ -69,7 +37,7 @@ RSP::RSP(wstring filename, MEMORY *mem) : PLUGIN(filename)
 	debug_info					= initiateRSPDebugger_ == NULL ? NULL : (DEBUG_INFO*) malloc(sizeof(DEBUG_INFO));
 
 	rsp_info->hInst				= hDLL; // FIXME?
-	rsp_info->MemoryBswaped		= plugin_info->MemoryBswaped;
+	rsp_info->memoryBswaped		= plugin_info->memoryBswaped;
 	rsp_info->rdram				= (byte*) memory->rdram[0];
 
 	rsp_info->mi_intr_reg		= (word*) memory->mi_regs[0x8];
@@ -96,11 +64,11 @@ RSP::RSP(wstring filename, MEMORY *mem) : PLUGIN(filename)
 	rsp_info->dpc_tmem_reg		= (word*) memory->dpc_regs[0x1C];
 
 	// FIXME:
-	rsp_info->CheckInterrupts	= checkInterrupts_temp;
-	rsp_info->ProcessDlistList  = processDlistList_temp;
-	rsp_info->ProcessAlistList  = processAlistList_temp;
-	rsp_info->ProcessRdpList	= processRdpList_temp;
-	rsp_info->ShowCFB			= showCFB_temp;
+	rsp_info->CheckInterrupts	= NULL;
+	rsp_info->ProcessDlistList  = NULL;
+	rsp_info->ProcessAlistList  = NULL;
+	rsp_info->ProcessRdpList	= NULL;
+	rsp_info->ShowCFB			= NULL;
 
 	int cycles;
 	initiateRSP((word*)&cycles);

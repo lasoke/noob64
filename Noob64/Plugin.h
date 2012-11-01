@@ -34,14 +34,11 @@
 ** general info on it
 */
 typedef struct {
-	hword Version;        /* Should be set to 0x0101 */
-	hword Type;           /* Set to PLUGIN_TYPE_RSP */
-	char Name[100];      /* Name of the DLL */
-
-	/* If DLL supports memory these memory options then set them to TRUE or FALSE
-	   if it does not support it */
-	bool NormalMemory;   /* a normal byte array */ 
-	bool MemoryBswaped;  /* a normal byte array where the memory has been pre
+	hword	version;        /* Should be set to 0x0101 */
+	hword	type;           /* Set to PLUGIN_TYPE_RSP */
+	char	name[100];      /* Name of the DLL */
+	int		normalMemory;   /* a normal byte array */ 
+	int		memoryBswaped;  /* a normal byte array where the memory has been pre
 	                          bswap on a dword (32 bits) boundry */
 } PLUGIN_INFO;
 
@@ -59,16 +56,17 @@ typedef void (_cdecl* ROMCLOSED)(void);
 class PLUGIN
 {
 public:
-	PLUGIN(wstring filename);
+	PLUGIN(wstring filename, MEMORY *mem);
 	~PLUGIN();
 
-	void closeDLL();
+	void closeDLL(void);
 	void dllAbout(HWND);
 	void dllConfig(HWND);
 	void dllTest(HWND);
-	void romClosed();
+	void romClosed(void);
 
 protected:
+	MEMORY					*memory;
 	HINSTANCE				hDLL;
 
 	CLOSEDLL				closeDLL_;
