@@ -108,6 +108,7 @@ private:
 	inline void decode_bc1(const word instr);
 	template<typename Type>
 	inline void decode_fpu(const word instr);
+	int			probe_nop(dword address);			//check wheater the next instruction is a nop
 	//****************************************************************************
 	//** REGISTERS					                                            **
 	//****************************************************************************
@@ -123,6 +124,7 @@ private:
 	bool	delay_slot;								// for branch instructions
 	bool	running;								// Status of the CPU
 	dword	cic_chip;								// To Hack the security of the n64
+	word	skip;									// 
 	//****************************************************************************
 	//** OTHER																	**
 	//****************************************************************************
