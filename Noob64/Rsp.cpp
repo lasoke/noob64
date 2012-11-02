@@ -25,18 +25,27 @@
 #include "StdAfx.h"
 #include "Rsp.h"
 
-RSP::RSP(wstring filename, MEMORY *mem) : PLUGIN(filename, mem)
+RSP::RSP(wstring filename, HWND hWnd) : PLUGIN(filename, hWnd)
 {
 	doRspCycles_				= (DORSPCYCLES) GetProcAddress(hDLL, "DoRspCycles");
 	getRspDebugInfo_			= (GETRSPDEBUGINFO) GetProcAddress(hDLL, "GetRspDebugInfo");
 	initiateRSP_				= (INITIATERSP) GetProcAddress(hDLL, "InitiateRSP");
 	initiateRSPDebugger_		= (INITIATERSPDEBUGGER) GetProcAddress(hDLL, "InitiateRSPDebugger");
+}
+
+RSP::~RSP(void)
+{
+}
+
+void RSP::init(MEMORY *mem)
+{
+	PLUGIN::init(mem);
 
 	rsp_info					= (RSP_INFO*) malloc(sizeof(RSP_INFO));
 	rspdebug_info				= getRspDebugInfo_ == NULL ? NULL : (RSPDEBUG_INFO*) malloc(sizeof(RSPDEBUG_INFO));
 	debug_info					= initiateRSPDebugger_ == NULL ? NULL : (DEBUG_INFO*) malloc(sizeof(DEBUG_INFO));
 
-	rsp_info->hInst				= hDLL; // FIXME?
+	rsp_info->hInst				= hDLL;
 	rsp_info->memoryBswaped		= plugin_info->memoryBswaped;
 	rsp_info->rdram				= (byte*) memory->rdram[0];
 
@@ -63,7 +72,7 @@ RSP::RSP(wstring filename, MEMORY *mem) : PLUGIN(filename, mem)
 	rsp_info->dpc_pipebusy_reg	= (word*) memory->dpc_regs[0x18];
 	rsp_info->dpc_tmem_reg		= (word*) memory->dpc_regs[0x1C];
 
-	// FIXME:
+	// TODO:
 	rsp_info->CheckInterrupts	= NULL;
 	rsp_info->ProcessDlistList  = NULL;
 	rsp_info->ProcessAlistList  = NULL;
@@ -72,11 +81,6 @@ RSP::RSP(wstring filename, MEMORY *mem) : PLUGIN(filename, mem)
 
 	int cycles;
 	initiateRSP((word*)&cycles);
-
-}
-
-RSP::~RSP(void)
-{
 }
 
 word RSP::doRspCycles(word w)

@@ -84,10 +84,10 @@ typedef void (_cdecl* VIWIDTHCHANGED)(void);
 class GFX : public PLUGIN
 {
 public:
-	GFX(wstring filename, MEMORY *mem, HWND hWnd);
+	GFX(wstring filename, HWND hWnd);
 	~GFX();
 
-	void init(ROM* rom);
+	void init(MEMORY *mem);
 
 	void captureScreen(char*);
 	void changeWindow(void);

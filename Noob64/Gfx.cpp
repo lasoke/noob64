@@ -30,7 +30,7 @@ void dummy_checkInterrupts()
 	return;
 }
 
-GFX::GFX(wstring filename, MEMORY *mem, HWND hWnd) : PLUGIN(filename, mem)
+GFX::GFX(wstring filename, HWND hWnd) : PLUGIN(filename, hWnd)
 {
 	captureScreen_				= (CAPTURESCREEN) GetProcAddress(hDLL, "CaptureScreen");
 	changeWindow_				= (CHANGEWINDOW) GetProcAddress(hDLL, "ChangeWindow");
@@ -44,15 +44,23 @@ GFX::GFX(wstring filename, MEMORY *mem, HWND hWnd) : PLUGIN(filename, mem)
 	updateScreen_				= (UPDATESCREEN) GetProcAddress(hDLL, "UpdateScreen");
 	viStatusChanged_			= (VISTATUSCHANGED) GetProcAddress(hDLL, "ViStatusChanged");
 	viWidthChanged_				= (VIWIDTHCHANGED) GetProcAddress(hDLL, "ViWidthChanged");
+}
+
+GFX::~GFX(void)
+{
+}
+
+void GFX::init(MEMORY *mem)
+{
+	PLUGIN::init(mem);
 
 	gfx_info					= (GFX_INFO*) malloc(sizeof(GFX_INFO));
 
-	// TODO:
 	gfx_info->hWnd				= hWnd;	// Render window
 	gfx_info->hStatusBar		= 0;	// if render window does not have a status bar then this is NULL
 	gfx_info->memoryBswaped		= plugin_info->memoryBswaped;
-	// TODO:
-	gfx_info->rom_header		= 0;
+
+	gfx_info->rom_header		= (byte*) memory->rom[0];
 	gfx_info->rdram				= (byte*) memory->rdram[0];
 	gfx_info->dmem				= (byte*) memory->sp_regs[0x00000];
 	gfx_info->imem				= (byte*) memory->sp_regs[0x01000];
@@ -85,15 +93,7 @@ GFX::GFX(wstring filename, MEMORY *mem, HWND hWnd) : PLUGIN(filename, mem)
 
 	// TODO:
 	gfx_info->CheckInterrupts	= dummy_checkInterrupts;
-}
 
-GFX::~GFX(void)
-{
-}
-
-void GFX::init(ROM* rom)
-{
-	gfx_info->rom_header = (byte*) (*rom)[0];
 	romOpen();
 	initiateGFX();
 }

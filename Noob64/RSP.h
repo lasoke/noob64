@@ -120,9 +120,10 @@ typedef void (_cdecl* INITIATERSPDEBUGGER)(DEBUG_INFO);
 class RSP : public PLUGIN
 {
 public:
-	RSP(wstring filename, MEMORY *mem);
+	RSP(wstring filename, HWND hWnd);
 	~RSP();
 
+	void init(MEMORY *mem);
 	// Allows the RSP to run in parrel with the CPU
 	word doRspCycles(word);
 	// To retreive the debug info of the RSP

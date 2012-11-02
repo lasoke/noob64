@@ -885,9 +885,9 @@ private:
 class MEMORY
 {
 public:
-	MEMORY();
+	MEMORY(ROM* rom);
 
-	ROM			*rom;
+	ROM			&rom;
 	RDRAM		&rdram;
 	RDRAM_REGS	&rdram_regs;
 	SP_REGS		&sp_regs;
@@ -1411,7 +1411,7 @@ inline void* MEMORY::virtual_to_physical(dword address)
 	else if (SI_REGS::begining <= address && address <= SI_REGS::end)
 		return (void*) (si_regs[address - SI_REGS::begining]);
 	else if (ROM::begining <= address && address <= ROM::end)
-		return (void*) ((*rom)[address - ROM::begining]);
+		return (void*) (rom[address - ROM::begining]);
 	else if (PIF_ROM::begining <= address && address <= PIF_ROM::end)
 		return (void*) (pif_rom[address - PIF_ROM::begining]);
 	else if (PIF_RAM::begining <= address && address <= PIF_RAM::end)

@@ -27,7 +27,8 @@
 //****************************************************************************
 //** MEMORY																	**
 //****************************************************************************
-MEMORY::MEMORY() :
+MEMORY::MEMORY(ROM* r) :
+	rom			(*r),
 	rdram		(*new RDRAM()),
 	rdram_regs	(*new RDRAM_REGS()),
 	sp_regs		(*new SP_REGS()),
@@ -355,7 +356,7 @@ void PIF_RAM::dump(void) const
 
 void MEMORY::dma_pi_read()
 {
-	memcpy((*rom)[0] + (pi_regs.getCartAddr() & 0xFFFFFFF),
+	memcpy(rom[0] + (pi_regs.getCartAddr() & 0xFFFFFFF),
 		rdram[0] + (pi_regs.getDramAddr() & 0xFFFFFFF),
 		(pi_regs.getRdLen() & 0xFFFFFFF) + 1);
 	
@@ -365,7 +366,7 @@ void MEMORY::dma_pi_read()
 void MEMORY::dma_pi_write()
 {
 	memcpy(rdram[0] + (pi_regs.getDramAddr() & 0xFFFFFFF),
-		(*rom)[0] + (pi_regs.getCartAddr() & 0xFFFFFFF),
+		rom[0] + (pi_regs.getCartAddr() & 0xFFFFFFF),
 		(pi_regs.getWrLen() & 0xFFFFFFF) + 1);
 #	if defined DEBUG
 		cout << "*** pi_write ***" << endl;

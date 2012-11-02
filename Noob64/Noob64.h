@@ -25,3 +25,14 @@
 #pragma once
 
 #include "resource.h"
+
+using namespace std;
+
+//#define DEBUG
+
+enum NOOB64_EXCEPTION
+{
+	PLUGIN_FAILED_TO_LOAD	= 0,
+	PLUGIN_FAILED_TO_INIT	= 1,
+	ROM_FAILED_TO_LOAD		= 2
+};

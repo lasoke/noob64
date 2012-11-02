@@ -44,15 +44,12 @@
 
 // TODO: reference additional headers your program requires here
 
-//#define DEBUG true
-
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
 #include <string>
 
-using namespace std;
-
+#include "Noob64.h"
 #include "Memory.h"
 #include "Instruction.h"
 #include "Exception.h"

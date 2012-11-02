@@ -28,10 +28,8 @@ ROM::ROM(string filename)
 {
 	file.open(filename, ios::ate | ios::in | ios::binary);
 	if (!file.is_open())
-	{
-		// TODO: error
-		return;
-	}
+		throw ROM_FAILED_TO_LOAD;
+
 	int size = (int) file.tellg();
 	data = (char*) malloc(size);
 	file.seekg (0, ios::beg);

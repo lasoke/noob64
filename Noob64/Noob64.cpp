@@ -52,29 +52,25 @@ void inline enableConsole()
 	err = freopen_s(&stream, "conout$","w", stderr);
 }
 
+wstring rsp_path = _T("C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll");
+wstring gfx_path = _T("E:\\Documents\\Games\\Project 64 1.7.0.9\\Plugin\\GFX\\Jabo_Direct3D8.dll");
+string  rom_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
+
 MEMORY*	mem;
-ROM*	rom;
 R4300i*	cpu;
 RSP*	rsp;
 GFX*	gfx;
 
-void play(HWND hWnd)
+void boot(string filename)
 {
-	//enableConsole();
+	enableConsole();						// Displays the console
 
-	wstring rsp_path = _T("C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll");
-	wstring gfx_path = _T("E:\\Documents\\Games\\Project 64 1.7.0.9\\Plugin\\GFX\\Jabo_Direct3D8.dll");
-	string  rom_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
-	
-	mem	= new MEMORY();
-	rom	= new ROM(rom_path);
-	cpu	= new R4300i(mem);
-	rsp	= new RSP(rsp_path, mem);
-	gfx	= new GFX(gfx_path, mem, hWnd);
+	mem	= new MEMORY(new ROM(filename));	// Sets up the ROM and the Memory 
+	cpu	= new R4300i(mem);					// Sets up the CPU and links it to the Memory
 
-	cpu->boot(gfx, rom);
-
-	//getchar();
+	rsp->init(mem);							// Initializes the RSP plugin
+	gfx->init(mem);							// Initializes the GFX plugin
+	cpu->init();							// Initializes the CPU and actually boots the ROM
 }
 
 // Main
@@ -215,7 +211,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wmId)
 		{
 		case ID_FILE_PLAY:
-			play(hWnd);
+			rsp	= new RSP(rsp_path, hWnd);
+			gfx	= new GFX(gfx_path, hWnd);
+			boot(rom_path);
 			break;
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);

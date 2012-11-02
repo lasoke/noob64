@@ -56,8 +56,10 @@ typedef void (_cdecl* ROMCLOSED)(void);
 class PLUGIN
 {
 public:
-	PLUGIN(wstring filename, MEMORY *mem);
+	PLUGIN(wstring filename, HWND hWnd);
 	~PLUGIN();
+
+	void init(MEMORY *mem);
 
 	void closeDLL(void);
 	void dllAbout(HWND);
@@ -66,8 +68,9 @@ public:
 	void romClosed(void);
 
 protected:
-	MEMORY					*memory;
 	HINSTANCE				hDLL;
+	HWND					hWnd;
+	MEMORY					*memory;
 
 	CLOSEDLL				closeDLL_;
 	DLLABOUT				dllAbout_;

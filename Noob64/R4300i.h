@@ -68,7 +68,7 @@ class R4300i
 public:
 	R4300i(MEMORY *mem);
 	// initialize the R4300i and enter in the main loop
-	void boot(GFX *gfx, ROM *rom);
+	void init();
 	// sets every bit to 0;
 	void reset();
 	// Check if an interrupt has been triggered

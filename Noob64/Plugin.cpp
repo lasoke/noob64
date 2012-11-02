@@ -25,13 +25,12 @@
 #include "StdAfx.h"
 #include "Plugin.h"
 
-PLUGIN::PLUGIN(wstring filename, MEMORY *mem)
+PLUGIN::PLUGIN(wstring filename, HWND h)
 {
-	if ((hDLL = LoadLibrary(filename.c_str())) == NULL)
-	{
-		// TODO: throw an exception so that new RSP() returns NULL
-		return;
-	}
+	if (!(hDLL = LoadLibrary(filename.c_str())))
+		throw PLUGIN_FAILED_TO_LOAD;
+
+	hWnd					= h;
 
 	closeDLL_				= (CLOSEDLL) GetProcAddress(hDLL, "CloseDLL");
 	dllAbout_				= (DLLABOUT) GetProcAddress(hDLL, "DllAbout");
@@ -42,13 +41,16 @@ PLUGIN::PLUGIN(wstring filename, MEMORY *mem)
 
 	plugin_info				= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
 	getDllInfo_(plugin_info);
-
-	memory					= mem;
 }
-
 
 PLUGIN::~PLUGIN(void)
 {
+	FreeLibrary(hDLL);
+}
+
+void PLUGIN::init(MEMORY *mem)
+{
+	memory = mem;
 }
 
 void PLUGIN::closeDLL()
