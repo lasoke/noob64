@@ -45,6 +45,7 @@ PLUGIN::PLUGIN(wstring filename, HWND h)
 
 PLUGIN::~PLUGIN(void)
 {
+	// TODO
 	FreeLibrary(hDLL);
 }
 

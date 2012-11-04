@@ -35,30 +35,30 @@ typedef struct {
 	HINSTANCE hInst;
 	int memoryBswaped;    /* If this is set to TRUE, then the memory has been pre
 	                          bswap on a dword (32 bits) boundry */
-	byte *rdram;
-	byte *dmem;
-	byte *imem;
+	byte* rdram;
+	byte* dmem;
+	byte* imem;
 
-	word *mi_intr_reg;
+	word* mi_intr_reg;
 
-	word *sp_mem_addr_reg;
-	word *sp_dram_addr_reg;
-	word *sp_rd_len_reg;
-	word *sp_wr_len_reg;
-	word *sp_status_reg;
-	word *sp_dma_full_reg;
-	word *sp_dma_busy_reg;
-	word *sp_pc_reg;
-	word *sp_semaphore_reg;
+	word* sp_mem_addr_reg;
+	word* sp_dram_addr_reg;
+	word* sp_rd_len_reg;
+	word* sp_wr_len_reg;
+	word* sp_status_reg;
+	word* sp_dma_full_reg;
+	word* sp_dma_busy_reg;
+	word* sp_pc_reg;
+	word* sp_semaphore_reg;
 
-	word *dpc_start_reg;
-	word *dpc_end_reg;
-	word *dpc_current_reg;
-	word *dpc_status_reg;
-	word *dpc_clock_reg;
-	word *dpc_bufbusy_reg;
-	word *dpc_pipebusy_reg;
-	word *dpc_tmem_reg;
+	word* dpc_start_reg;
+	word* dpc_end_reg;
+	word* dpc_current_reg;
+	word* dpc_status_reg;
+	word* dpc_clock_reg;
+	word* dpc_bufbusy_reg;
+	word* dpc_pipebusy_reg;
+	word* dpc_tmem_reg;
 
 	void (*CheckInterrupts)(void);
 	void (*ProcessDlistList)(void);
@@ -123,7 +123,7 @@ public:
 	RSP(wstring filename, HWND hWnd);
 	~RSP();
 
-	void init(MEMORY *mem);
+	void init(MEMORY* mem);
 	// Allows the RSP to run in parrel with the CPU
 	word doRspCycles(word);
 	// To retreive the debug info of the RSP

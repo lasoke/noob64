@@ -25,7 +25,7 @@
 #include "StdAfx.h"
 #include "Gfx.h"
 
-void dummy_checkInterrupts()
+void dummy()
 {
 	return;
 }
@@ -48,6 +48,7 @@ GFX::GFX(wstring filename, HWND hWnd) : PLUGIN(filename, hWnd)
 
 GFX::~GFX(void)
 {
+	// TODO
 }
 
 void GFX::init(MEMORY *mem)
@@ -92,10 +93,9 @@ void GFX::init(MEMORY *mem)
 	gfx_info->vi_y_scale_reg	= (word*) memory->vi_regs[0x34];
 
 	// TODO:
-	gfx_info->CheckInterrupts	= dummy_checkInterrupts;
-
+	gfx_info->CheckInterrupts	= dummy;
+	bool r = initiateGFX();
 	romOpen();
-	initiateGFX();
 }
 
 void GFX::captureScreen(char* directory)

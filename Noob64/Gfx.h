@@ -31,36 +31,36 @@ typedef struct {
 	HWND hStatusBar;    // if render window does not have a status bar then this is NULL
 	int memoryBswaped;
 
-	byte *rom_header;
-	byte *rdram;
-	byte *dmem;
-	byte *imem;
+	byte* rom_header;
+	byte* rdram;
+	byte* dmem;
+	byte* imem;
 
-	word *mi_intr_reg;
+	word* mi_intr_reg;
 
-	word *dpc_start_reg;
-	word *dpc_end_reg;
-	word *dpc_current_reg;
-	word *dpc_status_reg;
-	word *dpc_clock_reg;
-	word *dpc_bufbusy_reg;
-	word *dpc_pipebusy_reg;
-	word *dpc_tmem_reg;
+	word* dpc_start_reg;
+	word* dpc_end_reg;
+	word* dpc_current_reg;
+	word* dpc_status_reg;
+	word* dpc_clock_reg;
+	word* dpc_bufbusy_reg;
+	word* dpc_pipebusy_reg;
+	word* dpc_tmem_reg;
 
-	word *vi_status_reg;
-	word *vi_origin_reg;
-	word *vi_width_reg;
-	word *vi_intr_reg;
-	word *vi_v_current_line_reg;
-	word *vi_timing_reg;
-	word *vi_v_sync_reg;
-	word *vi_h_sync_reg;
-	word *vi_leap_reg;
-	word *vi_h_start_reg;
-	word *vi_v_start_reg;
-	word *vi_v_burst_reg;
-	word *vi_x_scale_reg;
-	word *vi_y_scale_reg;
+	word* vi_status_reg;
+	word* vi_origin_reg;
+	word* vi_width_reg;
+	word* vi_intr_reg;
+	word* vi_v_current_line_reg;
+	word* vi_timing_reg;
+	word* vi_v_sync_reg;
+	word* vi_h_sync_reg;
+	word* vi_leap_reg;
+	word* vi_h_start_reg;
+	word* vi_v_start_reg;
+	word* vi_v_burst_reg;
+	word* vi_x_scale_reg;
+	word* vi_y_scale_reg;
 
 	void (*CheckInterrupts)(void);
 } GFX_INFO;
@@ -87,7 +87,7 @@ public:
 	GFX(wstring filename, HWND hWnd);
 	~GFX();
 
-	void init(MEMORY *mem);
+	void init(MEMORY* mem);
 
 	void captureScreen(char*);
 	void changeWindow(void);

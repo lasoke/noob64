@@ -56,21 +56,25 @@ wstring rsp_path = _T("C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64
 wstring gfx_path = _T("E:\\Documents\\Games\\Project 64 1.7.0.9\\Plugin\\GFX\\Jabo_Direct3D8.dll");
 string  rom_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
 
+HANDLE emuThread;
+
 MEMORY*	mem;
 R4300i*	cpu;
 RSP*	rsp;
 GFX*	gfx;
 
-void boot(string filename)
+DWORD WINAPI boot(LPVOID lpParameter)
 {
 	enableConsole();						// Displays the console
 
-	mem	= new MEMORY(new ROM(filename));	// Sets up the ROM and the Memory 
+	mem	= new MEMORY(new ROM(rom_path));	// Sets up the ROM and the Memory 
 	cpu	= new R4300i(mem);					// Sets up the CPU and links it to the Memory
 
 	rsp->init(mem);							// Initializes the RSP plugin
 	gfx->init(mem);							// Initializes the GFX plugin
 	cpu->init();							// Initializes the CPU and actually boots the ROM
+
+	return 0;
 }
 
 // Main
@@ -82,14 +86,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	//****************************************************************************
-	//** MAIN CODE HERE															**
-	//****************************************************************************
-
-
-	//****************************************************************************
-	//** END OF MAIN CODE														**
-	//****************************************************************************
+	// MAIN CODE HERE
 
 	MSG msg;
 	HACCEL hAccelTable;
@@ -211,9 +208,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wmId)
 		{
 		case ID_FILE_PLAY:
+			EnableMenuItem(GetMenu(hWnd), ID_FILE_PLAY, MF_BYCOMMAND | MF_GRAYED);
 			rsp	= new RSP(rsp_path, hWnd);
 			gfx	= new GFX(gfx_path, hWnd);
-			boot(rom_path);
+			emuThread = CreateThread(0, 0, boot, 0, 0, 0);
 			break;
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
@@ -235,6 +233,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_DESTROY:
+		CloseHandle(emuThread);
 		PostQuitMessage(0);
 		break;
 	default:
