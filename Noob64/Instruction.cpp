@@ -2156,7 +2156,7 @@ void R4300i::ERET(void)
 		pc = EPC;
 	}
 	ll = 0;
-//	check_interupt();
+	check_interrupt();
 }
 
 void R4300i::MFC0(int rt, int fs)
@@ -2219,9 +2219,7 @@ void R4300i::MTC0(int rt, int fs)
 //		check_interupt();
 		break;
 	case 13:   // Cause
-		if (r[rt] != 0)
-			cout << print_addr((word) pc) << " écriture dans Cause";
-		else Cause = r[rt] & 0xFFFFFFFF;
+		Cause = r[rt] & 0xFFFFFFFF;
 		break;
 	case 14:   // EPC
 		EPC = r[rt] & 0xFFFFFFFF;
