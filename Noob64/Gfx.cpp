@@ -94,7 +94,7 @@ void GFX::init(MEMORY *mem)
 
 	// TODO:
 	gfx_info->CheckInterrupts	= dummy;
-	bool r = initiateGFX();
+	initiateGFX();
 	romOpen();
 }
 
