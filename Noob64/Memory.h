@@ -15,7 +15,7 @@
  *
  * Noob64 is freeware for PERSONAL USE only. Commercial users should
  * seek permission of the copyright holders first. Commercial use includes
- * charging money for Noob64 or software derived from Noob64.
+ * chwing money for Noob64 or software derived from Noob64.
  *
  * The copyright holders request that bug fixes and improvements to the code
  * should be forwarded to them so if they want them.
@@ -1431,421 +1431,421 @@ bool is_address_defined(dword address);
 //** SET METHODS					                                        **
 //****************************************************************************
 
-inline void RDRAM_REGS::setConfig(word arg)
+inline void RDRAM_REGS::setConfig(word w)
 {
-	data.config = arg;
+	data.config = w;
 }
-inline void RDRAM_REGS::setDeviceId(word arg)
+inline void RDRAM_REGS::setDeviceId(word w)
 {
-	data.device_id = arg;
+	data.device_id = w;
 }
-inline void RDRAM_REGS::setDelay(word arg)
+inline void RDRAM_REGS::setDelay(word w)
 {
-	data.delay = arg;
+	data.delay = w;
 }
-inline void RDRAM_REGS::setMode(word arg)
+inline void RDRAM_REGS::setMode(word w)
 {
-	data.mode = arg;
+	data.mode = w;
 }
-inline void RDRAM_REGS::setRefInterval(word arg)
+inline void RDRAM_REGS::setRefInterval(word w)
 {
-	data.ref_interval = arg;
+	data.ref_interval = w;
 }
-inline void RDRAM_REGS::setRefRow(word arg)
+inline void RDRAM_REGS::setRefRow(word w)
 {
-	data.ref_row = arg;
+	data.ref_row = w;
 }
-inline void RDRAM_REGS::setRasInterval(word arg)
+inline void RDRAM_REGS::setRasInterval(word w)
 {
-	data.ras_interval = arg;
+	data.ras_interval = w;
 }
-inline void RDRAM_REGS::setMinInterval(word arg)
+inline void RDRAM_REGS::setMinInterval(word w)
 {
-	data.min_interval = arg;
+	data.min_interval = w;
 }
-inline void RDRAM_REGS::setAddrSelect(word arg)
+inline void RDRAM_REGS::setAddrSelect(word w)
 {
-	data.addr_select = arg;
+	data.addr_select = w;
 }
-inline void RDRAM_REGS::setDeviceManuf(word arg)
+inline void RDRAM_REGS::setDeviceManuf(word w)
 {
-	data.device_manuf = arg;
+	data.device_manuf = w;
 }
 
-inline void SP_REGS::setMemAddr(word arg)
+inline void SP_REGS::setMemAddr(word w)
 {
-	data.mem_addr = arg;
+	data.mem_addr = w;
 }
-inline void SP_REGS::setDramAddr(word arg)
+inline void SP_REGS::setDramAddr(word w)
 {
-	data.dram_addr = arg;
+	data.dram_addr = w;
 }
-inline void SP_REGS::setRdLen(word arg)
+inline void SP_REGS::setRdLen(word w)
 {
-	data.rd_len = arg;
+	data.rd_len = w;
 }
-inline void SP_REGS::setWrLen(word arg)
+inline void SP_REGS::setWrLen(word w)
 {
-	data.wr_len = arg;
+	data.wr_len = w;
 }
-inline void SP_REGS::setStatus(word arg)
+inline void SP_REGS::setStatus(word w)
 {
-	if (arg & SP_CLR_HALT)
+	if (w & SP_CLR_HALT)
 		data.status &= ~SP_STATUS_HALT;
-	if (arg & SP_CLR_BROKE)
+	if (w & SP_CLR_BROKE)
 		data.status &= ~SP_STATUS_BROKE;
-	if (arg & SP_CLR_SSTEP)
+	if (w & SP_CLR_SSTEP)
 		data.status &= ~SP_STATUS_SSTEP;
-	if (arg & SP_CLR_INTR_BREAK)
+	if (w & SP_CLR_INTR_BREAK)
 		data.status &= ~SP_STATUS_INTR_BREAK;
-	if (arg & SP_CLR_SIG0)
+	if (w & SP_CLR_SIG0)
 		data.status &= ~SP_STATUS_SIG0;
-	if (arg & SP_CLR_SIG1)
+	if (w & SP_CLR_SIG1)
 		data.status &= ~SP_STATUS_SIG1;
-	if (arg & SP_CLR_SIG2)
+	if (w & SP_CLR_SIG2)
 		data.status &= ~SP_STATUS_SIG2;
-	if (arg & SP_CLR_SIG3)
+	if (w & SP_CLR_SIG3)
 		data.status &= ~SP_STATUS_SIG3;
-	if (arg & SP_CLR_SIG4)
+	if (w & SP_CLR_SIG4)
 		data.status &= ~SP_STATUS_SIG4;
-	if (arg & SP_CLR_SIG5)
+	if (w & SP_CLR_SIG5)
 		data.status &= ~SP_STATUS_SIG5;
-	if (arg & SP_CLR_SIG6)
+	if (w & SP_CLR_SIG6)
 		data.status &= ~SP_STATUS_SIG6;
-	if (arg & SP_CLR_SIG7)
+	if (w & SP_CLR_SIG7)
 		data.status &= ~SP_STATUS_SIG7;
 
-	if (arg & SP_SET_HALT)
+	if (w & SP_SET_HALT)
 		data.status |= SP_STATUS_HALT;
-	if (arg & SP_SET_SSTEP)
+	if (w & SP_SET_SSTEP)
 		data.status |= SP_STATUS_SSTEP;
-	if (arg & SP_SET_INTR_BREAK)
+	if (w & SP_SET_INTR_BREAK)
 		data.status |= SP_STATUS_INTR_BREAK;
-	if (arg & SP_SET_SIG0)
+	if (w & SP_SET_SIG0)
 		data.status |= SP_STATUS_SIG0;
-	if (arg & SP_SET_SIG1)
+	if (w & SP_SET_SIG1)
 		data.status |= SP_STATUS_SIG1;
-	if (arg & SP_SET_SIG2)
+	if (w & SP_SET_SIG2)
 		data.status |= SP_STATUS_SIG2;
-	if (arg & SP_SET_SIG3)
+	if (w & SP_SET_SIG3)
 		data.status |= SP_STATUS_SIG3;
-	if (arg & SP_SET_SIG4)
+	if (w & SP_SET_SIG4)
 		data.status |= SP_STATUS_SIG4;
-	if (arg & SP_SET_SIG5)
+	if (w & SP_SET_SIG5)
 		data.status |= SP_STATUS_SIG5;
-	if (arg & SP_SET_SIG6)
+	if (w & SP_SET_SIG6)
 		data.status |= SP_STATUS_SIG6;
-	if (arg & SP_SET_SIG7)
+	if (w & SP_SET_SIG7)
 		data.status |= SP_STATUS_SIG7;
 }
-inline void SP_REGS::setDmaFull(word arg)
+inline void SP_REGS::setDmaFull(word w)
 {
-	data.dma_full = arg;
+	data.dma_full = w;
 }
-inline void SP_REGS::setDmaBusy(word arg)
+inline void SP_REGS::setDmaBusy(word w)
 {
-	data.dma_busy = arg;
+	data.dma_busy = w;
 }
-inline void SP_REGS::setSemaphore(word arg)
+inline void SP_REGS::setSemaphore(word w)
 {
 	data.semaphore = 0;
 }
-inline void SP_REGS::setPc(word arg)
+inline void SP_REGS::setPc(word w)
 {
-	data.pc = arg & 0xFFC;
+	data.pc = w & 0xFFC;
 }
-inline void SP_REGS::setIbist(word arg)
+inline void SP_REGS::setIbist(word w)
 {
-	data.ibist = arg;
-}
-
-inline void DPC_REGS::setStart(word arg)
-{
-	data.start = arg;
-}
-inline void DPC_REGS::setEnd(word arg)
-{
-	data.end = arg;
-}
-inline void DPC_REGS::setCurrent(word arg)
-{
-	data.current = arg;
-}
-inline void DPC_REGS::setStatus(word arg)
-{
-	data.status = arg;
-}
-inline void DPC_REGS::setClock(word arg)
-{
-	data.clock = arg;
-}
-inline void DPC_REGS::setBufBusy(word arg)
-{
-	data.bufbusy = arg;
-}
-inline void DPC_REGS::setPipeBusy(word arg)
-{
-	data.pipebusy = arg;
-}
-inline void DPC_REGS::setTmem(word arg)
-{
-	data.tmem = arg;
+	data.ibist = w;
 }
 
-inline void DPS_REGS::setTbist(word arg)
+inline void DPC_REGS::setStart(word w)
 {
-	data.tbist = arg;
+	data.start = w;
 }
-inline void DPS_REGS::setTestMode(word arg)
+inline void DPC_REGS::setEnd(word w)
 {
-	data.test_mode = arg;
+	data.end = w;
 }
-inline void DPS_REGS::setBufTestAddr(word arg)
+inline void DPC_REGS::setCurrent(word w)
 {
-	data.buftest_addr = arg;
+	data.current = w;
 }
-inline void DPS_REGS::setBufTestData(word arg)
+inline void DPC_REGS::setStatus(word w)
 {
-	data.buftest_data = arg;
+	data.status = w;
+}
+inline void DPC_REGS::setClock(word w)
+{
+	data.clock = w;
+}
+inline void DPC_REGS::setBufBusy(word w)
+{
+	data.bufbusy = w;
+}
+inline void DPC_REGS::setPipeBusy(word w)
+{
+	data.pipebusy = w;
+}
+inline void DPC_REGS::setTmem(word w)
+{
+	data.tmem = w;
 }
 
-inline void MI_REGS::setInitMode(word arg)
+inline void DPS_REGS::setTbist(word w)
 {
-	if (arg & MI_CLR_INIT)
+	data.tbist = w;
+}
+inline void DPS_REGS::setTestMode(word w)
+{
+	data.test_mode = w;
+}
+inline void DPS_REGS::setBufTestAddr(word w)
+{
+	data.buftest_addr = w;
+}
+inline void DPS_REGS::setBufTestData(word w)
+{
+	data.buftest_data = w;
+}
+
+inline void MI_REGS::setInitMode(word w)
+{
+	if (w & MI_CLR_INIT)
 		data.init_mode &= ~MI_MODE_INIT;
-	if (arg & MI_CLR_EBUS)
+	if (w & MI_CLR_EBUS)
 		data.init_mode &= ~MI_MODE_EBUS;
-	if (arg & MI_CLR_RDRAM)
+	if (w & MI_CLR_RDRAM)
 		data.init_mode &= ~MI_MODE_RDRAM;
 
-	if (arg & MI_SET_INIT)
+	if (w & MI_SET_INIT)
 		data.init_mode |= MI_MODE_INIT;
-	if (arg & MI_SET_EBUS)
+	if (w & MI_SET_EBUS)
 		data.init_mode |= MI_MODE_EBUS;
-	if (arg & MI_SET_RDRAM)
+	if (w & MI_SET_RDRAM)
 		data.init_mode |= MI_MODE_RDRAM;
 
-	if (arg & MI_CLR_DP_INTR)
+	if (w & MI_CLR_DP_INTR)
 		data.intr &= ~MI_INTR_DP;
 }
-inline void MI_REGS::setVersion(word arg)
+inline void MI_REGS::setVersion(word w)
 {
-	data.version = arg;
+	data.version = w;
 }
-inline void MI_REGS::setIntr(word arg)
+inline void MI_REGS::setIntr(word w)
 {
-	data.intr = arg;
+	data.intr = w;
 }
-inline void MI_REGS::setIntrMask(word arg)
+inline void MI_REGS::setIntrMask(word w)
 {
-	if (arg & MI_INTR_MASK_CLR_SP )
+	if (w & MI_INTR_MASK_CLR_SP)
 		data.intr_mask &= ~MI_INTR_MASK_SP;
-	if (arg & MI_INTR_MASK_CLR_SI )
+	if (w & MI_INTR_MASK_CLR_SI)
 		data.intr_mask &= ~MI_INTR_MASK_SI;
-	if (arg & MI_INTR_MASK_CLR_AI )
+	if (w & MI_INTR_MASK_CLR_AI)
 		data.intr_mask &= ~MI_INTR_MASK_AI;
-	if (arg & MI_INTR_MASK_CLR_VI )
+	if (w & MI_INTR_MASK_CLR_VI)
 		data.intr_mask &= ~MI_INTR_MASK_VI;
-	if (arg & MI_INTR_MASK_CLR_PI )
+	if (w & MI_INTR_MASK_CLR_PI)
 		data.intr_mask &= ~MI_INTR_MASK_PI;
-	if (arg & MI_INTR_MASK_CLR_DP )
+	if (w & MI_INTR_MASK_CLR_DP)
 		data.intr_mask &= ~MI_INTR_MASK_DP;
 
-	if (arg & MI_INTR_MASK_SET_SP )
+	if (w & MI_INTR_MASK_SET_SP)
 		data.intr_mask |= MI_INTR_MASK_SP;
-	if (arg & MI_INTR_MASK_SET_SI )
+	if (w & MI_INTR_MASK_SET_SI)
 		data.intr_mask |= MI_INTR_MASK_SI;
-	if (arg & MI_INTR_MASK_SET_AI )
+	if (w & MI_INTR_MASK_SET_AI)
 		data.intr_mask |= MI_INTR_MASK_AI;
-	if (arg & MI_INTR_MASK_SET_VI )
+	if (w & MI_INTR_MASK_SET_VI)
 		data.intr_mask |= MI_INTR_MASK_VI;
-	if (arg & MI_INTR_MASK_SET_PI )
+	if (w & MI_INTR_MASK_SET_PI)
 		data.intr_mask |= MI_INTR_MASK_PI;
-	if (arg & MI_INTR_MASK_SET_DP )
+	if (w & MI_INTR_MASK_SET_DP)
 		data.intr_mask |= MI_INTR_MASK_DP;
 }
 
-inline void VI_REGS::setStatus(word arg)
+inline void VI_REGS::setStatus(word w)
 {
-	data.status = arg;
+	data.status = w;
 	//ViStatusChanged
 }
-inline void VI_REGS::setOrigin(word arg)
+inline void VI_REGS::setOrigin(word w)
 {
-	data.origin = arg;
+	data.origin = w;
 }
-inline void VI_REGS::setWidth(word arg)
+inline void VI_REGS::setWidth(word w)
 {
-	data.width = arg;
+	data.width = w;
 	//ViWidthChanged
 }
-inline void VI_REGS::setVintr(word arg)
+inline void VI_REGS::setVintr(word w)
 {
 }
-inline void VI_REGS::setCurrent(word arg)
+inline void VI_REGS::setCurrent(word w)
 {
-	data.current = arg;
+	data.current = w;
 }
-inline void VI_REGS::setBurst(word arg)
+inline void VI_REGS::setBurst(word w)
 {
-	data.burst = arg;
+	data.burst = w;
 }
-inline void VI_REGS::setVsync(word arg)
+inline void VI_REGS::setVsync(word w)
 {
-	data.v_sync = arg;
+	data.v_sync = w;
 }
-inline void VI_REGS::setHsync(word arg)
+inline void VI_REGS::setHsync(word w)
 {
-	data.h_sync = arg;
+	data.h_sync = w;
 }
-inline void VI_REGS::setLeap(word arg)
+inline void VI_REGS::setLeap(word w)
 {
-	data.leap = arg;
+	data.leap = w;
 }
-inline void VI_REGS::setHstart(word arg)
+inline void VI_REGS::setHstart(word w)
 {
-	data.h_start = arg;
+	data.h_start = w;
 }
-inline void VI_REGS::setVstart(word arg)
+inline void VI_REGS::setVstart(word w)
 {
-	data.v_start = arg;
+	data.v_start = w;
 }
-inline void VI_REGS::setVburst(word arg)
+inline void VI_REGS::setVburst(word w)
 {
-	data.v_burst = arg;
+	data.v_burst = w;
 }
-inline void VI_REGS::setXscale(word arg)
+inline void VI_REGS::setXscale(word w)
 {
-	data.x_scale = arg;
+	data.x_scale = w;
 }
-inline void VI_REGS::setYscale(word arg)
+inline void VI_REGS::setYscale(word w)
 {
-	data.y_scale = arg;
+	data.y_scale = w;
 }
 
-inline void AI_REGS::setDramAddr(word arg)
+inline void AI_REGS::setDramAddr(word w)
 {
-	data.dram_addr = arg;
+	data.dram_addr = w;
 }
-inline void AI_REGS::setLen(word arg)
+inline void AI_REGS::setLen(word w)
 {
-	data.len = arg;
+	data.len = w;
 	//AiLenChanged
 }
-inline void AI_REGS::setControl(word arg)
+inline void AI_REGS::setControl(word w)
 {
-	data.control = arg & 0x1;
+	data.control = w & 0x1;
 }
-inline void AI_REGS::setStatus(word arg)
+inline void AI_REGS::setStatus(word w)
 {
 }
-inline void AI_REGS::setDacrate(word arg)
+inline void AI_REGS::setDacrate(word w)
 {
-	data.dacrate = arg;
+	data.dacrate = w;
 }
-inline void AI_REGS::setBitrate(word arg)
+inline void AI_REGS::setBitrate(word w)
 {
-	data.bitrate = arg;
-}
-
-inline void PI_REGS::setDramAddr(word arg)
-{
-	data.dram_addr = arg;
-}
-inline void PI_REGS::setCartAddr(word arg)
-{
-	data.cart_addr = arg;
-}
-inline void PI_REGS::setRdLen(word arg)
-{
-	data.rd_len = arg;
-}
-inline void PI_REGS::setWrLen(word arg)
-{
-	data.wr_len = arg;
-}
-inline void PI_REGS::setStatus(word arg)
-{
-	data.status = arg;
-}
-inline void PI_REGS::setBsdDom1Lat(word arg)
-{
-	data.bsd_dom1_lat = arg;
-}
-inline void PI_REGS::setBsdDom1Pwd(word arg)
-{
-	data.bsd_dom1_pwd = arg;
-}
-inline void PI_REGS::setBsdDom1Pgs(word arg)
-{
-	data.bsd_dom1_pgs = arg;
-}
-inline void PI_REGS::setBsdDom1Rls(word arg)
-{
-	data.bsd_dom1_rls = arg;
-}
-inline void PI_REGS::setBsdDom2Lat(word arg)
-{
-	data.bsd_dom2_lat = arg;
-}
-inline void PI_REGS::setBsdDom2Pwd(word arg)
-{
-	data.bsd_dom2_pwd = arg;
-}
-inline void PI_REGS::setBsdDom2Pgs(word arg)
-{
-	data.bsd_dom2_pgs = arg;
-}
-inline void PI_REGS::setBsdDom2Rls(word arg)
-{
-	data.bsd_dom2_rls = arg;
+	data.bitrate = w;
 }
 
-inline void RI_REGS::setMode(word arg)
+inline void PI_REGS::setDramAddr(word w)
 {
-	data.mode = arg;
+	data.dram_addr = w;
 }
-inline void RI_REGS::setConfig(word arg)
+inline void PI_REGS::setCartAddr(word w)
 {
-	data.config = arg;
+	data.cart_addr = w;
 }
-inline void RI_REGS::setCurrentLoad(word arg)
+inline void PI_REGS::setRdLen(word w)
 {
-	data.current_load = arg;
+	data.rd_len = w;
 }
-inline void RI_REGS::setSelect(word arg)
+inline void PI_REGS::setWrLen(word w)
 {
-	data.select = arg;
+	data.wr_len = w;
 }
-inline void RI_REGS::setRefresh(word arg)
+inline void PI_REGS::setStatus(word w)
 {
-	data.refresh = arg;
+	data.status = w;
 }
-inline void RI_REGS::setLatency(word arg)
+inline void PI_REGS::setBsdDom1Lat(word w)
 {
-	data.latency = arg;
+	data.bsd_dom1_lat = w;
 }
-inline void RI_REGS::setRerror(word arg)
+inline void PI_REGS::setBsdDom1Pwd(word w)
 {
-	data.rerror = arg;
+	data.bsd_dom1_pwd = w;
 }
-inline void RI_REGS::setWerror(word arg)
+inline void PI_REGS::setBsdDom1Pgs(word w)
 {
-	data.werror = arg;
+	data.bsd_dom1_pgs = w;
+}
+inline void PI_REGS::setBsdDom1Rls(word w)
+{
+	data.bsd_dom1_rls = w;
+}
+inline void PI_REGS::setBsdDom2Lat(word w)
+{
+	data.bsd_dom2_lat = w;
+}
+inline void PI_REGS::setBsdDom2Pwd(word w)
+{
+	data.bsd_dom2_pwd = w;
+}
+inline void PI_REGS::setBsdDom2Pgs(word w)
+{
+	data.bsd_dom2_pgs = w;
+}
+inline void PI_REGS::setBsdDom2Rls(word w)
+{
+	data.bsd_dom2_rls = w;
 }
 
-inline void SI_REGS::setDramAddr(word arg)
+inline void RI_REGS::setMode(word w)
 {
-	data.dram_addr = arg;
+	data.mode = w;
 }
-inline void SI_REGS::setPifAddrRd64b(word arg)
+inline void RI_REGS::setConfig(word w)
 {
-	data.pif_addr_rd64b = arg;
+	data.config = w;
 }
-inline void SI_REGS::setPifAddrWr64b(word arg)
+inline void RI_REGS::setCurrentLoad(word w)
 {
-	data.pif_addr_wr64b = arg;
+	data.current_load = w;
 }
-inline void SI_REGS::setStatus(word arg)
+inline void RI_REGS::setSelect(word w)
+{
+	data.select = w;
+}
+inline void RI_REGS::setRefresh(word w)
+{
+	data.refresh = w;
+}
+inline void RI_REGS::setLatency(word w)
+{
+	data.latency = w;
+}
+inline void RI_REGS::setRerror(word w)
+{
+	data.rerror = w;
+}
+inline void RI_REGS::setWerror(word w)
+{
+	data.werror = w;
+}
+
+inline void SI_REGS::setDramAddr(word w)
+{
+	data.dram_addr = w;
+}
+inline void SI_REGS::setPifAddrRd64b(word w)
+{
+	data.pif_addr_rd64b = w;
+}
+inline void SI_REGS::setPifAddrWr64b(word w)
+{
+	data.pif_addr_wr64b = w;
+}
+inline void SI_REGS::setStatus(word w)
 {
 }
