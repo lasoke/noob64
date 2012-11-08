@@ -27,6 +27,7 @@
 
 R4300i::R4300i(MEMORY *mem) : memory(mem)
 {
+	timers = new Timers();
 }
 
 void R4300i::reset()
@@ -75,10 +76,16 @@ void R4300i::reset()
 	delay_slot	= false;
 	running		= true;
 	cic_chip	= 0;
-	next_interrupt = 5000;
 
 	interrupt_detected	= false;
 	current_coprocessor = CPU;
+	
+	timers->CurrentTimerType = -1;
+	timers->Timer = 0;
+	for (int i = 0; i < MaxTimers; ++i) 
+		timers->Active[i]= FALSE;
+	timers->ChangeTimer(ViTimer,5000, Compare, Count); 
+	timers->ChangeCompareTimer(Compare, Count);
 }
 
 void R4300i::init_crc()
@@ -140,7 +147,6 @@ void R4300i::init_crc()
 	for(int i = 0; i < 0x1000; i++)
 		memory->write<byte>(*(memory->rom)[i], SP_REGS::begining + i);
 	pc = 0xA4000040;
-	next_interrupt = 624999;
 
 	memory->write<word>(0xBDA807FC, 0x04001004);
 	memory->write<word>(0x3C0DBFC0, 0x04001000);
@@ -304,7 +310,7 @@ void R4300i::init()
 
 	while (running)
 	{
-		if (memory->check_intr || next_interrupt <= Count)
+		if (memory->check_intr)
 		{
 			check_interrupt();
 			memory->check_intr = false;
@@ -315,8 +321,10 @@ void R4300i::init()
 			}
 		}
 		++Count;
-		if ((pc & 0xFFFFFFFF) == 0x80246dd8)
+		if ((pc & 0xFFFFFFFF) == 0x80322DF0)
 			++i;
 		decode(memory->read<word>(pc));
+		if (timers->Timer < 0) 
+			TimerDone();
 	}
 }

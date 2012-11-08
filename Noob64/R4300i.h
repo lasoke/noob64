@@ -72,9 +72,12 @@ public:
 	// sets every bit to 0;
 	void reset();
 	// Check if an interrupt has been triggered
-	void check_interrupt(void);
+	void check_interrupt();
+	// Use to see if a timer is done
+	void TimerDone();
 private:
 	MEMORY	*memory;
+	Timers	*timers;
 
 	// Useful to hack the Crc chip which prevent a fake game from loading
 	void init_crc();
@@ -117,14 +120,12 @@ private:
 	dword	f[32];									// FP General Purpose Registers (FGRs)
 	word	cop0[32];								// Cop0 registers
 	dword	pc;										// Program Counter
-	word	next_interrupt;							// Next interrupt
 	dword	hi, lo;									// Multiply/Divide result
 	word	fcr0, fcr31;							// Floating Point Control Registers
 	bool	ll;										// Load/Link Register
 	bool	delay_slot;								// for branch instructions
 	bool	running;								// Status of the CPU
 	dword	cic_chip;								// To Hack the security of the n64
-	word	skip;									// 
 	//****************************************************************************
 	//** OTHER																	**
 	//****************************************************************************

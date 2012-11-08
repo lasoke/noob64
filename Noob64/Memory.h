@@ -476,12 +476,14 @@ public:
 	inline void setWrLen(word);
 	inline word getStatus()		{ return data.status; };
 	inline void setStatus(word);
+	inline void setSpecialStatus(word);
 	inline word getDmaFull()	{ return data.dma_full; };
 	inline void setDmaFull(word);
 	inline word getDmaBusy()	{ return data.dma_busy; };
 	inline void setDmaBusy(word);
 	inline word getSemaphore()	{ return data.semaphore; };
 	inline void setSemaphore(word);
+	inline void setSpecialSemaphore(word);
 	inline word getPc()			{ return data.pc; };
 	inline void setPc(word);
 	inline word getIbist()		{ return data.ibist; };
@@ -595,12 +597,14 @@ public:
 
 	inline word getInitMode()	{ return data.init_mode; };
 	inline void setInitMode(word);
+	inline void setSpecialInitMode(word);
 	inline word getVersion()	{ return data.version; };
 	inline void setVersion(word);
 	inline word getIntr()		{ return data.intr; };
 	inline void setIntr(word);
 	inline word getIntrMask()	{ return data.intr_mask; };
 	inline void setIntrMask(word);
+	inline void setSpecialIntrMask(word);
 
 private:
 	struct	{
@@ -732,6 +736,7 @@ public:
 		inline void setWrLen(word);
 		inline word getStatus()		{ return data.status; };
 		inline void setStatus(word);
+		inline void setSpecialStatus(word);
 		inline word getBsdDom1Lat()	{ return data.bsd_dom1_lat; };
 		inline void setBsdDom1Lat(word);
 		inline word getBsdDom1Pwd()	{ return data.bsd_dom1_pwd; };
@@ -831,6 +836,7 @@ public:
 	inline void setPifAddrWr64b(word);
 	inline word getStatus()			{ return data.status; };
 	inline void setStatus(word);
+	inline void setSpecialStatus(word);
 
 private:
 	struct	{
@@ -1183,7 +1189,7 @@ inline bool MEMORY::write_in_register(word data, dword address)
 	}
 	else if (address == SP_STATUS_REG)
 	{
-		sp_regs.setStatus(data);
+		sp_regs.setSpecialStatus(data);
 		if (data & SP_SET_SIG0) 
 		{
 			mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_SP);
@@ -1203,7 +1209,7 @@ inline bool MEMORY::write_in_register(word data, dword address)
 	else if (address == SP_DMA_BUSY_REG)
 		sp_regs.setDmaBusy(data);
 	else if (address == SP_SEMAPHORE_REG)
-		sp_regs.setSemaphore(data);
+		sp_regs.setSpecialSemaphore(data);
 	else if (address == SP_PC_REG)
 		sp_regs.setPc(data);
 	else if (address == SP_IBIST_REG)
@@ -1236,13 +1242,13 @@ inline bool MEMORY::write_in_register(word data, dword address)
 		dps_regs.setBufTestData(data);
 
 	else if (address == MI_INIT_MODE_REG)
-		mi_regs.setInitMode(data);
+		mi_regs.setSpecialInitMode(data);
 	else if (address == MI_VERSION_REG)
 		mi_regs.setVersion(data);
 	else if (address == MI_INTR_REG)
 		mi_regs.setIntr(data);
 	else if (address == MI_INTR_MASK_REG)
-		mi_regs.setIntrMask(data);
+		mi_regs.setSpecialIntrMask(data);
 
 	else if (address == VI_STATUS_REG)
 		vi_regs.setStatus(data);
@@ -1373,7 +1379,7 @@ inline bool MEMORY::write_in_register(word data, dword address)
 	}
 	else if (address == SI_STATUS_REG)
 	{
-		si_regs.setStatus(data);
+		si_regs.setSpecialStatus(data);
 		mi_regs.setIntr(mi_regs.getIntr() & ~MI_INTR_SI);
 		check_intr = true;
 	}
@@ -1490,6 +1496,10 @@ inline void SP_REGS::setWrLen(word w)
 }
 inline void SP_REGS::setStatus(word w)
 {
+	data.status = w;
+}
+inline void SP_REGS::setSpecialStatus(word w)
+{
 	if (w & SP_CLR_HALT)
 		data.status &= ~SP_STATUS_HALT;
 	if (w & SP_CLR_BROKE)
@@ -1547,6 +1557,10 @@ inline void SP_REGS::setDmaBusy(word w)
 	data.dma_busy = w;
 }
 inline void SP_REGS::setSemaphore(word w)
+{
+	data.semaphore = w;
+}
+inline void SP_REGS::setSpecialSemaphore(word w)
 {
 	data.semaphore = 0;
 }
@@ -1611,6 +1625,10 @@ inline void DPS_REGS::setBufTestData(word w)
 
 inline void MI_REGS::setInitMode(word w)
 {
+	data.init_mode = w;
+}
+inline void MI_REGS::setSpecialInitMode(word w)
+{
 	if (w & MI_CLR_INIT)
 		data.init_mode &= ~MI_MODE_INIT;
 	if (w & MI_CLR_EBUS)
@@ -1637,6 +1655,10 @@ inline void MI_REGS::setIntr(word w)
 	data.intr = w;
 }
 inline void MI_REGS::setIntrMask(word w)
+{
+	data.intr_mask = w;
+}
+inline void MI_REGS::setSpecialIntrMask(word w)
 {
 	if (w & MI_INTR_MASK_CLR_SP)
 		data.intr_mask &= ~MI_INTR_MASK_SP;
@@ -1847,5 +1869,9 @@ inline void SI_REGS::setPifAddrWr64b(word w)
 	data.pif_addr_wr64b = w;
 }
 inline void SI_REGS::setStatus(word w)
+{
+	data.status = w;
+}
+inline void SI_REGS::setSpecialStatus(word w)
 {
 }

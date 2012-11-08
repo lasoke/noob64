@@ -23,7 +23,6 @@
  */
 
 #include "StdAfx.h"
-#include "Exception.h"
 
 #define UPDATE_REGS()															\
 		EPC = (word) (delay_slot ? pc - 4 : pc);								\

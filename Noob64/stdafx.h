@@ -55,6 +55,7 @@
 #include "Exception.h"
 #include "Helper.h"
 #include "Tlb.h"
+#include "Timers.h"
 #include "R4300i.h"
 #include "Plugin.h"
 #include "Rsp.h"
