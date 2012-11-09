@@ -78,7 +78,6 @@ void R4300i::reset()
 	next_interrupt = 5000;
 
 	interrupt_detected	= false;
-	current_coprocessor = CPU;
 }
 
 void R4300i::init_crc()

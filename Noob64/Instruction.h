@@ -25,57 +25,46 @@
 #pragma once
 
 //extend the negative bit to a dword if 1 in word
-inline dword extend_sign_word(dword d)
-{
-	return d & 0x80000000 ? d |= 0xFFFFFFFF00000000 : d &= 0xFFFFFFFF;
-}
+inline dword extend_sign_word(dword d);
 
 //extend the negative bit to a dword if 1 in halfword
-inline dword extend_sign_halfword(dword d)
-{
-	return d & 0x8000 ? d |= 0xFFFFFFFFFFFF0000 : d &= 0xFFFF;
-}
+inline dword extend_sign_halfword(dword d);
 
 //extend the negative bit to a dword if 1 in byte
-inline dword extend_sign_byte(dword d)
-{
-	return d & 0x80 ? d |= 0xFFFFFFFFFFFFFF00 : d &= 0xFF;
-}
+inline dword extend_sign_byte(dword d);
 
 //getOpCode retreives the Op code from an instruction
-inline int getOpCode(word instr) { return (instr & 0xfc000000) >> 26; }
+inline int getOpCode(word instr);
 
 //getRs retreives the source register from an instruction
-inline int getRs(word instr) { return (instr & 0x3e00000) >> 21; }
+inline int getRs(word instr);
 
 //getRt retreives the target register from an instruction
-inline int getRt(word instr) { return (instr & 0x1F0000) >> 16; }
+inline int getRt(word instr);
 
 //getRd retreives the destination register from an instruction
-inline int getRd(word instr) { return (instr & 0xF800) >> 11; }
+inline int getRd(word instr);
 
 //getSa retreives the shift amount from an instruction
-inline int getSa(word instr) { return (instr & 0x7C0) >> 6; }
+inline int getSa(word instr);
 
 //getFunct retreives the function from the instruction
-inline int getFunct(word instr) {return instr & 0x3F; }
+inline int getFunct(word instr);
 
 //getImmediate retreives the immediate from the instruction
-inline int getImmediate(word instr) { return instr & 0xffff; }
+inline int getImmediate(word instr);
 
 //getTarget retreives the jump target address from the instruction
-inline int getTarget(word instr) { return instr & 0x3ffffff; }
+inline int getTarget(word instr);
 
 //getCond retreives the jump condition from the instruction
-inline int getCond(word instr) { return instr & 0xF; }
+inline int getCond(word instr);
 
 //getNd retreives the nd from the instruction useful for the bc instruction
-inline int getNd(word instr) { return (instr & 0x20000) >> 17; }
+inline int getNd(word instr);
 
 //getTf retreives the tf from the instruction useful for the bc instruction
-inline int getTf(word instr) { return (instr & 0x10000) >> 16; }
+inline int getTf(word instr);
 
 //getNdTf retreives the nd and tf from the instruction useful for the bc instruction
-inline int getNdTf(word instr) { return (instr & 0x30000) >> 16; }
-
-
+inline int getNdTf(word instr);

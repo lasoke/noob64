@@ -22,14 +22,15 @@
  *
  */
 
-#include "StdAfx.h"
+#pragma once
+
 #include "R4300i.h"
 
 //****************************************************************************
 //** DECODE METHODS															**
 //****************************************************************************
 
-void R4300i::decode(const word i)
+inline void R4300i::decode(const word i)
 {
 	switch(getOpCode(i)) {
 	case 0:
@@ -415,8 +416,6 @@ inline void R4300i::decode_i(word i)
 
 inline void R4300i::decode_cop0(word i)
 {
-	current_coprocessor = COP0;
-
 	switch(getRs(i)) {
 	case 0:
 		MFC0(getRt(i), getRd(i));
@@ -430,8 +429,6 @@ inline void R4300i::decode_cop0(word i)
 	default:
 		trigger_address_error(i, true);
 	}
-
-	current_coprocessor = CPU;
 }
 
 inline void R4300i::decode_tlb(word i)
@@ -459,8 +456,6 @@ inline void R4300i::decode_tlb(word i)
 
 inline void R4300i::decode_cop1(const word i)
 {
-	current_coprocessor = COP1;
-
 	switch(getRs(i)) {
 	case 0:
 		MFC1(getRt(i), getRd(i));
@@ -498,8 +493,6 @@ inline void R4300i::decode_cop1(const word i)
 	default:
 		trigger_address_error(i, true);
 	}
-
-	current_coprocessor = CPU;
 }
 
 inline void R4300i::decode_bc1(const word i)
@@ -639,33 +632,6 @@ inline void R4300i::decode_fpu(const word i)
 	}
 }
 
-int R4300i::probe_nop(dword address)
-{
-	word a;
-	address = (word) address;
-	if (address < 0x80000000 || address > 0xc0000000)
-	{
-		if (tlb_lut_r[address >> 12])
-			a = (tlb_lut_r[address >> 12] & 0xFFFFF000) | (address & 0xFFF);
-		else
-			return 0;
-	}
-	else
-		a = (word) address;
-
-	if (a >= 0xa4000000 && a < 0xa4001000)
-	{
-		if (!memory->read<word>(a)) return 1;
-		else return 0;
-	}
-	else if (a >= 0x80000000 && a < 0x80800000)
-	{
-		if (!memory->read<word>(a)) return 1;
-		else return 0;
-	}
-	else return 0;
-}
-
 //****************************************************************************
 //** INSTRUCTIONS															**
 //****************************************************************************
@@ -678,7 +644,7 @@ int R4300i::probe_nop(dword address)
 #	define PRINT(instr)
 #endif
 
-void R4300i::LB(int rt, int immed, int rs)
+inline void R4300i::LB(int rt, int immed, int rs)
 {
 	PRINT_PC("LB " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	r[rt] = extend_sign_byte(memory->read<sbyte>(r[rs] + extend_sign_halfword(immed)));
@@ -686,7 +652,7 @@ void R4300i::LB(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::LBU(int rt, int immed, int rs)
+inline void R4300i::LBU(int rt, int immed, int rs)
 {
 	PRINT_PC("LBU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	r[rt] = memory->read<byte>(r[rs] + extend_sign_halfword(immed));
@@ -694,7 +660,7 @@ void R4300i::LBU(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::LD(int rt, int immed, int rs)
+inline void R4300i::LD(int rt, int immed, int rs)
 {
 	PRINT_PC("LD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	r[rt] = memory->read<dword>(r[rs] + extend_sign_halfword(immed));
@@ -702,7 +668,7 @@ void R4300i::LD(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::LDL(int rt, int immed, int rs)
+inline void R4300i::LDL(int rt, int immed, int rs)
 {
 	PRINT_PC("LDL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	dword tmp = memory->read<dword>(r[rs] + extend_sign_halfword(immed));
@@ -711,7 +677,7 @@ void R4300i::LDL(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::LDR(int rt, int immed, int rs)
+inline void R4300i::LDR(int rt, int immed, int rs)
 {
 	PRINT_PC("LDR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	dword tmp = memory->read<dword>(r[rs] + extend_sign_halfword(immed));
@@ -720,7 +686,7 @@ void R4300i::LDR(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::LH(int rt, int immed, int rs)
+inline void R4300i::LH(int rt, int immed, int rs)
 {
 	PRINT_PC("LH " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	r[rt] = extend_sign_halfword(memory->read<shword>(r[rs] + extend_sign_halfword(immed)));
@@ -728,7 +694,7 @@ void R4300i::LH(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::LHU(int rt, int immed, int rs)
+inline void R4300i::LHU(int rt, int immed, int rs)
 {
 	PRINT_PC("LHU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	r[rt] = memory->read<hword>(r[rs] + extend_sign_halfword(immed));
@@ -736,7 +702,7 @@ void R4300i::LHU(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::LL(int rt, int immed, int rs)
+inline void R4300i::LL(int rt, int immed, int rs)
 {
 	PRINT_PC("LL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	r[rt] = extend_sign_word(memory->read<sword>(r[rs] + extend_sign_halfword(immed)));
@@ -745,7 +711,7 @@ void R4300i::LL(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::LLD(int rt, int immed, int rs)
+inline void R4300i::LLD(int rt, int immed, int rs)
 {
 	PRINT_PC("LLD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	r[rt] = memory->read<sdword>(r[rs] + extend_sign_halfword(immed));
@@ -754,7 +720,7 @@ void R4300i::LLD(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::LW(int rt, int immed, int rs)
+inline void R4300i::LW(int rt, int immed, int rs)
 {
 	PRINT_PC("LW " << dec << "r" << rt << " 0x" << hex << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	r[rt] = extend_sign_word(memory->read<word>(r[rs] + extend_sign_halfword(immed)));
@@ -762,7 +728,7 @@ void R4300i::LW(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::LWL(int rt, int immed, int rs)
+inline void R4300i::LWL(int rt, int immed, int rs)
 {
 	PRINT_PC("LWL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	word tmp = memory->read<word>(r[rs] + extend_sign_halfword(immed));
@@ -772,7 +738,7 @@ void R4300i::LWL(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::LWR(int rt, int immed, int rs)
+inline void R4300i::LWR(int rt, int immed, int rs)
 {
 	PRINT_PC("LWR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	word tmp = memory->read<word>(r[rs] + extend_sign_halfword(immed));
@@ -782,7 +748,7 @@ void R4300i::LWR(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::LWU(int rt, int immed, int rs)
+inline void R4300i::LWU(int rt, int immed, int rs)
 {
 	PRINT_PC("LWU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	r[rt] = memory->read<word>(r[rs] + extend_sign_halfword(immed));
@@ -790,14 +756,14 @@ void R4300i::LWU(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::SB(int rt, int immed, int rs)
+inline void R4300i::SB(int rt, int immed, int rs)
 {
 	PRINT_PC("SB " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	memory->write<byte>(r[rt] & 0xFF, r[rs] + extend_sign_halfword(immed));
 	pc += 4;
 }
 
-void R4300i::SC(int rt, int immed, int rs)
+inline void R4300i::SC(int rt, int immed, int rs)
 {
 	if (ll)
 	{
@@ -811,7 +777,7 @@ void R4300i::SC(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::SCD(int rt, int immed, int rs)
+inline void R4300i::SCD(int rt, int immed, int rs)
 {
 	if (ll)
 	{
@@ -827,14 +793,14 @@ void R4300i::SCD(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::SD(int rt, int immed, int rs)
+inline void R4300i::SD(int rt, int immed, int rs)
 {
 	PRINT_PC("SD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	memory->write<dword>(r[rt], r[rs] + extend_sign_halfword(immed));
 	pc += 4;
 }
 
-void R4300i::SDL(int rt, int immed, int rs)
+inline void R4300i::SDL(int rt, int immed, int rs)
 {
 	dword old_word = 0;
 	PRINT_PC("SDL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
@@ -844,7 +810,7 @@ void R4300i::SDL(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::SDR(int rt, int immed, int rs)
+inline void R4300i::SDR(int rt, int immed, int rs)
 {
 	dword old_word = 0;
 	PRINT_PC("SDR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
@@ -854,21 +820,21 @@ void R4300i::SDR(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::SH(int rt, int immed, int rs)
+inline void R4300i::SH(int rt, int immed, int rs)
 {
 	PRINT_PC("SH " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	memory->write<hword>(r[rt] & 0xFFFF, r[rs] + extend_sign_halfword(immed));
 	pc += 4;
 }
 
-void R4300i::SW(int rt, int immed, int rs)
+inline void R4300i::SW(int rt, int immed, int rs)
 {
 	PRINT_PC("SW " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	memory->write<word>(r[rt] & 0xFFFFFFFF, r[rs] + extend_sign_halfword(immed));
 	pc += 4;
 }
 
-void R4300i::SWL(int rt, int immed, int rs)
+inline void R4300i::SWL(int rt, int immed, int rs)
 {
 	word old_word = 0;
 	PRINT_PC("SWL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
@@ -878,7 +844,7 @@ void R4300i::SWL(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::SWR(int rt, int immed, int rs)
+inline void R4300i::SWR(int rt, int immed, int rs)
 {
 	word old_word = 0;
 	PRINT_PC("SWR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
@@ -888,13 +854,13 @@ void R4300i::SWR(int rt, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::SYNC(void)
+inline void R4300i::SYNC(void)
 {
 	PRINT_PC("SYNC?");
 	pc += 4;
 }
 
-void R4300i::ADD(int rd, int rs, int rt)
+inline void R4300i::ADD(int rd, int rs, int rt)
 {
 #	if defined DEBUG
 		if (!rt) { PRINT_PC("MOVE " << dec << "r" << rd << ", " << dec << "r" << rs); }
@@ -905,7 +871,7 @@ void R4300i::ADD(int rd, int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::ADDI(int rt, int rs, int immed)
+inline void R4300i::ADDI(int rt, int rs, int immed)
 {
 	PRINT_PC("ADDI " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	r[rt] = extend_sign_word(r[rs] + extend_sign_halfword(immed));
@@ -913,7 +879,7 @@ void R4300i::ADDI(int rt, int rs, int immed)
 	pc += 4;
 }
 
-void R4300i::ADDIU(int rt, int rs, int immed)
+inline void R4300i::ADDIU(int rt, int rs, int immed)
 {
 	PRINT_PC("ADDIU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << dec << "[" << dec << "r" << rs << "]");
 	r[rt] = extend_sign_word(r[rs] + extend_sign_halfword(immed));
@@ -921,7 +887,7 @@ void R4300i::ADDIU(int rt, int rs, int immed)
 	pc += 4;
 }
 
-void R4300i::ADDU(int rd, int rs, int rt)
+inline void R4300i::ADDU(int rd, int rs, int rt)
 {
 	PRINT_PC("ADDU " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt);
 	r[rd] = extend_sign_word(r[rs] + r[rt]);
@@ -929,7 +895,7 @@ void R4300i::ADDU(int rd, int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::AND(int rd, int rs, int rt)
+inline void R4300i::AND(int rd, int rs, int rt)
 {
 	PRINT_PC("AND " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt);
 	r[rd] = r[rs] & r[rt];
@@ -937,7 +903,7 @@ void R4300i::AND(int rd, int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::ANDI(int rt, int rs, int immed)
+inline void R4300i::ANDI(int rt, int rs, int immed)
 {
 	PRINT_PC("ANDI " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	r[rt] = r[rs] & immed;
@@ -945,7 +911,7 @@ void R4300i::ANDI(int rt, int rs, int immed)
 	pc += 4;
 }
 
-void R4300i::DADD(int rd, int rs, int rt)
+inline void R4300i::DADD(int rd, int rs, int rt)
 {
 	PRINT_PC("DADD " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt);
 	r[rd] = r[rs] + r[rt];
@@ -953,7 +919,7 @@ void R4300i::DADD(int rd, int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::DADDI(int rt, int rs, int immed)
+inline void R4300i::DADDI(int rt, int rs, int immed)
 {
 	PRINT_PC("DADDI " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	r[rt] = r[rs] + extend_sign_halfword(immed);
@@ -961,7 +927,7 @@ void R4300i::DADDI(int rt, int rs, int immed)
 	pc += 4;
 }
 
-void R4300i::DADDIU(int rt, int rs, int immed)
+inline void R4300i::DADDIU(int rt, int rs, int immed)
 {
 	PRINT_PC("DADDIU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
 	r[rt] = r[rs] + extend_sign_halfword(immed);
@@ -969,7 +935,7 @@ void R4300i::DADDIU(int rt, int rs, int immed)
 	pc += 4;
 }
 
-void R4300i::DADDU(int rd, int rs, int rt)
+inline void R4300i::DADDU(int rd, int rs, int rt)
 {
 	PRINT_PC("DADDU " << dec << "r" << rd << ", " << dec << "r" << rs << " " << dec << "r" << rt);
 	r[rd] = r[rs] + r[rt];
@@ -977,7 +943,7 @@ void R4300i::DADDU(int rd, int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::DDIV(int rs, int rt)
+inline void R4300i::DDIV(int rs, int rt)
 {
 	PRINT_PC("DDIV " << dec << "r" << rs << ", " << dec << "r" << rt);
 	lo = (sdword) r[rs] / (sdword) r[rt];
@@ -986,7 +952,7 @@ void R4300i::DDIV(int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::DDIVU(int rs, int rt)
+inline void R4300i::DDIVU(int rs, int rt)
 {
 	PRINT_PC("DDIVU " << dec << "r" << rs << ", " << dec << "r" << rt);
 	lo = r[rs] / r[rt];
@@ -995,7 +961,7 @@ void R4300i::DDIVU(int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::DIV(int rs, int rt)
+inline void R4300i::DIV(int rs, int rt)
 {
 	PRINT_PC("DIV " << dec << "r" << rs << ", " << dec << "r" << rt);
 	lo = extend_sign_word(r[rs] / r[rt]);
@@ -1004,7 +970,7 @@ void R4300i::DIV(int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::DIVU(int rs, int rt)
+inline void R4300i::DIVU(int rs, int rt)
 {
 	PRINT_PC("DIVU " << dec << "r" << rs << ", " << dec << "r" << rt);
 	lo = extend_sign_word(r[rs] / r[rt]);
@@ -1013,7 +979,7 @@ void R4300i::DIVU(int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::DMULT(int rs, int rt)
+inline void R4300i::DMULT(int rs, int rt)
 {
 	PRINT_PC("DMULT " << dec << "r" << rs << ", " << dec << "r" << rt);
 	dword op1, op2, op3, op4;
@@ -1065,7 +1031,7 @@ void R4300i::DMULT(int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::DMULTU(int rs, int rt)
+inline void R4300i::DMULTU(int rs, int rt)
 {
 	PRINT_PC("DMULTU " << dec << "r" << rs << ", " << dec << "r" << rt);
 	dword op1, op2, op3, op4;
@@ -1093,7 +1059,7 @@ void R4300i::DMULTU(int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::DSLL(int rd, int rt, int sa)
+inline void R4300i::DSLL(int rd, int rt, int sa)
 {
 	PRINT_PC("DSLL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa);
 	r[rd] = r[rt] << sa;
@@ -1101,7 +1067,7 @@ void R4300i::DSLL(int rd, int rt, int sa)
 	pc += 4;
 }
 
-void R4300i::DSLL32(int rd, int rt, int sa)
+inline void R4300i::DSLL32(int rd, int rt, int sa)
 {
 	PRINT_PC("DSLL32 " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa);
 	r[rd] = r[rt] << (sa + 32);
@@ -1109,7 +1075,7 @@ void R4300i::DSLL32(int rd, int rt, int sa)
 	pc += 4;
 }
 
-void R4300i::DSLLV(int rd, int rt, int rs)
+inline void R4300i::DSLLV(int rd, int rt, int rs)
 {
 	PRINT_PC("DSLLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs);
 	r[rd] = r[rt] << r[rs];
@@ -1117,7 +1083,7 @@ void R4300i::DSLLV(int rd, int rt, int rs)
 	pc += 4;
 }
 
-void R4300i::DSRA(int rd, int rt, int sa)
+inline void R4300i::DSRA(int rd, int rt, int sa)
 {
 	PRINT_PC("DSRA " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa);
 	r[rd] = r[rt] >> sa;
@@ -1125,7 +1091,7 @@ void R4300i::DSRA(int rd, int rt, int sa)
 	pc += 4;
 }
 
-void R4300i::DSRA32(int rd, int rt, int sa)
+inline void R4300i::DSRA32(int rd, int rt, int sa)
 {
 	PRINT_PC("DSRA32 " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa);
 	r[rd] = r[rt] >> (sa + 32);
@@ -1133,7 +1099,7 @@ void R4300i::DSRA32(int rd, int rt, int sa)
 	pc += 4;
 }
 
-void R4300i::DSRAV(int rd, int rt, int rs)
+inline void R4300i::DSRAV(int rd, int rt, int rs)
 {
 	PRINT_PC("DSRAV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs);
 	r[rd] = r[rt] >> r[rs];
@@ -1141,7 +1107,7 @@ void R4300i::DSRAV(int rd, int rt, int rs)
 	pc += 4;
 }
 
-void R4300i::DSRL(int rd, int rt, int sa)
+inline void R4300i::DSRL(int rd, int rt, int sa)
 {
 	PRINT_PC("DSRL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa);
 	r[rd] = r[rt] >> sa;
@@ -1149,7 +1115,7 @@ void R4300i::DSRL(int rd, int rt, int sa)
 	pc += 4;
 }
 
-void R4300i::DSRL32(int rd, int rt, int sa)
+inline void R4300i::DSRL32(int rd, int rt, int sa)
 {
 	PRINT_PC("DSRL32 " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa);
 	r[rd] = r[rt] >> (sa + 32);
@@ -1157,7 +1123,7 @@ void R4300i::DSRL32(int rd, int rt, int sa)
 	pc += 4;
 }
 
-void R4300i::DSRLV(int rd, int rt, int rs)
+inline void R4300i::DSRLV(int rd, int rt, int rs)
 {
 	PRINT_PC("DSRLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs);
 	r[rd] = r[rt] >> r[rs];
@@ -1165,7 +1131,7 @@ void R4300i::DSRLV(int rd, int rt, int rs)
 	pc += 4;
 }
 
-void R4300i::DSUB(int rd, int rs, int rt)
+inline void R4300i::DSUB(int rd, int rs, int rt)
 {
 	PRINT_PC("DSUB " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt);
 	r[rd] = (sdword) r[rs] - (sdword) r[rt];
@@ -1173,7 +1139,7 @@ void R4300i::DSUB(int rd, int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::DSUBU(int rd, int rs, int rt)
+inline void R4300i::DSUBU(int rd, int rs, int rt)
 {
 	PRINT_PC("DSUBU " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt);
 	r[rd] = r[rs] - r[rt];
@@ -1181,7 +1147,7 @@ void R4300i::DSUBU(int rd, int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::LUI(int rt, int immed)
+inline void R4300i::LUI(int rt, int immed)
 {
 	PRINT_PC("LUI " << dec << "r" << rt << " 0x" << hex << extend_sign_halfword(immed));
 	r[rt] = extend_sign_word(extend_sign_halfword(immed) << 16);
@@ -1189,7 +1155,7 @@ void R4300i::LUI(int rt, int immed)
 	pc += 4;
 }
 
-void R4300i::MFHI(int rd)
+inline void R4300i::MFHI(int rd)
 {
 	PRINT_PC("MFHI " << dec << "r" << rd);
 	r[rd] = hi;
@@ -1197,7 +1163,7 @@ void R4300i::MFHI(int rd)
 	pc += 4;
 }
 
-void R4300i::MFLO(int rd)
+inline void R4300i::MFLO(int rd)
 {
 	PRINT_PC("MFLO " << dec << "r" << rd);
 	r[rd] = lo;
@@ -1205,7 +1171,7 @@ void R4300i::MFLO(int rd)
 	pc += 4;
 }
 
-void R4300i::MTHI(int rs)
+inline void R4300i::MTHI(int rs)
 {
 	PRINT_PC("MTHI " << dec << "r" << rs);
 	hi = r[rs];
@@ -1213,7 +1179,7 @@ void R4300i::MTHI(int rs)
 	pc += 4;
 }
 
-void R4300i::MTLO(int rs)
+inline void R4300i::MTLO(int rs)
 {
 	PRINT_PC("MTLO " << dec << "r" << rs);
 	lo = r[rs];
@@ -1221,7 +1187,7 @@ void R4300i::MTLO(int rs)
 	pc += 4;
 }
 
-void R4300i::MULT(int rs, int rt)
+inline void R4300i::MULT(int rs, int rt)
 {
 	PRINT_PC("MULT " << dec << "r" << rs << ", " << dec << "r" << rt);
 	sdword temp = r[rs] * r[rt];
@@ -1231,7 +1197,7 @@ void R4300i::MULT(int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::MULTU(int rs, int rt)
+inline void R4300i::MULTU(int rs, int rt)
 {
 	PRINT_PC("DMULTU " << dec << "r" << rs << ", " << dec << "r" << rt);
 	dword temp = r[rs] * r[rt];
@@ -1241,7 +1207,7 @@ void R4300i::MULTU(int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::NOR(int rd, int rs, int rt)
+inline void R4300i::NOR(int rd, int rs, int rt)
 {
 	PRINT_PC("NOR " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt);
 	r[rd] = ~(r[rs] | r[rt]);
@@ -1249,7 +1215,7 @@ void R4300i::NOR(int rd, int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::OR(int rd, int rs, int rt)
+inline void R4300i::OR(int rd, int rs, int rt)
 {
 	PRINT_PC("OR " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt);
 	r[rd] = r[rs] | r[rt];
@@ -1257,7 +1223,7 @@ void R4300i::OR(int rd, int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::ORI(int rt, int rs, int immed)
+inline void R4300i::ORI(int rt, int rs, int immed)
 {
 	PRINT_PC("ORI " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 	r[rt] = r[rs] | immed;
@@ -1265,7 +1231,7 @@ void R4300i::ORI(int rt, int rs, int immed)
 	pc += 4;
 }
 
-void R4300i::SLL(int rd, int rt, int sa)
+inline void R4300i::SLL(int rd, int rt, int sa)
 {
 #	if defined DEBUG
 		if (!rd && !rt && !sa) { PRINT_PC("NOP"); }
@@ -1280,7 +1246,7 @@ void R4300i::SLL(int rd, int rt, int sa)
 	pc += 4;
 }
 
-void R4300i::SLLV(int rd, int rt, int rs)
+inline void R4300i::SLLV(int rd, int rt, int rs)
 {
 	PRINT_PC("SLLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs);
 	r[rd] = extend_sign_word((word) r[rt] << (r[rs]&0x1F));
@@ -1288,7 +1254,7 @@ void R4300i::SLLV(int rd, int rt, int rs)
 	pc += 4;
 }
 
-void R4300i::SLT(int rd, int rs, int rt)
+inline void R4300i::SLT(int rd, int rs, int rt)
 {
 	PRINT_PC("SLT " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt);
 	if ((sword) r[rs] < (sword) r[rt])
@@ -1299,7 +1265,7 @@ void R4300i::SLT(int rd, int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::SLTI(int rt, int rs, int immed)
+inline void R4300i::SLTI(int rt, int rs, int immed)
 {
 	PRINT_PC("SLTI " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 	if ((sword) r[rs] < extend_sign_halfword(immed))
@@ -1310,7 +1276,7 @@ void R4300i::SLTI(int rt, int rs, int immed)
 	pc += 4;
 }
 
-void R4300i::SLTIU(int rt, int rs, int immed)
+inline void R4300i::SLTIU(int rt, int rs, int immed)
 {
 	PRINT_PC("SLTIU " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 	if (r[rs] < extend_sign_halfword(immed))
@@ -1321,7 +1287,7 @@ void R4300i::SLTIU(int rt, int rs, int immed)
 	pc += 4;
 }
 
-void R4300i::SLTU(int rd, int rs, int rt)
+inline void R4300i::SLTU(int rd, int rs, int rt)
 {
 	PRINT_PC("SLTU " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt);
 	if (r[rs] < r[rt])
@@ -1332,7 +1298,7 @@ void R4300i::SLTU(int rd, int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::SRA(int rd, int rt, int sa)
+inline void R4300i::SRA(int rd, int rt, int sa)
 {
 	PRINT_PC("SRA " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa);
 	r[rd] = extend_sign_word((sword) r[rt] >> sa);
@@ -1340,7 +1306,7 @@ void R4300i::SRA(int rd, int rt, int sa)
 	pc += 4;
 }
 
-void R4300i::SRAV(int rd, int rt, int rs)
+inline void R4300i::SRAV(int rd, int rt, int rs)
 {
 	PRINT_PC("SRAV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs);
 	r[rd] = extend_sign_word((sword) r[rt] >> (r[rs]&0x1F));
@@ -1348,7 +1314,7 @@ void R4300i::SRAV(int rd, int rt, int rs)
 	pc += 4;
 }
 
-void R4300i::SRL(int rd, int rt, int sa)
+inline void R4300i::SRL(int rd, int rt, int sa)
 {
 	PRINT_PC("SRL " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa);
 	r[rd] = extend_sign_word((word) r[rt] >> sa);
@@ -1356,7 +1322,7 @@ void R4300i::SRL(int rd, int rt, int sa)
 	pc += 4;
 }
 
-void R4300i::SRLV(int rd, int rt, int rs)
+inline void R4300i::SRLV(int rd, int rt, int rs)
 {
 	PRINT_PC("SRLV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs);
 	r[rd] = extend_sign_word((word) r[rt] >> (r[rs]&0x1F));
@@ -1364,7 +1330,7 @@ void R4300i::SRLV(int rd, int rt, int rs)
 	pc += 4;
 }
 
-void R4300i::SUB(int rd, int rs, int rt)
+inline void R4300i::SUB(int rd, int rs, int rt)
 {
 #	if defined DEBUG
 		if (!rs) { PRINT_PC("NEG " << dec << "r" << rd << " " << dec << "r" << rt); }
@@ -1375,7 +1341,7 @@ void R4300i::SUB(int rd, int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::SUBU(int rd, int rs, int rt)
+inline void R4300i::SUBU(int rd, int rs, int rt)
 {
 #	if defined DEBUG
 		if (!rs) { PRINT_PC("NEGU " << dec << "r" << rd << " " << dec << "r" << rt); }
@@ -1388,7 +1354,7 @@ void R4300i::SUBU(int rd, int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::XOR(int rd, int rs, int rt)
+inline void R4300i::XOR(int rd, int rs, int rt)
 {
 	PRINT_PC("XOR " << dec << "r" << rd << " " << dec << "r" << rs << " " << dec << "r" << rt);
 	r[rd] = r[rs] ^ r[rt];
@@ -1396,7 +1362,7 @@ void R4300i::XOR(int rd, int rs, int rt)
 	pc += 4;
 }
 
-void R4300i::XORI(int rt, int rs, int immed)
+inline void R4300i::XORI(int rt, int rs, int immed)
 {
 	PRINT_PC("XORI " << dec << "r" << rt << " " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 	r[rt] = r[rs] ^ immed;
@@ -1404,7 +1370,7 @@ void R4300i::XORI(int rt, int rs, int immed)
 	pc += 4;
 }
 
-void R4300i::BEQ(int rs, int rt, int immed)
+inline void R4300i::BEQ(int rs, int rt, int immed)
 {
 #	if defined DEBUG
 		if (!rt && !rs) { PRINT_PC("B"); }
@@ -1440,7 +1406,7 @@ void R4300i::BEQ(int rs, int rt, int immed)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 }
 
-void R4300i::BEQL(int rs, int rt, int immed)
+inline void R4300i::BEQL(int rs, int rt, int immed)
 {
 #	if defined DEBUG
 		if (!rt) { PRINT_PC("BEQLZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed)); }
@@ -1480,7 +1446,7 @@ void R4300i::BEQL(int rs, int rt, int immed)
 		pc += 8;
 }
 
-void R4300i::BGEZ(int immed, int rs)
+inline void R4300i::BGEZ(int immed, int rs)
 {
 	PRINT_PC("BGEZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
@@ -1508,7 +1474,7 @@ void R4300i::BGEZ(int immed, int rs)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 }
 
-void R4300i::BGEZAL(int immed, int rs)
+inline void R4300i::BGEZAL(int immed, int rs)
 {
 #	if defined DEBUG
 		if (!rs) { PRINT_PC("BAL"); }
@@ -1540,7 +1506,7 @@ void R4300i::BGEZAL(int immed, int rs)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 }
 
-void R4300i::BGEZALL(int immed, int rs)
+inline void R4300i::BGEZALL(int immed, int rs)
 {
 	PRINT_PC("BGEZALL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
@@ -1573,7 +1539,7 @@ void R4300i::BGEZALL(int immed, int rs)
 		pc += 8;
 }
 
-void R4300i::BGEZL(int immed, int rs)
+inline void R4300i::BGEZL(int immed, int rs)
 {
 	PRINT_PC("BGEZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
@@ -1605,7 +1571,7 @@ void R4300i::BGEZL(int immed, int rs)
 		pc += 8;
 }
 
-void R4300i::BGTZ(int rs, int immed)
+inline void R4300i::BGTZ(int rs, int immed)
 {
 	PRINT_PC("BGTZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
@@ -1637,7 +1603,7 @@ void R4300i::BGTZ(int rs, int immed)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 }
 
-void R4300i::BGTZL(int immed, int rs)
+inline void R4300i::BGTZL(int immed, int rs)
 {
 	PRINT_PC("BGTZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
@@ -1673,7 +1639,7 @@ void R4300i::BGTZL(int immed, int rs)
 		pc += 8;
 }
 
-void R4300i::BLEZ(int rs, int immed)
+inline void R4300i::BLEZ(int rs, int immed)
 {
 	PRINT_PC("BLEZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
@@ -1705,7 +1671,7 @@ void R4300i::BLEZ(int rs, int immed)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 }
 
-void R4300i::BLEZL(int immed, int rs)
+inline void R4300i::BLEZL(int immed, int rs)
 {
 	PRINT_PC("BLEZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
@@ -1741,7 +1707,7 @@ void R4300i::BLEZL(int immed, int rs)
 		pc += 8;
 }
 
-void R4300i::BLTZ(int immed, int rs)
+inline void R4300i::BLTZ(int immed, int rs)
 {
 	PRINT_PC("BLTZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
@@ -1769,7 +1735,7 @@ void R4300i::BLTZ(int immed, int rs)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 }
 
-void R4300i::BLTZAL(int immed, int rs)
+inline void R4300i::BLTZAL(int immed, int rs)
 {
 	PRINT_PC("BLTZAL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
@@ -1798,7 +1764,7 @@ void R4300i::BLTZAL(int immed, int rs)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 }
 
-void R4300i::BLTZALL(int immed, int rs)
+inline void R4300i::BLTZALL(int immed, int rs)
 {
 	PRINT_PC("BLTZALL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
@@ -1831,7 +1797,7 @@ void R4300i::BLTZALL(int immed, int rs)
 		pc += 8;
 }
 
-void R4300i::BLTZL(int immed, int rs)
+inline void R4300i::BLTZL(int immed, int rs)
 {
 	PRINT_PC("BLTZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
@@ -1863,7 +1829,7 @@ void R4300i::BLTZL(int immed, int rs)
 		pc += 8;
 }
 
-void R4300i::BNE(int rs, int rt, int immed)
+inline void R4300i::BNE(int rs, int rt, int immed)
 {
 #	if defined DEBUG
 		if (!rt) { PRINT_PC("BNEZ " << dec << "r" << rs << " 0x" << hex << extend_sign_halfword(immed)); }
@@ -1899,7 +1865,7 @@ void R4300i::BNE(int rs, int rt, int immed)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 }
 
-void R4300i::BNEL(int rs, int rt, int immed)
+inline void R4300i::BNEL(int rs, int rt, int immed)
 {
 #	if defined DEBUG
 		if (!rt) { PRINT_PC("BNELZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed)); }
@@ -1939,7 +1905,7 @@ void R4300i::BNEL(int rs, int rt, int immed)
 		pc += 8;
 }
 
-void R4300i::J(int address)
+inline void R4300i::J(int address)
 {
 	PRINT_PC("J " << address);
 
@@ -1966,7 +1932,7 @@ void R4300i::J(int address)
 	pc = (pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2);
 }
 
-void R4300i::JAL(int address)
+inline void R4300i::JAL(int address)
 {
 	PRINT_PC("JAL " << address);
 	if (((pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2)) == pc)
@@ -1993,7 +1959,7 @@ void R4300i::JAL(int address)
 	pc = (pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2);
 }
 
-void R4300i::JALR(int rs, int rd)
+inline void R4300i::JALR(int rs, int rd)
 {
 	PRINT_PC("JALR " << dec << "r" << rs << " " << dec << "r" << rd);
 
@@ -2022,7 +1988,7 @@ void R4300i::JALR(int rs, int rd)
 	pc = local_rs;
 }
 
-void R4300i::JR(int rs)
+inline void R4300i::JR(int rs)
 {
 	PRINT_PC("JR " << dec << "r" << rs);
 
@@ -2050,91 +2016,91 @@ void R4300i::JR(int rs)
 	pc = local_rs;
 }
 
-void R4300i::BREAK(int immed)
+inline void R4300i::BREAK(int immed)
 {
 	PRINT_PC("SYSCALL " << extend_sign_halfword(immed));
 	trigger_break_exception();
 }
 
-void R4300i::SYSCALL(int immed)
+inline void R4300i::SYSCALL(int immed)
 {
 	PRINT_PC("SYSCALL " << hex << "0x" << extend_sign_halfword(immed));
 	trigger_syscall_exception();
 }
 
-void R4300i::TEQ(int rs, int rt)
+inline void R4300i::TEQ(int rs, int rt)
 {
 	PRINT_PC("TEQ " << dec << "r" << rs << " " << dec << "r" << rt);
 	pc += 4;
 }
 
-void R4300i::TEQI(int rs, int immed)
+inline void R4300i::TEQI(int rs, int immed)
 {
 	PRINT_PC("TEQI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 	pc += 4;
 }
 
-void R4300i::TGE(int rs, int rt)
+inline void R4300i::TGE(int rs, int rt)
 {
 	PRINT_PC("TGE " << dec << "r" << rs << " " << dec << "r" << rt);
 	pc += 4;
 }
 
-void R4300i::TGEI(int rs, int immed)
+inline void R4300i::TGEI(int rs, int immed)
 {
 	PRINT_PC("TGEI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 	pc += 4;
 }
 
-void R4300i::TGEIU(int rs, int immed)
+inline void R4300i::TGEIU(int rs, int immed)
 {
 	PRINT_PC("TGEIU " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 	pc += 4;
 }
 
-void R4300i::TGEU(int rs, int rt)
+inline void R4300i::TGEU(int rs, int rt)
 {
 	PRINT_PC("TGEU " << dec << "r" << rs << " " << dec << "r" << rt);
 	pc += 4;
 }
 
-void R4300i::TLT(int rs, int rt)
+inline void R4300i::TLT(int rs, int rt)
 {
 	PRINT_PC("TLT " << dec << "r" << rs << " " << dec << "r" << rt);
 	pc += 4;
 }
 
-void R4300i::TLTI(int rs, int immed)
+inline void R4300i::TLTI(int rs, int immed)
 {
 	PRINT_PC("TLTI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 	pc += 4;
 }
 
-void R4300i::TLTIU(int rs, int immed)
+inline void R4300i::TLTIU(int rs, int immed)
 {
 	PRINT_PC("TLTIU " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 	pc += 4;
 }
 
-void R4300i::TLTU(int rs, int rt)
+inline void R4300i::TLTU(int rs, int rt)
 {
 	PRINT_PC("TLTU " << dec << "r" << rs << " " << dec << "r" << rt);
 	pc += 4;
 }
 
-void R4300i::TNE(int rs, int rt)
+inline void R4300i::TNE(int rs, int rt)
 {
 	PRINT_PC("TNE " << dec << "r" << rs << " " << dec << "r" << rt);
 	pc += 4;
 }
 
-void R4300i::TNEI(int rs, int immed)
+inline void R4300i::TNEI(int rs, int immed)
 {
 	PRINT_PC("TNEI " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 	pc += 4;
 }
 
-void R4300i::CACHE(int rt, int immed, int rs)
+inline void R4300i::CACHE(int rt, int immed, int rs)
 {
 	PRINT_PC("CACHE " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
 	pc += 4;
@@ -2142,7 +2108,7 @@ void R4300i::CACHE(int rt, int immed, int rs)
 
 int jump_marker = 0;
 
-void R4300i::ERET(void)
+inline void R4300i::ERET(void)
 {
 	++Count;
 	PRINT_PC("ERET");
@@ -2159,7 +2125,7 @@ void R4300i::ERET(void)
 //	check_interupt();
 }
 
-void R4300i::MFC0(int rt, int fs)
+inline void R4300i::MFC0(int rt, int fs)
 {
 	PRINT_PC("MFC0 " << dec << "r" << rt << " " << dec << "cop0" << fs);
 	r[rt] = extend_sign_word(cop0[fs]);
@@ -2167,7 +2133,7 @@ void R4300i::MFC0(int rt, int fs)
 	pc += 4;
 }
 
-void R4300i::MTC0(int rt, int fs)
+inline void R4300i::MTC0(int rt, int fs)
 {
 	PRINT_PC("MTC0 " << dec << "r" << rt << " " << dec << "cop0" << fs);
 
@@ -2251,7 +2217,7 @@ void R4300i::MTC0(int rt, int fs)
 	pc += 4;
 }
 
-void R4300i::TLBP(void)
+inline void R4300i::TLBP(void)
 {
 	PRINT_PC("TLBP");
 //	int i;
@@ -2271,7 +2237,7 @@ void R4300i::TLBP(void)
 	pc += 4;
 }
 
-void R4300i::TLBR(void)
+inline void R4300i::TLBR(void)
 {  
 	PRINT_PC("TLBR");
 	int index;
@@ -2287,7 +2253,7 @@ void R4300i::TLBR(void)
 	pc += 4;
 }
 
-void R4300i::TLBWI(void)
+inline void R4300i::TLBWI(void)
 {
 	PRINT_PC("TLBWI");
 	unsigned int i;
@@ -2372,7 +2338,7 @@ void R4300i::TLBWI(void)
 	pc += 4;
 }
 
-void R4300i::TLBWR(void)
+inline void R4300i::TLBWR(void)
 {
 	PRINT_PC("TLBWR");
 	unsigned int i;
@@ -2460,7 +2426,7 @@ void R4300i::TLBWR(void)
 }
 
 template<typename Type>
-void R4300i::ABS(int fd, int fs)
+inline void R4300i::ABS(int fd, int fs)
 {
 	PRINT_PC("ABS " << dec << "f" << fd << " " << dec << "f" << fs);
 	f[fd] = (dword) abs((Type) f[fs]);
@@ -2469,7 +2435,7 @@ void R4300i::ABS(int fd, int fs)
 }
 
 template<typename Type>
-void R4300i::ADD(int fd, int fs, int ft)
+inline void R4300i::ADD(int fd, int fs, int ft)
 {
 	PRINT_PC("ADD " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
 	f[fd] = (dword) ((Type) f[fs] + (Type) f[ft]);
@@ -2477,7 +2443,7 @@ void R4300i::ADD(int fd, int fs, int ft)
 	pc += 4;
 }
 
-void R4300i::BC1F(int immed)
+inline void R4300i::BC1F(int immed)
 {
 	PRINT_PC("BC1F " << hex << "0x" << extend_sign_halfword(immed));
 	dword pc_tmp = pc + extend_sign_halfword(immed);
@@ -2494,7 +2460,7 @@ void R4300i::BC1F(int immed)
 		
 }
 
-void R4300i::BC1FL(int immed)
+inline void R4300i::BC1FL(int immed)
 {
 	PRINT_PC("BC1FL " << hex << "0x" << extend_sign_halfword(immed));
 	dword pc_tmp = pc + extend_sign_halfword(immed);
@@ -2511,7 +2477,7 @@ void R4300i::BC1FL(int immed)
 		
 }
 
-void R4300i::BC1T(int immed)
+inline void R4300i::BC1T(int immed)
 {
 	PRINT_PC("BC1T " << hex << "0x" << extend_sign_halfword(immed));
 	dword pc_tmp = pc + extend_sign_halfword(immed);
@@ -2528,7 +2494,7 @@ void R4300i::BC1T(int immed)
 		
 }
 
-void R4300i::BC1TL(int immed)
+inline void R4300i::BC1TL(int immed)
 {
 	PRINT_PC("BC1TL " << hex << "0x" << extend_sign_halfword(immed));
 	dword pc_tmp = pc + extend_sign_halfword(immed);
@@ -2544,7 +2510,7 @@ void R4300i::BC1TL(int immed)
 }
 
 template<typename Type>
-void R4300i::C(int fs, int ft, int cond)
+inline void R4300i::C(int fs, int ft, int cond)
 {
 	PRINT_PC("C " << dec << "f" << fs << " " << dec << "f" << ft << " " << dec << "cond " << cond);
 	switch (cond) {
@@ -2604,7 +2570,7 @@ void R4300i::C(int fs, int ft, int cond)
 }
 
 template<typename Type, typename toType>
-void R4300i::CEIL(int fd, int fs)
+inline void R4300i::CEIL(int fd, int fs)
 {
 	PRINT_PC("CEIL " << dec << "f" << fd << " " << dec << "f" << fs);
 	f[fd] = (toType) ((Type) f[fs]);
@@ -2612,7 +2578,7 @@ void R4300i::CEIL(int fd, int fs)
 	pc += 4;
 }
 
-void R4300i::CFC1(int rt, int fs)
+inline void R4300i::CFC1(int rt, int fs)
 {
 	PRINT_PC("CFC1 " << dec << "r" << rt << " " << dec << "f" << fs);
 	if (fs == 0)
@@ -2623,7 +2589,7 @@ void R4300i::CFC1(int rt, int fs)
 	pc += 4;
 }
 
-void R4300i::CTC1(int rt, int fs)
+inline void R4300i::CTC1(int rt, int fs)
 {
 	PRINT_PC("CTC1 " << dec << "r" << rt << " " << dec << "f" << fs);
 	if (fs == 0)
@@ -2635,7 +2601,7 @@ void R4300i::CTC1(int rt, int fs)
 }
 
 template<typename Type, typename toType>
-void R4300i::CVT(int fd, int fs)
+inline void R4300i::CVT(int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
 	f[fd] = (dword) ((toType) ((Type) f[fs]));
@@ -2644,7 +2610,7 @@ void R4300i::CVT(int fd, int fs)
 }
 
 template<typename Type>
-void R4300i::DIV(int fd, int fs, int ft)
+inline void R4300i::DIV(int fd, int fs, int ft)
 {
 	PRINT_PC("DIV " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
 	f[fd] = (dword) ((Type) f[fs] / (Type) f[ft]);
@@ -2652,7 +2618,7 @@ void R4300i::DIV(int fd, int fs, int ft)
 	pc += 4;
 }
 
-void R4300i::DMFC1(int rt, int fs)
+inline void R4300i::DMFC1(int rt, int fs)
 {
 	PRINT_PC("DMFC1 " << dec << "r" << rt << " " << dec << "f" << fs);
 	r[rt] = f[fs];
@@ -2660,7 +2626,7 @@ void R4300i::DMFC1(int rt, int fs)
 	pc += 4;
 }
 
-void R4300i::DMTC1(int rt, int fs)
+inline void R4300i::DMTC1(int rt, int fs)
 {
 	PRINT_PC("DMTC1 " << dec << "r" << rt << " " << dec << "f" << fs);
 	f[fs] = r[rt];
@@ -2669,7 +2635,7 @@ void R4300i::DMTC1(int rt, int fs)
 }
 
 template<typename Type, typename toType>
-void R4300i::FLOOR(int fd, int fs)
+inline void R4300i::FLOOR(int fd, int fs)
 {
 	PRINT_PC("FLOOR " << dec << "f" << fd << " " << dec << "f" << fs);
 	f[fd] = (toType) ((Type) f[fs]);
@@ -2677,7 +2643,7 @@ void R4300i::FLOOR(int fd, int fs)
 	pc += 4;
 }
 
-void R4300i::LDC1(int ft, int immed, int rs)
+inline void R4300i::LDC1(int ft, int immed, int rs)
 {
 	PRINT_PC("LDC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
 	f[ft] = memory->read<dword>(r[rs] + extend_sign_halfword(immed) * sizeof(dword));
@@ -2685,7 +2651,7 @@ void R4300i::LDC1(int ft, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::LWC1(int ft, int immed, int rs)
+inline void R4300i::LWC1(int ft, int immed, int rs)
 {
 	PRINT_PC("LWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
 	f[ft] = memory->read<word>(r[rs] + extend_sign_halfword(immed));
@@ -2693,7 +2659,7 @@ void R4300i::LWC1(int ft, int immed, int rs)
 	pc += 4;
 }
 
-void R4300i::MFC1(int rt, int fs)
+inline void R4300i::MFC1(int rt, int fs)
 {
 	PRINT_PC("MFC1 " << dec << "r" << rt << " " << dec << "f" << fs);
 	r[rt] = extend_sign_word(f[fs]);
@@ -2702,7 +2668,7 @@ void R4300i::MFC1(int rt, int fs)
 }
 
 template<typename Type>
-void R4300i::MOV(int fd, int fs)
+inline void R4300i::MOV(int fd, int fs)
 {
 	PRINT_PC("MOV " << dec << "f" << fd << " " << dec << "f" << fs);
 	f[fd] = (dword) ((Type) f[fs]);
@@ -2710,7 +2676,7 @@ void R4300i::MOV(int fd, int fs)
 	pc += 4;
 }
 
-void R4300i::MTC1(int rt, int fs)
+inline void R4300i::MTC1(int rt, int fs)
 {
 	PRINT_PC("MTC1 " << dec << "r" << rt << " " << dec << "f" << fs);
 	f[fs] = r[rt] & 0xFFFFFFFF;
@@ -2719,7 +2685,7 @@ void R4300i::MTC1(int rt, int fs)
 }
 
 template<typename Type>
-void R4300i::MUL(int fd, int fs, int ft)
+inline void R4300i::MUL(int fd, int fs, int ft)
 {
 	PRINT_PC("MUL " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
 	f[fd] = (dword) ((Type) f[fs] * (Type) f[ft]);
@@ -2728,7 +2694,7 @@ void R4300i::MUL(int fd, int fs, int ft)
 }
 
 template<typename Type>
-void R4300i::NEG(int fd, int fs)
+inline void R4300i::NEG(int fd, int fs)
 {
 	PRINT_PC("NEG " << dec << "f" << fd << " " << dec << "f" << fs);
 	f[fd] = (dword) (- (Type) f[fs]);
@@ -2737,7 +2703,7 @@ void R4300i::NEG(int fd, int fs)
 }
 
 template<typename Type, typename toType>
-void R4300i::ROUND(int fd, int fs)
+inline void R4300i::ROUND(int fd, int fs)
 {
 	PRINT_PC("ROUND " << dec << "f" << fd << " " << dec << "f" << fs);
 	f[fd] = (toType) ((Type) f[fs]);
@@ -2745,7 +2711,7 @@ void R4300i::ROUND(int fd, int fs)
 	pc += 4;
 }
 
-void R4300i::SDC1(int ft, int immed, int rs)
+inline void R4300i::SDC1(int ft, int immed, int rs)
 {
 	PRINT_PC("SDC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
 	memory->write<dword>(f[ft], r[rs] + extend_sign_halfword(immed) * sizeof(dword));
@@ -2753,7 +2719,7 @@ void R4300i::SDC1(int ft, int immed, int rs)
 }
 
 template<>
-void R4300i::SQRT<w>(int fd, int fs)
+inline void R4300i::SQRT<w>(int fd, int fs)
 {
 	PRINT_PC("SQRT " << dec << "f" << fd << " " << dec << "f" << fs);
 	f[fd] = (dword) sqrt((double)f[fs]);
@@ -2762,7 +2728,7 @@ void R4300i::SQRT<w>(int fd, int fs)
 }
 
 template<>
-void R4300i::SQRT<l>(int fd, int fs)
+inline void R4300i::SQRT<l>(int fd, int fs)
 {
 	PRINT_PC("SQRT " << dec << "f" << fd << " " << dec << "f" << fs);
 	f[fd] = (dword) sqrt((double)f[fs]);
@@ -2771,7 +2737,7 @@ void R4300i::SQRT<l>(int fd, int fs)
 }
 
 template<typename Type>
-void R4300i::SQRT(int fd, int fs)
+inline void R4300i::SQRT(int fd, int fs)
 {
 	PRINT_PC("SQRT " << dec << "f" << fd << " " << dec << "f" << fs);
 	f[fd] = (dword) sqrt((Type)f[fs]);
@@ -2780,7 +2746,7 @@ void R4300i::SQRT(int fd, int fs)
 }
 
 template<typename Type>
-void R4300i::SUB(int fd, int fs, int ft)
+inline void R4300i::SUB(int fd, int fs, int ft)
 {
 	PRINT_PC("SUB " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
 	f[fd] = (dword) ((Type) f[fs] - (Type) f[ft]);
@@ -2788,7 +2754,7 @@ void R4300i::SUB(int fd, int fs, int ft)
 	pc += 4;
 }
 
-void R4300i::SWC1(int ft, int immed, int rs)
+inline void R4300i::SWC1(int ft, int immed, int rs)
 {
 	PRINT_PC("SWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
 	memory->write<word>((word) f[ft], (r[rs] + extend_sign_halfword(immed) & 0xFFFFFFFF));
@@ -2796,7 +2762,7 @@ void R4300i::SWC1(int ft, int immed, int rs)
 }
 
 template<typename Type, typename toType>
-void R4300i::TRUNC(int fd, int fs)
+inline void R4300i::TRUNC(int fd, int fs)
 {
 	PRINT_PC("TRUNC " << dec << "f" << fd << " " << dec << "f" << fs);
 	f[fd] = (toType) ((Type) f[fs]);
@@ -2805,13 +2771,13 @@ void R4300i::TRUNC(int fd, int fs)
 }
 
 template<typename Type>
-void R4300i::F(Type a, Type b)
+inline void R4300i::F(Type a, Type b)
 {
 	fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-void R4300i::UN(Type a, Type b)
+inline void R4300i::UN(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 		fcr31 |= 0x800000;
@@ -2820,7 +2786,7 @@ void R4300i::UN(Type a, Type b)
 }
 
 template<typename Type>
-void R4300i::EQ(Type a, Type b)
+inline void R4300i::EQ(Type a, Type b)
 {
 	if (!_isnan((double) a) && !_isnan((double) b) && a == b)
 		fcr31 |= 0x800000;
@@ -2829,7 +2795,7 @@ void R4300i::EQ(Type a, Type b)
 }
 
 template<typename Type>
-void R4300i::UEQ(Type a, Type b)
+inline void R4300i::UEQ(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b) || a == b)
 		fcr31 |= 0x800000;
@@ -2838,7 +2804,7 @@ void R4300i::UEQ(Type a, Type b)
 }
 
 template<typename Type>
-void R4300i::OLT(Type a, Type b)
+inline void R4300i::OLT(Type a, Type b)
 {
 	if (!_isnan((double) a) && !_isnan((double) b) && a < b)
 		fcr31 |= 0x800000;
@@ -2847,7 +2813,7 @@ void R4300i::OLT(Type a, Type b)
 }
 
 template<typename Type>
-void R4300i::ULT(Type a, Type b)
+inline void R4300i::ULT(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b) || a < b)
 		fcr31 |= 0x800000;
@@ -2856,7 +2822,7 @@ void R4300i::ULT(Type a, Type b)
 }
 
 template<typename Type>
-void R4300i::OLE(Type a, Type b)
+inline void R4300i::OLE(Type a, Type b)
 {
 	if (!_isnan((double) a) && !_isnan((double) b) && a <= b)
 		fcr31 |= 0x800000;
@@ -2865,7 +2831,7 @@ void R4300i::OLE(Type a, Type b)
 }
 
 template<typename Type>
-void R4300i::ULE(Type a, Type b)
+inline void R4300i::ULE(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b) || a <= b)
 		fcr31 |= 0x800000;
@@ -2874,7 +2840,7 @@ void R4300i::ULE(Type a, Type b)
 }
 
 template<typename Type>
-void R4300i::SF(Type a, Type b)
+inline void R4300i::SF(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
@@ -2884,7 +2850,7 @@ void R4300i::SF(Type a, Type b)
 }
 
 template<typename Type>
-void R4300i::NGLE(Type a, Type b)
+inline void R4300i::NGLE(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
@@ -2895,7 +2861,7 @@ void R4300i::NGLE(Type a, Type b)
 
 
 template<typename Type>
-void R4300i::SEQ(Type a, Type b)
+inline void R4300i::SEQ(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
@@ -2908,7 +2874,7 @@ void R4300i::SEQ(Type a, Type b)
 }
 
 template<typename Type>
-void R4300i::NGL(Type a, Type b)
+inline void R4300i::NGL(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
@@ -2921,7 +2887,7 @@ void R4300i::NGL(Type a, Type b)
 }
 
 template<typename Type>
-void R4300i::LT(Type a, Type b)
+inline void R4300i::LT(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
@@ -2934,7 +2900,7 @@ void R4300i::LT(Type a, Type b)
 }
 
 template<typename Type>
-void R4300i::NGE(Type a, Type b)
+inline void R4300i::NGE(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
@@ -2947,7 +2913,7 @@ void R4300i::NGE(Type a, Type b)
 }
 
 template<typename Type>
-void R4300i::LE(Type a, Type b)
+inline void R4300i::LE(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
@@ -2960,7 +2926,7 @@ void R4300i::LE(Type a, Type b)
 }
 
 template<typename Type>
-void R4300i::NGT(Type a, Type b)
+inline void R4300i::NGT(Type a, Type b)
 {
 	if (_isnan((double) a) || _isnan((double) b))
 	{
@@ -2970,4 +2936,26 @@ void R4300i::NGT(Type a, Type b)
 		fcr31 |= 0x800000;
 	else
 		fcr31 &= ~0x800000;
+}
+
+inline int R4300i::probe_nop(dword address)
+{
+	word a;
+	address = (word) address;
+	if (address < 0x80000000 || address > 0xc0000000)
+	{
+		if (tlb_lut_r[address >> 12])
+			a = (tlb_lut_r[address >> 12] & 0xFFFFF000) | (address & 0xFFF);
+		else
+			return 0;
+	}
+	else
+		a = (word) address;
+
+	if ((a >= 0xa4000000 && a < 0xa4001000) || (a >= 0x80000000 && a < 0x80800000))
+	{
+		if (!memory->read<word>(a)) return 1;
+		else return 0;
+	}
+	else return 0;
 }

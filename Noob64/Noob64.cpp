@@ -53,7 +53,7 @@ void inline enableConsole()
 }
 
 wstring rsp_path = _T("C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll");
-wstring gfx_path = _T("E:\\Documents\\Games\\Project 64 1.7.0.9\\Plugin\\GFX\\Jabo_Direct3D8.dll");
+wstring gfx_path = _T("C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\CFB Plugin\\Plugin\\CFB.dll");
 string  rom_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
 
 HANDLE emuThread;
@@ -72,6 +72,7 @@ DWORD WINAPI boot(LPVOID lpParameter)
 
 	rsp->init(mem);							// Initializes the RSP plugin
 	gfx->init(mem);							// Initializes the GFX plugin
+
 	cpu->init();							// Initializes the CPU and actually boots the ROM
 
 	return 0;
