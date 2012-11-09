@@ -590,19 +590,19 @@ inline void MI_REGS::setVersion(word w)			{ data.version = w; }
 inline void MI_REGS::setIntr(word w)			{ data.intr = w; }
 inline void MI_REGS::setIntrMask(word w)
 {
-	if (w & MI_INTR_MASK_CLR_SP)		data.intr_mask &= ~MI_INTR_MASK_SP;
-	if (w & MI_INTR_MASK_CLR_SI)		data.intr_mask &= ~MI_INTR_MASK_SI;
-	if (w & MI_INTR_MASK_CLR_AI)		data.intr_mask &= ~MI_INTR_MASK_AI;
-	if (w & MI_INTR_MASK_CLR_VI)		data.intr_mask &= ~MI_INTR_MASK_VI;
-	if (w & MI_INTR_MASK_CLR_PI)		data.intr_mask &= ~MI_INTR_MASK_PI;
-	if (w & MI_INTR_MASK_CLR_DP)		data.intr_mask &= ~MI_INTR_MASK_DP;
+	if (w & MI_INTR_MASK_CLR_SP) data.intr_mask &= ~MI_INTR_MASK_SP;
+	if (w & MI_INTR_MASK_CLR_SI) data.intr_mask &= ~MI_INTR_MASK_SI;
+	if (w & MI_INTR_MASK_CLR_AI) data.intr_mask &= ~MI_INTR_MASK_AI;
+	if (w & MI_INTR_MASK_CLR_VI) data.intr_mask &= ~MI_INTR_MASK_VI;
+	if (w & MI_INTR_MASK_CLR_PI) data.intr_mask &= ~MI_INTR_MASK_PI;
+	if (w & MI_INTR_MASK_CLR_DP) data.intr_mask &= ~MI_INTR_MASK_DP;
 
-	if (w & MI_INTR_MASK_SET_SP)		data.intr_mask |= MI_INTR_MASK_SP;
-	if (w & MI_INTR_MASK_SET_SI)		data.intr_mask |= MI_INTR_MASK_SI;
-	if (w & MI_INTR_MASK_SET_AI)		data.intr_mask |= MI_INTR_MASK_AI;
-	if (w & MI_INTR_MASK_SET_VI)		data.intr_mask |= MI_INTR_MASK_VI;
-	if (w & MI_INTR_MASK_SET_PI)		data.intr_mask |= MI_INTR_MASK_PI;
-	if (w & MI_INTR_MASK_SET_DP)		data.intr_mask |= MI_INTR_MASK_DP;
+	if (w & MI_INTR_MASK_SET_SP) data.intr_mask |= MI_INTR_MASK_SP;
+	if (w & MI_INTR_MASK_SET_SI) data.intr_mask |= MI_INTR_MASK_SI;
+	if (w & MI_INTR_MASK_SET_AI) data.intr_mask |= MI_INTR_MASK_AI;
+	if (w & MI_INTR_MASK_SET_VI) data.intr_mask |= MI_INTR_MASK_VI;
+	if (w & MI_INTR_MASK_SET_PI) data.intr_mask |= MI_INTR_MASK_PI;
+	if (w & MI_INTR_MASK_SET_DP) data.intr_mask |= MI_INTR_MASK_DP;
 }
 
 inline void VI_REGS::setStatus(word w)
@@ -671,95 +671,95 @@ inline void SI_REGS::setStatus(word w)			{ /*TODO*/ }
 //** GET METHODS					                                        **
 //****************************************************************************
 
-inline word RDRAM_REGS::getConfig()			{ return data.config; }
-inline word RDRAM_REGS::getDeviceId()		{ return data.device_id; }
-inline word RDRAM_REGS::getDelay()			{ return data.delay; }
-inline word RDRAM_REGS::getMode()			{ return data.mode; }
-inline word RDRAM_REGS::getRefInterval()	{ return data.ref_interval; }
-inline word RDRAM_REGS::getRefRow()			{ return data.ref_row; }
-inline word RDRAM_REGS::getRasInterval()	{ return data.ras_interval; }
-inline word RDRAM_REGS::getMinInterval()	{ return data.min_interval; }
-inline word RDRAM_REGS::getAddrSelect()		{ return data.addr_select; }
-inline word RDRAM_REGS::getDeviceManuf()	{ return data.device_manuf; }
+inline word RDRAM_REGS::getConfig()				{ return data.config; }
+inline word RDRAM_REGS::getDeviceId()			{ return data.device_id; }
+inline word RDRAM_REGS::getDelay()				{ return data.delay; }
+inline word RDRAM_REGS::getMode()				{ return data.mode; }
+inline word RDRAM_REGS::getRefInterval()		{ return data.ref_interval; }
+inline word RDRAM_REGS::getRefRow()				{ return data.ref_row; }
+inline word RDRAM_REGS::getRasInterval()		{ return data.ras_interval; }
+inline word RDRAM_REGS::getMinInterval()		{ return data.min_interval; }
+inline word RDRAM_REGS::getAddrSelect()			{ return data.addr_select; }
+inline word RDRAM_REGS::getDeviceManuf()		{ return data.device_manuf; }
 
-inline byte* SP_REGS::getDmem()				{ return data.dmem; }
-inline byte* SP_REGS::getImem()				{ return data.imem; }
-inline word SP_REGS::getMemAddr()			{ return data.mem_addr; }
-inline word SP_REGS::getDramAddr()			{ return data.dram_addr; }
-inline word SP_REGS::getRdLen()				{ return data.rd_len; }
-inline word SP_REGS::getWrLen()				{ return data.wr_len; }
-inline word SP_REGS::getStatus()			{ return data.status; }
-inline word SP_REGS::getDmaFull()			{ return data.dma_full; }
-inline word SP_REGS::getDmaBusy()			{ return data.dma_busy; }
-inline word SP_REGS::getSemaphore()			{ return data.semaphore; }
-inline word SP_REGS::getPc()				{ return data.pc; }
-inline word SP_REGS::getIbist()				{ return data.ibist; }
+inline byte* SP_REGS::getDmem()					{ return data.dmem; }
+inline byte* SP_REGS::getImem()					{ return data.imem; }
+inline word SP_REGS::getMemAddr()				{ return data.mem_addr; }
+inline word SP_REGS::getDramAddr()				{ return data.dram_addr; }
+inline word SP_REGS::getRdLen()					{ return data.rd_len; }
+inline word SP_REGS::getWrLen()					{ return data.wr_len; }
+inline word SP_REGS::getStatus()				{ return data.status; }
+inline word SP_REGS::getDmaFull()				{ return data.dma_full; }
+inline word SP_REGS::getDmaBusy()				{ return data.dma_busy; }
+inline word SP_REGS::getSemaphore()				{ return data.semaphore; }
+inline word SP_REGS::getPc()					{ return data.pc; }
+inline word SP_REGS::getIbist()					{ return data.ibist; }
 
-inline word DPC_REGS::getStart()			{ return data.start; }
-inline word DPC_REGS::getEnd()				{ return data.end; }
-inline word DPC_REGS::getCurrent()			{ return data.current; }
-inline word DPC_REGS::getStatus()			{ return data.status; }
-inline word DPC_REGS::getClock()			{ return data.clock; }
-inline word DPC_REGS::getBufBusy()			{ return data.bufbusy; }
-inline word DPC_REGS::getPipeBusy()			{ return data.pipebusy; }
-inline word DPC_REGS::getTmem()				{ return data.tmem; }
+inline word DPC_REGS::getStart()				{ return data.start; }
+inline word DPC_REGS::getEnd()					{ return data.end; }
+inline word DPC_REGS::getCurrent()				{ return data.current; }
+inline word DPC_REGS::getStatus()				{ return data.status; }
+inline word DPC_REGS::getClock()				{ return data.clock; }
+inline word DPC_REGS::getBufBusy()				{ return data.bufbusy; }
+inline word DPC_REGS::getPipeBusy()				{ return data.pipebusy; }
+inline word DPC_REGS::getTmem()					{ return data.tmem; }
 
-inline word DPS_REGS::getTbist()			{ return data.tbist; }
-inline word DPS_REGS::getTestMode()			{ return data.test_mode; }
-inline word DPS_REGS::getBufTestAddr()		{ return data.buftest_addr; }
-inline word DPS_REGS::getBufTestData()		{ return data.buftest_data; }
+inline word DPS_REGS::getTbist()				{ return data.tbist; }
+inline word DPS_REGS::getTestMode()				{ return data.test_mode; }
+inline word DPS_REGS::getBufTestAddr()			{ return data.buftest_addr; }
+inline word DPS_REGS::getBufTestData()			{ return data.buftest_data; }
 
-inline word MI_REGS::getInitMode()			{ return data.init_mode; }
-inline word MI_REGS::getVersion()			{ return data.version; }
-inline word MI_REGS::getIntr()				{ return data.intr; }
-inline word MI_REGS::getIntrMask()			{ return data.intr_mask; }
+inline word MI_REGS::getInitMode()				{ return data.init_mode; }
+inline word MI_REGS::getVersion()				{ return data.version; }
+inline word MI_REGS::getIntr()					{ return data.intr; }
+inline word MI_REGS::getIntrMask()				{ return data.intr_mask; }
 
-inline word VI_REGS::getStatus()			{ return data.status; }
-inline word VI_REGS::getOrigin()			{ return data.origin; }
-inline word VI_REGS::getWidth()				{ return data.width; }
-inline word VI_REGS::getIntr()				{ return data.intr; }
-inline word VI_REGS::getCurrent()			{ return data.current; }
-inline word VI_REGS::getBurst()				{ return data.burst; }
-inline word VI_REGS::getVsync()				{ return data.v_sync; }
-inline word VI_REGS::getHsync()				{ return data.h_sync; }
-inline word VI_REGS::getLeap()				{ return data.leap; }
-inline word VI_REGS::getHstart()			{ return data.h_start; }
-inline word VI_REGS::getVstart()			{ return data.v_start; }
-inline word VI_REGS::getVburst()			{ return data.v_burst; }
-inline word VI_REGS::getXscale()			{ return data.x_scale; }
-inline word VI_REGS::getYscale()			{ return data.y_scale; }
+inline word VI_REGS::getStatus()				{ return data.status; }
+inline word VI_REGS::getOrigin()				{ return data.origin; }
+inline word VI_REGS::getWidth()					{ return data.width; }
+inline word VI_REGS::getIntr()					{ return data.intr; }
+inline word VI_REGS::getCurrent()				{ return data.current; }
+inline word VI_REGS::getBurst()					{ return data.burst; }
+inline word VI_REGS::getVsync()					{ return data.v_sync; }
+inline word VI_REGS::getHsync()					{ return data.h_sync; }
+inline word VI_REGS::getLeap()					{ return data.leap; }
+inline word VI_REGS::getHstart()				{ return data.h_start; }
+inline word VI_REGS::getVstart()				{ return data.v_start; }
+inline word VI_REGS::getVburst()				{ return data.v_burst; }
+inline word VI_REGS::getXscale()				{ return data.x_scale; }
+inline word VI_REGS::getYscale()				{ return data.y_scale; }
 
-inline word AI_REGS::getDramAddr()			{ return data.dram_addr; }
-inline word AI_REGS::getLen()				{ return data.len; }
-inline word AI_REGS::getControl()			{ return data.control; }
-inline word AI_REGS::getStatus()			{ return data.status; }
-inline word AI_REGS::getDacrate()			{ return data.dacrate; }
-inline word AI_REGS::getBitrate()			{ return data.bitrate; }
+inline word AI_REGS::getDramAddr()				{ return data.dram_addr; }
+inline word AI_REGS::getLen()					{ return data.len; }
+inline word AI_REGS::getControl()				{ return data.control; }
+inline word AI_REGS::getStatus()				{ return data.status; }
+inline word AI_REGS::getDacrate()				{ return data.dacrate; }
+inline word AI_REGS::getBitrate()				{ return data.bitrate; }
 
-inline word PI_REGS::getDramAddr()			{ return data.dram_addr; }
-inline word PI_REGS::getCartAddr()			{ return data.cart_addr; }
-inline word PI_REGS::getRdLen()				{ return data.rd_len; }
-inline word PI_REGS::getWrLen()				{ return data.wr_len; }
-inline word PI_REGS::getStatus()			{ return data.status; }
-inline word PI_REGS::getBsdDom1Lat()		{ return data.bsd_dom1_lat; }
-inline word PI_REGS::getBsdDom1Pwd()		{ return data.bsd_dom1_pwd; }
-inline word PI_REGS::getBsdDom1Pgs()		{ return data.bsd_dom1_pgs; }
-inline word PI_REGS::getBsdDom1Rls()		{ return data.bsd_dom1_rls; }
-inline word PI_REGS::getBsdDom2Lat()		{ return data.bsd_dom2_lat; }
-inline word PI_REGS::getBsdDom2Pwd()		{ return data.bsd_dom2_pwd; }
-inline word PI_REGS::getBsdDom2Pgs()		{ return data.bsd_dom2_pgs; }
-inline word PI_REGS::getBsdDom2Rls()		{ return data.bsd_dom2_rls; }
+inline word PI_REGS::getDramAddr()				{ return data.dram_addr; }
+inline word PI_REGS::getCartAddr()				{ return data.cart_addr; }
+inline word PI_REGS::getRdLen()					{ return data.rd_len; }
+inline word PI_REGS::getWrLen()					{ return data.wr_len; }
+inline word PI_REGS::getStatus()				{ return data.status; }
+inline word PI_REGS::getBsdDom1Lat()			{ return data.bsd_dom1_lat; }
+inline word PI_REGS::getBsdDom1Pwd()			{ return data.bsd_dom1_pwd; }
+inline word PI_REGS::getBsdDom1Pgs()			{ return data.bsd_dom1_pgs; }
+inline word PI_REGS::getBsdDom1Rls()			{ return data.bsd_dom1_rls; }
+inline word PI_REGS::getBsdDom2Lat()			{ return data.bsd_dom2_lat; }
+inline word PI_REGS::getBsdDom2Pwd()			{ return data.bsd_dom2_pwd; }
+inline word PI_REGS::getBsdDom2Pgs()			{ return data.bsd_dom2_pgs; }
+inline word PI_REGS::getBsdDom2Rls()			{ return data.bsd_dom2_rls; }
 
-inline word RI_REGS::getMode()				{ return data.mode; }
-inline word RI_REGS::getConfig()			{ return data.config; }
-inline word RI_REGS::getCurrentLoad()		{ return data.current_load; }
-inline word RI_REGS::getSelect()			{ return data.select; }
-inline word RI_REGS::getRefresh()			{ return data.refresh; }
-inline word RI_REGS::getLatency()			{ return data.latency; }
-inline word RI_REGS::getRerror()			{ return data.rerror; }
-inline word RI_REGS::getWerror()			{ return data.werror; }
+inline word RI_REGS::getMode()					{ return data.mode; }
+inline word RI_REGS::getConfig()				{ return data.config; }
+inline word RI_REGS::getCurrentLoad()			{ return data.current_load; }
+inline word RI_REGS::getSelect()				{ return data.select; }
+inline word RI_REGS::getRefresh()				{ return data.refresh; }
+inline word RI_REGS::getLatency()				{ return data.latency; }
+inline word RI_REGS::getRerror()				{ return data.rerror; }
+inline word RI_REGS::getWerror()				{ return data.werror; }
 
-inline word SI_REGS::getDramAddr()			{ return data.dram_addr; }
-inline word SI_REGS::getPifAddrRd64b()		{ return data.pif_addr_rd64b; }
-inline word SI_REGS::getPifAddrWr64b()		{ return data.pif_addr_wr64b; }
-inline word SI_REGS::getStatus()			{ return data.status; }
+inline word SI_REGS::getDramAddr()				{ return data.dram_addr; }
+inline word SI_REGS::getPifAddrRd64b()			{ return data.pif_addr_rd64b; }
+inline word SI_REGS::getPifAddrWr64b()			{ return data.pif_addr_wr64b; }
+inline word SI_REGS::getStatus()				{ return data.status; }
