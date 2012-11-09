@@ -75,6 +75,8 @@ public:
 	void check_interrupt();
 	// Use to see if a timer is done
 	void TimerDone();
+	// Refresh the screen when the vi timer is done
+	void RefreshScreen();
 private:
 	MEMORY	*memory;
 	Timers	*timers;
@@ -126,6 +128,7 @@ private:
 	bool	delay_slot;								// for branch instructions
 	bool	running;								// Status of the CPU
 	dword	cic_chip;								// To Hack the security of the n64
+	word	ViFieldNumber;							//
 	//****************************************************************************
 	//** OTHER																	**
 	//****************************************************************************

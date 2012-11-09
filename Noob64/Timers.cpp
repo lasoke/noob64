@@ -90,7 +90,7 @@ void R4300i::TimerDone()
 			check_interrupt();
 			break;
 		case ViTimer:
-			//RefreshScreen();
+			RefreshScreen();
 			memory->mi_regs.setIntr(memory->mi_regs.getIntr() | MI_INTR_VI);
 			check_interrupt();
 			break;

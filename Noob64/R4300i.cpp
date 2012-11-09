@@ -302,6 +302,33 @@ void R4300i::init_crc()
 	*/
 }
 
+void R4300i::RefreshScreen()
+{
+	static word OLD_VI_V_SYNC_REG = 0, VI_INTR_TIME = 500000;
+
+	if (OLD_VI_V_SYNC_REG != memory->vi_regs.getVsync())
+	{
+		if (memory->vi_regs.getVsync() == 0)
+		{
+			VI_INTR_TIME = 500000;
+		} 
+		else 
+		{
+			VI_INTR_TIME = (memory->vi_regs.getVsync() + 1) * 1500;
+			if ((memory->vi_regs.getVsync() % 1) != 0)
+				VI_INTR_TIME -= 38;
+		}
+	}
+	timers->ChangeTimer(ViTimer, timers->Timer + timers->NextTimer[ViTimer] + VI_INTR_TIME, Compare, Count);
+	
+	if ((VI_STATUS_REG & 0x10) != 0)
+		ViFieldNumber = (ViFieldNumber == 0) ? 1 : 0;
+	else
+		ViFieldNumber = 0;
+	
+	memory->gfx->updateScreen();
+}
+
 void R4300i::init()
 {
 	int i = 0;
@@ -324,7 +351,7 @@ void R4300i::init()
 		if ((pc & 0xFFFFFFFF) == 0x80322DF0)
 			++i;
 		decode(memory->read<word>(pc));
-		if (timers->Timer < 0) 
-			TimerDone();
+//		if (timers->Timer < 0) 
+//			TimerDone();
 	}
 }
