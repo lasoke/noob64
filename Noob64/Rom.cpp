@@ -112,16 +112,5 @@ hword ROM::getCountry()
 	return header->country;
 }
 
-void ROM::dump(void) const
-{
-	cout << "*** ROM ***"				<< endl;
-	cout << "name = ";
-	for(int i = 0; i < sizeof(header->name); i++)
-	{
-		cout << header->name[i];
-	}
-	cout << endl;
-	cout << "*** END OF ROM ***"		<< endl;
-}
 
 
