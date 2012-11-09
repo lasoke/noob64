@@ -78,7 +78,6 @@ void R4300i::reset()
 	cic_chip	= 0;
 
 	interrupt_detected	= false;
-	current_coprocessor = CPU;
 	
 	timers->CurrentTimerType = -1;
 	timers->Timer = 0;
@@ -348,10 +347,10 @@ void R4300i::init()
 			}
 		}
 		++Count;
-		if ((pc & 0xFFFFFFFF) == 0x80322DF0)
+		if ((pc & 0xFFFFFFFF) == 0x80246DD8)
 			++i;
 		decode(memory->read<word>(pc));
-//		if (timers->Timer < 0) 
-//			TimerDone();
+		if (timers->Timer < 0)
+			TimerDone();
 	}
 }

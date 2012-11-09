@@ -63,11 +63,11 @@ void R4300i::trigger_break_exception()
 	UPDATE_REGS();
 }
 
-void R4300i::trigger_copunusable_exception()
+void R4300i::trigger_copunusable_exception(int cop)
 {
 	PRINT_EXC("CopUnusable");
     Cause = COPROCESSOR_UNUSABLE << 2;
-    Cause |= current_coprocessor == 1 ? 0x10000000 : 0;
+    Cause |= cop == 1 ? 0x10000000 : 0;
 	UPDATE_REGS();
 }
 

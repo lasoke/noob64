@@ -49,8 +49,7 @@ MEMORY::MEMORY(ROM* r) :
 }
 
 // MEMORY SEGMENT
-MEM_SEG::MEM_SEG() :
-	ptr(0)
+MEM_SEG::MEM_SEG() : ptr(0)
 {
 }
 
@@ -158,6 +157,7 @@ bool is_address_defined(dword address)
 {
 	if (0x80000000 <= address && address <= 0xBFFFFFFF)
 		return true;
+	// TODO
 	/*
 	dword i;
 	for (i = 0; i < 64; i++)

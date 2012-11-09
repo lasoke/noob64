@@ -22,43 +22,30 @@
  *
  */
 
-#include "StdAfx.h"
+#pragma once
 
-ROM::ROM(string filename)
+#include "Helper.h"
+
+template <typename Type>
+inline Type binary_to_type(const byte *address)
 {
-	file.open(filename, ios::ate | ios::in | ios::binary);
-	if (!file.is_open())
-		throw ROM_FAILED_TO_LOAD;
+	Type result = 0;
+	for (unsigned int i = 0; i < sizeof(result); i++)
+		result = (result << 8) + address[i];
+	return result;
+}
 
-	int size = (int) file.tellg();
-	data = (char*) malloc(size);
-	file.seekg (0, ios::beg);
-    file.read(data, size);
-	file.close();
-	ptr = data;
-	header = (ROM_HEADER*) data;
-
-	word type = ((word*) data)[0];
-	if (type == 0x40123780)
-		; // BIG ENDIAN
-	else if (type == 0x12408037)
+template <typename Type>
+inline Type type_to_binary(Type data)
+{
+	byte *tab = (byte*) &data;
+	byte b;
+	unsigned size = sizeof(data);
+	for (unsigned int i = 0; i < size / 2; i++)
 	{
-		// MIDDLE ENDIAN
-		for (int i = 0; i < size - 1; i += 2)
-		{
-			char temp = data[i];
-			data[i] = data[i+1];
-			data[i+1] = temp;
-		}
+		b = tab[i];
+		tab[i] = tab[size-1-i];
+		tab[size-1-i] = b;
 	}
-	else throw ROM_UNKNOWN_FORMAT;
+	return data;
 }
-
-ROM::~ROM()
-{
-	delete[] data;
-}
-
-
-
-
