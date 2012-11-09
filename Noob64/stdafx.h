@@ -51,6 +51,7 @@
 
 #include "Noob64.h"
 #include "Memory.h"
+#include "Memory.hxx"
 #include "Instruction.h"
 #include "Exception.h"
 #include "Helper.h"

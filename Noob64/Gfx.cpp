@@ -54,6 +54,7 @@ GFX::~GFX(void)
 void GFX::init(MEMORY *mem)
 {
 	PLUGIN::init(mem);
+	mem->gfx = this;
 
 	gfx_info					= (GFX_INFO*) malloc(sizeof(GFX_INFO));
 

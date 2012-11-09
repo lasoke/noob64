@@ -40,6 +40,7 @@ RSP::~RSP(void)
 void RSP::init(MEMORY *mem)
 {
 	PLUGIN::init(mem);
+	mem->rsp = this;
 
 	rsp_info					= (RSP_INFO*) malloc(sizeof(RSP_INFO));
 	rspdebug_info				= getRspDebugInfo_ == NULL ? NULL : (RSPDEBUG_INFO*) malloc(sizeof(RSPDEBUG_INFO));
