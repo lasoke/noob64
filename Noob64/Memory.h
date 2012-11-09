@@ -343,7 +343,6 @@ public:
 	static const word begining = 0x10000000;
 	static const word end = 0x1FBFFFFF;
 
-
 	inline word		getClock();
 	inline word		getPc();
 	inline word		getRelease();
@@ -406,26 +405,25 @@ public:
 	static const word begining = 0x03F00000;
 	static const word end = 0x03FFFFFF;
 
-
-	inline word getConfig()			{ return data.config; };
+	inline word getConfig();
 	inline void setConfig(word);
-	inline word getDeviceId()		{ return data.device_id; };
+	inline word getDeviceId();
 	inline void setDeviceId(word);
-	inline word getDelay()			{ return data.delay; };
+	inline word getDelay();
 	inline void setDelay(word);
-	inline word getMode()			{ return data.mode; };
+	inline word getMode();
 	inline void setMode(word);
-	inline word getRefInterval()	{ return data.ref_interval; };
+	inline word getRefInterval();
 	inline void setRefInterval(word);
-	inline word getRefRow()			{ return data.ref_row; };
+	inline word getRefRow();
 	inline void setRefRow(word);
-	inline word getRasInterval()	{ return data.ras_interval; };
+	inline word getRasInterval();
 	inline void setRasInterval(word);
-	inline word getMinInterval()	{ return data.min_interval; };
+	inline word getMinInterval();
 	inline void setMinInterval(word);
-	inline word getAddrSelect()		{ return data.addr_select; };
+	inline word getAddrSelect();
 	inline void setAddrSelect(word);
-	inline word getDeviceManuf()	{ return data.device_manuf; };
+	inline word getDeviceManuf();
 	inline void setDeviceManuf(word);
 
 private:
@@ -457,30 +455,30 @@ public:
 	static const word end = 0x040FFFFF;
 
 	//contains the instruction of the RSP
-	inline byte *getDmem()		{ return data.dmem; };
-	inline byte *getImem()		{ return data.imem; };
+	inline byte *getDmem();
+	inline byte *getImem();
 
-	inline word getMemAddr()	{ return data.mem_addr; };
+	inline word getMemAddr();
 	inline void setMemAddr(word);
-	inline word getDramAddr()	{ return data.dram_addr; };
+	inline word getDramAddr();
 	inline void setDramAddr(word);
-	inline word getRdLen()		{ return data.rd_len; };
+	inline word getRdLen();
 	inline void setRdLen(word);
-	inline word getWrLen()		{ return data.wr_len; };
+	inline word getWrLen();
 	inline void setWrLen(word);
-	inline word getStatus()		{ return data.status; };
+	inline word getStatus();
 	inline void setStatus(word);
 	inline void setSpecialStatus(word);
-	inline word getDmaFull()	{ return data.dma_full; };
+	inline word getDmaFull();
 	inline void setDmaFull(word);
-	inline word getDmaBusy()	{ return data.dma_busy; };
+	inline word getDmaBusy();
 	inline void setDmaBusy(word);
-	inline word getSemaphore()	{ return data.semaphore; };
+	inline word getSemaphore();
 	inline void setSemaphore(word);
 	inline void setSpecialSemaphore(word);
-	inline word getPc()			{ return data.pc; };
+	inline word getPc();
 	inline void setPc(word);
-	inline word getIbist()		{ return data.ibist; };
+	inline word getIbist();
 	inline void setIbist(word);
 	
 private:
@@ -514,21 +512,21 @@ public:
 	static const word begining = 0x04100000;
 	static const word end = 0x041FFFFF;
 
-	inline word getStart()		{ return data.start; };
+	inline word getStart();
 	inline void setStart(word);
-	inline word getEnd()		{ return data.end; };
+	inline word getEnd();
 	inline void setEnd(word);
-	inline word getCurrent()	{ return data.current; };
+	inline word getCurrent();
 	inline void setCurrent(word);
-	inline word getStatus()		{ return data.status; };
+	inline word getStatus();
 	inline void setStatus(word);
-	inline word getClock()		{ return data.clock; };
+	inline word getClock();
 	inline void setClock(word);
-	inline word getBufBusy()	{ return data.bufbusy; };
+	inline word getBufBusy();
 	inline void setBufBusy(word);
-	inline word getPipeBusy()	{ return data.pipebusy; };
+	inline word getPipeBusy();
 	inline void setPipeBusy(word);
-	inline word getTmem()		{ return data.tmem; };
+	inline word getTmem();
 	inline void setTmem(word);
 
 private:
@@ -556,13 +554,13 @@ public:
 	static const word begining = 0x04200000;
 	static const word end = 0x042FFFFF;
 
-	inline word getTbist()			{ return data.tbist; };
+	inline word getTbist();
 	inline void setTbist(word);
-	inline word getTestMode()		{ return data.test_mode; };
+	inline word getTestMode();
 	inline void setTestMode(word);
-	inline word getBufTestAddr()	{ return data.buftest_addr; };
+	inline word getBufTestAddr();
 	inline void setBufTestAddr(word);
-	inline word getBufTestData()	{ return data.buftest_data; };
+	inline word getBufTestData();
 	inline void setBufTestData(word);
 
 private:
@@ -586,14 +584,14 @@ public:
 	static const word begining = 0x04300000;
 	static const word end = 0x043FFFFF;
 
-	inline word getInitMode()	{ return data.init_mode; };
+	inline word getInitMode();
 	inline void setInitMode(word);
 	inline void setSpecialInitMode(word);
-	inline word getVersion()	{ return data.version; };
+	inline word getVersion();
 	inline void setVersion(word);
-	inline word getIntr()		{ return data.intr; };
+	inline word getIntr();
 	inline void setIntr(word);
-	inline word getIntrMask()	{ return data.intr_mask; };
+	inline word getIntrMask();
 	inline void setIntrMask(word);
 	inline void setSpecialIntrMask(word);
 
@@ -618,33 +616,33 @@ public:
 	static const word begining = 0x04400000;
 	static const word end = 0x044FFFFF;
 
-	inline word getStatus()		{ return data.status; };
+	inline word getStatus();
 	inline void setStatus(word);
-	inline word getOrigin()		{ return data.origin; };
+	inline word getOrigin();
 	inline void setOrigin(word);
-	inline word getWidth()		{ return data.width; };
+	inline word getWidth();
 	inline void setWidth(word);
-	inline word getIntr()		{ return data.intr; };
+	inline word getIntr();
 	inline void setVintr(word);
-	inline word getCurrent()	{ return data.current; };
+	inline word getCurrent();
 	inline void setCurrent(word);
-	inline word getBurst()		{ return data.burst; };
+	inline word getBurst();
 	inline void setBurst(word);
-	inline word getVsync()		{ return data.v_sync; };
+	inline word getVsync();
 	inline void setVsync(word);
-	inline word getHsync()		{ return data.h_sync; };
+	inline word getHsync();
 	inline void setHsync(word);
-	inline word getLeap()		{ return data.leap; };
+	inline word getLeap();
 	inline void setLeap(word);
-	inline word getHstart()		{ return data.h_start; };
+	inline word getHstart();
 	inline void setHstart(word);
-	inline word getVstart()		{ return data.v_start; };
+	inline word getVstart();
 	inline void setVstart(word);
-	inline word getVburst()		{ return data.v_burst; };
+	inline word getVburst();
 	inline void setVburst(word);
-	inline word getXscale()		{ return data.x_scale; };
+	inline word getXscale();
 	inline void setXscale(word);
-	inline word getYscale()		{ return data.y_scale; };
+	inline word getYscale();
 	inline void setYscale(word);
 
 private:
@@ -678,17 +676,17 @@ public:
 	static const word begining = 0x04500000;
 	static const word end = 0x045FFFFF;
 
-	inline word getDramAddr()	{ return data.dram_addr; };
+	inline word getDramAddr();
 	inline void setDramAddr(word);
-	inline word getLen()		{ return data.len; };
+	inline word getLen();
 	inline void setLen(word);
-	inline word getControl()	{ return data.control; };
+	inline word getControl();
 	inline void setControl(word);
-	inline word getStatus()		{ return data.status; };
+	inline word getStatus();
 	inline void setStatus(word);
-	inline word getDacrate()	{ return data.dacrate; };
+	inline word getDacrate();
 	inline void setDacrate(word);
-	inline word getBitrate()	{ return data.bitrate; };
+	inline word getBitrate();
 	inline void setBitrate(word);
 
 private:
@@ -714,31 +712,31 @@ public:
 	static const word begining = 0x04600000;
 	static const word end = 0x046FFFFF;
 
-	inline word getDramAddr()	{ return data.dram_addr; };
+	inline word getDramAddr();
 	inline void setDramAddr(word);
-	inline word getCartAddr()	{ return data.cart_addr; };
+	inline word getCartAddr();
 	inline void setCartAddr(word);
-	inline word getRdLen()		{ return data.rd_len; };
+	inline word getRdLen();
 	inline void setRdLen(word);
-	inline word getWrLen()		{ return data.wr_len; };
+	inline word getWrLen();
 	inline void setWrLen(word);
-	inline word getStatus()		{ return data.status; };
+	inline word getStatus();
 	inline void setStatus(word);
-	inline word getBsdDom1Lat()	{ return data.bsd_dom1_lat; };
+	inline word getBsdDom1Lat();
 	inline void setBsdDom1Lat(word);
-	inline word getBsdDom1Pwd()	{ return data.bsd_dom1_pwd; };
+	inline word getBsdDom1Pwd();
 	inline void setBsdDom1Pwd(word);
-	inline word getBsdDom1Pgs()	{ return data.bsd_dom1_pgs; };
+	inline word getBsdDom1Pgs();
 	inline void setBsdDom1Pgs(word);
-	inline word getBsdDom1Rls()	{ return data.bsd_dom1_rls; };
+	inline word getBsdDom1Rls();
 	inline void setBsdDom1Rls(word);
-	inline word getBsdDom2Lat()	{ return data.bsd_dom2_lat; };
+	inline word getBsdDom2Lat();
 	inline void setBsdDom2Lat(word);
-	inline word getBsdDom2Pwd()	{ return data.bsd_dom2_pwd; };
+	inline word getBsdDom2Pwd();
 	inline void setBsdDom2Pwd(word);
-	inline word getBsdDom2Pgs()	{ return data.bsd_dom2_pgs; };
+	inline word getBsdDom2Pgs();
 	inline void setBsdDom2Pgs(word);
-	inline word getBsdDom2Rls()	{ return data.bsd_dom2_rls; };
+	inline word getBsdDom2Rls();
 	inline void setBsdDom2Rls(word);
 
 private:
@@ -771,22 +769,22 @@ public:
 	static const word begining = 0x04700000;
 	static const word end = 0x047FFFFF;
 
-	inline word getMode()			{ return data.mode; };
+	inline word getMode();
 	inline void setMode(word);
-	inline word getConfig()			{ return data.config; };
+	inline word getConfig();
 	inline void setConfig(word);
-	inline word getCurrentLoad()	{ return data.current_load; };
+	inline word getCurrentLoad();
 	inline void setCurrentLoad(word);
-	inline word getSelect()			{ return data.select; };
+	inline word getSelect();
 	inline void setSelect(word);
-	inline word getRefresh()		{ return data.refresh; };
+	inline word getRefresh();
 	inline void setRefresh(word);
-	inline word getLatency()		{ return data.latency; };
+	inline word getLatency();
 	inline void setLatency(word);
-	inline word getRerror()			{ return data.rerror; };
+	inline word getRerror();
 	inline void setRerror(word);
-	inline word getWerror()			{ return data.werror; };
-		inline void setWerror(word);
+	inline word getWerror();
+	inline void setWerror(word);
 
 private:
 	struct	{
@@ -813,13 +811,13 @@ public:
 	static const word begining = 0x04800000;
 	static const word end = 0x048FFFFF;
 
-	inline word getDramAddr()		{ return data.dram_addr; };
+	inline word getDramAddr();
 	inline void setDramAddr(word);
-	inline word getPifAddrRd64b()	{ return data.pif_addr_rd64b; };
+	inline word getPifAddrRd64b();
 	inline void setPifAddrRd64b(word);
-	inline word getPifAddrWr64b()	{ return data.pif_addr_wr64b; };
+	inline word getPifAddrWr64b();
 	inline void setPifAddrWr64b(word);
-	inline word getStatus()			{ return data.status; };
+	inline word getStatus();
 	inline void setStatus(word);
 	inline void setSpecialStatus(word);
 
