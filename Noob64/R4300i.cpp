@@ -27,6 +27,7 @@
 
 R4300i::R4300i(MEMORY *mem) : memory(mem)
 {
+	memory->cpu = this;
 }
 
 void R4300i::reset()

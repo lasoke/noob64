@@ -861,6 +861,7 @@ private:
 //** MEMORY					                                                **
 //****************************************************************************
 
+class R4300i;
 class GFX;
 class RSP;
 
@@ -884,6 +885,7 @@ public:
 	PIF_ROM		&pif_rom;
 	PIF_RAM		&pif_ram;
 
+	R4300i		*cpu;
 	RSP			*rsp;
 	GFX			*gfx;
 
