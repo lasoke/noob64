@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Memory.h"
+#include "Rcp.h"
 
 #define SI_SEG_BEGINING			0x04800000
 #define SI_SEG_END				0x048FFFFF
@@ -43,10 +43,10 @@
 //** Serial Interface (SI) Registers										**
 //****************************************************************************
 
-class SI_REGS : public MEM_SEG
+class SI : public MEM_SEG
 {
 public:
-	SI_REGS();
+	SI();
 
 	inline word getDramAddr();
 	inline void setDramAddr(word);

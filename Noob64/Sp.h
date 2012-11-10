@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Memory.h"
+#include "Rcp.h"
 
 #define SP_SEG_BEGINING			0x04000000
 #define SP_SEG_END				0x040FFFFF
@@ -88,10 +88,10 @@
 //** SP Registers															**
 //****************************************************************************
 
-class SP_REGS : public MEM_SEG
+class SP : public MEM_SEG
 {
 public:
-	SP_REGS();
+	SP();
 
 	//contains the instruction of the RSP
 	inline byte *getDmem();

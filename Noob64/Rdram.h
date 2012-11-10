@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Memory.h"
+#include "Rcp.h"
 
 #define RDRAM_SEG_BEGINING		0x00000000
 #define RDRAM_SEG_END			0x03EFFFFF

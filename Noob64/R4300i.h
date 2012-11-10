@@ -60,22 +60,26 @@
 class R4300i
 {
 public:
-	R4300i(MEMORY *mem);
+	R4300i(RCP*);
 
-	void init();				// initializes the R4300i and enter in the main loop
-	void reset();				// clears bits
-	void check_interrupt();		// Checks if an interrupt has been triggered
-	void TimerDone();			// Uses to see if a timer is done
+	void start(void);				// initializes the R4300i and enter in the main loop
+	void reset(void);				// clears bits
+	void check_interrupt(void);		// Checks if an interrupt has been triggered
+	void TimerDone(void);			// Uses to see if a timer is done
+
+	inline MMU& getMMU(void) const;
+	inline TimerHandler& getTimerHandler(void) const;
 
 private:
-	MEMORY			&memory;
+	RCP				&rcp;
+	MMU				&mmu;
 	TimerHandler	&timer_handler;
 
 	// Workaround to pass the CRC check which prevents a fake game from loading
-	void pif_init();
+	void pif_init(void);
 
 	//****************************************************************************
-	//** EXCEPTIONS																**
+	//** EXCEPTION PROCESSING UNIT												**
 	//****************************************************************************
 	bool interrupt_detected;									// Notifies whether an interrupt has been detected or not
 	void trigger_address_error(word address, bool from_read);	// Triggers an address error exception
@@ -85,7 +89,7 @@ private:
 	void trigger_tlb_miss(word address);						// Triggers a TLB missed exception
 	void trigger_syscall_exception();							// Triggers a syscall exception
 	//****************************************************************************
-	//** DECODING RELATING METHODS				                                **
+	//** DECODER																**
 	//****************************************************************************
 	inline void	decode(const word instr);
 	inline void decode_r(const word instr);

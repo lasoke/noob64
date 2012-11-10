@@ -26,30 +26,30 @@
 
 #include "Pi.h"
 
-inline void PI_REGS::setDramAddr(word w)		{ data.dram_addr = w; }
-inline void PI_REGS::setCartAddr(word w)		{ data.cart_addr = w; }
-inline void PI_REGS::setRdLen(word w)			{ data.rd_len = w; }
-inline void PI_REGS::setWrLen(word w)			{ data.wr_len = w; }
-inline void PI_REGS::setStatus(word w)			{ data.status = w; }
-inline void PI_REGS::setBsdDom1Lat(word w)		{ data.bsd_dom1_lat = w; }
-inline void PI_REGS::setBsdDom1Pwd(word w)		{ data.bsd_dom1_pwd = w; }
-inline void PI_REGS::setBsdDom1Pgs(word w)		{ data.bsd_dom1_pgs = w; }
-inline void PI_REGS::setBsdDom1Rls(word w)		{ data.bsd_dom1_rls = w; }
-inline void PI_REGS::setBsdDom2Lat(word w)		{ data.bsd_dom2_lat = w; }
-inline void PI_REGS::setBsdDom2Pwd(word w)		{ data.bsd_dom2_pwd = w; }
-inline void PI_REGS::setBsdDom2Pgs(word w)		{ data.bsd_dom2_pgs = w; }
-inline void PI_REGS::setBsdDom2Rls(word w)		{ data.bsd_dom2_rls = w; }
+inline void PI::setDramAddr(word w)		{ data.dram_addr = w; }
+inline void PI::setCartAddr(word w)		{ data.cart_addr = w; }
+inline void PI::setRdLen(word w)			{ data.rd_len = w; }
+inline void PI::setWrLen(word w)			{ data.wr_len = w; }
+inline void PI::setStatus(word w)			{ data.status = w; }
+inline void PI::setBsdDom1Lat(word w)		{ data.bsd_dom1_lat = w; }
+inline void PI::setBsdDom1Pwd(word w)		{ data.bsd_dom1_pwd = w; }
+inline void PI::setBsdDom1Pgs(word w)		{ data.bsd_dom1_pgs = w; }
+inline void PI::setBsdDom1Rls(word w)		{ data.bsd_dom1_rls = w; }
+inline void PI::setBsdDom2Lat(word w)		{ data.bsd_dom2_lat = w; }
+inline void PI::setBsdDom2Pwd(word w)		{ data.bsd_dom2_pwd = w; }
+inline void PI::setBsdDom2Pgs(word w)		{ data.bsd_dom2_pgs = w; }
+inline void PI::setBsdDom2Rls(word w)		{ data.bsd_dom2_rls = w; }
 
-inline word PI_REGS::getDramAddr()				{ return data.dram_addr; }
-inline word PI_REGS::getCartAddr()				{ return data.cart_addr; }
-inline word PI_REGS::getRdLen()					{ return data.rd_len; }
-inline word PI_REGS::getWrLen()					{ return data.wr_len; }
-inline word PI_REGS::getStatus()				{ return data.status; }
-inline word PI_REGS::getBsdDom1Lat()			{ return data.bsd_dom1_lat; }
-inline word PI_REGS::getBsdDom1Pwd()			{ return data.bsd_dom1_pwd; }
-inline word PI_REGS::getBsdDom1Pgs()			{ return data.bsd_dom1_pgs; }
-inline word PI_REGS::getBsdDom1Rls()			{ return data.bsd_dom1_rls; }
-inline word PI_REGS::getBsdDom2Lat()			{ return data.bsd_dom2_lat; }
-inline word PI_REGS::getBsdDom2Pwd()			{ return data.bsd_dom2_pwd; }
-inline word PI_REGS::getBsdDom2Pgs()			{ return data.bsd_dom2_pgs; }
-inline word PI_REGS::getBsdDom2Rls()			{ return data.bsd_dom2_rls; }
+inline word PI::getDramAddr()				{ return data.dram_addr; }
+inline word PI::getCartAddr()				{ return data.cart_addr; }
+inline word PI::getRdLen()					{ return data.rd_len; }
+inline word PI::getWrLen()					{ return data.wr_len; }
+inline word PI::getStatus()				{ return data.status; }
+inline word PI::getBsdDom1Lat()			{ return data.bsd_dom1_lat; }
+inline word PI::getBsdDom1Pwd()			{ return data.bsd_dom1_pwd; }
+inline word PI::getBsdDom1Pgs()			{ return data.bsd_dom1_pgs; }
+inline word PI::getBsdDom1Rls()			{ return data.bsd_dom1_rls; }
+inline word PI::getBsdDom2Lat()			{ return data.bsd_dom2_lat; }
+inline word PI::getBsdDom2Pwd()			{ return data.bsd_dom2_pwd; }
+inline word PI::getBsdDom2Pgs()			{ return data.bsd_dom2_pgs; }
+inline word PI::getBsdDom2Rls()			{ return data.bsd_dom2_rls; }

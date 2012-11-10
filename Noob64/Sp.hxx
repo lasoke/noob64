@@ -26,12 +26,12 @@
 
 #include "Sp.h"
 
-inline void SP_REGS::setMemAddr(word w)			{ data.mem_addr = w; }
-inline void SP_REGS::setDramAddr(word w)		{ data.dram_addr = w; }
-inline void SP_REGS::setRdLen(word w)			{ data.rd_len = w; }
-inline void SP_REGS::setWrLen(word w)			{ data.wr_len = w; }
-inline void SP_REGS::setStatus(word w)			{ data.status = w; }
-inline void SP_REGS::setSpecialStatus(word w)
+inline void SP::setMemAddr(word w)			{ data.mem_addr = w; }
+inline void SP::setDramAddr(word w)		{ data.dram_addr = w; }
+inline void SP::setRdLen(word w)			{ data.rd_len = w; }
+inline void SP::setWrLen(word w)			{ data.wr_len = w; }
+inline void SP::setStatus(word w)			{ data.status = w; }
+inline void SP::setSpecialStatus(word w)
 { 
 	if (w & SP_CLR_HALT)		data.status &= ~SP_STATUS_HALT;
 	if (w & SP_CLR_BROKE)		data.status &= ~SP_STATUS_BROKE;
@@ -58,22 +58,22 @@ inline void SP_REGS::setSpecialStatus(word w)
 	if (w & SP_SET_SIG6)		data.status |= SP_STATUS_SIG6;
 	if (w & SP_SET_SIG7)		data.status |= SP_STATUS_SIG7;
 }
-inline void SP_REGS::setDmaFull(word w)			{ data.dma_full = w; }
-inline void SP_REGS::setDmaBusy(word w)			{ data.dma_busy = w; }
-inline void SP_REGS::setSemaphore(word w)		{ data.semaphore = w; }
-inline void SP_REGS::setSpecialSemaphore(word w){ data.semaphore = 0; }
-inline void SP_REGS::setPc(word w)				{ data.pc = w & 0xFFC; }
-inline void SP_REGS::setIbist(word w)			{ data.ibist = w; }
+inline void SP::setDmaFull(word w)			{ data.dma_full = w; }
+inline void SP::setDmaBusy(word w)			{ data.dma_busy = w; }
+inline void SP::setSemaphore(word w)		{ data.semaphore = w; }
+inline void SP::setSpecialSemaphore(word w){ data.semaphore = 0; }
+inline void SP::setPc(word w)				{ data.pc = w & 0xFFC; }
+inline void SP::setIbist(word w)			{ data.ibist = w; }
 
-inline byte* SP_REGS::getDmem()					{ return data.dmem; }
-inline byte* SP_REGS::getImem()					{ return data.imem; }
-inline word SP_REGS::getMemAddr()				{ return data.mem_addr; }
-inline word SP_REGS::getDramAddr()				{ return data.dram_addr; }
-inline word SP_REGS::getRdLen()					{ return data.rd_len; }
-inline word SP_REGS::getWrLen()					{ return data.wr_len; }
-inline word SP_REGS::getStatus()				{ return data.status; }
-inline word SP_REGS::getDmaFull()				{ return data.dma_full; }
-inline word SP_REGS::getDmaBusy()				{ return data.dma_busy; }
-inline word SP_REGS::getSemaphore()				{ return data.semaphore; }
-inline word SP_REGS::getPc()					{ return data.pc; }
-inline word SP_REGS::getIbist()					{ return data.ibist; }
+inline byte* SP::getDmem()					{ return data.dmem; }
+inline byte* SP::getImem()					{ return data.imem; }
+inline word SP::getMemAddr()				{ return data.mem_addr; }
+inline word SP::getDramAddr()				{ return data.dram_addr; }
+inline word SP::getRdLen()					{ return data.rd_len; }
+inline word SP::getWrLen()					{ return data.wr_len; }
+inline word SP::getStatus()				{ return data.status; }
+inline word SP::getDmaFull()				{ return data.dma_full; }
+inline word SP::getDmaBusy()				{ return data.dma_busy; }
+inline word SP::getSemaphore()				{ return data.semaphore; }
+inline word SP::getPc()					{ return data.pc; }
+inline word SP::getIbist()					{ return data.ibist; }

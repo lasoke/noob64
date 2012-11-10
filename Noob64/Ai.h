@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Memory.h"
+#include "Rcp.h"
 
 #define AI_SEG_BEGINING			0x04500000
 #define AI_SEG_END				0x045FFFFF
@@ -40,10 +40,10 @@
 //** Audio Interface (AI) Registers											**
 //****************************************************************************
 
-class AI_REGS : public MEM_SEG
+class AI : public MEM_SEG
 {
 public:
-	AI_REGS();
+	AI();
 
 	inline word getDramAddr();
 	inline void setDramAddr(word);

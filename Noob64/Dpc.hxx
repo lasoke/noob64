@@ -26,20 +26,20 @@
 
 #include "Dpc.h"
 
-inline void DPC_REGS::setStart(word w)			{ data.start = w; }
-inline void DPC_REGS::setEnd(word w)			{ data.end = w; }
-inline void DPC_REGS::setCurrent(word w)		{ data.current = w; }
-inline void DPC_REGS::setStatus(word w)			{ data.status = w; }
-inline void DPC_REGS::setClock(word w)			{ data.clock = w; }
-inline void DPC_REGS::setBufBusy(word w)		{ data.bufbusy = w; }
-inline void DPC_REGS::setPipeBusy(word w)		{ data.pipebusy = w; }
-inline void DPC_REGS::setTmem(word w)			{ data.tmem = w; }
+inline void DPC::setStart(word w)			{ data.start = w; }
+inline void DPC::setEnd(word w)			{ data.end = w; }
+inline void DPC::setCurrent(word w)		{ data.current = w; }
+inline void DPC::setStatus(word w)			{ data.status = w; }
+inline void DPC::setClock(word w)			{ data.clock = w; }
+inline void DPC::setBufBusy(word w)		{ data.bufbusy = w; }
+inline void DPC::setPipeBusy(word w)		{ data.pipebusy = w; }
+inline void DPC::setTmem(word w)			{ data.tmem = w; }
 
-inline word DPC_REGS::getStart()				{ return data.start; }
-inline word DPC_REGS::getEnd()					{ return data.end; }
-inline word DPC_REGS::getCurrent()				{ return data.current; }
-inline word DPC_REGS::getStatus()				{ return data.status; }
-inline word DPC_REGS::getClock()				{ return data.clock; }
-inline word DPC_REGS::getBufBusy()				{ return data.bufbusy; }
-inline word DPC_REGS::getPipeBusy()				{ return data.pipebusy; }
-inline word DPC_REGS::getTmem()					{ return data.tmem; }
+inline word DPC::getStart()				{ return data.start; }
+inline word DPC::getEnd()					{ return data.end; }
+inline word DPC::getCurrent()				{ return data.current; }
+inline word DPC::getStatus()				{ return data.status; }
+inline word DPC::getClock()				{ return data.clock; }
+inline word DPC::getBufBusy()				{ return data.bufbusy; }
+inline word DPC::getPipeBusy()				{ return data.pipebusy; }
+inline word DPC::getTmem()					{ return data.tmem; }

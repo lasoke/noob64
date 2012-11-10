@@ -50,8 +50,10 @@
 #include <string>
 
 #include "Noob64.h"
-#include "Memory.h"
-#include "Memory.hxx"
+#include "Rcp.h"
+#include "Rcp.hxx"
+#include "Mmu.h"
+#include "Mmu.hxx"
 #include "Rom.h"
 #include "Rom.hxx"
 #include "Rdram.h"

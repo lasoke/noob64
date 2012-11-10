@@ -51,79 +51,53 @@ GFX::~GFX(void)
 	// TODO
 }
 
-void GFX::init(MEMORY *mem)
+void GFX::init(RCP *rcp)
 {
-	PLUGIN::init(mem);
-	mem->gfx = this;
+	PLUGIN::init(rcp);
 
 	gfx_info					= (GFX_INFO*) malloc(sizeof(GFX_INFO));
+
+	MMU& memory					= rcp->getCPU().getMMU();
 
 	gfx_info->hWnd				= hWnd;	// Render window
 	gfx_info->hStatusBar		= 0;	// if render window does not have a status bar then this is NULL
 	gfx_info->memoryBswaped		= plugin_info->memoryBswaped;
 
-	gfx_info->rom_header		= (byte*) (*memory)[ROM_SEG_BEGINING];
-	gfx_info->rdram				= (byte*) (*memory)[RDRAM_SEG_BEGINING];
-	gfx_info->dmem				= (byte*) (*memory)[SP_DMEM];
-	gfx_info->imem				= (byte*) (*memory)[SP_IMEM];
+	gfx_info->rom_header		= (byte*) memory[ROM_SEG_BEGINING];
+	gfx_info->rdram				= (byte*) memory[RDRAM_SEG_BEGINING];
+	gfx_info->dmem				= (byte*) memory[SP_DMEM];
+	gfx_info->imem				= (byte*) memory[SP_IMEM];
 
-	gfx_info->mi_intr_reg		= (word*) (*memory)[MI_INTR_REG];
+	gfx_info->mi_intr_reg		= (word*) memory[MI_INTR_REG];
 
-	gfx_info->dpc_start_reg		= (word*) (*memory)[DPC_START_REG];
-	gfx_info->dpc_end_reg		= (word*) (*memory)[DPC_END_REG];
-	gfx_info->dpc_current_reg	= (word*) (*memory)[DPC_CURRENT_REG];
-	gfx_info->dpc_status_reg	= (word*) (*memory)[DPC_STATUS_REG];
-	gfx_info->dpc_clock_reg		= (word*) (*memory)[DPC_CLOCK_REG];
-	gfx_info->dpc_bufbusy_reg	= (word*) (*memory)[DPC_BUFBUSY_REG];
-	gfx_info->dpc_pipebusy_reg	= (word*) (*memory)[DPC_PIPEBUSY_REG];
-	gfx_info->dpc_tmem_reg		= (word*) (*memory)[DPC_TMEM_REG];
+	gfx_info->dpc_start_reg		= (word*) memory[DPC_START_REG];
+	gfx_info->dpc_end_reg		= (word*) memory[DPC_END_REG];
+	gfx_info->dpc_current_reg	= (word*) memory[DPC_CURRENT_REG];
+	gfx_info->dpc_status_reg	= (word*) memory[DPC_STATUS_REG];
+	gfx_info->dpc_clock_reg		= (word*) memory[DPC_CLOCK_REG];
+	gfx_info->dpc_bufbusy_reg	= (word*) memory[DPC_BUFBUSY_REG];
+	gfx_info->dpc_pipebusy_reg	= (word*) memory[DPC_PIPEBUSY_REG];
+	gfx_info->dpc_tmem_reg		= (word*) memory[DPC_TMEM_REG];
 
-	gfx_info->vi_status_reg		= (word*) (*memory)[VI_STATUS_REG];
-	gfx_info->vi_origin_reg		= (word*) (*memory)[VI_ORIGIN_REG];
-	gfx_info->vi_width_reg		= (word*) (*memory)[VI_WIDTH_REG];
-	gfx_info->vi_intr_reg		= (word*) (*memory)[VI_INTR_REG];
-	gfx_info->vi_v_current_line_reg	= (word*) (*memory)[VI_CURRENT_REG];
-	gfx_info->vi_timing_reg		= (word*) (*memory)[VI_BURST_REG];
-	gfx_info->vi_v_sync_reg		= (word*) (*memory)[VI_V_SYNC_REG];
-	gfx_info->vi_h_sync_reg		= (word*) (*memory)[VI_H_SYNC_REG];
-	gfx_info->vi_leap_reg		= (word*) (*memory)[VI_LEAP_REG];
-	gfx_info->vi_h_start_reg	= (word*) (*memory)[VI_H_START_REG];
-	gfx_info->vi_v_start_reg	= (word*) (*memory)[VI_V_START_REG];
-	gfx_info->vi_v_burst_reg	= (word*) (*memory)[VI_V_BURST_REG];
-	gfx_info->vi_x_scale_reg	= (word*) (*memory)[VI_X_SCALE_REG];
-	gfx_info->vi_y_scale_reg	= (word*) (*memory)[VI_Y_SCALE_REG];
+	gfx_info->vi_status_reg		= (word*) memory[VI_STATUS_REG];
+	gfx_info->vi_origin_reg		= (word*) memory[VI_ORIGIN_REG];
+	gfx_info->vi_width_reg		= (word*) memory[VI_WIDTH_REG];
+	gfx_info->vi_intr_reg		= (word*) memory[VI_INTR_REG];
+	gfx_info->vi_v_current_line_reg	= (word*) memory[VI_CURRENT_REG];
+	gfx_info->vi_timing_reg		= (word*) memory[VI_BURST_REG];
+	gfx_info->vi_v_sync_reg		= (word*) memory[VI_V_SYNC_REG];
+	gfx_info->vi_h_sync_reg		= (word*) memory[VI_H_SYNC_REG];
+	gfx_info->vi_leap_reg		= (word*) memory[VI_LEAP_REG];
+	gfx_info->vi_h_start_reg	= (word*) memory[VI_H_START_REG];
+	gfx_info->vi_v_start_reg	= (word*) memory[VI_V_START_REG];
+	gfx_info->vi_v_burst_reg	= (word*) memory[VI_V_BURST_REG];
+	gfx_info->vi_x_scale_reg	= (word*) memory[VI_X_SCALE_REG];
+	gfx_info->vi_y_scale_reg	= (word*) memory[VI_Y_SCALE_REG];
 
 	// TODO:
 	gfx_info->CheckInterrupts	= dummy;
 	initiateGFX();
 	romOpen();
-}
-
-void GFX::RefreshScreen()
-{
-	static word OLD_VI_V_SYNC_REG = 0, VI_INTR_TIME = 500000;
-
-	if (OLD_VI_V_SYNC_REG != memory.vi_regs.getVsync())
-	{
-		if (memory.vi_regs.getVsync() == 0)
-		{
-			VI_INTR_TIME = 500000;
-		} 
-		else 
-		{
-			VI_INTR_TIME = (memory.vi_regs.getVsync() + 1) * 1500;
-			if ((memory.vi_regs.getVsync() % 1) != 0)
-				VI_INTR_TIME -= 38;
-		}
-	}
-	timer_handler.ChangeTimer(ViTimer, timer_handler.Timer + timer_handler.NextTimer[ViTimer] + VI_INTR_TIME, Compare, Count);
-	
-	if ((VI_STATUS_REG & 0x10) != 0)
-		ViFieldNumber = (ViFieldNumber == 0) ? 1 : 0;
-	else
-		ViFieldNumber = 0;
-	
-	memory.gfx->updateScreen();
 }
 
 void GFX::captureScreen(char* directory)

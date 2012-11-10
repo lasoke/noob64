@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Memory.h"
+#include "Rcp.h"
 
 #define MI_SEG_BEGINING			0x04300000
 #define MI_SEG_END				0x043FFFFF
@@ -77,10 +77,10 @@
 //** MIPS Interface (MI) Registers											**
 //****************************************************************************
 
-class MI_REGS : public MEM_SEG
+class MI : public MEM_SEG
 {
 public:
-	MI_REGS();
+	MI();
 
 	inline word getInitMode();
 	inline void setInitMode(word);

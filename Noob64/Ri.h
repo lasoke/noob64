@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Memory.h"
+#include "Rcp.h"
 
 #define RI_SEG_BEGINING			0x04700000
 #define RI_SEG_END				0x047FFFFF
@@ -42,10 +42,10 @@
 //** RDRAM Interface (RI) Registers											**
 //****************************************************************************
 
-class RI_REGS : public MEM_SEG
+class RI : public MEM_SEG
 {
 public:
-	RI_REGS();
+	RI();
 
 	inline word getMode();
 	inline void setMode(word);

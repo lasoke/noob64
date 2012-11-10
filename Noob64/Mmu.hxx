@@ -24,33 +24,13 @@
 
 #pragma once
 
-#include "Rsp.h"
-#include "Gfx.h"
-#include "Rom.h"
-#include "Rdram.h"
-#include "RdramRegs.h"
-#include "Sp.h"
-#include "Dpc.h"
-#include "Dps.h"
-#include "Ai.h"
-#include "Mi.h"
-#include "Vi.h"
-#include "Pi.h"
-#include "Ri.h"
-#include "Si.h"
-#include "PifRom.h"
-#include "PifRam.h"
-
-inline bool MEM_SEG::contains(word address) const				{ return begining <= address && address <= end; }
-
-inline bool MEMORY::isCheckInterrupt() const					{ return check_intr; }
-inline void MEMORY::setCheckInterrupt(bool isCheckInterrupt)	{ check_intr = isCheckInterrupt; }
+#include "Mmu.h"
 
 //****************************************************************************
-//** READ															**
+//** READ																	**
 //****************************************************************************
 template <typename Type>
-Type MEMORY::read(word address)
+Type MMU::read(word address)
 {
 	Type res;
 	if (typeid(Type) == typeid(word) && read_from_register((word *) &res, address))
@@ -62,186 +42,186 @@ Type MEMORY::read(word address)
 }
 
 // Get the value contains in the registes
-inline bool MEMORY::read_from_register(word *data, word address)
+inline bool MMU::read_from_register(word *data, word address)
 {
 	address &= 0x0FFFFFFF;
 	if (address == RDRAM_CONFIG_REG)
-		*data = rdram_regs.getConfig();
+		*data = rcp.rdram_regs.getConfig();
 	else if (address == RDRAM_DEVICE_ID_REG)
-		*data = rdram_regs.getDeviceId();
+		*data = rcp.rdram_regs.getDeviceId();
 	else if (address == RDRAM_DELAY_REG)
-		*data = rdram_regs.getDelay();
+		*data = rcp.rdram_regs.getDelay();
 	else if (address == RDRAM_MODE_REG)
-		*data = rdram_regs.getMode();
+		*data = rcp.rdram_regs.getMode();
 	else if (address == RDRAM_REF_INTERVAL_REG)
-		*data = rdram_regs.getRefInterval();
+		*data = rcp.rdram_regs.getRefInterval();
 	else if (address == RDRAM_REF_ROW_REG)
-		*data = rdram_regs.getRefRow();
+		*data = rcp.rdram_regs.getRefRow();
 	else if (address == RDRAM_RAS_INTERVAL_REG)
-		*data = rdram_regs.getConfig();
+		*data = rcp.rdram_regs.getConfig();
 	else if (address == RDRAM_MIN_INTERVAL_REG)
-		*data = rdram_regs.getConfig();
+		*data = rcp.rdram_regs.getConfig();
 	else if (address == RDRAM_ADDR_SELECT_REG)
-		*data = rdram_regs.getConfig();
+		*data = rcp.rdram_regs.getConfig();
 	else if (address == RDRAM_DEVICE_MANUF_REG)
-		*data = rdram_regs.getConfig();
+		*data = rcp.rdram_regs.getConfig();
 
 	else if (address == SP_MEM_ADDR_REG)
-		*data = sp_regs.getMemAddr();
+		*data = rcp.sp.getMemAddr();
 	else if (address == SP_DRAM_ADDR_REG)
-		*data = sp_regs.getDramAddr();
+		*data = rcp.sp.getDramAddr();
 	else if (address == SP_RD_LEN_REG)
-		*data = sp_regs.getRdLen();
+		*data = rcp.sp.getRdLen();
 	else if (address == SP_WR_LEN_REG)
-		*data = sp_regs.getWrLen();
+		*data = rcp.sp.getWrLen();
 	else if (address == SP_STATUS_REG)
-		*data = sp_regs.getStatus();
+		*data = rcp.sp.getStatus();
 	else if (address == SP_DMA_FULL_REG)
-		*data = sp_regs.getDmaFull();
+		*data = rcp.sp.getDmaFull();
 	else if (address == SP_DMA_BUSY_REG)
-		*data = sp_regs.getDmaBusy();
+		*data = rcp.sp.getDmaBusy();
 	else if (address == SP_SEMAPHORE_REG)
-		*data = sp_regs.getSemaphore();
+		*data = rcp.sp.getSemaphore();
 	else if (address == SP_PC_REG)
-		*data = sp_regs.getPc();
+		*data = rcp.sp.getPc();
 	else if (address == SP_IBIST_REG)
-		*data = sp_regs.getIbist();
+		*data = rcp.sp.getIbist();
 
 	else if (address == DPC_START_REG)
-		*data = dpc_regs.getStart();
+		*data = rcp.dpc.getStart();
 	else if (address == DPC_END_REG)
-		*data = dpc_regs.getEnd();
+		*data = rcp.dpc.getEnd();
 	else if (address == DPC_CURRENT_REG)
-		*data = dpc_regs.getCurrent();
+		*data = rcp.dpc.getCurrent();
 	else if (address == DPC_STATUS_REG)
-		*data = dpc_regs.getStatus();
+		*data = rcp.dpc.getStatus();
 	else if (address == DPC_CLOCK_REG)
-		*data = dpc_regs.getClock();
+		*data = rcp.dpc.getClock();
 	else if (address == DPC_BUFBUSY_REG)
-		*data = dpc_regs.getBufBusy();
+		*data = rcp.dpc.getBufBusy();
 	else if (address == DPC_PIPEBUSY_REG)
-		*data = dpc_regs.getPipeBusy();
+		*data = rcp.dpc.getPipeBusy();
 	else if (address == DPC_TMEM_REG)
-		*data = dpc_regs.getTmem();
+		*data = rcp.dpc.getTmem();
 
 	else if (address == DPS_TBIST_REG)
-		*data = dps_regs.getTbist();
+		*data = rcp.dps.getTbist();
 	else if (address == DPS_TEST_MODE_REG)
-		*data = dps_regs.getTestMode();
+		*data = rcp.dps.getTestMode();
 	else if (address == DPS_BUFTEST_ADDR_REG)
-		*data = dps_regs.getBufTestAddr();
+		*data = rcp.dps.getBufTestAddr();
 	else if (address == DPS_BUFTEST_DATA_REG)
-		*data = dps_regs.getBufTestData();
+		*data = rcp.dps.getBufTestData();
 
 	else if (address == MI_INIT_MODE_REG)
-		*data = mi_regs.getInitMode();
+		*data = rcp.mi.getInitMode();
 	else if (address == MI_VERSION_REG)
-		*data = mi_regs.getVersion();
+		*data = rcp.mi.getVersion();
 	else if (address == MI_INTR_REG)
-		*data = mi_regs.getIntr();
+		*data = rcp.mi.getIntr();
 	else if (address == MI_INTR_MASK_REG)
-		*data = mi_regs.getIntrMask();
+		*data = rcp.mi.getIntrMask();
 
 	else if (address == VI_STATUS_REG)
-		*data = vi_regs.getStatus();
+		*data = rcp.vi.getStatus();
 	else if (address == VI_ORIGIN_REG)
-		*data = vi_regs.getOrigin();
+		*data = rcp.vi.getOrigin();
 	else if (address == VI_WIDTH_REG)
-		*data = vi_regs.getWidth();
+		*data = rcp.vi.getWidth();
 	else if (address == VI_INTR_REG)
-		*data = vi_regs.getIntr();
+		*data = rcp.vi.getIntr();
 	else if (address == VI_CURRENT_REG)
 	{
-		*data = vi_regs.getCurrent();
+		*data = rcp.vi.getCurrent();
 		//UpdateCurrentHalfLine();
 	}
 	else if (address == VI_BURST_REG)
-		*data = vi_regs.getBurst();
+		*data = rcp.vi.getBurst();
 	else if (address == VI_V_SYNC_REG)
-		*data = vi_regs.getVsync();
+		*data = rcp.vi.getVsync();
 	else if (address == VI_H_SYNC_REG)
-		*data = vi_regs.getHsync();
+		*data = rcp.vi.getHsync();
 	else if (address == VI_LEAP_REG)
-		*data = vi_regs.getLeap();
+		*data = rcp.vi.getLeap();
 	else if (address == VI_H_START_REG)
-		*data = vi_regs.getHstart();
+		*data = rcp.vi.getHstart();
 	else if (address == VI_V_START_REG)
-		*data = vi_regs.getVstart();
+		*data = rcp.vi.getVstart();
 	else if (address == VI_V_BURST_REG)
-		*data = vi_regs.getVburst();
+		*data = rcp.vi.getVburst();
 	else if (address == VI_X_SCALE_REG)
-		*data = vi_regs.getXscale();
+		*data = rcp.vi.getXscale();
 	else if (address == VI_Y_SCALE_REG)
-		*data = vi_regs.getYscale();
+		*data = rcp.vi.getYscale();
 
 	else if (address == AI_DRAM_ADDR_REG)
-		*data = ai_regs.getDramAddr();
+		*data = rcp.ai.getDramAddr();
 	else if (address == AI_LEN_REG)
 	{
-		*data = ai_regs.getLen();
+		*data = rcp.ai.getLen();
 		//res = AiReadLength();
 	}
 	else if (address == AI_CONTROL_REG)
-		*data = ai_regs.getControl();
+		*data = rcp.ai.getControl();
 	else if (address == AI_STATUS_REG)
-		*data = ai_regs.getStatus();
+		*data = rcp.ai.getStatus();
 	else if (address == AI_DACRATE_REG)
-		*data = ai_regs.getDacrate();
+		*data = rcp.ai.getDacrate();
 	else if (address == AI_BITRATE_REG)
-		*data = ai_regs.getBitrate();
+		*data = rcp.ai.getBitrate();
 
 	else if (address == PI_DRAM_ADDR_REG)
-		*data = pi_regs.getDramAddr();
+		*data = rcp.pi.getDramAddr();
 	else if (address == PI_CART_ADDR_REG)
-		*data = pi_regs.getCartAddr();
+		*data = rcp.pi.getCartAddr();
 	else if (address == PI_RD_LEN_REG)
-		*data = pi_regs.getRdLen();
+		*data = rcp.pi.getRdLen();
 	else if (address == PI_WR_LEN_REG)
-		*data = pi_regs.getWrLen();
+		*data = rcp.pi.getWrLen();
 	else if (address == PI_STATUS_REG)
-		*data = pi_regs.getStatus();
+		*data = rcp.pi.getStatus();
 	else if (address == PI_BSD_DOM1_LAT_REG)
-		*data = pi_regs.getBsdDom1Lat();
+		*data = rcp.pi.getBsdDom1Lat();
 	else if (address == PI_BSD_DOM1_PWD_REG)
-		*data = pi_regs.getBsdDom1Pwd();
+		*data = rcp.pi.getBsdDom1Pwd();
 	else if (address == PI_BSD_DOM1_PGS_REG)
-		*data = pi_regs.getBsdDom1Pgs();
+		*data = rcp.pi.getBsdDom1Pgs();
 	else if (address == PI_BSD_DOM1_RLS_REG)
-		*data = pi_regs.getBsdDom1Rls();
+		*data = rcp.pi.getBsdDom1Rls();
 	else if (address == PI_BSD_DOM2_LAT_REG)
-		*data = pi_regs.getBsdDom2Lat();
+		*data = rcp.pi.getBsdDom2Lat();
 	else if (address == PI_BSD_DOM2_PWD_REG)
-		*data = pi_regs.getBsdDom2Pwd();
+		*data = rcp.pi.getBsdDom2Pwd();
 	else if (address == PI_BSD_DOM2_PGS_REG)
-		*data = pi_regs.getBsdDom2Pgs();
+		*data = rcp.pi.getBsdDom2Pgs();
 	else if (address == PI_BSD_DOM2_RLS_REG)
-		*data = pi_regs.getBsdDom2Rls();
+		*data = rcp.pi.getBsdDom2Rls();
 
 	else if (address == RI_MODE_REG)
-		*data = ri_regs.getMode();
+		*data = rcp.ri.getMode();
 	else if (address == RI_CONFIG_REG)
-		*data = ri_regs.getConfig();
+		*data = rcp.ri.getConfig();
 	else if (address == RI_CURRENT_LOAD_REG)
-		*data = ri_regs.getCurrentLoad();
+		*data = rcp.ri.getCurrentLoad();
 	else if (address == RI_SELECT_REG)
-		*data = ri_regs.getSelect();
+		*data = rcp.ri.getSelect();
 	else if (address == RI_REFRESH_REG)
-		*data = ri_regs.getRefresh();
+		*data = rcp.ri.getRefresh();
 	else if (address == RI_LATENCY_REG)
-		*data = ri_regs.getLatency();
+		*data = rcp.ri.getLatency();
 	else if (address == RI_RERROR_REG)
-		*data = ri_regs.getRerror();
+		*data = rcp.ri.getRerror();
 	else if (address == RI_WERROR_REG)
-		*data = ri_regs.getWerror();
+		*data = rcp.ri.getWerror();
 
 	else if (address == SI_DRAM_ADDR_REG)
-		*data = si_regs.getDramAddr();
+		*data = rcp.si.getDramAddr();
 	else if (address == SI_PIF_ADDR_RD64B_REG)
-		*data = si_regs.getPifAddrRd64b();
+		*data = rcp.si.getPifAddrRd64b();
 	else if (address == SI_PIF_ADDR_WR64B_REG)
-		*data = si_regs.getPifAddrWr64b();
+		*data = rcp.si.getPifAddrWr64b();
 	else if (address == SI_STATUS_REG)
-		*data = si_regs.getStatus();
+		*data = rcp.si.getStatus();
 	else
 		return false;
 	return true;
@@ -251,7 +231,7 @@ inline bool MEMORY::read_from_register(word *data, word address)
 //** WRITE																	**
 //****************************************************************************
 template <typename Type>
-inline void MEMORY::write(Type data, word address)
+inline void MMU::write(Type data, word address)
 {
 	if (typeid(Type) == typeid(word) && write_in_register((word) data, address))
 		return;
@@ -262,242 +242,242 @@ inline void MEMORY::write(Type data, word address)
 }
 
 // Set the value of the registers
-inline bool MEMORY::write_in_register(word data, word address)
+inline bool MMU::write_in_register(word data, word address)
 {
 	address &= 0x0FFFFFFF;
 	if (address == RDRAM_CONFIG_REG)
-		rdram_regs.setConfig(data);
+		rcp.rdram_regs.setConfig(data);
 	else if (address == RDRAM_DEVICE_ID_REG)
-		rdram_regs.setDeviceId(data);
+		rcp.rdram_regs.setDeviceId(data);
 	else if (address == RDRAM_DELAY_REG)
-		rdram_regs.setDelay(data);
+		rcp.rdram_regs.setDelay(data);
 	else if (address == RDRAM_MODE_REG)
-		rdram_regs.setMode(data);
+		rcp.rdram_regs.setMode(data);
 	else if (address == RDRAM_REF_INTERVAL_REG)
-		rdram_regs.setRefInterval(data);
+		rcp.rdram_regs.setRefInterval(data);
 	else if (address == RDRAM_REF_ROW_REG)
-		rdram_regs.setRefRow(data);
+		rcp.rdram_regs.setRefRow(data);
 	else if (address == RDRAM_RAS_INTERVAL_REG)
-		rdram_regs.setConfig(data);
+		rcp.rdram_regs.setConfig(data);
 	else if (address == RDRAM_MIN_INTERVAL_REG)
-		rdram_regs.setConfig(data);
+		rcp.rdram_regs.setConfig(data);
 	else if (address == RDRAM_ADDR_SELECT_REG)
-		rdram_regs.setConfig(data);
+		rcp.rdram_regs.setConfig(data);
 	else if (address == RDRAM_DEVICE_MANUF_REG)
-		rdram_regs.setConfig(data);
+		rcp.rdram_regs.setConfig(data);
 
 	else if (address == SP_MEM_ADDR_REG)
-		sp_regs.setMemAddr(data);
+		rcp.sp.setMemAddr(data);
 	else if (address == SP_DRAM_ADDR_REG)
-		sp_regs.setDramAddr(data);
+		rcp.sp.setDramAddr(data);
 	else if (address == SP_RD_LEN_REG)
 	{
-		sp_regs.setRdLen(data);
-		dma_sp_read();	
-		sp_regs.setDmaBusy(0);
-		sp_regs.setStatus(sp_regs.getStatus() & ~SP_STATUS_DMA_BUSY);
+		rcp.sp.setRdLen(data);
+		rcp.dma_sp_read();	
+		rcp.sp.setDmaBusy(0);
+		rcp.sp.setStatus(rcp.sp.getStatus() & ~SP_STATUS_DMA_BUSY);
 	}
 	else if (address == SP_WR_LEN_REG)
 	{
-		sp_regs.setWrLen(data);
-		dma_sp_write();
-		sp_regs.setDmaBusy(0);
-		sp_regs.setStatus(sp_regs.getStatus() & ~SP_STATUS_DMA_BUSY);
+		rcp.sp.setWrLen(data);
+		rcp.dma_sp_write();
+		rcp.sp.setDmaBusy(0);
+		rcp.sp.setStatus(rcp.sp.getStatus() & ~SP_STATUS_DMA_BUSY);
 	}
 	else if (address == SP_STATUS_REG)
 	{
-		sp_regs.setSpecialStatus(data);
+		rcp.sp.setSpecialStatus(data);
 		if (data & SP_SET_SIG0) 
 		{
-			mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_SP);
-			check_intr = true;
+			rcp.mi.setIntr(rcp.mi.getIntr() | MI_INTR_SP);
+			rcp.setCheckInterrupt(true);
 		}
 		if (data & SP_CLR_INTR)
 		{ 
-			mi_regs.setIntr(mi_regs.getIntr() & ~MI_INTR_SP);
-			//	RunRsp();
-			check_intr = true;
+			rcp.mi.setIntr(rcp.mi.getIntr() & ~MI_INTR_SP);
+			// TODO: RunRsp();
+			rcp.setCheckInterrupt(true);
 		}
 		else
-			;//	RunRsp();
+			;// TODO: RunRsp();
 	}
 	else if (address == SP_DMA_FULL_REG)
-		sp_regs.setDmaFull(data);
+		rcp.sp.setDmaFull(data);
 	else if (address == SP_DMA_BUSY_REG)
-		sp_regs.setDmaBusy(data);
+		rcp.sp.setDmaBusy(data);
 	else if (address == SP_SEMAPHORE_REG)
-		sp_regs.setSpecialSemaphore(data);
+		rcp.sp.setSpecialSemaphore(data);
 	else if (address == SP_PC_REG)
-		sp_regs.setPc(data);
+		rcp.sp.setPc(data);
 	else if (address == SP_IBIST_REG)
-		sp_regs.setIbist(data);
+		rcp.sp.setIbist(data);
 
 	else if (address == DPC_START_REG)
-		dpc_regs.setStart(data);
+		rcp.dpc.setStart(data);
 	else if (address == DPC_END_REG)
-		dpc_regs.setEnd(data);
+		rcp.dpc.setEnd(data);
 	else if (address == DPC_CURRENT_REG)
-		dpc_regs.setCurrent(data);
+		rcp.dpc.setCurrent(data);
 	else if (address == DPC_STATUS_REG)
-		dpc_regs.setStatus(data);
+		rcp.dpc.setStatus(data);
 	else if (address == DPC_CLOCK_REG)
-		dpc_regs.setClock(data);
+		rcp.dpc.setClock(data);
 	else if (address == DPC_BUFBUSY_REG)
-		dpc_regs.setBufBusy(data);
+		rcp.dpc.setBufBusy(data);
 	else if (address == DPC_PIPEBUSY_REG)
-		dpc_regs.setPipeBusy(data);
+		rcp.dpc.setPipeBusy(data);
 	else if (address == DPC_TMEM_REG)
-		dpc_regs.setTmem(data);
+		rcp.dpc.setTmem(data);
 
 	else if (address == DPS_TBIST_REG)
-		dps_regs.setTbist(data);
+		rcp.dps.setTbist(data);
 	else if (address == DPS_TEST_MODE_REG)
-		dps_regs.setTestMode(data);
+		rcp.dps.setTestMode(data);
 	else if (address == DPS_BUFTEST_ADDR_REG)
-		dps_regs.setBufTestAddr(data);
+		rcp.dps.setBufTestAddr(data);
 	else if (address == DPS_BUFTEST_DATA_REG)
-		dps_regs.setBufTestData(data);
+		rcp.dps.setBufTestData(data);
 
 	else if (address == MI_INIT_MODE_REG)
-		mi_regs.setSpecialInitMode(data);
+		rcp.mi.setSpecialInitMode(data);
 	else if (address == MI_VERSION_REG)
-		mi_regs.setVersion(data);
+		rcp.mi.setVersion(data);
 	else if (address == MI_INTR_REG)
-		mi_regs.setIntr(data);
+		rcp.mi.setIntr(data);
 	else if (address == MI_INTR_MASK_REG)
-		mi_regs.setSpecialIntrMask(data);
+		rcp.mi.setSpecialIntrMask(data);
 
 	else if (address == VI_STATUS_REG)
-		vi_regs.setStatus(data);
+		rcp.vi.setStatus(data);
 	else if (address == VI_ORIGIN_REG)
-		vi_regs.setOrigin(data);
+		rcp.vi.setOrigin(data);
 	else if (address == VI_WIDTH_REG)
-		vi_regs.setWidth(data);
+		rcp.vi.setWidth(data);
 	else if (address == VI_INTR_REG)
 	{
-		vi_regs.setVintr(data);
-		mi_regs.setIntr(mi_regs.getIntr() & ~MI_INTR_VI);
-		check_intr = true;
+		rcp.vi.setVintr(data);
+		rcp.mi.setIntr(rcp.mi.getIntr() & ~MI_INTR_VI);
+		rcp.setCheckInterrupt(true);
 	}
 	else if (address == VI_CURRENT_REG)
-		vi_regs.setCurrent(data);
+		rcp.vi.setCurrent(data);
 	else if (address == VI_BURST_REG)
-		vi_regs.setBurst(data);
+		rcp.vi.setBurst(data);
 	else if (address == VI_V_SYNC_REG)
-		vi_regs.setVsync(data);
+		rcp.vi.setVsync(data);
 	else if (address == VI_H_SYNC_REG)
-		vi_regs.setHsync(data);
+		rcp.vi.setHsync(data);
 	else if (address == VI_LEAP_REG)
-		vi_regs.setLeap(data);
+		rcp.vi.setLeap(data);
 	else if (address == VI_H_START_REG)
-		vi_regs.setHstart(data);
+		rcp.vi.setHstart(data);
 	else if (address == VI_V_START_REG)
-		vi_regs.setVstart(data);
+		rcp.vi.setVstart(data);
 	else if (address == VI_V_BURST_REG)
-		vi_regs.setVburst(data);
+		rcp.vi.setVburst(data);
 	else if (address == VI_X_SCALE_REG)
-		vi_regs.setXscale(data);
+		rcp.vi.setXscale(data);
 	else if (address == VI_Y_SCALE_REG)
-		vi_regs.setYscale(data);
+		rcp.vi.setYscale(data);
 
 	else if (address == AI_DRAM_ADDR_REG)
-		ai_regs.setDramAddr(data);
+		rcp.ai.setDramAddr(data);
 	else if (address == AI_LEN_REG)
-		ai_regs.setLen(data);
+		rcp.ai.setLen(data);
 	else if (address == AI_CONTROL_REG)
-		ai_regs.setControl(data);
+		rcp.ai.setControl(data);
 	else if (address == AI_STATUS_REG)
 	{
-		mi_regs.setIntr(mi_regs.getIntr() & ~MI_INTR_AI);
-		check_intr = true;
+		rcp.mi.setIntr(rcp.mi.getIntr() & ~MI_INTR_AI);
+		rcp.setCheckInterrupt(true);
 	}
 	else if (address == AI_DACRATE_REG)
-		ai_regs.setDacrate(data);
+		rcp.ai.setDacrate(data);
 	else if (address == AI_BITRATE_REG)
-		ai_regs.setBitrate(data);
+		rcp.ai.setBitrate(data);
 
 	else if (address == PI_DRAM_ADDR_REG)
-		pi_regs.setDramAddr(data);
+		rcp.pi.setDramAddr(data);
 	else if (address == PI_CART_ADDR_REG)
-		pi_regs.setCartAddr(data);
+		rcp.pi.setCartAddr(data);
 	else if (address == PI_RD_LEN_REG)
 	{
-		pi_regs.setRdLen(data);
-		dma_pi_read();
-		mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_PI);
-		pi_regs.setStatus(pi_regs.getStatus() & ~PI_STATUS_DMA_BUSY);
-		check_intr = true;
+		rcp.pi.setRdLen(data);
+		rcp.dma_pi_read();
+		rcp.mi.setIntr(rcp.mi.getIntr() | MI_INTR_PI);
+		rcp.pi.setStatus(rcp.pi.getStatus() & ~PI_STATUS_DMA_BUSY);
+		rcp.setCheckInterrupt(true);
 	}
 	else if (address == PI_WR_LEN_REG)
 	{
-		pi_regs.setWrLen(data);
-		dma_pi_write();
-		mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_PI);
-		pi_regs.setStatus(pi_regs.getStatus() & ~PI_STATUS_DMA_BUSY);
-		check_intr = true;
+		rcp.pi.setWrLen(data);
+		rcp.dma_pi_write();
+		rcp.mi.setIntr(rcp.mi.getIntr() | MI_INTR_PI);
+		rcp.pi.setStatus(rcp.pi.getStatus() & ~PI_STATUS_DMA_BUSY);
+		rcp.setCheckInterrupt(true);
 	}
 	else if (address == PI_STATUS_REG)
 	{
-		mi_regs.setIntr(mi_regs.getIntr() & ~MI_INTR_PI);
-		check_intr = true;
+		rcp.mi.setIntr(rcp.mi.getIntr() & ~MI_INTR_PI);
+		rcp.setCheckInterrupt(true);
 	}
 	else if (address == PI_BSD_DOM1_LAT_REG)
-		pi_regs.setBsdDom1Lat(data);
+		rcp.pi.setBsdDom1Lat(data);
 	else if (address == PI_BSD_DOM1_PWD_REG)
-		pi_regs.setBsdDom1Pwd(data);
+		rcp.pi.setBsdDom1Pwd(data);
 	else if (address == PI_BSD_DOM1_PGS_REG)
-		pi_regs.setBsdDom1Pgs(data);
+		rcp.pi.setBsdDom1Pgs(data);
 	else if (address == PI_BSD_DOM1_RLS_REG)
-		pi_regs.setBsdDom1Rls(data);
+		rcp.pi.setBsdDom1Rls(data);
 	else if (address == PI_BSD_DOM2_LAT_REG)
-		pi_regs.setBsdDom2Lat(data);
+		rcp.pi.setBsdDom2Lat(data);
 	else if (address == PI_BSD_DOM2_PWD_REG)
-		pi_regs.setBsdDom2Pwd(data);
+		rcp.pi.setBsdDom2Pwd(data);
 	else if (address == PI_BSD_DOM2_PGS_REG)
-		pi_regs.setBsdDom2Pgs(data);
+		rcp.pi.setBsdDom2Pgs(data);
 	else if (address == PI_BSD_DOM2_RLS_REG)
-		pi_regs.setBsdDom2Rls(data);
+		rcp.pi.setBsdDom2Rls(data);
 
 	else if (address == RI_MODE_REG)
-		ri_regs.setMode(data);
+		rcp.ri.setMode(data);
 	else if (address == RI_CONFIG_REG)
-		ri_regs.setConfig(data);
+		rcp.ri.setConfig(data);
 	else if (address == RI_CURRENT_LOAD_REG)
-		ri_regs.setCurrentLoad(data);
+		rcp.ri.setCurrentLoad(data);
 	else if (address == RI_SELECT_REG)
-		ri_regs.setSelect(data);
+		rcp.ri.setSelect(data);
 	else if (address == RI_REFRESH_REG)
-		ri_regs.setRefresh(data);
+		rcp.ri.setRefresh(data);
 	else if (address == RI_LATENCY_REG)
-		ri_regs.setLatency(data);
+		rcp.ri.setLatency(data);
 	else if (address == RI_RERROR_REG)
-		ri_regs.setRerror(data);
+		rcp.ri.setRerror(data);
 	else if (address == RI_WERROR_REG)
-		ri_regs.setWerror(data);
+		rcp.ri.setWerror(data);
 
 	else if (address == SI_DRAM_ADDR_REG)
-		si_regs.setDramAddr(data);
+		rcp.si.setDramAddr(data);
 	else if (address == SI_PIF_ADDR_RD64B_REG)
 	{
-		si_regs.setPifAddrRd64b(data);
-		dma_si_read();
-		mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_SI);
-		si_regs.setStatus(si_regs.getStatus() | SI_STATUS_INTERRUPT);
-		check_intr = true;
+		rcp.si.setPifAddrRd64b(data);
+		rcp.dma_si_read();
+		rcp.mi.setIntr(rcp.mi.getIntr() | MI_INTR_SI);
+		rcp.si.setStatus(rcp.si.getStatus() | SI_STATUS_INTERRUPT);
+		rcp.setCheckInterrupt(true);
 	}
 	else if (address == SI_PIF_ADDR_WR64B_REG)
 	{
-		si_regs.setPifAddrWr64b(data);
-		dma_si_write();
-		mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_SI);
-		si_regs.setStatus(si_regs.getStatus() | SI_STATUS_INTERRUPT);
-		check_intr = true;
+		rcp.si.setPifAddrWr64b(data);
+		rcp.dma_si_write();
+		rcp.mi.setIntr(rcp.mi.getIntr() | MI_INTR_SI);
+		rcp.si.setStatus(rcp.si.getStatus() | SI_STATUS_INTERRUPT);
+		rcp.setCheckInterrupt(true);
 	}
 	else if (address == SI_STATUS_REG)
 	{
-		si_regs.setSpecialStatus(data);
-		mi_regs.setIntr(mi_regs.getIntr() & ~MI_INTR_SI);
-		check_intr = true;
+		rcp.si.setSpecialStatus(data);
+		rcp.mi.setIntr(rcp.mi.getIntr() & ~MI_INTR_SI);
+		rcp.setCheckInterrupt(true);
 	}
 	else
 		return false;
@@ -507,22 +487,22 @@ inline bool MEMORY::write_in_register(word data, word address)
 //****************************************************************************
 //** VIRTUAL TO PHYSICAL													**
 //****************************************************************************
-inline void* MEMORY::virtual_to_physical(word a)
+inline void* MMU::virtual_to_physical(word a)
 {
-	if (rdram.contains(a))		return rdram[a];
-	if (rdram_regs.contains(a))	return rdram_regs[a];
-	if (sp_regs.contains(a))	return sp_regs[a];
-	if (dpc_regs.contains(a))	return dpc_regs[a];
-	if (dps_regs.contains(a))	return dps_regs[a];
-	if (mi_regs.contains(a))	return mi_regs[a];
-	if (vi_regs.contains(a))	return vi_regs[a];
-	if (ai_regs.contains(a))	return ai_regs[a];
-	if (pi_regs.contains(a))	return pi_regs[a];
-	if (ri_regs.contains(a))	return ri_regs[a];
-	if (si_regs.contains(a))	return si_regs[a];
-	if (rom.contains(a))		return rom[a];
-	if (pif_rom.contains(a))	return pif_rom[a];
-	if (pif_ram.contains(a))	return pif_ram[a];
+	if (rcp.rdram.contains(a))			return rcp.rdram[a];
+	if (rcp.rdram_regs.contains(a))		return rcp.rdram_regs[a];
+	if (rcp.sp.contains(a))		return rcp.sp[a];
+	if (rcp.dpc.contains(a))		return rcp.dpc[a];
+	if (rcp.dps.contains(a))		return rcp.dps[a];
+	if (rcp.mi.contains(a))		return rcp.mi[a];
+	if (rcp.vi.contains(a))		return rcp.vi[a];
+	if (rcp.ai.contains(a))		return rcp.ai[a];
+	if (rcp.pi.contains(a))		return rcp.pi[a];
+	if (rcp.ri.contains(a))		return rcp.ri[a];
+	if (rcp.si.contains(a))		return rcp.si[a];
+	if (rcp.rom.contains(a))			return rcp.rom[a];
+	if (rcp.pif_rom.contains(a))		return rcp.pif_rom[a];
+	if (rcp.pif_ram.contains(a))		return rcp.pif_ram[a];
 
 	if (KSEG0 <= a && a <= KSEG1-1)		// Mirror of 0x0000 0000 to 0x1FFF FFFF
 		return (virtual_to_physical(a-KSEG0));
@@ -536,12 +516,3 @@ inline void* MEMORY::virtual_to_physical(word a)
 	cerr << endl << "ERROR: Virtual address 0x" << hex << a << " not handled" << endl;
 	throw VIRTUAL_ADDRESS_ERROR;
 }
-
-
-
-
-
-
-
-
-

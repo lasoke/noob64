@@ -25,22 +25,23 @@
 #include "StdAfx.h"
 
 //****************************************************************************
-//** MEMORY																	**
+//** RCP																	**
 //****************************************************************************
 
-MEMORY::MEMORY(ROM* r) :
+RCP::RCP(ROM* r) :
+	cpu			(*new R4300i(this)),
 	rom			(*r),
 	rdram		(*new RDRAM()),
 	rdram_regs	(*new RDRAM_REGS()),
-	sp_regs		(*new SP_REGS()),
-	dpc_regs	(*new DPC_REGS()),
-	dps_regs	(*new DPS_REGS()),
-	mi_regs		(*new MI_REGS()),
-	vi_regs		(*new VI_REGS()),
-	ai_regs		(*new AI_REGS()),
-	pi_regs		(*new PI_REGS()),
-	ri_regs		(*new RI_REGS()),
-	si_regs		(*new SI_REGS()),
+	sp			(*new SP()),
+	dpc			(*new DPC()),
+	dps			(*new DPS()),
+	mi			(*new MI()),
+	vi			(*new VI()),
+	ai			(*new AI()),
+	pi			(*new PI()),
+	ri			(*new RI()),
+	si			(*new SI()),
 	pif_rom		(*new PIF_ROM()),
 	pif_ram		(*new PIF_RAM())
 {
@@ -49,10 +50,52 @@ MEMORY::MEMORY(ROM* r) :
 	check_intr = false;
 }
 
-void* MEMORY::operator[] (const word address)
+void RCP::start()
 {
-	return virtual_to_physical(address);
+	cpu.start();
 }
+
+void RCP::setRSP(RSP* r)
+{
+	rsp = r;
+	rsp->init(this);
+}
+void RCP::setGFX(GFX* g)
+{
+	gfx = g;
+	gfx->init(this);
+}
+
+
+void RCP::RefreshScreen()
+{
+	static word OLD_VI_V_SYNC_REG = 0, VI_INTR_TIME = 500000;
+
+	if (OLD_VI_V_SYNC_REG != vi.getVsync())
+	{
+		if (vi.getVsync() == 0)
+		{
+			VI_INTR_TIME = 500000;
+		} 
+		else 
+		{
+			VI_INTR_TIME = (vi.getVsync() + 1) * 1500;
+			if ((vi.getVsync() % 1) != 0)
+				VI_INTR_TIME -= 38;
+		}
+	}
+	/* FIXME:
+	TimerHandler& t = cpu.getTimerHandler();
+	t.ChangeTimer(ViTimer, t.Timer + t.NextTimer[ViTimer] + VI_INTR_TIME, Compare, Count);
+	
+	if ((VI_STATUS_REG & 0x10) != 0)
+		ViFieldNumber = (ViFieldNumber == 0) ? 1 : 0;
+	else
+		ViFieldNumber = 0;
+	*/
+	gfx->updateScreen();
+}
+
 
 //****************************************************************************
 //** SEGMENTS																**
@@ -66,15 +109,15 @@ MEM_SEG::MEM_SEG(word b, word e) : ptr(0), begining(b), end(e)					{}
 MEM_SEG::~MEM_SEG()																{}
 RDRAM::RDRAM() : MEM_SEG(RDRAM_SEG_BEGINING, RDRAM_SEG_END)						{ INIT(data) }
 RDRAM_REGS::RDRAM_REGS() : MEM_SEG(RDRAM_REGS_SEG_BEGINING, RDRAM_REGS_SEG_END) { INIT(&data) }
-SP_REGS::SP_REGS() : MEM_SEG(SP_SEG_BEGINING, SP_SEG_END)						{ INIT(&data) }
-DPC_REGS::DPC_REGS() : MEM_SEG(DPC_SEG_BEGINING, DPC_SEG_END)					{ INIT(&data) }
-DPS_REGS::DPS_REGS() : MEM_SEG(DPS_SEG_BEGINING, DPS_SEG_END)					{ INIT(&data) }
-MI_REGS::MI_REGS() : MEM_SEG(MI_SEG_BEGINING, MI_SEG_END)						{ INIT(&data) }
-VI_REGS::VI_REGS() : MEM_SEG(VI_SEG_BEGINING, VI_SEG_END)						{ INIT(&data) }
-AI_REGS::AI_REGS() : MEM_SEG(AI_SEG_BEGINING, AI_SEG_END)						{ INIT(&data) }
-PI_REGS::PI_REGS() : MEM_SEG(PI_SEG_BEGINING, PI_SEG_END)						{ INIT(&data) }
-RI_REGS::RI_REGS() : MEM_SEG(RI_SEG_BEGINING, RI_SEG_END)						{ INIT(&data) }
-SI_REGS::SI_REGS() : MEM_SEG(SI_SEG_BEGINING, SI_SEG_END)						{ INIT(&data) }
+SP::SP() : MEM_SEG(SP_SEG_BEGINING, SP_SEG_END)						{ INIT(&data) }
+DPC::DPC() : MEM_SEG(DPC_SEG_BEGINING, DPC_SEG_END)					{ INIT(&data) }
+DPS::DPS() : MEM_SEG(DPS_SEG_BEGINING, DPS_SEG_END)					{ INIT(&data) }
+MI::MI() : MEM_SEG(MI_SEG_BEGINING, MI_SEG_END)						{ INIT(&data) }
+VI::VI() : MEM_SEG(VI_SEG_BEGINING, VI_SEG_END)						{ INIT(&data) }
+AI::AI() : MEM_SEG(AI_SEG_BEGINING, AI_SEG_END)						{ INIT(&data) }
+PI::PI() : MEM_SEG(PI_SEG_BEGINING, PI_SEG_END)						{ INIT(&data) }
+RI::RI() : MEM_SEG(RI_SEG_BEGINING, RI_SEG_END)						{ INIT(&data) }
+SI::SI() : MEM_SEG(SI_SEG_BEGINING, SI_SEG_END)						{ INIT(&data) }
 PIF_ROM::PIF_ROM() : MEM_SEG(PIF_ROM_SEG_BEGINING, PIF_ROM_SEG_END)				{ INIT(&data) }
 PIF_RAM::PIF_RAM() : MEM_SEG(PIF_RAM_SEG_BEGINING, PIF_RAM_SEG_END)				{ INIT(&data) }
 
@@ -83,20 +126,3 @@ void* MEM_SEG::operator[] (const word address) const
 	return (char*) ptr + address - begining;
 }
 
-bool is_address_defined(word address)
-{
-	if (KSEG0 <= address && address <= KSEG2-1)
-		return true;
-	// TODO
-	/*
-	dword i;
-	for (i = 0; i < 64; i++)
-	{
-		if (FastTlb[i].ValidEntry == false)
-			continue;
-		if (address >= FastTlb[i].VSTART && address <= FastTlb[i].VEND)
-			return true;
-	}
-	*/
-	return false; 
-}

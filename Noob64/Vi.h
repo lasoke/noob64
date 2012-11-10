@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Memory.h"
+#include "Rcp.h"
 
 #define VI_SEG_BEGINING			0x04400000
 #define VI_SEG_END				0x044FFFFF
@@ -48,10 +48,10 @@
 //** Video Interface (VI) Registers											**
 //****************************************************************************
 
-class VI_REGS : public MEM_SEG
+class VI : public MEM_SEG
 {
 public:
-	VI_REGS();
+	VI();
 
 	inline word getStatus();
 	inline void setStatus(word);

@@ -25,9 +25,12 @@
 #include "StdAfx.h"
 #include "R4300i.h"
 
-R4300i::R4300i(MEMORY *mem) : memory(*mem), timer_handler(*new TimerHandler())
+R4300i::R4300i(RCP *r) :
+		rcp(*r),
+		mmu(*new MMU(*this, rcp)),
+		timer_handler(*new TimerHandler())
+		
 {
-	memory.cpu = this;
 }
 
 void R4300i::reset()
@@ -113,13 +116,13 @@ void R4300i::pif_init()
 	PRevID	= 0x00000B00;
 	Random	= 0x0000001F;
 
-	memory.write<word>(0x02020202, MI_VERSION_REG);
-	memory.write<word>(0x00000041, SP_STATUS_REG);
-	memory.write<word>(0x00000088, DPC_STATUS_REG);
-	memory.write<word>(0x00000040, PI_BSD_DOM1_LAT_REG);
-	memory.write<word>(0x00000012, PI_BSD_DOM1_PWD_REG);
-	memory.write<word>(0x00000007, PI_BSD_DOM1_PGS_REG);
-	memory.write<word>(0x00000003, PI_BSD_DOM1_RLS_REG);
+	mmu.write<word>(0x02020202, MI_VERSION_REG);
+	mmu.write<word>(0x00000041, SP_STATUS_REG);
+	mmu.write<word>(0x00000088, DPC_STATUS_REG);
+	mmu.write<word>(0x00000040, PI_BSD_DOM1_LAT_REG);
+	mmu.write<word>(0x00000012, PI_BSD_DOM1_PWD_REG);
+	mmu.write<word>(0x00000007, PI_BSD_DOM1_PGS_REG);
+	mmu.write<word>(0x00000003, PI_BSD_DOM1_RLS_REG);
 
 	fcr0 = 0x511;
 
@@ -127,24 +130,24 @@ void R4300i::pif_init()
 	
 	// Copies first 0x1000 bytes of ROM to first 0x1000 bytes of SP_MEM
 	for(int i = 0; i < 0x1000; i++)
-		memory.write<byte>(*((byte*) memory[ROM_SEG_BEGINING+i]), SP_SEG_BEGINING+i);
+		mmu.write<byte>(*((byte*) mmu[ROM_SEG_BEGINING+i]), SP_SEG_BEGINING+i);
 	// Sets PC right after the ROM header
 	pc = 0xA4000040;
 
-	memory.write<word>(0xBDA807FC, 0x04001004);
-	memory.write<word>(0x3C0DBFC0, 0x04001000);
-	memory.write<word>(0x25AD07C0, 0x04001008);
-	memory.write<word>(0x31080080, 0x0400100C);
-	memory.write<word>(0x5500FFFC, 0x04001010);
-	memory.write<word>(0x3C0DBFC0, 0x04001014);
-	memory.write<word>(0x8DA80024, 0x04001018);
-	memory.write<word>(0x3C0BB000, 0x0400101C);
-	memory.write<word>(0x6886A9C1, 0x04001F94);
-	memory.write<word>(0x915F5B7E, 0x04001F90);
+	mmu.write<word>(0xBDA807FC, 0x04001004);
+	mmu.write<word>(0x3C0DBFC0, 0x04001000);
+	mmu.write<word>(0x25AD07C0, 0x04001008);
+	mmu.write<word>(0x31080080, 0x0400100C);
+	mmu.write<word>(0x5500FFFC, 0x04001010);
+	mmu.write<word>(0x3C0DBFC0, 0x04001014);
+	mmu.write<word>(0x8DA80024, 0x04001018);
+	mmu.write<word>(0x3C0BB000, 0x0400101C);
+	mmu.write<word>(0x6886A9C1, 0x04001F94);
+	mmu.write<word>(0x915F5B7E, 0x04001F90);
 
 }
 
-void R4300i::init()
+void R4300i::start()
 {
 	reset();
 	pif_init();
@@ -152,10 +155,10 @@ void R4300i::init()
 	int i = 0;
 	while (running)
 	{
-		if (memory.isCheckInterrupt())
+		if (rcp.isCheckInterrupt())
 		{
 			check_interrupt();
-			memory.setCheckInterrupt(false);
+			rcp.setCheckInterrupt(false);
 			if (interrupt_detected)
 			{
 				trigger_intr_exception();
@@ -165,7 +168,7 @@ void R4300i::init()
 		++Count;
 		if ((pc & 0xFFFFFFFF) == 0x80246DD8)
 			++i;
-		decode(memory.read<word>((word) pc));
+		decode(mmu.read<word>((word) pc));
 		if (timer_handler.Timer < 0)
 			TimerDone();
 	}

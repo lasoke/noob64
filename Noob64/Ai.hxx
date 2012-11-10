@@ -26,20 +26,20 @@
 
 #include "Ai.h"
 
-inline void AI_REGS::setDramAddr(word w)		{ data.dram_addr = w; }
-inline void AI_REGS::setLen(word w)
+inline void AI::setDramAddr(word w)		{ data.dram_addr = w; }
+inline void AI::setLen(word w)
 {
 	data.len = w;
 	//AiLenChanged
 }
-inline void AI_REGS::setControl(word w)			{ data.control = w & 0x1; }
-inline void AI_REGS::setStatus(word w)			{ /*TODO*/ }
-inline void AI_REGS::setDacrate(word w)			{ data.dacrate = w; }
-inline void AI_REGS::setBitrate(word w)			{ data.bitrate = w; }
+inline void AI::setControl(word w)			{ data.control = w & 0x1; }
+inline void AI::setStatus(word w)			{ /*TODO*/ }
+inline void AI::setDacrate(word w)			{ data.dacrate = w; }
+inline void AI::setBitrate(word w)			{ data.bitrate = w; }
 
-inline word AI_REGS::getDramAddr()				{ return data.dram_addr; }
-inline word AI_REGS::getLen()					{ return data.len; }
-inline word AI_REGS::getControl()				{ return data.control; }
-inline word AI_REGS::getStatus()				{ return data.status; }
-inline word AI_REGS::getDacrate()				{ return data.dacrate; }
-inline word AI_REGS::getBitrate()				{ return data.bitrate; }
+inline word AI::getDramAddr()				{ return data.dram_addr; }
+inline word AI::getLen()					{ return data.len; }
+inline word AI::getControl()				{ return data.control; }
+inline word AI::getStatus()				{ return data.status; }
+inline word AI::getDacrate()				{ return data.dacrate; }
+inline word AI::getBitrate()				{ return data.bitrate; }

@@ -49,9 +49,9 @@ PLUGIN::~PLUGIN(void)
 	FreeLibrary(hDLL);
 }
 
-void PLUGIN::init(MEMORY *mem)
+void PLUGIN::init(RCP *r)
 {
-	memory = mem;
+	rcp = r;
 }
 
 void PLUGIN::closeDLL()

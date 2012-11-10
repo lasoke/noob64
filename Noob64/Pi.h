@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Memory.h"
+#include "Rcp.h"
 
 #define PI_SEG_BEGINING			0x04600000
 #define PI_SEG_END				0x046FFFFF
@@ -54,10 +54,10 @@
 //** Peripheral Interface (PI) Registers									**
 //****************************************************************************
 
-class PI_REGS : public MEM_SEG
+class PI : public MEM_SEG
 {
 public:
-	PI_REGS();
+	PI();
 
 	inline word getDramAddr();
 	inline void setDramAddr(word);

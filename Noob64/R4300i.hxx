@@ -27,6 +27,13 @@
 #include "R4300i.h"
 
 //****************************************************************************
+//** GETTERS																**
+//****************************************************************************
+
+inline MMU& R4300i::getMMU(void) const { return mmu; }
+inline TimerHandler& R4300i::getTimerHandler(void) const { return timer_handler; }
+
+//****************************************************************************
 //** DECODE METHODS															**
 //****************************************************************************
 
@@ -647,7 +654,7 @@ inline void R4300i::decode_fpu(const word i)
 inline void R4300i::LB(int rt, int immed, int rs)
 {
 	PRINT_PC("LB " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = extend_sign_byte(memory.read<sbyte>((word) (r[rs] + extend_sign_halfword(immed))));
+	r[rt] = extend_sign_byte(mmu.read<sbyte>((word) (r[rs] + extend_sign_halfword(immed))));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -655,7 +662,7 @@ inline void R4300i::LB(int rt, int immed, int rs)
 inline void R4300i::LBU(int rt, int immed, int rs)
 {
 	PRINT_PC("LBU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = memory.read<byte>((word) (r[rs] + extend_sign_halfword(immed)));
+	r[rt] = mmu.read<byte>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -663,7 +670,7 @@ inline void R4300i::LBU(int rt, int immed, int rs)
 inline void R4300i::LD(int rt, int immed, int rs)
 {
 	PRINT_PC("LD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = memory.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
+	r[rt] = mmu.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -671,7 +678,7 @@ inline void R4300i::LD(int rt, int immed, int rs)
 inline void R4300i::LDL(int rt, int immed, int rs)
 {
 	PRINT_PC("LDL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	dword tmp = memory.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
+	dword tmp = mmu.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
 	r[rt] |= (tmp << ((r[rs] + extend_sign_halfword(immed)) & 7) * 8);
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
@@ -680,7 +687,7 @@ inline void R4300i::LDL(int rt, int immed, int rs)
 inline void R4300i::LDR(int rt, int immed, int rs)
 {
 	PRINT_PC("LDR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	dword tmp = memory.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
+	dword tmp = mmu.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
 	r[rt] |= (tmp >> (( 7 - (r[rs] + extend_sign_halfword(immed)) & 7)) * 8);
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
@@ -689,7 +696,7 @@ inline void R4300i::LDR(int rt, int immed, int rs)
 inline void R4300i::LH(int rt, int immed, int rs)
 {
 	PRINT_PC("LH " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = extend_sign_halfword(memory.read<shword>((word) (r[rs] + extend_sign_halfword(immed))));
+	r[rt] = extend_sign_halfword(mmu.read<shword>((word) (r[rs] + extend_sign_halfword(immed))));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -697,7 +704,7 @@ inline void R4300i::LH(int rt, int immed, int rs)
 inline void R4300i::LHU(int rt, int immed, int rs)
 {
 	PRINT_PC("LHU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = memory.read<hword>((word) (r[rs] + extend_sign_halfword(immed)));
+	r[rt] = mmu.read<hword>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -705,7 +712,7 @@ inline void R4300i::LHU(int rt, int immed, int rs)
 inline void R4300i::LL(int rt, int immed, int rs)
 {
 	PRINT_PC("LL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = extend_sign_word(memory.read<sword>((word) (r[rs] + extend_sign_halfword(immed))));
+	r[rt] = extend_sign_word(mmu.read<sword>((word) (r[rs] + extend_sign_halfword(immed))));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	ll = 1;
 	pc += 4;
@@ -714,7 +721,7 @@ inline void R4300i::LL(int rt, int immed, int rs)
 inline void R4300i::LLD(int rt, int immed, int rs)
 {
 	PRINT_PC("LLD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = memory.read<sdword>((word) (r[rs] + extend_sign_halfword(immed)));
+	r[rt] = mmu.read<sdword>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	ll = 1;
 	pc += 4;
@@ -723,7 +730,7 @@ inline void R4300i::LLD(int rt, int immed, int rs)
 inline void R4300i::LW(int rt, int immed, int rs)
 {
 	PRINT_PC("LW " << dec << "r" << rt << " 0x" << hex << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = extend_sign_word(memory.read<word>((word) (r[rs] + extend_sign_halfword(immed))));
+	r[rt] = extend_sign_word(mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed))));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -731,7 +738,7 @@ inline void R4300i::LW(int rt, int immed, int rs)
 inline void R4300i::LWL(int rt, int immed, int rs)
 {
 	PRINT_PC("LWL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	word tmp = memory.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
+	word tmp = mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
 	r[rt] |= (tmp << (3 - (r[rs] + extend_sign_halfword(immed)) & 3) * 8);
 	r[rt] = extend_sign_word(r[rt]);
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
@@ -741,7 +748,7 @@ inline void R4300i::LWL(int rt, int immed, int rs)
 inline void R4300i::LWR(int rt, int immed, int rs)
 {
 	PRINT_PC("LWR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	word tmp = memory.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
+	word tmp = mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
 	r[rt] |= (tmp >> ((3 - (r[rs] + extend_sign_halfword(immed)) & 3)) * 8);
 	r[rt] = extend_sign_word(r[rt]);
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
@@ -751,7 +758,7 @@ inline void R4300i::LWR(int rt, int immed, int rs)
 inline void R4300i::LWU(int rt, int immed, int rs)
 {
 	PRINT_PC("LWU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = memory.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
+	r[rt] = mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -759,7 +766,7 @@ inline void R4300i::LWU(int rt, int immed, int rs)
 inline void R4300i::SB(int rt, int immed, int rs)
 {
 	PRINT_PC("SB " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	memory.write<byte>(r[rt] & 0xFF, (word) (r[rs] + extend_sign_halfword(immed)));
+	mmu.write<byte>(r[rt] & 0xFF, (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
@@ -768,7 +775,7 @@ inline void R4300i::SC(int rt, int immed, int rs)
 	if (ll)
 	{
 		PRINT_PC("SC " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-		memory.write<word>(r[rt] & 0xFFFFFFFF, (word) (r[rs] + extend_sign_halfword(immed)));
+		mmu.write<word>(r[rt] & 0xFFFFFFFF, (word) (r[rs] + extend_sign_halfword(immed)));
 		//maybe something to do here...
 		ll = 0;
 	}
@@ -782,7 +789,7 @@ inline void R4300i::SCD(int rt, int immed, int rs)
 	if (ll)
 	{
 	PRINT_PC("SCD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-		memory.write<dword>(r[rt], (word) (r[rs] + extend_sign_halfword(immed)));
+		mmu.write<dword>(r[rt], (word) (r[rs] + extend_sign_halfword(immed)));
 		//maybe something to do here...
 		ll = 0;
 	}
@@ -796,7 +803,7 @@ inline void R4300i::SCD(int rt, int immed, int rs)
 inline void R4300i::SD(int rt, int immed, int rs)
 {
 	PRINT_PC("SD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	memory.write<dword>(r[rt], (word) (r[rs] + extend_sign_halfword(immed)));
+	mmu.write<dword>(r[rt], (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
@@ -804,9 +811,9 @@ inline void R4300i::SDL(int rt, int immed, int rs)
 {
 	dword old_word = 0;
 	PRINT_PC("SDL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	old_word = memory.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
+	old_word = mmu.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
 	old_word = (r[rt] >> (8 * (r[rs] + extend_sign_halfword(immed)) & 7)) | old_word;
-	memory.write<dword>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
+	mmu.write<dword>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
@@ -814,23 +821,23 @@ inline void R4300i::SDR(int rt, int immed, int rs)
 {
 	dword old_word = 0;
 	PRINT_PC("SDR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	old_word = memory.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
+	old_word = mmu.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
 	old_word = (r[rt] << (8 * (7 - (r[rs] + extend_sign_halfword(immed)) & 7))) | old_word;
-	memory.write<dword>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
+	mmu.write<dword>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
 inline void R4300i::SH(int rt, int immed, int rs)
 {
 	PRINT_PC("SH " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	memory.write<hword>(r[rt] & 0xFFFF, (word) (r[rs] + extend_sign_halfword(immed)));
+	mmu.write<hword>(r[rt] & 0xFFFF, (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
 inline void R4300i::SW(int rt, int immed, int rs)
 {
 	PRINT_PC("SW " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	memory.write<word>(r[rt] & 0xFFFFFFFF, (word) (r[rs] + extend_sign_halfword(immed)));
+	mmu.write<word>(r[rt] & 0xFFFFFFFF, (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
@@ -838,9 +845,9 @@ inline void R4300i::SWL(int rt, int immed, int rs)
 {
 	word old_word = 0;
 	PRINT_PC("SWL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	old_word = memory.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
+	old_word = mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
 	old_word = (r[rt] >> (8 * (r[rs] + extend_sign_halfword(immed)) & 3)) & 0xFFFFFFFF | old_word;
-	memory.write<word>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
+	mmu.write<word>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
@@ -848,9 +855,9 @@ inline void R4300i::SWR(int rt, int immed, int rs)
 {
 	word old_word = 0;
 	PRINT_PC("SWR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	old_word = memory.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
+	old_word = mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
 	old_word = (r[rt] << (8 * (3 - (r[rs] + extend_sign_halfword(immed)) & 3))) & 0xFFFFFFFF | old_word;
-	memory.write<word>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
+	mmu.write<word>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
@@ -1381,7 +1388,7 @@ inline void R4300i::BEQ(int rs, int rt, int immed)
 	sdword local_rt = r[rt];
 	if ((word) (pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == (word) pc)
 	{
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 		{
 			if (local_rs == local_rt)
 			{
@@ -1398,7 +1405,7 @@ inline void R4300i::BEQ(int rs, int rt, int immed)
 	}
 	pc += 4;
 	delay_slot = true;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = false;
@@ -1417,7 +1424,7 @@ inline void R4300i::BEQL(int rs, int rt, int immed)
 	sdword local_rt = r[rt];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
 	{
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 		{
 			if (local_rs == local_rt)
 			{
@@ -1436,7 +1443,7 @@ inline void R4300i::BEQL(int rs, int rt, int immed)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(memory.read<word>((word) pc));
+		decode(mmu.read<word>((word) pc));
 		++Count;
 		--timer_handler.Timer;
 		delay_slot = false;
@@ -1452,7 +1459,7 @@ inline void R4300i::BGEZ(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 			if (local_rs >= 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1466,7 +1473,7 @@ inline void R4300i::BGEZ(int immed, int rs)
 			}
 	pc += 4;
 	delay_slot = true;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = false;
@@ -1483,7 +1490,7 @@ inline void R4300i::BGEZAL(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 			if (local_rs >= 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1497,7 +1504,7 @@ inline void R4300i::BGEZAL(int immed, int rs)
 			}
 	pc += 4;
 	delay_slot = true;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = false;
@@ -1512,7 +1519,7 @@ inline void R4300i::BGEZALL(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 			if (local_rs >= 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1528,7 +1535,7 @@ inline void R4300i::BGEZALL(int immed, int rs)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(memory.read<word>((word) pc));
+		decode(mmu.read<word>((word) pc));
 		++Count;
 	--timer_handler.Timer;
 		delay_slot = false;
@@ -1545,7 +1552,7 @@ inline void R4300i::BGEZL(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 			if (local_rs >= 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1561,7 +1568,7 @@ inline void R4300i::BGEZL(int immed, int rs)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(memory.read<word>((word) pc));
+		decode(mmu.read<word>((word) pc));
 		++Count;
 		--timer_handler.Timer;
 		delay_slot = false;
@@ -1578,7 +1585,7 @@ inline void R4300i::BGTZ(int rs, int immed)
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
 	{
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 		{
 			if (local_rs > 0)
 			{
@@ -1595,7 +1602,7 @@ inline void R4300i::BGTZ(int rs, int immed)
 	}
 	pc += 4;
 	delay_slot = true;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = false;
@@ -1610,7 +1617,7 @@ inline void R4300i::BGTZL(int immed, int rs)
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
 	{
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 		{
 			if (local_rs > 0)
 			{
@@ -1629,7 +1636,7 @@ inline void R4300i::BGTZL(int immed, int rs)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(memory.read<word>((word) pc));
+		decode(mmu.read<word>((word) pc));
 		++Count;
 		--timer_handler.Timer;
 		delay_slot = false;
@@ -1646,7 +1653,7 @@ inline void R4300i::BLEZ(int rs, int immed)
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
 	{
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 		{
 			if (local_rs <= 0)
 			{
@@ -1663,7 +1670,7 @@ inline void R4300i::BLEZ(int rs, int immed)
 	}
 	pc += 4;
 	delay_slot = true;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = false;
@@ -1678,7 +1685,7 @@ inline void R4300i::BLEZL(int immed, int rs)
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
 	{
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 		{
 			if (local_rs <= 0)
 			{
@@ -1697,7 +1704,7 @@ inline void R4300i::BLEZL(int immed, int rs)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(memory.read<word>((word) pc));
+		decode(mmu.read<word>((word) pc));
 		++Count;
 		--timer_handler.Timer;
 		delay_slot = false;
@@ -1713,7 +1720,7 @@ inline void R4300i::BLTZ(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 			if (local_rs < 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1727,7 +1734,7 @@ inline void R4300i::BLTZ(int immed, int rs)
 			}
 	pc += 4;
 	delay_slot = true;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = false;
@@ -1741,7 +1748,7 @@ inline void R4300i::BLTZAL(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 			if (local_rs < 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1755,7 +1762,7 @@ inline void R4300i::BLTZAL(int immed, int rs)
 			}
 	pc += 4;
 	delay_slot = true;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = false;
@@ -1770,7 +1777,7 @@ inline void R4300i::BLTZALL(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 			if (local_rs < 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1786,7 +1793,7 @@ inline void R4300i::BLTZALL(int immed, int rs)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(memory.read<word>((word) pc));
+		decode(mmu.read<word>((word) pc));
 		++Count;
 	--timer_handler.Timer;
 		delay_slot = false;
@@ -1803,7 +1810,7 @@ inline void R4300i::BLTZL(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 			if (local_rs < 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1819,7 +1826,7 @@ inline void R4300i::BLTZL(int immed, int rs)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(memory.read<word>((word) pc));
+		decode(mmu.read<word>((word) pc));
 		++Count;
 	--timer_handler.Timer;
 		delay_slot = false;
@@ -1840,7 +1847,7 @@ inline void R4300i::BNE(int rs, int rt, int immed)
 	dword local_rt = r[rt];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
 	{
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 		{
 			if (local_rs != local_rt)
 			{
@@ -1857,7 +1864,7 @@ inline void R4300i::BNE(int rs, int rt, int immed)
 	}
 	pc += 4;
 	delay_slot = true;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = false;
@@ -1876,7 +1883,7 @@ inline void R4300i::BNEL(int rs, int rt, int immed)
 	dword local_rt = r[rt];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
 	{
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 		{
 			if (local_rs != local_rt)
 			{
@@ -1895,7 +1902,7 @@ inline void R4300i::BNEL(int rs, int rt, int immed)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(memory.read<word>((word) pc));
+		decode(mmu.read<word>((word) pc));
 		++Count;
 	--timer_handler.Timer;
 		delay_slot = false;
@@ -1911,7 +1918,7 @@ inline void R4300i::J(int address)
 
 	if (((pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2)) == pc)
 	{
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 		{
 			if (probe_nop((word) (pc+4)))
 			{
@@ -1925,7 +1932,7 @@ inline void R4300i::J(int address)
 	}
 	pc += 4;
 	delay_slot = true;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = false;
@@ -1937,7 +1944,7 @@ inline void R4300i::JAL(int address)
 	PRINT_PC("JAL " << address);
 	if (((pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2)) == pc)
 	{
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 		{
 			if (probe_nop((word) (pc+4)))
 			{
@@ -1951,7 +1958,7 @@ inline void R4300i::JAL(int address)
 	}
 	pc += 4;
 	delay_slot = true;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = false;
@@ -1966,7 +1973,7 @@ inline void R4300i::JALR(int rs, int rd)
 	dword local_rs = r[rs];
 	if (local_rs == pc)
 	{
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 		{
 			if (probe_nop((word) (pc+4)))
 			{
@@ -1980,7 +1987,7 @@ inline void R4300i::JALR(int rs, int rd)
 	}
 	pc += 4;
 	delay_slot = true;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = false;
@@ -1995,7 +2002,7 @@ inline void R4300i::JR(int rs)
 	dword local_rs = r[rs];
 	if (local_rs == pc)
 	{
-		if (memory.sp_regs.getStatus() & 0x1)
+		if (rcp.sp.getStatus() & 0x1)
 		{
 			if (probe_nop((word) (pc+4)))
 			{
@@ -2009,7 +2016,7 @@ inline void R4300i::JR(int rs)
 	}
 	pc += 4;
 	delay_slot = true;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = false;
@@ -2211,7 +2218,7 @@ inline void R4300i::MTC0(int rt, int fs)
 		TagHi = 0;
 		break;
 	default:
-		cout << endl << "Unknown mtc0 write";
+		cout << endl << "Unknown mtc0 mmu.write";
 	}
 	pc += 4;
 }
@@ -2449,7 +2456,7 @@ inline void R4300i::BC1F(int immed)
 	dword pc_tmp = pc + extend_sign_halfword(immed);
 	pc += 4;
 	delay_slot = 1;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = 0;
@@ -2467,7 +2474,7 @@ inline void R4300i::BC1FL(int immed)
 	dword pc_tmp = pc + extend_sign_halfword(immed);
 	pc += 4;
 	delay_slot = true;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = false;
@@ -2485,7 +2492,7 @@ inline void R4300i::BC1T(int immed)
 	dword pc_tmp = pc + extend_sign_halfword(immed);
 	pc += 4;
 	delay_slot = 1;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = 0;
@@ -2503,7 +2510,7 @@ inline void R4300i::BC1TL(int immed)
 	dword pc_tmp = pc + extend_sign_halfword(immed);
 	pc += 4;
 	delay_slot = true;
-	decode(memory.read<word>((word) pc));
+	decode(mmu.read<word>((word) pc));
 	++Count;
 	--timer_handler.Timer;
 	delay_slot = false;
@@ -2650,7 +2657,7 @@ inline void R4300i::FLOOR(int fd, int fs)
 inline void R4300i::LDC1(int ft, int immed, int rs)
 {
 	PRINT_PC("LDC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
-	f[ft] = memory.read<dword>((word) (r[rs] + extend_sign_halfword(immed) * sizeof(dword)));
+	f[ft] = mmu.read<dword>((word) (r[rs] + extend_sign_halfword(immed) * sizeof(dword)));
 	PRINT_PC(" f" << dec << ft << hex << "=0x" << f[ft]);
 	pc += 4;
 }
@@ -2658,7 +2665,7 @@ inline void R4300i::LDC1(int ft, int immed, int rs)
 inline void R4300i::LWC1(int ft, int immed, int rs)
 {
 	PRINT_PC("LWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
-	f[ft] = memory.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
+	f[ft] = mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT_PC(" f" << dec << ft << hex << "=0x" << f[ft]);
 	pc += 4;
 }
@@ -2718,7 +2725,7 @@ inline void R4300i::ROUND(int fd, int fs)
 inline void R4300i::SDC1(int ft, int immed, int rs)
 {
 	PRINT_PC("SDC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
-	memory.write<dword>(f[ft], (word) (r[rs] + extend_sign_halfword(immed) * sizeof(dword)));
+	mmu.write<dword>(f[ft], (word) (r[rs] + extend_sign_halfword(immed) * sizeof(dword)));
 	pc += 4;
 }
 
@@ -2761,7 +2768,7 @@ inline void R4300i::SUB(int fd, int fs, int ft)
 inline void R4300i::SWC1(int ft, int immed, int rs)
 {
 	PRINT_PC("SWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
-	memory.write<word>((word) f[ft], (r[rs] + extend_sign_halfword(immed) & 0xFFFFFFFF));
+	mmu.write<word>((word) f[ft], (r[rs] + extend_sign_halfword(immed) & 0xFFFFFFFF));
 	pc += 4;
 }
 
@@ -2958,7 +2965,7 @@ inline int R4300i::probe_nop(word address)
 
 	if ((a >= 0xa4000000 && a < 0xa4001000) || (a >= 0x80000000 && a < 0x80800000))
 	{
-		if (!memory.read<word>(a)) return 1;
+		if (!mmu.read<word>(a)) return 1;
 		else return 0;
 	}
 	else return 0;

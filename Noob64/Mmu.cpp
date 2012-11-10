@@ -22,16 +22,34 @@
  *
  */
 
-#pragma once
+#include "StdAfx.h"
+#include "Mmu.h"
 
-#include "Dps.h"
 
-inline void DPS::setTbist(word w)			{ data.tbist = w; }
-inline void DPS::setTestMode(word w)		{ data.test_mode = w; }
-inline void DPS::setBufTestAddr(word w)	{ data.buftest_addr = w; }
-inline void DPS::setBufTestData(word w)	{ data.buftest_data = w; }
+MMU::MMU(R4300i& cpu, RCP& rcp) : cpu(cpu), rcp(rcp) {}
 
-inline word DPS::getTbist()				{ return data.tbist; }
-inline word DPS::getTestMode()				{ return data.test_mode; }
-inline word DPS::getBufTestAddr()			{ return data.buftest_addr; }
-inline word DPS::getBufTestData()			{ return data.buftest_data; }
+
+MMU::~MMU(void) {}
+
+void* MMU::operator[] (const word address)
+{
+	return virtual_to_physical(address);
+}
+
+bool is_address_defined(word address)
+{
+	if (KSEG0 <= address && address <= KSEG2-1)
+		return true;
+	// TODO
+	/*
+	dword i;
+	for (i = 0; i < 64; i++)
+	{
+		if (FastTlb[i].ValidEntry == false)
+			continue;
+		if (address >= FastTlb[i].VSTART && address <= FastTlb[i].VEND)
+			return true;
+	}
+	*/
+	return false; 
+}

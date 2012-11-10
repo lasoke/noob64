@@ -24,14 +24,24 @@
 
 #pragma once
 
-#include "Dps.h"
+class MMU
+{
+public:
+	MMU(R4300i&, RCP&);
+	~MMU(void);
 
-inline void DPS::setTbist(word w)			{ data.tbist = w; }
-inline void DPS::setTestMode(word w)		{ data.test_mode = w; }
-inline void DPS::setBufTestAddr(word w)	{ data.buftest_addr = w; }
-inline void DPS::setBufTestData(word w)	{ data.buftest_data = w; }
+	void* operator[] (const word address);
+	template <typename Type> inline Type read(word address);
+	template <typename Type> inline void write(Type data, word address);
 
-inline word DPS::getTbist()				{ return data.tbist; }
-inline word DPS::getTestMode()				{ return data.test_mode; }
-inline word DPS::getBufTestAddr()			{ return data.buftest_addr; }
-inline word DPS::getBufTestData()			{ return data.buftest_data; }
+private:
+	R4300i	&cpu;
+	RCP		&rcp;
+
+	inline void* virtual_to_physical(word address);
+	inline bool read_from_register(word *data, word address);
+	inline bool write_in_register(word data, word address);
+};
+
+bool is_address_defined(word address);
+

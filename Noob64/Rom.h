@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Memory.h"
+#include "Rcp.h"
 
 #define ROM_HEADER_SIZE			0x1000
 #define ROM_BOOT_CODE_SIZE		1008

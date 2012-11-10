@@ -26,13 +26,13 @@
 
 #include "Si.h"
 
-inline void SI_REGS::setDramAddr(word w)		{ data.dram_addr = w; }
-inline void SI_REGS::setPifAddrRd64b(word w)	{ data.pif_addr_rd64b = w; }
-inline void SI_REGS::setPifAddrWr64b(word w)	{ data.pif_addr_wr64b = w; }
-inline void SI_REGS::setStatus(word w)			{ data.status = w; }
-inline void SI_REGS::setSpecialStatus(word w)	{ /*TODO*/ }
+inline void SI::setDramAddr(word w)		{ data.dram_addr = w; }
+inline void SI::setPifAddrRd64b(word w)	{ data.pif_addr_rd64b = w; }
+inline void SI::setPifAddrWr64b(word w)	{ data.pif_addr_wr64b = w; }
+inline void SI::setStatus(word w)			{ data.status = w; }
+inline void SI::setSpecialStatus(word w)	{ /*TODO*/ }
 
-inline word SI_REGS::getDramAddr()				{ return data.dram_addr; }
-inline word SI_REGS::getPifAddrRd64b()			{ return data.pif_addr_rd64b; }
-inline word SI_REGS::getPifAddrWr64b()			{ return data.pif_addr_wr64b; }
-inline word SI_REGS::getStatus()				{ return data.status; }
+inline word SI::getDramAddr()				{ return data.dram_addr; }
+inline word SI::getPifAddrRd64b()			{ return data.pif_addr_rd64b; }
+inline word SI::getPifAddrWr64b()			{ return data.pif_addr_wr64b; }
+inline word SI::getStatus()				{ return data.status; }

@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Memory.h"
+#include "Rcp.h"
 
 #define DPS_SEG_BEGINING		0x04200000
 #define DPS_SEG_END				0x042FFFFF
@@ -38,10 +38,10 @@
 //** DP Span Registers														**
 //****************************************************************************
 
-class DPS_REGS : public MEM_SEG
+class DPS : public MEM_SEG
 {
 public:
-	DPS_REGS();
+	DPS();
 
 	inline word getTbist();
 	inline void setTbist(word);

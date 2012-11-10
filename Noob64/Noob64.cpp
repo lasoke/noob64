@@ -58,8 +58,7 @@ string  rom_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z6
 
 HANDLE emuThread;
 
-MEMORY*	mem;
-R4300i*	cpu;
+RCP*	rcp;
 RSP*	rsp;
 GFX*	gfx;
 
@@ -67,13 +66,10 @@ DWORD WINAPI boot(LPVOID lpParameter)
 {
 	enableConsole();						// Displays the console
 
-	mem	= new MEMORY(new ROM(rom_path));	// Sets up the ROM and the Memory 
-	cpu	= new R4300i(mem);					// Sets up the CPU and links it to the Memory
-
-	rsp->init(mem);							// Initializes the RSP plugin
-	gfx->init(mem);							// Initializes the GFX plugin
-
-	cpu->init();							// Initializes the CPU and actually boots the ROM
+	rcp	= new RCP(new ROM(rom_path));		// Sets up the RCP with the given ROM
+	rcp->setRSP(rsp);						// Initializes the RSP plugin
+	rcp->setGFX(gfx);						// Initializes the GFX plugin
+	rcp->start();							// Initializes the CPU and boots the ROM
 
 	return 0;
 }

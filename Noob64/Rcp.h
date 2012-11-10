@@ -24,38 +24,18 @@
 
 #pragma once
 
-#define KSEG0					0x80000000
-#define KSEG1					0xA0000000
-#define KSEG2					0xC0000000
-#define KSEG3					0xE0000000
-
-typedef unsigned __int8			byte;
-typedef unsigned __int16		hword;
-typedef unsigned __int32		word;
-typedef unsigned __int64		dword;
-
-typedef __int8					sbyte;
-typedef __int16					shword;
-typedef __int32					sword;
-typedef __int64					sdword;
-
-typedef float					s; // Single-Precision	Floating-Point Format:	[31:sign;30-23-exponent;22-0:fraction]
-typedef double					d; // Double-Precision	Floating-Point Format:	[63:sign;62-52:exponent;51-0:fraction]
-typedef long					w; // Word				Fixed-Point Format:		[31:sign;30-0:int]
-typedef long long int			l; // Longword			Fixed-Point Format:		[63:sign;62-0:int]
-
 class ROM;
 class RDRAM;
 class RDRAM_REGS;
-class SP_REGS;
-class DPC_REGS;
-class DPS_REGS;
-class MI_REGS;
-class VI_REGS;
-class AI_REGS;
-class PI_REGS;
-class RI_REGS;
-class SI_REGS;
+class SP;
+class DPC;
+class DPS;
+class MI;
+class VI;
+class AI;
+class PI;
+class RI;
+class SI;
 class PIF_ROM;
 class PIF_RAM;
 class R4300i;
@@ -63,7 +43,7 @@ class GFX;
 class RSP;
 
 //****************************************************************************
-//** MEMORY SEGMENT															**
+//** RCP SEGMENT															**
 //****************************************************************************
 
 class MEM_SEG
@@ -80,40 +60,32 @@ protected:
 };
 
 //****************************************************************************
-//** MEMORY					                                                **
+//** RCP					                                                **
 //****************************************************************************
 
-class MEMORY
+class RCP
 {
 public:
-	MEMORY(ROM* rom);
-
+	RCP(ROM* rom);
+	R4300i		&cpu;
 	ROM			&rom;
 	RDRAM		&rdram;
 	RDRAM_REGS	&rdram_regs;
-	SP_REGS		&sp_regs;
-	DPC_REGS	&dpc_regs;
-	DPS_REGS	&dps_regs;
-	MI_REGS		&mi_regs;
-	VI_REGS		&vi_regs;
-	AI_REGS		&ai_regs;
-	PI_REGS		&pi_regs;
-	RI_REGS		&ri_regs;
-	SI_REGS		&si_regs;
+	SP			&sp;
+	DPC			&dpc;
+	DPS			&dps;
+	MI			&mi;
+	VI			&vi;
+	AI			&ai;
+	PI			&pi;
+	RI			&ri;
+	SI			&si;
 	PIF_ROM		&pif_rom;
 	PIF_RAM		&pif_ram;
 
-	R4300i		*cpu;
-	RSP			*rsp;
-	GFX			*gfx;
-
-	void* operator[] (const word address);
-
-	template <typename Type> inline Type read(word address);
-	template <typename Type> inline void write(Type data, word address);
-
-	inline bool isCheckInterrupt() const;
-	inline void setCheckInterrupt(bool);
+	void start();
+	void setRSP(RSP*);
+	void setGFX(GFX*);
 
 	void dma_pi_write();
 	void dma_pi_read();
@@ -122,15 +94,22 @@ public:
 	void dma_sp_write();
 	void dma_sp_read();
 
+	void RefreshScreen();	// Refreshs the screen when the vi timer is done
+	inline bool isCheckInterrupt() const;
+	inline void setCheckInterrupt(bool);
+
+	inline R4300i&	getCPU(void) const;
+	inline RSP*		getRSP(void) const;
+	inline GFX*		getGFX(void) const;
+
 private:
-	inline void* virtual_to_physical(word address);
-	inline bool read_from_register(word *data, word address);
-	inline bool write_in_register(word data, word address);
-	inline void checkDMA(word address);
+	RSP			*rsp;
+	GFX			*gfx;
 
 	byte		SRAM[0x8000];
 	word		cic_chip;
 	bool		check_intr;
+
+	inline void checkDMA(word address);
 };
 
-bool is_address_defined(word address);

@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Memory.h"
+#include "Rcp.h"
 
 #define DPC_SEG_BEGINING		0x04100000
 #define DPC_SEG_END				0x041FFFFF
@@ -65,10 +65,10 @@
 //** DP Command Registers													**
 //****************************************************************************
 
-class DPC_REGS : public MEM_SEG
+class DPC : public MEM_SEG
 {
 public:
-	DPC_REGS();
+	DPC();
 
 	inline word getStart();
 	inline void setStart(word);

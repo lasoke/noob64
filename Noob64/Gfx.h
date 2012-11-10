@@ -87,9 +87,7 @@ public:
 	GFX(wstring filename, HWND hWnd);
 	~GFX();
 
-	void init(MEMORY* mem);
-
-	void RefreshScreen();	// Refreshs the screen when the vi timer is done
+	void init(RCP* mem);
 
 	void captureScreen(char*);
 	void changeWindow(void);

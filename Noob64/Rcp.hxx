@@ -24,14 +24,33 @@
 
 #pragma once
 
+#include "Rsp.h"
+#include "Gfx.h"
+#include "Rom.h"
+#include "Rdram.h"
+#include "RdramRegs.h"
+#include "Sp.h"
+#include "Dpc.h"
 #include "Dps.h"
+#include "Ai.h"
+#include "Mi.h"
+#include "Vi.h"
+#include "Pi.h"
+#include "Ri.h"
+#include "Si.h"
+#include "PifRom.h"
+#include "PifRam.h"
 
-inline void DPS::setTbist(word w)			{ data.tbist = w; }
-inline void DPS::setTestMode(word w)		{ data.test_mode = w; }
-inline void DPS::setBufTestAddr(word w)	{ data.buftest_addr = w; }
-inline void DPS::setBufTestData(word w)	{ data.buftest_data = w; }
+inline bool MEM_SEG::contains(word address) const			{ return begining <= address && address <= end; }
 
-inline word DPS::getTbist()				{ return data.tbist; }
-inline word DPS::getTestMode()				{ return data.test_mode; }
-inline word DPS::getBufTestAddr()			{ return data.buftest_addr; }
-inline word DPS::getBufTestData()			{ return data.buftest_data; }
+inline R4300i&	RCP::getCPU(void) const						{ return cpu; }
+inline RSP*		RCP::getRSP(void) const						{ return rsp; }
+inline GFX*		RCP::getGFX(void) const						{ return gfx; }
+
+inline bool RCP::isCheckInterrupt() const					{ return check_intr; }
+inline void RCP::setCheckInterrupt(bool isCheckInterrupt)	{ check_intr = isCheckInterrupt; }
+
+
+
+
+

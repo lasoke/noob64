@@ -26,8 +26,8 @@
 
 #include "Mi.h"
 
-inline void MI_REGS::setInitMode(word w)		{ data.init_mode = w; }
-inline void MI_REGS::setSpecialInitMode(word w)
+inline void MI::setInitMode(word w)		{ data.init_mode = w; }
+inline void MI::setSpecialInitMode(word w)
 {
 	if (w & MI_CLR_INIT)		data.init_mode &= ~MI_MODE_INIT;
 	if (w & MI_CLR_EBUS)		data.init_mode &= ~MI_MODE_EBUS;
@@ -39,10 +39,10 @@ inline void MI_REGS::setSpecialInitMode(word w)
 
 	if (w & MI_CLR_DP_INTR)		data.intr &= ~MI_INTR_DP;
 }
-inline void MI_REGS::setVersion(word w)			{ data.version = w; }
-inline void MI_REGS::setIntr(word w)			{ data.intr = w; }
-inline void MI_REGS::setIntrMask(word w)		{ data.intr_mask = w; }
-inline void MI_REGS::setSpecialIntrMask(word w)
+inline void MI::setVersion(word w)			{ data.version = w; }
+inline void MI::setIntr(word w)			{ data.intr = w; }
+inline void MI::setIntrMask(word w)		{ data.intr_mask = w; }
+inline void MI::setSpecialIntrMask(word w)
 {
 	if (w & MI_INTR_MASK_CLR_SP) data.intr_mask &= ~MI_INTR_MASK_SP;
 	if (w & MI_INTR_MASK_CLR_SI) data.intr_mask &= ~MI_INTR_MASK_SI;
@@ -59,7 +59,7 @@ inline void MI_REGS::setSpecialIntrMask(word w)
 	if (w & MI_INTR_MASK_SET_DP) data.intr_mask |= MI_INTR_MASK_DP;
 }
 
-inline word MI_REGS::getInitMode()				{ return data.init_mode; }
-inline word MI_REGS::getVersion()				{ return data.version; }
-inline word MI_REGS::getIntr()					{ return data.intr; }
-inline word MI_REGS::getIntrMask()				{ return data.intr_mask; }
+inline word MI::getInitMode()				{ return data.init_mode; }
+inline word MI::getVersion()				{ return data.version; }
+inline word MI::getIntr()					{ return data.intr; }
+inline word MI::getIntrMask()				{ return data.intr_mask; }
