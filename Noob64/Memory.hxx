@@ -288,7 +288,7 @@ inline bool MEMORY::write_in_register(word data, dword address)
 	}
 	else if (address == SP_STATUS_REG)
 	{
-		sp_regs.setStatus(data);
+		sp_regs.setSpecialStatus(data);
 		if (data & SP_SET_SIG0) 
 		{
 			mi_regs.setIntr(mi_regs.getIntr() | MI_INTR_SP);
@@ -308,7 +308,7 @@ inline bool MEMORY::write_in_register(word data, dword address)
 	else if (address == SP_DMA_BUSY_REG)
 		sp_regs.setDmaBusy(data);
 	else if (address == SP_SEMAPHORE_REG)
-		sp_regs.setSemaphore(data);
+		sp_regs.setSpecialSemaphore(data);
 	else if (address == SP_PC_REG)
 		sp_regs.setPc(data);
 	else if (address == SP_IBIST_REG)
@@ -341,13 +341,13 @@ inline bool MEMORY::write_in_register(word data, dword address)
 		dps_regs.setBufTestData(data);
 
 	else if (address == MI_INIT_MODE_REG)
-		mi_regs.setInitMode(data);
+		mi_regs.setSpecialInitMode(data);
 	else if (address == MI_VERSION_REG)
 		mi_regs.setVersion(data);
 	else if (address == MI_INTR_REG)
 		mi_regs.setIntr(data);
 	else if (address == MI_INTR_MASK_REG)
-		mi_regs.setIntrMask(data);
+		mi_regs.setSpecialIntrMask(data);
 
 	else if (address == VI_STATUS_REG)
 		vi_regs.setStatus(data);
@@ -390,7 +390,6 @@ inline bool MEMORY::write_in_register(word data, dword address)
 		ai_regs.setControl(data);
 	else if (address == AI_STATUS_REG)
 	{
-		ai_regs.setStatus(data);
 		mi_regs.setIntr(mi_regs.getIntr() & ~MI_INTR_AI);
 		check_intr = true;
 	}
@@ -478,7 +477,7 @@ inline bool MEMORY::write_in_register(word data, dword address)
 	}
 	else if (address == SI_STATUS_REG)
 	{
-		si_regs.setStatus(data);
+		si_regs.setSpecialStatus(data);
 		mi_regs.setIntr(mi_regs.getIntr() & ~MI_INTR_SI);
 		check_intr = true;
 	}
@@ -551,7 +550,8 @@ inline void SP_REGS::setMemAddr(word w)			{ data.mem_addr = w; }
 inline void SP_REGS::setDramAddr(word w)		{ data.dram_addr = w; }
 inline void SP_REGS::setRdLen(word w)			{ data.rd_len = w; }
 inline void SP_REGS::setWrLen(word w)			{ data.wr_len = w; }
-inline void SP_REGS::setStatus(word w)
+inline void SP_REGS::setStatus(word w)			{ data.status = w; }
+inline void SP_REGS::setSpecialStatus(word w)
 { 
 	if (w & SP_CLR_HALT)		data.status &= ~SP_STATUS_HALT;
 	if (w & SP_CLR_BROKE)		data.status &= ~SP_STATUS_BROKE;
@@ -580,7 +580,8 @@ inline void SP_REGS::setStatus(word w)
 }
 inline void SP_REGS::setDmaFull(word w)			{ data.dma_full = w; }
 inline void SP_REGS::setDmaBusy(word w)			{ data.dma_busy = w; }
-inline void SP_REGS::setSemaphore(word w)		{ data.semaphore = 0; }
+inline void SP_REGS::setSemaphore(word w)		{ data.semaphore = w; }
+inline void SP_REGS::setSpecialSemaphore(word w){ data.semaphore = 0; }
 inline void SP_REGS::setPc(word w)				{ data.pc = w & 0xFFC; }
 inline void SP_REGS::setIbist(word w)			{ data.ibist = w; }
 
@@ -598,7 +599,8 @@ inline void DPS_REGS::setTestMode(word w)		{ data.test_mode = w; }
 inline void DPS_REGS::setBufTestAddr(word w)	{ data.buftest_addr = w; }
 inline void DPS_REGS::setBufTestData(word w)	{ data.buftest_data = w; }
 
-inline void MI_REGS::setInitMode(word w)
+inline void MI_REGS::setInitMode(word w)		{ data.init_mode = w; }
+inline void MI_REGS::setSpecialInitMode(word w)
 {
 	if (w & MI_CLR_INIT)		data.init_mode &= ~MI_MODE_INIT;
 	if (w & MI_CLR_EBUS)		data.init_mode &= ~MI_MODE_EBUS;
@@ -612,7 +614,8 @@ inline void MI_REGS::setInitMode(word w)
 }
 inline void MI_REGS::setVersion(word w)			{ data.version = w; }
 inline void MI_REGS::setIntr(word w)			{ data.intr = w; }
-inline void MI_REGS::setIntrMask(word w)
+inline void MI_REGS::setIntrMask(word w)		{ data.intr_mask = w; }
+inline void MI_REGS::setSpecialIntrMask(word w)
 {
 	if (w & MI_INTR_MASK_CLR_SP) data.intr_mask &= ~MI_INTR_MASK_SP;
 	if (w & MI_INTR_MASK_CLR_SI) data.intr_mask &= ~MI_INTR_MASK_SI;
@@ -689,7 +692,8 @@ inline void RI_REGS::setWerror(word w)			{ data.werror = w; }
 inline void SI_REGS::setDramAddr(word w)		{ data.dram_addr = w; }
 inline void SI_REGS::setPifAddrRd64b(word w)	{ data.pif_addr_rd64b = w; }
 inline void SI_REGS::setPifAddrWr64b(word w)	{ data.pif_addr_wr64b = w; }
-inline void SI_REGS::setStatus(word w)			{ /*TODO*/ }
+inline void SI_REGS::setStatus(word w)			{ data.status = w; }
+inline void SI_REGS::setSpecialStatus(word w)	{ /*TODO*/ }
 
 //****************************************************************************
 //** GET METHODS					                                        **

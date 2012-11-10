@@ -1387,11 +1387,10 @@ inline void R4300i::BEQ(int rs, int rt, int immed)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1401,6 +1400,7 @@ inline void R4300i::BEQ(int rs, int rt, int immed)
 	delay_slot = true;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = false;
 	if (local_rs == local_rt)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1423,11 +1423,10 @@ inline void R4300i::BEQL(int rs, int rt, int immed)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1439,6 +1438,7 @@ inline void R4300i::BEQL(int rs, int rt, int immed)
 		delay_slot = true;
 		decode(memory->read<word>(pc));
 		++Count;
+		--timers->Timer;
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
@@ -1457,11 +1457,10 @@ inline void R4300i::BGEZ(int immed, int rs)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1469,6 +1468,7 @@ inline void R4300i::BGEZ(int immed, int rs)
 	delay_slot = true;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = false;
 	if (local_rs >= 0)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1488,11 +1488,10 @@ inline void R4300i::BGEZAL(int immed, int rs)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1500,6 +1499,7 @@ inline void R4300i::BGEZAL(int immed, int rs)
 	delay_slot = true;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = false;
 	r[31] = pc;
 	if (local_rs >= 0)
@@ -1517,11 +1517,10 @@ inline void R4300i::BGEZALL(int immed, int rs)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1531,6 +1530,7 @@ inline void R4300i::BGEZALL(int immed, int rs)
 		delay_slot = true;
 		decode(memory->read<word>(pc));
 		++Count;
+	--timers->Timer;
 		delay_slot = false;
 		r[31] = pc;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1550,11 +1550,10 @@ inline void R4300i::BGEZL(int immed, int rs)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1564,6 +1563,7 @@ inline void R4300i::BGEZL(int immed, int rs)
 		delay_slot = true;
 		decode(memory->read<word>(pc));
 		++Count;
+	--timers->Timer;
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
@@ -1584,11 +1584,10 @@ inline void R4300i::BGTZ(int rs, int immed)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1598,6 +1597,7 @@ inline void R4300i::BGTZ(int rs, int immed)
 	delay_slot = true;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = false;
 	if (local_rs > 0)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1616,11 +1616,10 @@ inline void R4300i::BGTZL(int immed, int rs)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1632,6 +1631,7 @@ inline void R4300i::BGTZL(int immed, int rs)
 		delay_slot = true;
 		decode(memory->read<word>(pc));
 		++Count;
+	--timers->Timer;
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
@@ -1652,11 +1652,10 @@ inline void R4300i::BLEZ(int rs, int immed)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1666,6 +1665,7 @@ inline void R4300i::BLEZ(int rs, int immed)
 	delay_slot = true;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = false;
 	if (local_rs <= 0)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1684,11 +1684,10 @@ inline void R4300i::BLEZL(int immed, int rs)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1700,6 +1699,7 @@ inline void R4300i::BLEZL(int immed, int rs)
 		delay_slot = true;
 		decode(memory->read<word>(pc));
 		++Count;
+	--timers->Timer;
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
@@ -1718,11 +1718,10 @@ inline void R4300i::BLTZ(int immed, int rs)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1730,6 +1729,7 @@ inline void R4300i::BLTZ(int immed, int rs)
 	delay_slot = true;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = false;
 	if (local_rs < 0)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1746,11 +1746,10 @@ inline void R4300i::BLTZAL(int immed, int rs)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1758,6 +1757,7 @@ inline void R4300i::BLTZAL(int immed, int rs)
 	delay_slot = true;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = false;
 	r[31] = pc;
 	if (local_rs < 0)
@@ -1775,11 +1775,10 @@ inline void R4300i::BLTZALL(int immed, int rs)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1789,6 +1788,7 @@ inline void R4300i::BLTZALL(int immed, int rs)
 		delay_slot = true;
 		decode(memory->read<word>(pc));
 		++Count;
+	--timers->Timer;
 		delay_slot = false;
 		r[31] = pc;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1808,11 +1808,10 @@ inline void R4300i::BLTZL(int immed, int rs)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1822,6 +1821,7 @@ inline void R4300i::BLTZL(int immed, int rs)
 		delay_slot = true;
 		decode(memory->read<word>(pc));
 		++Count;
+	--timers->Timer;
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
@@ -1846,11 +1846,10 @@ inline void R4300i::BNE(int rs, int rt, int immed)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1860,6 +1859,7 @@ inline void R4300i::BNE(int rs, int rt, int immed)
 	delay_slot = true;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = false;
 	if (local_rs != local_rt)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1882,11 +1882,10 @@ inline void R4300i::BNEL(int rs, int rt, int immed)
 			{
 				if (probe_nop(pc+4))
 				{
-					skip = next_interrupt - Count;
-					if (skip >= 3) 
+					if (timers->Timer > 0)
 					{
-						Count += (skip & 0xFFFFFFFC);
-						return;
+						Count += timers->Timer + 1;
+						timers->Timer = -1;
 					}
 				}
 			}
@@ -1898,6 +1897,7 @@ inline void R4300i::BNEL(int rs, int rt, int immed)
 		delay_slot = true;
 		decode(memory->read<word>(pc));
 		++Count;
+	--timers->Timer;
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
@@ -1915,11 +1915,10 @@ inline void R4300i::J(int address)
 		{
 			if (probe_nop(pc+4))
 			{
-				skip = next_interrupt - Count;
-				if (skip >= 3) 
+				if (timers->Timer > 0)
 				{
-					Count += (skip & 0xFFFFFFFC);
-					return;
+					Count += timers->Timer + 1;
+					timers->Timer = -1;
 				}
 			}
 		}
@@ -1928,6 +1927,7 @@ inline void R4300i::J(int address)
 	delay_slot = true;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = false;
 	pc = (pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2);
 }
@@ -1941,11 +1941,10 @@ inline void R4300i::JAL(int address)
 		{
 			if (probe_nop(pc+4))
 			{
-				skip = next_interrupt - Count;
-				if (skip >= 3) 
+				if (timers->Timer > 0)
 				{
-					Count += (skip & 0xFFFFFFFC);
-					return;
+					Count += timers->Timer + 1;
+					timers->Timer = -1;
 				}
 			}
 		}
@@ -1954,6 +1953,7 @@ inline void R4300i::JAL(int address)
 	delay_slot = true;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = false;
 	r[31] = extend_sign_word(pc);
 	pc = (pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2);
@@ -1970,11 +1970,10 @@ inline void R4300i::JALR(int rs, int rd)
 		{
 			if (probe_nop(pc+4))
 			{
-				skip = next_interrupt - Count;
-				if (skip >= 3) 
+				if (timers->Timer > 0)
 				{
-					Count += (skip & 0xFFFFFFFC);
-					return;
+					Count += timers->Timer + 1;
+					timers->Timer = -1;
 				}
 			}
 		}
@@ -1983,6 +1982,7 @@ inline void R4300i::JALR(int rs, int rd)
 	delay_slot = true;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = false;
 	r[rd] = extend_sign_word(pc);
 	pc = local_rs;
@@ -1999,11 +1999,10 @@ inline void R4300i::JR(int rs)
 		{
 			if (probe_nop(pc+4))
 			{
-				skip = next_interrupt - Count;
-				if (skip >= 3) 
+				if (timers->Timer > 0)
 				{
-					Count += (skip & 0xFFFFFFFC);
-					return;
+					Count += timers->Timer + 1;
+					timers->Timer = -1;
 				}
 			}
 		}
@@ -2012,6 +2011,7 @@ inline void R4300i::JR(int rs)
 	delay_slot = true;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = false;
 	pc = local_rs;
 }
@@ -2111,6 +2111,7 @@ int jump_marker = 0;
 inline void R4300i::ERET(void)
 {
 	++Count;
+	--timers->Timer;
 	PRINT_PC("ERET");
 	if (Status & 0x4)
 	{
@@ -2122,7 +2123,7 @@ inline void R4300i::ERET(void)
 		pc = EPC;
 	}
 	ll = 0;
-//	check_interupt();
+	check_interrupt();
 }
 
 inline void R4300i::MFC0(int rt, int fs)
@@ -2166,28 +2167,26 @@ inline void R4300i::MTC0(int rt, int fs)
 		break;
 	case 9:    // Count
 		++Count;
-		
-			
+		--timers->Timer;
 		Count = r[rt] & 0xFFFFFFFF;
+		timers->ChangeCompareTimer(Compare, Count);
 		break;
 	case 10:   // EntryHi
 		EntryHi = r[rt] & 0xFFFFE0FF;
 		break;
 	case 11:   // Compare
-		//remove_event(COMPARE_INT);
-		//add_interupt_event_count(COMPARE_INT, (unsigned long)rrt);
 		Compare = r[rt] & 0xFFFFFFFF;
 		Cause = Cause & 0xFFFFFFFFFFFF7FFF; //Timer interupt is clear
+		timers->ChangeCompareTimer(Compare, Count);
 		break;
 	case 12:   // Status
 		Status = r[rt] & 0xFFFFFFFF;
 		++Count;
+	--timers->Timer;
 //		check_interupt();
 		break;
 	case 13:   // Cause
-		if (r[rt] != 0)
-			cout << print_addr((word) pc) << " écriture dans Cause";
-		else Cause = r[rt] & 0xFFFFFFFF;
+		Cause = r[rt] & 0xFFFFFFFF;
 		break;
 	case 14:   // EPC
 		EPC = r[rt] & 0xFFFFFFFF;
@@ -2343,6 +2342,7 @@ inline void R4300i::TLBWR(void)
 	PRINT_PC("TLBWR");
 	unsigned int i;
 	++Count;
+	--timers->Timer;
 	Random = (Count/2 % (32 - Wired)) + Wired;
 	if (tlb_e[Random].v_even)
 	{
@@ -2451,6 +2451,7 @@ inline void R4300i::BC1F(int immed)
 	delay_slot = 1;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = 0;
 	if ((fcr31 & 0x800000)==0)
 		pc = pc_tmp;
@@ -2468,6 +2469,7 @@ inline void R4300i::BC1FL(int immed)
 	delay_slot = true;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = false;
 	if ((fcr31 & 0x800000)==0)
 		pc = pc_tmp;
@@ -2485,6 +2487,7 @@ inline void R4300i::BC1T(int immed)
 	delay_slot = 1;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = 0;
 	if ((fcr31 & 0x800000)!=0)
 		pc = pc_tmp;
@@ -2502,6 +2505,7 @@ inline void R4300i::BC1TL(int immed)
 	delay_slot = true;
 	decode(memory->read<word>(pc));
 	++Count;
+	--timers->Timer;
 	delay_slot = false;
 	if ((fcr31 & 0x800000) != 0)
 		pc = pc_tmp;
