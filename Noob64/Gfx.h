@@ -89,6 +89,8 @@ public:
 
 	void init(MEMORY* mem);
 
+	void RefreshScreen();	// Refreshs the screen when the vi timer is done
+
 	void captureScreen(char*);
 	void changeWindow(void);
 	void drawScreen(void);
@@ -102,7 +104,6 @@ public:
 	void viStatusChanged(void);
 	void viWidthChanged(void);
 
-	
 private:
 	CAPTURESCREEN		captureScreen_;
 	CHANGEWINDOW		changeWindow_;

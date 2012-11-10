@@ -61,32 +61,28 @@ class R4300i
 {
 public:
 	R4300i(MEMORY *mem);
-	// initialize the R4300i and enter in the main loop
-	void init();
-	// sets every bit to 0;
-	void reset();
-	// Check if an interrupt has been triggered
-	void check_interrupt();
-	// Use to see if a timer is done
-	void TimerDone();
-	// Refresh the screen when the vi timer is done
-	void RefreshScreen();
-private:
-	MEMORY	*memory;
-	Timers	*timers;
 
-	// Useful to hack the Crc chip which prevent a fake game from loading
-	void init_crc();
+	void init();				// initializes the R4300i and enter in the main loop
+	void reset();				// clears bits
+	void check_interrupt();		// Checks if an interrupt has been triggered
+	void TimerDone();			// Uses to see if a timer is done
+
+private:
+	MEMORY			&memory;
+	TimerHandler	&timer_handler;
+
+	// Workaround to pass the CRC check which prevents a fake game from loading
+	void pif_init();
 
 	//****************************************************************************
-	//** EXCEPTION RELATED METHODS AND FIELDS									**
+	//** EXCEPTIONS																**
 	//****************************************************************************
 	bool interrupt_detected;									// Notifies whether an interrupt has been detected or not
-	void trigger_address_error(dword address, bool from_read);	// Triggers an address error exception
+	void trigger_address_error(word address, bool from_read);	// Triggers an address error exception
 	void trigger_break_exception();								// Triggers a break exception
 	void trigger_copunusable_exception(int cop);				// Triggers a COP unusable exception
 	void trigger_intr_exception();								// Triggers an interruption exception
-	void trigger_tlb_miss(dword address);						// Triggers a TLB missed exception
+	void trigger_tlb_miss(word address);						// Triggers a TLB missed exception
 	void trigger_syscall_exception();							// Triggers a syscall exception
 	//****************************************************************************
 	//** DECODING RELATING METHODS				                                **
@@ -100,7 +96,7 @@ private:
 	inline void decode_bc1(const word instr);
 	template<typename Type>
 	inline void decode_fpu(const word instr);
-	inline int	probe_nop(dword address);						// Checks whether the next instruction is a nop
+	inline int	probe_nop(word address);						// Checks whether the next instruction is a nop
 	//****************************************************************************
 	//** REGISTERS					                                            **
 	//****************************************************************************

@@ -22,43 +22,16 @@
  *
  */
 
-#include "StdAfx.h"
+#pragma once
 
-ROM::ROM(string filename) : MEM_SEG(ROM_SEG_BEGINING, ROM_SEG_END)
-{
-	file.open(filename, ios::ate | ios::in | ios::binary);
-	if (!file.is_open())
-		throw ROM_FAILED_TO_LOAD;
+#include "Dps.h"
 
-	int size = (int) file.tellg();
-	data = (char*) malloc(size);
-	file.seekg (0, ios::beg);
-    file.read(data, size);
-	file.close();
-	ptr = data;
-	header = (ROM_HEADER*) data;
+inline void DPS_REGS::setTbist(word w)			{ data.tbist = w; }
+inline void DPS_REGS::setTestMode(word w)		{ data.test_mode = w; }
+inline void DPS_REGS::setBufTestAddr(word w)	{ data.buftest_addr = w; }
+inline void DPS_REGS::setBufTestData(word w)	{ data.buftest_data = w; }
 
-	word type = ((word*) data)[0];
-	if (type == 0x40123780)
-		; // BIG ENDIAN
-	else if (type == 0x12408037)
-	{
-		// MIDDLE ENDIAN
-		for (int i = 0; i < size - 1; i += 2)
-		{
-			char temp = data[i];
-			data[i] = data[i+1];
-			data[i+1] = temp;
-		}
-	}
-	else throw ROM_UNKNOWN_FORMAT;
-}
-
-ROM::~ROM()
-{
-	delete[] data;
-}
-
-
-
-
+inline word DPS_REGS::getTbist()				{ return data.tbist; }
+inline word DPS_REGS::getTestMode()				{ return data.test_mode; }
+inline word DPS_REGS::getBufTestAddr()			{ return data.buftest_addr; }
+inline word DPS_REGS::getBufTestData()			{ return data.buftest_data; }

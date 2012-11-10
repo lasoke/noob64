@@ -22,43 +22,22 @@
  *
  */
 
-#include "StdAfx.h"
+#pragma once
 
-ROM::ROM(string filename) : MEM_SEG(ROM_SEG_BEGINING, ROM_SEG_END)
+#include "Rom.h"
+
+inline word ROM::getClock()						{ return header->clock;	}
+inline word ROM::getPc()						{ return header->pc; }
+inline word ROM::getRelease()					{ return header->release; }
+inline word ROM::getCRC1()						{ return header->crc1; }
+inline word ROM::getCRC2()						{ return header->crc2; }
+inline string ROM::getName()
 {
-	file.open(filename, ios::ate | ios::in | ios::binary);
-	if (!file.is_open())
-		throw ROM_FAILED_TO_LOAD;
-
-	int size = (int) file.tellg();
-	data = (char*) malloc(size);
-	file.seekg (0, ios::beg);
-    file.read(data, size);
-	file.close();
-	ptr = data;
-	header = (ROM_HEADER*) data;
-
-	word type = ((word*) data)[0];
-	if (type == 0x40123780)
-		; // BIG ENDIAN
-	else if (type == 0x12408037)
-	{
-		// MIDDLE ENDIAN
-		for (int i = 0; i < size - 1; i += 2)
-		{
-			char temp = data[i];
-			data[i] = data[i+1];
-			data[i+1] = temp;
-		}
-	}
-	else throw ROM_UNKNOWN_FORMAT;
+	string s = "";
+	for(int i = 0; i < sizeof(header->name); i++)
+		s += header->name[i];
+	return s;
 }
-
-ROM::~ROM()
-{
-	delete[] data;
-}
-
-
-
-
+inline word ROM::getManufacturer()				{ return header->manufacturer; }
+inline hword ROM::getCartridge()				{ return header->cartridge; }
+inline hword ROM::getCountry()					{ return header->country; }

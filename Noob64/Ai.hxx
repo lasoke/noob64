@@ -22,43 +22,24 @@
  *
  */
 
-#include "StdAfx.h"
+#pragma once
 
-ROM::ROM(string filename) : MEM_SEG(ROM_SEG_BEGINING, ROM_SEG_END)
+#include "Ai.h"
+
+inline void AI_REGS::setDramAddr(word w)		{ data.dram_addr = w; }
+inline void AI_REGS::setLen(word w)
 {
-	file.open(filename, ios::ate | ios::in | ios::binary);
-	if (!file.is_open())
-		throw ROM_FAILED_TO_LOAD;
-
-	int size = (int) file.tellg();
-	data = (char*) malloc(size);
-	file.seekg (0, ios::beg);
-    file.read(data, size);
-	file.close();
-	ptr = data;
-	header = (ROM_HEADER*) data;
-
-	word type = ((word*) data)[0];
-	if (type == 0x40123780)
-		; // BIG ENDIAN
-	else if (type == 0x12408037)
-	{
-		// MIDDLE ENDIAN
-		for (int i = 0; i < size - 1; i += 2)
-		{
-			char temp = data[i];
-			data[i] = data[i+1];
-			data[i+1] = temp;
-		}
-	}
-	else throw ROM_UNKNOWN_FORMAT;
+	data.len = w;
+	//AiLenChanged
 }
+inline void AI_REGS::setControl(word w)			{ data.control = w & 0x1; }
+inline void AI_REGS::setStatus(word w)			{ /*TODO*/ }
+inline void AI_REGS::setDacrate(word w)			{ data.dacrate = w; }
+inline void AI_REGS::setBitrate(word w)			{ data.bitrate = w; }
 
-ROM::~ROM()
-{
-	delete[] data;
-}
-
-
-
-
+inline word AI_REGS::getDramAddr()				{ return data.dram_addr; }
+inline word AI_REGS::getLen()					{ return data.len; }
+inline word AI_REGS::getControl()				{ return data.control; }
+inline word AI_REGS::getStatus()				{ return data.status; }
+inline word AI_REGS::getDacrate()				{ return data.dacrate; }
+inline word AI_REGS::getBitrate()				{ return data.bitrate; }

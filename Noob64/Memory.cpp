@@ -27,6 +27,7 @@
 //****************************************************************************
 //** MEMORY																	**
 //****************************************************************************
+
 MEMORY::MEMORY(ROM* r) :
 	rom			(*r),
 	rdram		(*new RDRAM()),
@@ -48,114 +49,43 @@ MEMORY::MEMORY(ROM* r) :
 	check_intr = false;
 }
 
-// MEMORY SEGMENT
-MEM_SEG::MEM_SEG() : ptr(0)
+void* MEMORY::operator[] (const word address)
 {
-}
-
-char* MEM_SEG::operator[] (const dword address) const
-{
-	return (char*) ptr + address;
+	return virtual_to_physical(address);
 }
 
 //****************************************************************************
-//** SEGMENTS CONSTRUCTORS					                                **
+//** SEGMENTS																**
 //****************************************************************************
 
-// RDRAM
-RDRAM::RDRAM()
-{
-	memset(data, 0, sizeof(data));
+#define INIT(data)					\
+	memset(data, 0, sizeof(data));	\
 	ptr = (char*) data;
+
+MEM_SEG::MEM_SEG(word b, word e) : ptr(0), begining(b), end(e)					{}
+MEM_SEG::~MEM_SEG()																{}
+RDRAM::RDRAM() : MEM_SEG(RDRAM_SEG_BEGINING, RDRAM_SEG_END)						{ INIT(data) }
+RDRAM_REGS::RDRAM_REGS() : MEM_SEG(RDRAM_REGS_SEG_BEGINING, RDRAM_REGS_SEG_END) { INIT(&data) }
+SP_REGS::SP_REGS() : MEM_SEG(SP_SEG_BEGINING, SP_SEG_END)						{ INIT(&data) }
+DPC_REGS::DPC_REGS() : MEM_SEG(DPC_SEG_BEGINING, DPC_SEG_END)					{ INIT(&data) }
+DPS_REGS::DPS_REGS() : MEM_SEG(DPS_SEG_BEGINING, DPS_SEG_END)					{ INIT(&data) }
+MI_REGS::MI_REGS() : MEM_SEG(MI_SEG_BEGINING, MI_SEG_END)						{ INIT(&data) }
+VI_REGS::VI_REGS() : MEM_SEG(VI_SEG_BEGINING, VI_SEG_END)						{ INIT(&data) }
+AI_REGS::AI_REGS() : MEM_SEG(AI_SEG_BEGINING, AI_SEG_END)						{ INIT(&data) }
+PI_REGS::PI_REGS() : MEM_SEG(PI_SEG_BEGINING, PI_SEG_END)						{ INIT(&data) }
+RI_REGS::RI_REGS() : MEM_SEG(RI_SEG_BEGINING, RI_SEG_END)						{ INIT(&data) }
+SI_REGS::SI_REGS() : MEM_SEG(SI_SEG_BEGINING, SI_SEG_END)						{ INIT(&data) }
+PIF_ROM::PIF_ROM() : MEM_SEG(PIF_ROM_SEG_BEGINING, PIF_ROM_SEG_END)				{ INIT(&data) }
+PIF_RAM::PIF_RAM() : MEM_SEG(PIF_RAM_SEG_BEGINING, PIF_RAM_SEG_END)				{ INIT(&data) }
+
+void* MEM_SEG::operator[] (const word address) const
+{
+	return (char*) ptr + address - begining;
 }
 
-// RDRAM REGISTERS
-RDRAM_REGS::RDRAM_REGS()
+bool is_address_defined(word address)
 {
-	memset(&data, 0, sizeof(data));
-	ptr = (char*) &data;
-}
-
-// SP REGISTERS
-SP_REGS::SP_REGS()
-{
-	memset(&data, 0, sizeof(data));
-	ptr = (char*) &data;
-}
-
-// DPC REGISTERS
-DPC_REGS::DPC_REGS()
-{
-	memset(&data, 0, sizeof(data));
-	ptr = (char*) &data;
-}
-
-// DPS REGISTERS
-DPS_REGS::DPS_REGS()
-{
-	memset(&data, 0, sizeof(data));
-	ptr = (char*) &data;
-}
-
-// MI REGISTERS
-MI_REGS::MI_REGS()
-{
-	memset(&data, 0, sizeof(data));
-	ptr = (char*) &data;
-}
-
-// VI REGISTERS
-VI_REGS::VI_REGS()
-{
-	memset(&data, 0, sizeof(data));
-	ptr = (char*) &data;
-}
-
-// AI REGISTERS
-AI_REGS::AI_REGS()
-{
-	memset(&data, 0, sizeof(data));
-	ptr = (char*) &data;
-}
-
-// PI REGISTERS
-PI_REGS::PI_REGS()
-{
-	memset(&data, 0, sizeof(data));
-	ptr = (char*) &data;
-}
-
-// RI REGISTERS
-RI_REGS::RI_REGS()
-{
-	memset(&data, 0, sizeof(data));
-	ptr = (char*) &data;
-}
-
-// SI REGISTERS
-SI_REGS::SI_REGS()
-{
-	memset(&data, 0, sizeof(data));
-	ptr = (char*) &data;
-}
-
-// PIF_ROM REGISTERS
-PIF_ROM::PIF_ROM()
-{
-	memset(&data, 0, sizeof(data));
-	ptr = (char*) &data;
-}
-
-// PIF_RAM REGISTERS
-PIF_RAM::PIF_RAM()
-{
-	memset(&data, 0, sizeof(data));
-	ptr = (char*) &data;
-}
-
-bool is_address_defined(dword address)
-{
-	if (0x80000000 <= address && address <= 0xBFFFFFFF)
+	if (KSEG0 <= address && address <= KSEG2-1)
 		return true;
 	// TODO
 	/*

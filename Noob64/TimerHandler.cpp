@@ -1,10 +1,10 @@
 #include "StdAfx.h"
 
-Timers::Timers()
+TimerHandler::TimerHandler()
 {
 }
 
-void Timers::ChangeCompareTimer(word compare, word count)
+void TimerHandler::ChangeCompareTimer(word compare, word count)
 {
 	word NextCompare = compare - count;
 	if ((NextCompare & 0x80000000) != 0)
@@ -14,7 +14,7 @@ void Timers::ChangeCompareTimer(word compare, word count)
 	ChangeTimer(CompareTimer,NextCompare, compare, count);
 }
 
-void Timers::ChangeTimer(int Type, int Value, word compare, word count)
+void TimerHandler::ChangeTimer(int Type, int Value, word compare, word count)
 {	
 	if (Value == 0) 
 	{ 
@@ -27,7 +27,7 @@ void Timers::ChangeTimer(int Type, int Value, word compare, word count)
 	CheckTimer(compare, count);
 }
 
-void Timers::CheckTimer(word compare, word count)
+void TimerHandler::CheckTimer(word compare, word count)
 {
 	int i;
 
@@ -49,7 +49,7 @@ void Timers::CheckTimer(word compare, word count)
 	}
 	if (CurrentTimerType == -1) 
 	{
-		cerr << "No active timers ???\nEmulation Stoped" << endl;
+		cerr << "No active timer_handler ???\nEmulation Stoped" << endl;
 		ExitThread(0);
 	}
 	for (i = 0; i < MaxTimers; i++)
@@ -70,34 +70,34 @@ void Timers::CheckTimer(word compare, word count)
 
 void R4300i::TimerDone()
 {
-	switch (timers->CurrentTimerType) 
+	switch (timer_handler.CurrentTimerType) 
 	{
 		case CompareTimer:
 			Cause |= CAUSE_IP7;
 			check_interrupt();
-			timers->ChangeCompareTimer(Compare, Count);
+			timer_handler.ChangeCompareTimer(Compare, Count);
 			break;
 		case SiTimer:
-			timers->ChangeTimer(SiTimer, 0, Compare, Count);
-			memory->mi_regs.setIntr(memory->mi_regs.getIntr() | MI_INTR_SI);
-			memory->si_regs.setStatus(memory->si_regs.getStatus() | SI_STATUS_INTERRUPT);
+			timer_handler.ChangeTimer(SiTimer, 0, Compare, Count);
+			memory.mi_regs.setIntr(memory.mi_regs.getIntr() | MI_INTR_SI);
+			memory.si_regs.setStatus(memory.si_regs.getStatus() | SI_STATUS_INTERRUPT);
 			check_interrupt();
 			break;
 		case PiTimer:
-			timers->ChangeTimer(PiTimer, 0, Compare, Count);
-			memory->pi_regs.setStatus(memory->pi_regs.getStatus() & ~PI_STATUS_DMA_BUSY);
-			memory->mi_regs.setIntr(memory->mi_regs.getIntr() | MI_INTR_PI);
+			timer_handler.ChangeTimer(PiTimer, 0, Compare, Count);
+			memory.pi_regs.setStatus(memory.pi_regs.getStatus() & ~PI_STATUS_DMA_BUSY);
+			memory.mi_regs.setIntr(memory.mi_regs.getIntr() | MI_INTR_PI);
 			check_interrupt();
 			break;
 		case ViTimer:
 			RefreshScreen();
-			memory->mi_regs.setIntr(memory->mi_regs.getIntr() | MI_INTR_VI);
+			memory.mi_regs.setIntr(memory.mi_regs.getIntr() | MI_INTR_VI);
 			check_interrupt();
 			break;
 		case RspTimer:
-			timers->ChangeTimer(RspTimer,0, Compare, Count);
+			timer_handler.ChangeTimer(RspTimer,0, Compare, Count);
 			//RunRsp();
 			break;
 	}
-	timers->CheckTimer(Compare, Count);
+	timer_handler.CheckTimer(Compare, Count);
 }

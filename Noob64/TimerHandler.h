@@ -1,16 +1,16 @@
 #pragma once
 
-#define MaxTimers				5
 #define CompareTimer			0
 #define SiTimer					1
 #define PiTimer					2
 #define ViTimer					3
 #define RspTimer				4
+#define MaxTimers				5
 
-class Timers
+class TimerHandler
 {
 public:
-	Timers();
+	TimerHandler();
 	int  CurrentTimerType;
 	int  Timer;
 	int  NextTimer[MaxTimers];
