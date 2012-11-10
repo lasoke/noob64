@@ -79,19 +79,19 @@ void R4300i::TimerDone()
 			break;
 		case SiTimer:
 			timer_handler.ChangeTimer(SiTimer, 0, Compare, Count);
-			rcp.mi.setIntr(rcp.mi.getIntr() | MI_INTR_SI);
-			rcp.si.setStatus(rcp.si.getStatus() | SI_STATUS_INTERRUPT);
+			rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_SI);
+			rcp.getSI().setStatus(rcp.getSI().getStatus() | SI_STATUS_INTERRUPT);
 			check_interrupt();
 			break;
 		case PiTimer:
 			timer_handler.ChangeTimer(PiTimer, 0, Compare, Count);
-			rcp.pi.setStatus(rcp.pi.getStatus() & ~PI_STATUS_DMA_BUSY);
-			rcp.mi.setIntr(rcp.mi.getIntr() | MI_INTR_PI);
+			rcp.getPI().setStatus(rcp.getPI().getStatus() & ~PI_STATUS_DMA_BUSY);
+			rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_PI);
 			check_interrupt();
 			break;
 		case ViTimer:
 			//RefreshScreen();
-			rcp.mi.setIntr(rcp.mi.getIntr() | MI_INTR_VI);
+			rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_VI);
 			check_interrupt();
 			break;
 		case RspTimer:

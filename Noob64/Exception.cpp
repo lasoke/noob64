@@ -39,7 +39,7 @@
 
 void R4300i::check_interrupt(void)
 {
-	if (rcp.mi.getIntr() & rcp.mi.getIntrMask())	// An interrupt is detected.
+	if (rcp.getMI().getIntr() & rcp.getMI().getIntrMask())	// An interrupt is detected.
 		Cause |= CAUSE_IP2;											// Sets the IP2 bit (ExcCode mask should be clear at this point!).
 	else
 		Cause &= ~CAUSE_IP2;										// Clears the IP2 bit

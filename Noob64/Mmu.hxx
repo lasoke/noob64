@@ -46,182 +46,182 @@ inline bool MMU::read_from_register(word *data, word address)
 {
 	address &= 0x0FFFFFFF;
 	if (address == RDRAM_CONFIG_REG)
-		*data = rcp.rdram_regs.getConfig();
+		*data = rcp.getRdramRegs().getConfig();
 	else if (address == RDRAM_DEVICE_ID_REG)
-		*data = rcp.rdram_regs.getDeviceId();
+		*data = rcp.getRdramRegs().getDeviceId();
 	else if (address == RDRAM_DELAY_REG)
-		*data = rcp.rdram_regs.getDelay();
+		*data = rcp.getRdramRegs().getDelay();
 	else if (address == RDRAM_MODE_REG)
-		*data = rcp.rdram_regs.getMode();
+		*data = rcp.getRdramRegs().getMode();
 	else if (address == RDRAM_REF_INTERVAL_REG)
-		*data = rcp.rdram_regs.getRefInterval();
+		*data = rcp.getRdramRegs().getRefInterval();
 	else if (address == RDRAM_REF_ROW_REG)
-		*data = rcp.rdram_regs.getRefRow();
+		*data = rcp.getRdramRegs().getRefRow();
 	else if (address == RDRAM_RAS_INTERVAL_REG)
-		*data = rcp.rdram_regs.getConfig();
+		*data = rcp.getRdramRegs().getConfig();
 	else if (address == RDRAM_MIN_INTERVAL_REG)
-		*data = rcp.rdram_regs.getConfig();
+		*data = rcp.getRdramRegs().getConfig();
 	else if (address == RDRAM_ADDR_SELECT_REG)
-		*data = rcp.rdram_regs.getConfig();
+		*data = rcp.getRdramRegs().getConfig();
 	else if (address == RDRAM_DEVICE_MANUF_REG)
-		*data = rcp.rdram_regs.getConfig();
+		*data = rcp.getRdramRegs().getConfig();
 
 	else if (address == SP_MEM_ADDR_REG)
-		*data = rcp.sp.getMemAddr();
+		*data = rcp.getSP().getMemAddr();
 	else if (address == SP_DRAM_ADDR_REG)
-		*data = rcp.sp.getDramAddr();
+		*data = rcp.getSP().getDramAddr();
 	else if (address == SP_RD_LEN_REG)
-		*data = rcp.sp.getRdLen();
+		*data = rcp.getSP().getRdLen();
 	else if (address == SP_WR_LEN_REG)
-		*data = rcp.sp.getWrLen();
+		*data = rcp.getSP().getWrLen();
 	else if (address == SP_STATUS_REG)
-		*data = rcp.sp.getStatus();
+		*data = rcp.getSP().getStatus();
 	else if (address == SP_DMA_FULL_REG)
-		*data = rcp.sp.getDmaFull();
+		*data = rcp.getSP().getDmaFull();
 	else if (address == SP_DMA_BUSY_REG)
-		*data = rcp.sp.getDmaBusy();
+		*data = rcp.getSP().getDmaBusy();
 	else if (address == SP_SEMAPHORE_REG)
-		*data = rcp.sp.getSemaphore();
+		*data = rcp.getSP().getSemaphore();
 	else if (address == SP_PC_REG)
-		*data = rcp.sp.getPc();
+		*data = rcp.getSP().getPc();
 	else if (address == SP_IBIST_REG)
-		*data = rcp.sp.getIbist();
+		*data = rcp.getSP().getIbist();
 
 	else if (address == DPC_START_REG)
-		*data = rcp.dpc.getStart();
+		*data = rcp.getDPC().getStart();
 	else if (address == DPC_END_REG)
-		*data = rcp.dpc.getEnd();
+		*data = rcp.getDPC().getEnd();
 	else if (address == DPC_CURRENT_REG)
-		*data = rcp.dpc.getCurrent();
+		*data = rcp.getDPC().getCurrent();
 	else if (address == DPC_STATUS_REG)
-		*data = rcp.dpc.getStatus();
+		*data = rcp.getDPC().getStatus();
 	else if (address == DPC_CLOCK_REG)
-		*data = rcp.dpc.getClock();
+		*data = rcp.getDPC().getClock();
 	else if (address == DPC_BUFBUSY_REG)
-		*data = rcp.dpc.getBufBusy();
+		*data = rcp.getDPC().getBufBusy();
 	else if (address == DPC_PIPEBUSY_REG)
-		*data = rcp.dpc.getPipeBusy();
+		*data = rcp.getDPC().getPipeBusy();
 	else if (address == DPC_TMEM_REG)
-		*data = rcp.dpc.getTmem();
+		*data = rcp.getDPC().getTmem();
 
 	else if (address == DPS_TBIST_REG)
-		*data = rcp.dps.getTbist();
+		*data = rcp.getDPS().getTbist();
 	else if (address == DPS_TEST_MODE_REG)
-		*data = rcp.dps.getTestMode();
+		*data = rcp.getDPS().getTestMode();
 	else if (address == DPS_BUFTEST_ADDR_REG)
-		*data = rcp.dps.getBufTestAddr();
+		*data = rcp.getDPS().getBufTestAddr();
 	else if (address == DPS_BUFTEST_DATA_REG)
-		*data = rcp.dps.getBufTestData();
+		*data = rcp.getDPS().getBufTestData();
 
 	else if (address == MI_INIT_MODE_REG)
-		*data = rcp.mi.getInitMode();
+		*data = rcp.getMI().getInitMode();
 	else if (address == MI_VERSION_REG)
-		*data = rcp.mi.getVersion();
+		*data = rcp.getMI().getVersion();
 	else if (address == MI_INTR_REG)
-		*data = rcp.mi.getIntr();
+		*data = rcp.getMI().getIntr();
 	else if (address == MI_INTR_MASK_REG)
-		*data = rcp.mi.getIntrMask();
+		*data = rcp.getMI().getIntrMask();
 
 	else if (address == VI_STATUS_REG)
-		*data = rcp.vi.getStatus();
+		*data = rcp.getVI().getStatus();
 	else if (address == VI_ORIGIN_REG)
-		*data = rcp.vi.getOrigin();
+		*data = rcp.getVI().getOrigin();
 	else if (address == VI_WIDTH_REG)
-		*data = rcp.vi.getWidth();
+		*data = rcp.getVI().getWidth();
 	else if (address == VI_INTR_REG)
-		*data = rcp.vi.getIntr();
+		*data = rcp.getVI().getIntr();
 	else if (address == VI_CURRENT_REG)
 	{
-		*data = rcp.vi.getCurrent();
+		*data = rcp.getVI().getCurrent();
 		//UpdateCurrentHalfLine();
 	}
 	else if (address == VI_BURST_REG)
-		*data = rcp.vi.getBurst();
+		*data = rcp.getVI().getBurst();
 	else if (address == VI_V_SYNC_REG)
-		*data = rcp.vi.getVsync();
+		*data = rcp.getVI().getVsync();
 	else if (address == VI_H_SYNC_REG)
-		*data = rcp.vi.getHsync();
+		*data = rcp.getVI().getHsync();
 	else if (address == VI_LEAP_REG)
-		*data = rcp.vi.getLeap();
+		*data = rcp.getVI().getLeap();
 	else if (address == VI_H_START_REG)
-		*data = rcp.vi.getHstart();
+		*data = rcp.getVI().getHstart();
 	else if (address == VI_V_START_REG)
-		*data = rcp.vi.getVstart();
+		*data = rcp.getVI().getVstart();
 	else if (address == VI_V_BURST_REG)
-		*data = rcp.vi.getVburst();
+		*data = rcp.getVI().getVburst();
 	else if (address == VI_X_SCALE_REG)
-		*data = rcp.vi.getXscale();
+		*data = rcp.getVI().getXscale();
 	else if (address == VI_Y_SCALE_REG)
-		*data = rcp.vi.getYscale();
+		*data = rcp.getVI().getYscale();
 
 	else if (address == AI_DRAM_ADDR_REG)
-		*data = rcp.ai.getDramAddr();
+		*data = rcp.getAI().getDramAddr();
 	else if (address == AI_LEN_REG)
 	{
-		*data = rcp.ai.getLen();
+		*data = rcp.getAI().getLen();
 		//res = AiReadLength();
 	}
 	else if (address == AI_CONTROL_REG)
-		*data = rcp.ai.getControl();
+		*data = rcp.getAI().getControl();
 	else if (address == AI_STATUS_REG)
-		*data = rcp.ai.getStatus();
+		*data = rcp.getAI().getStatus();
 	else if (address == AI_DACRATE_REG)
-		*data = rcp.ai.getDacrate();
+		*data = rcp.getAI().getDacrate();
 	else if (address == AI_BITRATE_REG)
-		*data = rcp.ai.getBitrate();
+		*data = rcp.getAI().getBitrate();
 
 	else if (address == PI_DRAM_ADDR_REG)
-		*data = rcp.pi.getDramAddr();
+		*data = rcp.getPI().getDramAddr();
 	else if (address == PI_CART_ADDR_REG)
-		*data = rcp.pi.getCartAddr();
+		*data = rcp.getPI().getCartAddr();
 	else if (address == PI_RD_LEN_REG)
-		*data = rcp.pi.getRdLen();
+		*data = rcp.getPI().getRdLen();
 	else if (address == PI_WR_LEN_REG)
-		*data = rcp.pi.getWrLen();
+		*data = rcp.getPI().getWrLen();
 	else if (address == PI_STATUS_REG)
-		*data = rcp.pi.getStatus();
+		*data = rcp.getPI().getStatus();
 	else if (address == PI_BSD_DOM1_LAT_REG)
-		*data = rcp.pi.getBsdDom1Lat();
+		*data = rcp.getPI().getBsdDom1Lat();
 	else if (address == PI_BSD_DOM1_PWD_REG)
-		*data = rcp.pi.getBsdDom1Pwd();
+		*data = rcp.getPI().getBsdDom1Pwd();
 	else if (address == PI_BSD_DOM1_PGS_REG)
-		*data = rcp.pi.getBsdDom1Pgs();
+		*data = rcp.getPI().getBsdDom1Pgs();
 	else if (address == PI_BSD_DOM1_RLS_REG)
-		*data = rcp.pi.getBsdDom1Rls();
+		*data = rcp.getPI().getBsdDom1Rls();
 	else if (address == PI_BSD_DOM2_LAT_REG)
-		*data = rcp.pi.getBsdDom2Lat();
+		*data = rcp.getPI().getBsdDom2Lat();
 	else if (address == PI_BSD_DOM2_PWD_REG)
-		*data = rcp.pi.getBsdDom2Pwd();
+		*data = rcp.getPI().getBsdDom2Pwd();
 	else if (address == PI_BSD_DOM2_PGS_REG)
-		*data = rcp.pi.getBsdDom2Pgs();
+		*data = rcp.getPI().getBsdDom2Pgs();
 	else if (address == PI_BSD_DOM2_RLS_REG)
-		*data = rcp.pi.getBsdDom2Rls();
+		*data = rcp.getPI().getBsdDom2Rls();
 
 	else if (address == RI_MODE_REG)
-		*data = rcp.ri.getMode();
+		*data = rcp.getRI().getMode();
 	else if (address == RI_CONFIG_REG)
-		*data = rcp.ri.getConfig();
+		*data = rcp.getRI().getConfig();
 	else if (address == RI_CURRENT_LOAD_REG)
-		*data = rcp.ri.getCurrentLoad();
+		*data = rcp.getRI().getCurrentLoad();
 	else if (address == RI_SELECT_REG)
-		*data = rcp.ri.getSelect();
+		*data = rcp.getRI().getSelect();
 	else if (address == RI_REFRESH_REG)
-		*data = rcp.ri.getRefresh();
+		*data = rcp.getRI().getRefresh();
 	else if (address == RI_LATENCY_REG)
-		*data = rcp.ri.getLatency();
+		*data = rcp.getRI().getLatency();
 	else if (address == RI_RERROR_REG)
-		*data = rcp.ri.getRerror();
+		*data = rcp.getRI().getRerror();
 	else if (address == RI_WERROR_REG)
-		*data = rcp.ri.getWerror();
+		*data = rcp.getRI().getWerror();
 
 	else if (address == SI_DRAM_ADDR_REG)
-		*data = rcp.si.getDramAddr();
+		*data = rcp.getSI().getDramAddr();
 	else if (address == SI_PIF_ADDR_RD64B_REG)
-		*data = rcp.si.getPifAddrRd64b();
+		*data = rcp.getSI().getPifAddrRd64b();
 	else if (address == SI_PIF_ADDR_WR64B_REG)
-		*data = rcp.si.getPifAddrWr64b();
+		*data = rcp.getSI().getPifAddrWr64b();
 	else if (address == SI_STATUS_REG)
-		*data = rcp.si.getStatus();
+		*data = rcp.getSI().getStatus();
 	else
 		return false;
 	return true;
@@ -246,55 +246,55 @@ inline bool MMU::write_in_register(word data, word address)
 {
 	address &= 0x0FFFFFFF;
 	if (address == RDRAM_CONFIG_REG)
-		rcp.rdram_regs.setConfig(data);
+		rcp.getRdramRegs().setConfig(data);
 	else if (address == RDRAM_DEVICE_ID_REG)
-		rcp.rdram_regs.setDeviceId(data);
+		rcp.getRdramRegs().setDeviceId(data);
 	else if (address == RDRAM_DELAY_REG)
-		rcp.rdram_regs.setDelay(data);
+		rcp.getRdramRegs().setDelay(data);
 	else if (address == RDRAM_MODE_REG)
-		rcp.rdram_regs.setMode(data);
+		rcp.getRdramRegs().setMode(data);
 	else if (address == RDRAM_REF_INTERVAL_REG)
-		rcp.rdram_regs.setRefInterval(data);
+		rcp.getRdramRegs().setRefInterval(data);
 	else if (address == RDRAM_REF_ROW_REG)
-		rcp.rdram_regs.setRefRow(data);
+		rcp.getRdramRegs().setRefRow(data);
 	else if (address == RDRAM_RAS_INTERVAL_REG)
-		rcp.rdram_regs.setConfig(data);
+		rcp.getRdramRegs().setConfig(data);
 	else if (address == RDRAM_MIN_INTERVAL_REG)
-		rcp.rdram_regs.setConfig(data);
+		rcp.getRdramRegs().setConfig(data);
 	else if (address == RDRAM_ADDR_SELECT_REG)
-		rcp.rdram_regs.setConfig(data);
+		rcp.getRdramRegs().setConfig(data);
 	else if (address == RDRAM_DEVICE_MANUF_REG)
-		rcp.rdram_regs.setConfig(data);
+		rcp.getRdramRegs().setConfig(data);
 
 	else if (address == SP_MEM_ADDR_REG)
-		rcp.sp.setMemAddr(data);
+		rcp.getSP().setMemAddr(data);
 	else if (address == SP_DRAM_ADDR_REG)
-		rcp.sp.setDramAddr(data);
+		rcp.getSP().setDramAddr(data);
 	else if (address == SP_RD_LEN_REG)
 	{
-		rcp.sp.setRdLen(data);
+		rcp.getSP().setRdLen(data);
 		rcp.dma_sp_read();	
-		rcp.sp.setDmaBusy(0);
-		rcp.sp.setStatus(rcp.sp.getStatus() & ~SP_STATUS_DMA_BUSY);
+		rcp.getSP().setDmaBusy(0);
+		rcp.getSP().setStatus(rcp.getSP().getStatus() & ~SP_STATUS_DMA_BUSY);
 	}
 	else if (address == SP_WR_LEN_REG)
 	{
-		rcp.sp.setWrLen(data);
+		rcp.getSP().setWrLen(data);
 		rcp.dma_sp_write();
-		rcp.sp.setDmaBusy(0);
-		rcp.sp.setStatus(rcp.sp.getStatus() & ~SP_STATUS_DMA_BUSY);
+		rcp.getSP().setDmaBusy(0);
+		rcp.getSP().setStatus(rcp.getSP().getStatus() & ~SP_STATUS_DMA_BUSY);
 	}
 	else if (address == SP_STATUS_REG)
 	{
-		rcp.sp.setSpecialStatus(data);
+		rcp.getSP().setSpecialStatus(data);
 		if (data & SP_SET_SIG0) 
 		{
-			rcp.mi.setIntr(rcp.mi.getIntr() | MI_INTR_SP);
+			rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_SP);
 			rcp.setCheckInterrupt(true);
 		}
 		if (data & SP_CLR_INTR)
 		{ 
-			rcp.mi.setIntr(rcp.mi.getIntr() & ~MI_INTR_SP);
+			rcp.getMI().setIntr(rcp.getMI().getIntr() & ~MI_INTR_SP);
 			// TODO: RunRsp();
 			rcp.setCheckInterrupt(true);
 		}
@@ -302,181 +302,181 @@ inline bool MMU::write_in_register(word data, word address)
 			;// TODO: RunRsp();
 	}
 	else if (address == SP_DMA_FULL_REG)
-		rcp.sp.setDmaFull(data);
+		rcp.getSP().setDmaFull(data);
 	else if (address == SP_DMA_BUSY_REG)
-		rcp.sp.setDmaBusy(data);
+		rcp.getSP().setDmaBusy(data);
 	else if (address == SP_SEMAPHORE_REG)
-		rcp.sp.setSpecialSemaphore(data);
+		rcp.getSP().setSpecialSemaphore(data);
 	else if (address == SP_PC_REG)
-		rcp.sp.setPc(data);
+		rcp.getSP().setPc(data);
 	else if (address == SP_IBIST_REG)
-		rcp.sp.setIbist(data);
+		rcp.getSP().setIbist(data);
 
 	else if (address == DPC_START_REG)
-		rcp.dpc.setStart(data);
+		rcp.getDPC().setStart(data);
 	else if (address == DPC_END_REG)
-		rcp.dpc.setEnd(data);
+		rcp.getDPC().setEnd(data);
 	else if (address == DPC_CURRENT_REG)
-		rcp.dpc.setCurrent(data);
+		rcp.getDPC().setCurrent(data);
 	else if (address == DPC_STATUS_REG)
-		rcp.dpc.setStatus(data);
+		rcp.getDPC().setStatus(data);
 	else if (address == DPC_CLOCK_REG)
-		rcp.dpc.setClock(data);
+		rcp.getDPC().setClock(data);
 	else if (address == DPC_BUFBUSY_REG)
-		rcp.dpc.setBufBusy(data);
+		rcp.getDPC().setBufBusy(data);
 	else if (address == DPC_PIPEBUSY_REG)
-		rcp.dpc.setPipeBusy(data);
+		rcp.getDPC().setPipeBusy(data);
 	else if (address == DPC_TMEM_REG)
-		rcp.dpc.setTmem(data);
+		rcp.getDPC().setTmem(data);
 
 	else if (address == DPS_TBIST_REG)
-		rcp.dps.setTbist(data);
+		rcp.getDPS().setTbist(data);
 	else if (address == DPS_TEST_MODE_REG)
-		rcp.dps.setTestMode(data);
+		rcp.getDPS().setTestMode(data);
 	else if (address == DPS_BUFTEST_ADDR_REG)
-		rcp.dps.setBufTestAddr(data);
+		rcp.getDPS().setBufTestAddr(data);
 	else if (address == DPS_BUFTEST_DATA_REG)
-		rcp.dps.setBufTestData(data);
+		rcp.getDPS().setBufTestData(data);
 
 	else if (address == MI_INIT_MODE_REG)
-		rcp.mi.setSpecialInitMode(data);
+		rcp.getMI().setSpecialInitMode(data);
 	else if (address == MI_VERSION_REG)
-		rcp.mi.setVersion(data);
+		rcp.getMI().setVersion(data);
 	else if (address == MI_INTR_REG)
-		rcp.mi.setIntr(data);
+		rcp.getMI().setIntr(data);
 	else if (address == MI_INTR_MASK_REG)
-		rcp.mi.setSpecialIntrMask(data);
+		rcp.getMI().setSpecialIntrMask(data);
 
 	else if (address == VI_STATUS_REG)
-		rcp.vi.setStatus(data);
+		rcp.getVI().setStatus(data);
 	else if (address == VI_ORIGIN_REG)
-		rcp.vi.setOrigin(data);
+		rcp.getVI().setOrigin(data);
 	else if (address == VI_WIDTH_REG)
-		rcp.vi.setWidth(data);
+		rcp.getVI().setWidth(data);
 	else if (address == VI_INTR_REG)
 	{
-		rcp.vi.setVintr(data);
-		rcp.mi.setIntr(rcp.mi.getIntr() & ~MI_INTR_VI);
+		rcp.getVI().setVintr(data);
+		rcp.getMI().setIntr(rcp.getMI().getIntr() & ~MI_INTR_VI);
 		rcp.setCheckInterrupt(true);
 	}
 	else if (address == VI_CURRENT_REG)
-		rcp.vi.setCurrent(data);
+		rcp.getVI().setCurrent(data);
 	else if (address == VI_BURST_REG)
-		rcp.vi.setBurst(data);
+		rcp.getVI().setBurst(data);
 	else if (address == VI_V_SYNC_REG)
-		rcp.vi.setVsync(data);
+		rcp.getVI().setVsync(data);
 	else if (address == VI_H_SYNC_REG)
-		rcp.vi.setHsync(data);
+		rcp.getVI().setHsync(data);
 	else if (address == VI_LEAP_REG)
-		rcp.vi.setLeap(data);
+		rcp.getVI().setLeap(data);
 	else if (address == VI_H_START_REG)
-		rcp.vi.setHstart(data);
+		rcp.getVI().setHstart(data);
 	else if (address == VI_V_START_REG)
-		rcp.vi.setVstart(data);
+		rcp.getVI().setVstart(data);
 	else if (address == VI_V_BURST_REG)
-		rcp.vi.setVburst(data);
+		rcp.getVI().setVburst(data);
 	else if (address == VI_X_SCALE_REG)
-		rcp.vi.setXscale(data);
+		rcp.getVI().setXscale(data);
 	else if (address == VI_Y_SCALE_REG)
-		rcp.vi.setYscale(data);
+		rcp.getVI().setYscale(data);
 
 	else if (address == AI_DRAM_ADDR_REG)
-		rcp.ai.setDramAddr(data);
+		rcp.getAI().setDramAddr(data);
 	else if (address == AI_LEN_REG)
-		rcp.ai.setLen(data);
+		rcp.getAI().setLen(data);
 	else if (address == AI_CONTROL_REG)
-		rcp.ai.setControl(data);
+		rcp.getAI().setControl(data);
 	else if (address == AI_STATUS_REG)
 	{
-		rcp.mi.setIntr(rcp.mi.getIntr() & ~MI_INTR_AI);
+		rcp.getMI().setIntr(rcp.getMI().getIntr() & ~MI_INTR_AI);
 		rcp.setCheckInterrupt(true);
 	}
 	else if (address == AI_DACRATE_REG)
-		rcp.ai.setDacrate(data);
+		rcp.getAI().setDacrate(data);
 	else if (address == AI_BITRATE_REG)
-		rcp.ai.setBitrate(data);
+		rcp.getAI().setBitrate(data);
 
 	else if (address == PI_DRAM_ADDR_REG)
-		rcp.pi.setDramAddr(data);
+		rcp.getPI().setDramAddr(data);
 	else if (address == PI_CART_ADDR_REG)
-		rcp.pi.setCartAddr(data);
+		rcp.getPI().setCartAddr(data);
 	else if (address == PI_RD_LEN_REG)
 	{
-		rcp.pi.setRdLen(data);
+		rcp.getPI().setRdLen(data);
 		rcp.dma_pi_read();
-		rcp.mi.setIntr(rcp.mi.getIntr() | MI_INTR_PI);
-		rcp.pi.setStatus(rcp.pi.getStatus() & ~PI_STATUS_DMA_BUSY);
+		rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_PI);
+		rcp.getPI().setStatus(rcp.getPI().getStatus() & ~PI_STATUS_DMA_BUSY);
 		rcp.setCheckInterrupt(true);
 	}
 	else if (address == PI_WR_LEN_REG)
 	{
-		rcp.pi.setWrLen(data);
+		rcp.getPI().setWrLen(data);
 		rcp.dma_pi_write();
-		rcp.mi.setIntr(rcp.mi.getIntr() | MI_INTR_PI);
-		rcp.pi.setStatus(rcp.pi.getStatus() & ~PI_STATUS_DMA_BUSY);
+		rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_PI);
+		rcp.getPI().setStatus(rcp.getPI().getStatus() & ~PI_STATUS_DMA_BUSY);
 		rcp.setCheckInterrupt(true);
 	}
 	else if (address == PI_STATUS_REG)
 	{
-		rcp.mi.setIntr(rcp.mi.getIntr() & ~MI_INTR_PI);
+		rcp.getMI().setIntr(rcp.getMI().getIntr() & ~MI_INTR_PI);
 		rcp.setCheckInterrupt(true);
 	}
 	else if (address == PI_BSD_DOM1_LAT_REG)
-		rcp.pi.setBsdDom1Lat(data);
+		rcp.getPI().setBsdDom1Lat(data);
 	else if (address == PI_BSD_DOM1_PWD_REG)
-		rcp.pi.setBsdDom1Pwd(data);
+		rcp.getPI().setBsdDom1Pwd(data);
 	else if (address == PI_BSD_DOM1_PGS_REG)
-		rcp.pi.setBsdDom1Pgs(data);
+		rcp.getPI().setBsdDom1Pgs(data);
 	else if (address == PI_BSD_DOM1_RLS_REG)
-		rcp.pi.setBsdDom1Rls(data);
+		rcp.getPI().setBsdDom1Rls(data);
 	else if (address == PI_BSD_DOM2_LAT_REG)
-		rcp.pi.setBsdDom2Lat(data);
+		rcp.getPI().setBsdDom2Lat(data);
 	else if (address == PI_BSD_DOM2_PWD_REG)
-		rcp.pi.setBsdDom2Pwd(data);
+		rcp.getPI().setBsdDom2Pwd(data);
 	else if (address == PI_BSD_DOM2_PGS_REG)
-		rcp.pi.setBsdDom2Pgs(data);
+		rcp.getPI().setBsdDom2Pgs(data);
 	else if (address == PI_BSD_DOM2_RLS_REG)
-		rcp.pi.setBsdDom2Rls(data);
+		rcp.getPI().setBsdDom2Rls(data);
 
 	else if (address == RI_MODE_REG)
-		rcp.ri.setMode(data);
+		rcp.getRI().setMode(data);
 	else if (address == RI_CONFIG_REG)
-		rcp.ri.setConfig(data);
+		rcp.getRI().setConfig(data);
 	else if (address == RI_CURRENT_LOAD_REG)
-		rcp.ri.setCurrentLoad(data);
+		rcp.getRI().setCurrentLoad(data);
 	else if (address == RI_SELECT_REG)
-		rcp.ri.setSelect(data);
+		rcp.getRI().setSelect(data);
 	else if (address == RI_REFRESH_REG)
-		rcp.ri.setRefresh(data);
+		rcp.getRI().setRefresh(data);
 	else if (address == RI_LATENCY_REG)
-		rcp.ri.setLatency(data);
+		rcp.getRI().setLatency(data);
 	else if (address == RI_RERROR_REG)
-		rcp.ri.setRerror(data);
+		rcp.getRI().setRerror(data);
 	else if (address == RI_WERROR_REG)
-		rcp.ri.setWerror(data);
+		rcp.getRI().setWerror(data);
 
 	else if (address == SI_DRAM_ADDR_REG)
-		rcp.si.setDramAddr(data);
+		rcp.getSI().setDramAddr(data);
 	else if (address == SI_PIF_ADDR_RD64B_REG)
 	{
-		rcp.si.setPifAddrRd64b(data);
+		rcp.getSI().setPifAddrRd64b(data);
 		rcp.dma_si_read();
-		rcp.mi.setIntr(rcp.mi.getIntr() | MI_INTR_SI);
-		rcp.si.setStatus(rcp.si.getStatus() | SI_STATUS_INTERRUPT);
+		rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_SI);
+		rcp.getSI().setStatus(rcp.getSI().getStatus() | SI_STATUS_INTERRUPT);
 		rcp.setCheckInterrupt(true);
 	}
 	else if (address == SI_PIF_ADDR_WR64B_REG)
 	{
-		rcp.si.setPifAddrWr64b(data);
+		rcp.getSI().setPifAddrWr64b(data);
 		rcp.dma_si_write();
-		rcp.mi.setIntr(rcp.mi.getIntr() | MI_INTR_SI);
-		rcp.si.setStatus(rcp.si.getStatus() | SI_STATUS_INTERRUPT);
+		rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_SI);
+		rcp.getSI().setStatus(rcp.getSI().getStatus() | SI_STATUS_INTERRUPT);
 		rcp.setCheckInterrupt(true);
 	}
 	else if (address == SI_STATUS_REG)
 	{
-		rcp.si.setSpecialStatus(data);
-		rcp.mi.setIntr(rcp.mi.getIntr() & ~MI_INTR_SI);
+		rcp.getSI().setSpecialStatus(data);
+		rcp.getMI().setIntr(rcp.getMI().getIntr() & ~MI_INTR_SI);
 		rcp.setCheckInterrupt(true);
 	}
 	else
@@ -489,20 +489,20 @@ inline bool MMU::write_in_register(word data, word address)
 //****************************************************************************
 inline void* MMU::virtual_to_physical(word a)
 {
-	if (rcp.rdram.contains(a))			return rcp.rdram[a];
-	if (rcp.rdram_regs.contains(a))		return rcp.rdram_regs[a];
-	if (rcp.sp.contains(a))		return rcp.sp[a];
-	if (rcp.dpc.contains(a))		return rcp.dpc[a];
-	if (rcp.dps.contains(a))		return rcp.dps[a];
-	if (rcp.mi.contains(a))		return rcp.mi[a];
-	if (rcp.vi.contains(a))		return rcp.vi[a];
-	if (rcp.ai.contains(a))		return rcp.ai[a];
-	if (rcp.pi.contains(a))		return rcp.pi[a];
-	if (rcp.ri.contains(a))		return rcp.ri[a];
-	if (rcp.si.contains(a))		return rcp.si[a];
-	if (rcp.rom.contains(a))			return rcp.rom[a];
-	if (rcp.pif_rom.contains(a))		return rcp.pif_rom[a];
-	if (rcp.pif_ram.contains(a))		return rcp.pif_ram[a];
+	if (rcp.getRDRAM().contains(a))			return rcp.getRDRAM()[a];
+	if (rcp.getRdramRegs().contains(a))		return rcp.getRdramRegs()[a];
+	if (rcp.getSP().contains(a))			return rcp.getSP()[a];
+	if (rcp.getDPC().contains(a))			return rcp.getDPC()[a];
+	if (rcp.getDPS().contains(a))			return rcp.getDPS()[a];
+	if (rcp.getMI().contains(a))			return rcp.getMI()[a];
+	if (rcp.getVI().contains(a))			return rcp.getVI()[a];
+	if (rcp.getAI().contains(a))			return rcp.getAI()[a];
+	if (rcp.getPI().contains(a))			return rcp.getPI()[a];
+	if (rcp.getRI().contains(a))			return rcp.getRI()[a];
+	if (rcp.getSI().contains(a))			return rcp.getSI()[a];
+	if (rcp.getROM().contains(a))			return rcp.getROM()[a];
+	if (rcp.getPifRom().contains(a))		return rcp.getPifRom()[a];
+	if (rcp.getPifRam().contains(a))		return rcp.getPifRam()[a];
 
 	if (KSEG0 <= a && a <= KSEG1-1)		// Mirror of 0x0000 0000 to 0x1FFF FFFF
 		return (virtual_to_physical(a-KSEG0));

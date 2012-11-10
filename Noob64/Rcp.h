@@ -67,21 +67,6 @@ class RCP
 {
 public:
 	RCP(ROM* rom);
-	R4300i		&cpu;
-	ROM			&rom;
-	RDRAM		&rdram;
-	RDRAM_REGS	&rdram_regs;
-	SP			&sp;
-	DPC			&dpc;
-	DPS			&dps;
-	MI			&mi;
-	VI			&vi;
-	AI			&ai;
-	PI			&pi;
-	RI			&ri;
-	SI			&si;
-	PIF_ROM		&pif_rom;
-	PIF_RAM		&pif_ram;
 
 	void start();
 	void setRSP(RSP*);
@@ -98,11 +83,41 @@ public:
 	inline bool isCheckInterrupt() const;
 	inline void setCheckInterrupt(bool);
 
-	inline R4300i&	getCPU(void) const;
-	inline RSP*		getRSP(void) const;
-	inline GFX*		getGFX(void) const;
+	inline R4300i&		getCPU(void) const;
+	inline ROM&			getROM(void) const;
+	inline RDRAM&		getRDRAM(void) const;
+	inline RDRAM_REGS&	getRdramRegs(void) const;
+	inline SP&			getSP(void) const;
+	inline DPC&			getDPC(void) const;
+	inline DPS&			getDPS(void) const;
+	inline MI&			getMI(void) const;
+	inline VI&			getVI(void) const;
+	inline AI&			getAI(void) const;
+	inline PI&			getPI(void) const;
+	inline RI&			getRI(void) const;
+	inline SI&			getSI(void) const;
+	inline PIF_ROM&		getPifRom(void) const;
+	inline PIF_RAM&		getPifRam(void) const;
+	inline RSP*			getRSP(void) const;
+	inline GFX*			getGFX(void) const;
 
 private:
+	R4300i		&cpu;
+	ROM			&rom;
+	RDRAM		&rdram;
+	RDRAM_REGS	&rdram_regs;
+	SP			&sp;
+	DPC			&dpc;
+	DPS			&dps;
+	MI			&mi;
+	VI			&vi;
+	AI			&ai;
+	PI			&pi;
+	RI			&ri;
+	SI			&si;
+	PIF_ROM		&pif_rom;
+	PIF_RAM		&pif_ram;
+
 	RSP			*rsp;
 	GFX			*gfx;
 

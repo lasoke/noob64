@@ -1388,7 +1388,7 @@ inline void R4300i::BEQ(int rs, int rt, int immed)
 	sdword local_rt = r[rt];
 	if ((word) (pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == (word) pc)
 	{
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 		{
 			if (local_rs == local_rt)
 			{
@@ -1424,7 +1424,7 @@ inline void R4300i::BEQL(int rs, int rt, int immed)
 	sdword local_rt = r[rt];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
 	{
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 		{
 			if (local_rs == local_rt)
 			{
@@ -1459,7 +1459,7 @@ inline void R4300i::BGEZ(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 			if (local_rs >= 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1490,7 +1490,7 @@ inline void R4300i::BGEZAL(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 			if (local_rs >= 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1519,7 +1519,7 @@ inline void R4300i::BGEZALL(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 			if (local_rs >= 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1552,7 +1552,7 @@ inline void R4300i::BGEZL(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 			if (local_rs >= 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1585,7 +1585,7 @@ inline void R4300i::BGTZ(int rs, int immed)
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
 	{
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 		{
 			if (local_rs > 0)
 			{
@@ -1617,7 +1617,7 @@ inline void R4300i::BGTZL(int immed, int rs)
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
 	{
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 		{
 			if (local_rs > 0)
 			{
@@ -1653,7 +1653,7 @@ inline void R4300i::BLEZ(int rs, int immed)
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
 	{
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 		{
 			if (local_rs <= 0)
 			{
@@ -1685,7 +1685,7 @@ inline void R4300i::BLEZL(int immed, int rs)
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
 	{
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 		{
 			if (local_rs <= 0)
 			{
@@ -1720,7 +1720,7 @@ inline void R4300i::BLTZ(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 			if (local_rs < 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1748,7 +1748,7 @@ inline void R4300i::BLTZAL(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 			if (local_rs < 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1777,7 +1777,7 @@ inline void R4300i::BLTZALL(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 			if (local_rs < 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1810,7 +1810,7 @@ inline void R4300i::BLTZL(int immed, int rs)
 
 	sdword local_rs = r[rs];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 			if (local_rs < 0)
 			{
 				if (probe_nop((word) (pc+4)))
@@ -1847,7 +1847,7 @@ inline void R4300i::BNE(int rs, int rt, int immed)
 	dword local_rt = r[rt];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
 	{
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 		{
 			if (local_rs != local_rt)
 			{
@@ -1883,7 +1883,7 @@ inline void R4300i::BNEL(int rs, int rt, int immed)
 	dword local_rt = r[rt];
 	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
 	{
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 		{
 			if (local_rs != local_rt)
 			{
@@ -1918,7 +1918,7 @@ inline void R4300i::J(int address)
 
 	if (((pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2)) == pc)
 	{
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 		{
 			if (probe_nop((word) (pc+4)))
 			{
@@ -1944,7 +1944,7 @@ inline void R4300i::JAL(int address)
 	PRINT_PC("JAL " << address);
 	if (((pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2)) == pc)
 	{
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 		{
 			if (probe_nop((word) (pc+4)))
 			{
@@ -1973,7 +1973,7 @@ inline void R4300i::JALR(int rs, int rd)
 	dword local_rs = r[rs];
 	if (local_rs == pc)
 	{
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 		{
 			if (probe_nop((word) (pc+4)))
 			{
@@ -2002,7 +2002,7 @@ inline void R4300i::JR(int rs)
 	dword local_rs = r[rs];
 	if (local_rs == pc)
 	{
-		if (rcp.sp.getStatus() & 0x1)
+		if (rcp.getSP().getStatus() & 0x1)
 		{
 			if (probe_nop((word) (pc+4)))
 			{

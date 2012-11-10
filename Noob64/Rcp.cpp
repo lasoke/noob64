@@ -109,15 +109,15 @@ MEM_SEG::MEM_SEG(word b, word e) : ptr(0), begining(b), end(e)					{}
 MEM_SEG::~MEM_SEG()																{}
 RDRAM::RDRAM() : MEM_SEG(RDRAM_SEG_BEGINING, RDRAM_SEG_END)						{ INIT(data) }
 RDRAM_REGS::RDRAM_REGS() : MEM_SEG(RDRAM_REGS_SEG_BEGINING, RDRAM_REGS_SEG_END) { INIT(&data) }
-SP::SP() : MEM_SEG(SP_SEG_BEGINING, SP_SEG_END)						{ INIT(&data) }
-DPC::DPC() : MEM_SEG(DPC_SEG_BEGINING, DPC_SEG_END)					{ INIT(&data) }
-DPS::DPS() : MEM_SEG(DPS_SEG_BEGINING, DPS_SEG_END)					{ INIT(&data) }
-MI::MI() : MEM_SEG(MI_SEG_BEGINING, MI_SEG_END)						{ INIT(&data) }
-VI::VI() : MEM_SEG(VI_SEG_BEGINING, VI_SEG_END)						{ INIT(&data) }
-AI::AI() : MEM_SEG(AI_SEG_BEGINING, AI_SEG_END)						{ INIT(&data) }
-PI::PI() : MEM_SEG(PI_SEG_BEGINING, PI_SEG_END)						{ INIT(&data) }
-RI::RI() : MEM_SEG(RI_SEG_BEGINING, RI_SEG_END)						{ INIT(&data) }
-SI::SI() : MEM_SEG(SI_SEG_BEGINING, SI_SEG_END)						{ INIT(&data) }
+SP::SP() : MEM_SEG(SP_SEG_BEGINING, SP_SEG_END)									{ INIT(&data) }
+DPC::DPC() : MEM_SEG(DPC_SEG_BEGINING, DPC_SEG_END)								{ INIT(&data) }
+DPS::DPS() : MEM_SEG(DPS_SEG_BEGINING, DPS_SEG_END)								{ INIT(&data) }
+MI::MI() : MEM_SEG(MI_SEG_BEGINING, MI_SEG_END)									{ INIT(&data) }
+VI::VI() : MEM_SEG(VI_SEG_BEGINING, VI_SEG_END)									{ INIT(&data) }
+AI::AI() : MEM_SEG(AI_SEG_BEGINING, AI_SEG_END)									{ INIT(&data) }
+PI::PI() : MEM_SEG(PI_SEG_BEGINING, PI_SEG_END)									{ INIT(&data) }
+RI::RI() : MEM_SEG(RI_SEG_BEGINING, RI_SEG_END)									{ INIT(&data) }
+SI::SI() : MEM_SEG(SI_SEG_BEGINING, SI_SEG_END)									{ INIT(&data) }
 PIF_ROM::PIF_ROM() : MEM_SEG(PIF_ROM_SEG_BEGINING, PIF_ROM_SEG_END)				{ INIT(&data) }
 PIF_RAM::PIF_RAM() : MEM_SEG(PIF_RAM_SEG_BEGINING, PIF_RAM_SEG_END)				{ INIT(&data) }
 
