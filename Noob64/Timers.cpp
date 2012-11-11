@@ -75,6 +75,11 @@ void R4300i::TimerDone()
 		case CompareTimer:
 			Cause |= CAUSE_IP7;
 			check_interrupt();
+			if (interrupt_detected)
+			{
+				trigger_intr_exception();
+				interrupt_detected = false;
+			}
 			timers->ChangeCompareTimer(Compare, Count);
 			break;
 		case SiTimer:
@@ -82,17 +87,32 @@ void R4300i::TimerDone()
 			memory->mi_regs.setIntr(memory->mi_regs.getIntr() | MI_INTR_SI);
 			memory->si_regs.setStatus(memory->si_regs.getStatus() | SI_STATUS_INTERRUPT);
 			check_interrupt();
+			if (interrupt_detected)
+			{
+				trigger_intr_exception();
+				interrupt_detected = false;
+			}
 			break;
 		case PiTimer:
 			timers->ChangeTimer(PiTimer, 0, Compare, Count);
 			memory->pi_regs.setStatus(memory->pi_regs.getStatus() & ~PI_STATUS_DMA_BUSY);
 			memory->mi_regs.setIntr(memory->mi_regs.getIntr() | MI_INTR_PI);
 			check_interrupt();
+			if (interrupt_detected)
+			{
+				trigger_intr_exception();
+				interrupt_detected = false;
+			}
 			break;
 		case ViTimer:
 			RefreshScreen();
 			memory->mi_regs.setIntr(memory->mi_regs.getIntr() | MI_INTR_VI);
 			check_interrupt();
+			if (interrupt_detected)
+			{
+				trigger_intr_exception();
+				interrupt_detected = false;
+			}
 			break;
 		case RspTimer:
 			timers->ChangeTimer(RspTimer,0, Compare, Count);
