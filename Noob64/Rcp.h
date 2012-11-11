@@ -72,15 +72,16 @@ public:
 	void setRSP(RSP*);
 	void setGFX(GFX*);
 
-	void dma_pi_write();
-	void dma_pi_read();
-	void dma_si_write();
-	void dma_si_read();
-	void dma_sp_write();
-	void dma_sp_read();
+	void dma_pi_write(void);
+	void dma_pi_read(void);
+	void dma_si_write(void);
+	void dma_si_read(void);
+	void dma_sp_write(void);
+	void dma_sp_read(void);
 
-	void RefreshScreen();	// Refreshs the screen when the vi timer is done
-	inline bool isCheckInterrupt() const;
+	void run(void);
+	void refresh_screen(void);	// Refreshs the screen when the vi timer is done
+	inline bool isCheckInterrupt(void) const;
 	inline void setCheckInterrupt(bool);
 
 	inline R4300i&		getCPU(void) const;

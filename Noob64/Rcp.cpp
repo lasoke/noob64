@@ -66,8 +66,65 @@ void RCP::setGFX(GFX* g)
 	gfx->init(this);
 }
 
+void RCP::run(void) 
+{
+	if ( ( SP_STATUS_REG & SP_STATUS_HALT ) == 0 && ( SP_STATUS_REG & SP_STATUS_BROKE ) == 0) 
+	{
+		//word task = *( word *)(DMEM + 0xFC0);
+		word task = *(word*)(cpu.getMMU()[SP_DMEM + 0xFC0]);
 
-void RCP::RefreshScreen()
+		if (task == 1 && (DPC_STATUS_REG & DPC_STATUS_FREEZE) != 0) 
+				return;
+                        
+		if (task == 1)
+			cpu.incDList();
+		else if (task == 2)
+			cpu.incAList();
+
+		//TODO - this was an error in the original code (the DisplayCPUPer not being a function call), so we need to debug it and see if it is supposed to be happening
+		/*
+		if (Profiling || ShowCPUPer)
+		{
+			char Label[100];
+
+			strncpy(Label,ProfilingLabel,sizeof(Label));
+
+			//TODO - this was an error in the original code (the DisplayCPUPer not being a function call), so we need to debug it and see if it is supposed to be happening
+			if (IndvidualBlock && !ShowCPUPer)
+			{
+					StartTimer("RSP");
+			} 
+			else 
+			{
+					switch (*( word *)(DMEM + 0xFC0)) 
+					{
+							case 1:
+									StartTimer("RSP: Dlist");
+									break;
+							case 2:
+									StartTimer("RSP: Alist");
+									break;
+							default: 
+									StartTimer("RSP: Unknown");
+									break;
+					}
+			}
+			DoRspCycles(100);
+			StartTimer(Label); 
+		}
+		else
+		{*/
+			rsp->doRspCycles(100);
+		/*}*/
+#	ifdef CFB_READ
+		if (VI_ORIGIN_REG > 0x280) 
+			SetFrameBuffer(VI_ORIGIN_REG, (word)(VI_WIDTH_REG * (VI_WIDTH_REG *.75)));
+#	endif
+	}
+}
+
+
+void RCP::refresh_screen()
 {
 	static word OLD_VI_V_SYNC_REG = 0, VI_INTR_TIME = 500000;
 

@@ -40,6 +40,8 @@ inline word R4300i::getCop0(int i) const					{ return cop0[i]; }
 //****************************************************************************
 
 inline void R4300i::setCop0(int i, word w)					{ cop0[i] = w; }
+inline void R4300i::incAList(void)							{ alist_counter++; }
+inline void R4300i::incDList(void)							{ dlist_counter++; }
 inline void R4300i::setViFieldNumber(word n)				{ vi_field_number = n; }
 
 //****************************************************************************

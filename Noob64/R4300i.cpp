@@ -41,17 +41,19 @@ void R4300i::reset()
 		f[i]				= (dword) 0;
 		cop0[i]				= (word)  0;
 	}
-
 	pc						= 0;
 	hi						= 0;
 	lo						= 0;
 	fcr0					= 0;
 	fcr31					= 0x01000800;
 	ll						= false;
+
 	delay_slot				= false;
 	running					= true;
 	cic_chip				= 0;
 	interrupt_detected		= false;
+	alist_counter			= 0;
+	dlist_counter			= 0;
 
 	mmu.reset();
 	timer_handler.reset();

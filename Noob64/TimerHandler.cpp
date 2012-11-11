@@ -100,13 +100,13 @@ void R4300i::timer_done()
 			check_interrupt();
 			break;
 		case VI_TIMER:
-			//RefreshScreen();
+			rcp.refresh_screen();
 			rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_VI);
 			check_interrupt();
 			break;
 		case RSP_TIMER:
 			timer_handler.change_timer(RSP_TIMER,0, Compare, Count);
-			//RunRsp();
+			rcp.run();
 			break;
 	}
 	timer_handler.check_timer(Compare, Count);
