@@ -59,7 +59,7 @@ public:
 	PLUGIN(wstring filename, HWND hWnd);
 	~PLUGIN();
 
-	void init(MEMORY *mem);
+	void init(RCP*);
 
 	void closeDLL(void);
 	void dllAbout(HWND);
@@ -70,7 +70,7 @@ public:
 protected:
 	HINSTANCE				hDLL;
 	HWND					hWnd;
-	MEMORY					*memory;
+	RCP						*rcp;
 
 	CLOSEDLL				closeDLL_;
 	DLLABOUT				dllAbout_;

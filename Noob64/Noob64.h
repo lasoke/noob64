@@ -30,10 +30,32 @@ using namespace std;
 
 //#define DEBUG
 
+#define KSEG0					0x80000000
+#define KSEG1					0xA0000000
+#define KSEG2					0xC0000000
+#define KSEG3					0xE0000000
+
+typedef unsigned __int8			byte;
+typedef unsigned __int16		hword;
+typedef unsigned __int32		word;
+typedef unsigned __int64		dword;
+
+typedef __int8					sbyte;
+typedef __int16					shword;
+typedef __int32					sword;
+typedef __int64					sdword;
+
+typedef float					s; // Single-Precision	Floating-Point Format:	[31:sign;30-23-exponent;22-0:fraction]
+typedef double					d; // Double-Precision	Floating-Point Format:	[63:sign;62-52:exponent;51-0:fraction]
+typedef long					w; // Word				Fixed-Point Format:		[31:sign;30-0:int]
+typedef long long int			l; // Longword			Fixed-Point Format:		[63:sign;62-0:int]
+
 enum NOOB64_EXCEPTION
 {
-	PLUGIN_FAILED_TO_LOAD	= 0,
-	PLUGIN_FAILED_TO_INIT	= 1,
-	ROM_FAILED_TO_LOAD		= 2,
-	ROM_UNKNOWN_FORMAT		= 3
+	PLUGIN_FAILED_TO_LOAD,
+	PLUGIN_FAILED_TO_INIT,
+	ROM_FAILED_TO_LOAD,
+	ROM_UNKNOWN_FORMAT,
+	VIRTUAL_ADDRESS_ERROR,
+	TLB_NOT_HANDLED
 };

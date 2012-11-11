@@ -24,62 +24,47 @@
 
 #include "StdAfx.h"
 
-void MEMORY::dma_pi_read()
+void RCP::dma_pi_read()
 {
-	memcpy(rom[0] + (pi_regs.getCartAddr() & 0xFFFFFFF),
-		rdram[0] + (pi_regs.getDramAddr() & 0xFFFFFFF),
-		(pi_regs.getRdLen() & 0xFFFFFFF) + 1);
+	memcpy((char*) rom.ptr + (pi.getCartAddr() & 0xFFFFFFF),
+		(char*) rdram.ptr + (pi.getDramAddr() & 0xFFFFFFF),
+		(pi.getRdLen() & 0xFFFFFFF) + 1);
 }
 
-void MEMORY::dma_pi_write()
+void RCP::dma_pi_write()
 {
-	memcpy(rdram[0] + (pi_regs.getDramAddr() & 0xFFFFFFF),
-		rom[0] + (pi_regs.getCartAddr() & 0xFFFFFFF),
-		(pi_regs.getWrLen() & 0xFFFFFFF) + 1);
+	memcpy((char*) rdram.ptr + (pi.getDramAddr() & 0xFFFFFFF),
+		(char*) rom.ptr + (pi.getCartAddr() & 0xFFFFFFF),
+		(pi.getWrLen() & 0xFFFFFFF) + 1);
 }
 
-void MEMORY::dma_sp_write()
+void RCP::dma_sp_write()
 {
-	if ((sp_regs.getWrLen() & 0x1000) > 0)
-		memcpy(rdram[0] + (sp_regs.getDramAddr() & 0xFFFFFFF),
-			(sp_regs.getImem()) + (sp_regs.getMemAddr() & 0xFFF),
-			(sp_regs.getWrLen() & 0xFFF) + 1);
-	else
-		memcpy(rdram[0] + (sp_regs.getDramAddr() & 0xFFFFFFF),
-			sp_regs.getDmem() + (sp_regs.getMemAddr() & 0xFFF),
-			(sp_regs.getWrLen() & 0xFFF) + 1);
+	byte* mem = ((sp.getWrLen() & 0x1000) > 0) ? sp.getImem() : sp.getDmem();
+	memcpy((char*) rdram.ptr + (sp.getDramAddr() & 0xFFFFFFF),
+		mem + (sp.getMemAddr() & 0xFFF),
+		(sp.getWrLen() & 0xFFF) + 1);
 }
 
-void MEMORY::dma_sp_read()
+void RCP::dma_sp_read()
 {
-	if ((sp_regs.getRdLen() & 0x1000) > 0)
-		memcpy((sp_regs.getImem()) + (sp_regs.getMemAddr() & 0xFFF),
-			rdram.ptr + (sp_regs.getDramAddr() & 0xFFFFFFF),
-			(sp_regs.getRdLen() & 0xFFF) + 1);
-	else
-		memcpy(sp_regs.getDmem() + (sp_regs.getMemAddr() & 0xFFF),
-			rdram.ptr + (sp_regs.getDramAddr() & 0xFFFFFFF),
-			(sp_regs.getRdLen() & 0xFFF) + 1);
+	byte* mem = ((sp.getRdLen() & 0x1000) > 0) ? sp.getImem() : sp.getDmem();
+	memcpy(mem + (sp.getMemAddr() & 0xFFF),
+		rdram.ptr + (sp.getDramAddr() & 0xFFFFFFF),
+		(sp.getRdLen() & 0xFFF) + 1);
 }
 
-void MEMORY::dma_si_write()
+void RCP::dma_si_write()
 {
-	if (si_regs.getPifAddrWr64b() != 0x1FC007C0)
-	{
-		cerr << "unknown SI use" << endl;
-	}
+	if (si.getPifAddrWr64b() != 0x1FC007C0)
+		cout << "unknown SI use" << endl;
+	memcpy((char*) rdram.ptr + (si.getDramAddr() & 0xFFFFFFF), (char*) pif_ram.ptr + (si.getPifAddrWr64b() & 0xFF), 64);
 
-	memcpy(rdram[0] + (si_regs.getDramAddr() & 0xFFFFFFF),
-		pif_ram[0] + (si_regs.getPifAddrWr64b() & 0xFF), 64);
 }
 
-void MEMORY::dma_si_read()
+void RCP::dma_si_read()
 {
-	if (si_regs.getPifAddrRd64b() != 0x1FC007C0)
-	{
-		cerr << "unknown SI use" << endl;
-	}
-
-	memcpy(pif_ram[0] + (si_regs.getPifAddrRd64b() & 0xFF),
-		rdram[0] + (si_regs.getDramAddr() & 0xFFFFFFF), 64);
+	if (si.getPifAddrRd64b() != 0x1FC007C0)
+		cout << "unknown SI use" << endl;
+	memcpy((char*) pif_ram.ptr + (si.getPifAddrRd64b() & 0xFF), (char*) rdram.ptr + (si.getDramAddr() & 0xFFFFFFF), 64);
 }

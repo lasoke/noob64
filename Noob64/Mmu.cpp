@@ -23,42 +23,47 @@
  */
 
 #include "StdAfx.h"
+#include "Mmu.h"
 
-ROM::ROM(string filename) : MEM_SEG(ROM_SEG_BEGINING, ROM_SEG_END)
+
+MMU::MMU(R4300i& cpu, RCP& rcp) : cpu(cpu), rcp(rcp) {}
+
+
+MMU::~MMU(void) {}
+
+void* MMU::operator[] (const word address)
 {
-	file.open(filename, ios::ate | ios::in | ios::binary);
-	if (!file.is_open())
-		throw ROM_FAILED_TO_LOAD;
+	return virtual_to_physical(address);
+}
 
-	int size = (int) file.tellg();
-	data = (char*) malloc(size);
-	file.seekg (0, ios::beg);
-    file.read(data, size);
-	file.close();
-	ptr = data;
-	header = (ROM_HEADER*) data;
-
-	word type = ((word*) data)[0];
-	if (type == 0x40123780)
-		; // BIG ENDIAN
-	else if (type == 0x12408037)
+void MMU::reset(void)
+{
+	for (int i = 0; i < 32; i++)
 	{
-		// MIDDLE ENDIAN
-		for (int i = 0; i < size - 1; i += 2)
-		{
-			char temp = data[i];
-			data[i] = data[i+1];
-			data[i+1] = temp;
-		}
+		tlb[i].mask		= 0;
+		tlb[i].vpn2		= 0;
+		tlb[i].g		= 0;
+		tlb[i].asid		= 0;
+		tlb[i].pfn0		= 0;
+		tlb[i].c0		= 0;
+		tlb[i].d0		= 0;
+		tlb[i].v0		= 0;
+		tlb[i].pfn1		= 0;
+		tlb[i].c1		= 0;
+		tlb[i].d1		= 0;
+		tlb[i].v1		= 0;
+		tlb[i].r		= 0;
+		tlb[i].start0	= 0;
+		tlb[i].end0		= 0;
+		tlb[i].phys0	= 0;
+		tlb[i].start1	= 0;
+		tlb[i].end1		= 0;
+		tlb[i].phys1	= 0;
 	}
-	else throw ROM_UNKNOWN_FORMAT;
+	for (int i = 0; i < 0x100000; i++)
+	{ 
+		tlb_lut_r[i] = 0;
+		tlb_lut_w[i] = 0;
+	}
 }
-
-ROM::~ROM()
-{
-	delete[] data;
-}
-
-
-
 

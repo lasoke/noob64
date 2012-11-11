@@ -25,71 +25,104 @@
 #pragma once
 
 // Cop0 Macros
-// Each entry of the co processor 0 have a signification
+// Each entry of the co-processor 0 have a signification
 // So we can rename each entry to have a better understanding of the code
-#define Index		cop0[0]
-#define Random		cop0[1]
-#define EntryLo0	cop0[2]
-#define EntryLo1	cop0[3]
-#define Context		cop0[4]
-#define PageMask	cop0[5]
-#define Wired		cop0[6]
-#define BadVAddr	cop0[8]
-#define Count		cop0[9]
-#define EntryHi		cop0[10]
-#define Compare		cop0[11]
-#define Status		cop0[12]
-#define Cause		cop0[13]
-#define EPC			cop0[14]
-#define PRevID		cop0[15]
-#define Config		cop0[16]
-#define LLAddr		cop0[17]
-#define WatchLo		cop0[18]
-#define WatchHi		cop0[19]
-#define XContext	cop0[20]
-#define PErr		cop0[26]
-#define CacheErr	cop0[27]
-#define TagLo		cop0[28]
-#define TagHi		cop0[29]
-#define ErrorEPC	cop0[30]
+#define INDEX		0
+#define RANDOM		1
+#define ENTRYLO0	2
+#define ENTRYLO1	3
+#define CONTEXT		4
+#define PAGEMASK	5
+#define WIRED		6
+#define BADVADDR	8
+#define COUNT		9
+#define ENTRYHI		10
+#define COMPARE		11
+#define STATUS		12
+#define CAUSE		13
+#define EPC			14
+#define PREVID		15
+#define CONFIG		16
+#define LLADDR		17
+#define WATCHLO		18
+#define WATCHHI		19
+#define XCONTEXT	20
+#define PERR		26
+#define CACHEERR	27
+#define TAGLO		28
+#define TAGHI		29
+#define ERROREPC	30
 
-/*
-** The main class of the emulator, contains functions and variables
-** useful to emulate the main micro-processor of the Nintendo 64
-*/
+#define Index		cop0[INDEX]
+#define Random		cop0[RANDOM]
+#define EntryLo0	cop0[ENTRYLO0]
+#define EntryLo1	cop0[ENTRYLO1]
+#define Context		cop0[CONTEXT]
+#define PageMask	cop0[PAGEMASK]
+#define Wired		cop0[WIRED]
+#define BadVAddr	cop0[BADVADDR]
+#define Count		cop0[COUNT]
+#define EntryHi		cop0[ENTRYHI]
+#define Compare		cop0[COMPARE]
+#define Status		cop0[STATUS]
+#define Cause		cop0[CAUSE]
+#define Epc			cop0[EPC]
+#define PRevID		cop0[PREVID]
+#define Config		cop0[CONFIG]
+#define LLAddr		cop0[LLADDR]
+#define WatchLo		cop0[WATCHLO]
+#define WatchHi		cop0[WATCHHI]
+#define XContext	cop0[XCONTEXT]
+#define PErr		cop0[PERR]
+#define CacheErr	cop0[CACHEERR]
+#define TagLo		cop0[TAGLO]
+#define TagHi		cop0[TAGHI]
+#define ErrorEpc	cop0[ERROREPC]
+
+//****************************************************************************
+//** N64's PROCESSOR														**
+//****************************************************************************
 class R4300i
 {
 public:
-	R4300i(MEMORY *mem);
-	// initialize the R4300i and enter in the main loop
-	void init();
-	// sets every bit to 0;
-	void reset();
-	// Check if an interrupt has been triggered
-	void check_interrupt();
-	// Use to see if a timer is done
-	void TimerDone();
-	// Refresh the screen when the vi timer is done
-	void RefreshScreen();
-private:
-	MEMORY	*memory;
-	Timers	*timers;
+	R4300i(RCP*);
 
-	// Useful to hack the Crc chip which prevent a fake game from loading
-	void init_crc();
+	void start(void);				// Initializes the R4300i and enter in the main loop
+	void reset(void);				// Clears bits
+	void check_interrupt(void);		// Checks if an interrupt has been triggered
+	void timer_done(void);			// Uses to see if a timer is done
+
+	/* GETTERS */
+	inline MMU& getMMU(void) const;
+	inline TimerHandler& getTimerHandler(void) const;
+	inline word getCop0(int) const;
+	inline word getViFieldNumber(void) const;
+	/* SETTERS */
+	inline void setCop0(int, word);
+	inline void incAList(void);
+	inline void incDList(void);
+	inline void setViFieldNumber(word);
+
+private:
+	RCP				&rcp;
+	MMU				&mmu;
+	TimerHandler	&timer_handler;
+
+	// Workaround to pass the CRC check which prevents a fake game from loading
+	void pif_init(void);
 
 	//****************************************************************************
-	//** EXCEPTION RELATED METHODS AND FIELDS									**
+	//** EXCEPTION PROCESSING UNIT												**
 	//****************************************************************************
 	bool interrupt_detected;									// Notifies whether an interrupt has been detected or not
-	void trigger_address_error(dword address, bool from_read);	// Triggers an address error exception
+	void trigger_address_error(word address, bool from_read);	// Triggers an address error exception
 	void trigger_break_exception();								// Triggers a break exception
 	void trigger_copunusable_exception(int cop);				// Triggers a COP unusable exception
 	void trigger_intr_exception();								// Triggers an interruption exception
-	void trigger_tlb_miss(dword address);						// Triggers a TLB missed exception
+	void trigger_tlb_miss(word address);						// Triggers a TLB missed exception
 	void trigger_syscall_exception();							// Triggers a syscall exception
 	//****************************************************************************
-	//** DECODING RELATING METHODS				                                **
+	//** DECODER																**
 	//****************************************************************************
 	inline void	decode(const word instr);
 	inline void decode_r(const word instr);
@@ -100,7 +133,7 @@ private:
 	inline void decode_bc1(const word instr);
 	template<typename Type>
 	inline void decode_fpu(const word instr);
-	inline int	probe_nop(dword address);						// Checks whether the next instruction is a nop
+	inline int	probe_nop(word address);						// Checks whether the next instruction is a nop
 	//****************************************************************************
 	//** REGISTERS					                                            **
 	//****************************************************************************
@@ -112,17 +145,15 @@ private:
 	dword	hi, lo;												// Multiply/Divide result
 	word	fcr0, fcr31;										// Floating Point Control Registers
 	bool	ll;													// Load/Link Register
+	//****************************************************************************
+	//** MISC																	**
+	//****************************************************************************
 	bool	delay_slot;											// for branch instructions
 	bool	running;											// Status of the CPU
-	dword	cic_chip;											// To Hack the security of the n64
-	word	ViFieldNumber;										//
-	//****************************************************************************
-	//** OTHER																	**
-	//****************************************************************************
-	char	invalid_code[0x100000];								// Invalid tlb code
-	word	tlb_lut_r[0x100000];
-	word	tlb_lut_w[0x100000];
-	TLB		tlb_e[32];											// TLB
+	dword	cic_chip;											// To hack the security check of the n64
+	word	vi_field_number;									//
+	int		alist_counter;										//
+	int		dlist_counter;										//
 	//****************************************************************************
 	//** LOAD AND STORE INSTRUCTIONS                                            **
 	//****************************************************************************

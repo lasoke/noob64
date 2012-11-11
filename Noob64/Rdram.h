@@ -15,50 +15,40 @@
  *
  * Noob64 is freeware for PERSONAL USE only. Commercial users should
  * seek permission of the copyright holders first. Commercial use includes
- * charging money for Noob64 or software derived from Noob64.
+ * chwing money for Noob64 or software derived from Noob64.
  *
  * The copyright holders request that bug fixes and improvements to the code
  * should be forwarded to them so if they want them.
  *
  */
 
-#include "StdAfx.h"
+#pragma once
 
-ROM::ROM(string filename) : MEM_SEG(ROM_SEG_BEGINING, ROM_SEG_END)
+#include "Rcp.h"
+
+#define RDRAM_SEG_BEGINING		0x00000000
+#define RDRAM_SEG_END			0x03EFFFFF
+
+#define RDRAM_CONFIG_REG		0x03F00000
+#define RDRAM_DEVICE_ID_REG     0x03F00004
+#define RDRAM_DELAY_REG			0x03F00008
+#define RDRAM_MODE_REG			0x03F0000C
+#define RDRAM_REF_INTERVAL_REG	0x03F00010
+#define RDRAM_REF_ROW_REG		0x03F00014
+#define RDRAM_RAS_INTERVAL_REG	0x03F00018
+#define RDRAM_MIN_INTERVAL_REG	0x03F0001C
+#define RDRAM_ADDR_SELECT_REG	0x03F00020
+#define RDRAM_DEVICE_MANUF_REG	0x03F00024
+
+//****************************************************************************
+//** RDRAM																	**
+//****************************************************************************
+
+
+class RDRAM : public MEM_SEG
 {
-	file.open(filename, ios::ate | ios::in | ios::binary);
-	if (!file.is_open())
-		throw ROM_FAILED_TO_LOAD;
-
-	int size = (int) file.tellg();
-	data = (char*) malloc(size);
-	file.seekg (0, ios::beg);
-    file.read(data, size);
-	file.close();
-	ptr = data;
-	header = (ROM_HEADER*) data;
-
-	word type = ((word*) data)[0];
-	if (type == 0x40123780)
-		; // BIG ENDIAN
-	else if (type == 0x12408037)
-	{
-		// MIDDLE ENDIAN
-		for (int i = 0; i < size - 1; i += 2)
-		{
-			char temp = data[i];
-			data[i] = data[i+1];
-			data[i+1] = temp;
-		}
-	}
-	else throw ROM_UNKNOWN_FORMAT;
-}
-
-ROM::~ROM()
-{
-	delete[] data;
-}
-
-
-
-
+public:
+	RDRAM();
+private:
+	byte data[0x800000];
+};

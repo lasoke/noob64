@@ -24,30 +24,20 @@
 
 #pragma once
 
-/* 
-** This structure is used for the TLB, it allow
-** quick translation between virtual to physical
-** address
-*/
-typedef struct {
-   short			mask;
-   long				vpn2;
-   char				g;
-   unsigned char	asid;
-   long				pfn_even;
-   char				c_even;
-   char				d_even;
-   char				v_even;
-   long				pfn_odd;
-   char				c_odd;
-   char				d_odd;
-   char				v_odd;
-   char				r;
-   //long check_parity_mask;
-   unsigned long	start_even;
-   unsigned long	end_even;
-   unsigned long	phys_even;
-   unsigned long	start_odd;
-   unsigned long	end_odd;
-   unsigned long	phys_odd;
-} TLB;
+#include "Rom.h"
+
+inline word ROM::getClock()						{ return header->clock;	}
+inline word ROM::getPc()						{ return header->pc; }
+inline word ROM::getRelease()					{ return header->release; }
+inline word ROM::getCRC1()						{ return header->crc1; }
+inline word ROM::getCRC2()						{ return header->crc2; }
+inline string ROM::getName()
+{
+	string s = "";
+	for(int i = 0; i < sizeof(header->name); i++)
+		s += header->name[i];
+	return s;
+}
+inline word ROM::getManufacturer()				{ return header->manufacturer; }
+inline hword ROM::getCartridge()				{ return header->cartridge; }
+inline hword ROM::getCountry()					{ return header->country; }

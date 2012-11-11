@@ -87,7 +87,7 @@ public:
 	GFX(wstring filename, HWND hWnd);
 	~GFX();
 
-	void init(MEMORY* mem);
+	void init(RCP* mem);
 
 	void captureScreen(char*);
 	void changeWindow(void);
@@ -102,7 +102,6 @@ public:
 	void viStatusChanged(void);
 	void viWidthChanged(void);
 
-	
 private:
 	CAPTURESCREEN		captureScreen_;
 	CHANGEWINDOW		changeWindow_;

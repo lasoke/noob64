@@ -37,41 +37,42 @@ RSP::~RSP(void)
 {
 }
 
-void RSP::init(MEMORY *mem)
+void RSP::init(RCP *rcp)
 {
-	PLUGIN::init(mem);
-	mem->rsp = this;
+	PLUGIN::init(rcp);
 
 	rsp_info					= (RSP_INFO*) malloc(sizeof(RSP_INFO));
 	rspdebug_info				= getRspDebugInfo_ == NULL ? NULL : (RSPDEBUG_INFO*) malloc(sizeof(RSPDEBUG_INFO));
 	debug_info					= initiateRSPDebugger_ == NULL ? NULL : (DEBUG_INFO*) malloc(sizeof(DEBUG_INFO));
 
+	MMU& memory					= rcp->getCPU().getMMU();
+
 	rsp_info->hInst				= hDLL;
 	rsp_info->memoryBswaped		= plugin_info->memoryBswaped;
-	rsp_info->rdram				= (byte*) memory->rdram[0];
+	rsp_info->rdram				= (byte*) memory[RDRAM_SEG_BEGINING];
 
-	rsp_info->mi_intr_reg		= (word*) memory->mi_regs[0x8];
+	rsp_info->mi_intr_reg		= (word*) memory[MI_INTR_REG];
 
-	rsp_info->dmem				= (byte*) memory->sp_regs[0x00000];
-	rsp_info->imem				= (byte*) memory->sp_regs[0x01000];
-	rsp_info->sp_mem_addr_reg	= (word*) memory->sp_regs[0x40000];
-	rsp_info->sp_dram_addr_reg	= (word*) memory->sp_regs[0x40004];
-	rsp_info->sp_rd_len_reg		= (word*) memory->sp_regs[0x40008];
-	rsp_info->sp_wr_len_reg		= (word*) memory->sp_regs[0x4000C];
-	rsp_info->sp_status_reg		= (word*) memory->sp_regs[0x40010];
-	rsp_info->sp_dma_full_reg	= (word*) memory->sp_regs[0x40014];
-	rsp_info->sp_dma_busy_reg	= (word*) memory->sp_regs[0x40018];
-	rsp_info->sp_semaphore_reg	= (word*) memory->sp_regs[0x4001C];
-	rsp_info->sp_pc_reg			= (word*) memory->sp_regs[0x80000];
+	rsp_info->dmem				= (byte*) memory[SP_DMEM];
+	rsp_info->imem				= (byte*) memory[SP_IMEM];
+	rsp_info->sp_mem_addr_reg	= (word*) memory[SP_MEM_ADDR_REG];
+	rsp_info->sp_dram_addr_reg	= (word*) memory[SP_DRAM_ADDR_REG];
+	rsp_info->sp_rd_len_reg		= (word*) memory[SP_RD_LEN_REG];
+	rsp_info->sp_wr_len_reg		= (word*) memory[SP_WR_LEN_REG];
+	rsp_info->sp_status_reg		= (word*) memory[SP_STATUS_REG];
+	rsp_info->sp_dma_full_reg	= (word*) memory[SP_DMA_FULL_REG];
+	rsp_info->sp_dma_busy_reg	= (word*) memory[SP_DMA_BUSY_REG];
+	rsp_info->sp_semaphore_reg	= (word*) memory[SP_SEMAPHORE_REG];
+	rsp_info->sp_pc_reg			= (word*) memory[SP_PC_REG];
 
-	rsp_info->dpc_start_reg		= (word*) memory->dpc_regs[0x00];
-	rsp_info->dpc_end_reg		= (word*) memory->dpc_regs[0x04];
-	rsp_info->dpc_current_reg	= (word*) memory->dpc_regs[0x08];
-	rsp_info->dpc_status_reg	= (word*) memory->dpc_regs[0x0C];
-	rsp_info->dpc_clock_reg		= (word*) memory->dpc_regs[0x10];
-	rsp_info->dpc_bufbusy_reg	= (word*) memory->dpc_regs[0x14];
-	rsp_info->dpc_pipebusy_reg	= (word*) memory->dpc_regs[0x18];
-	rsp_info->dpc_tmem_reg		= (word*) memory->dpc_regs[0x1C];
+	rsp_info->dpc_start_reg		= (word*) memory[DPC_START_REG];
+	rsp_info->dpc_end_reg		= (word*) memory[DPC_END_REG];
+	rsp_info->dpc_current_reg	= (word*) memory[DPC_CURRENT_REG];
+	rsp_info->dpc_status_reg	= (word*) memory[DPC_STATUS_REG];
+	rsp_info->dpc_clock_reg		= (word*) memory[DPC_CLOCK_REG];
+	rsp_info->dpc_bufbusy_reg	= (word*) memory[DPC_BUFBUSY_REG];
+	rsp_info->dpc_pipebusy_reg	= (word*) memory[DPC_PIPEBUSY_REG];
+	rsp_info->dpc_tmem_reg		= (word*) memory[DPC_TMEM_REG];
 
 	// TODO:
 	rsp_info->CheckInterrupts	= NULL;

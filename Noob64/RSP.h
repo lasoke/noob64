@@ -123,7 +123,7 @@ public:
 	RSP(wstring filename, HWND hWnd);
 	~RSP();
 
-	void init(MEMORY* mem);
+	void init(RCP* mem);
 	// Allows the RSP to run in parrel with the CPU
 	word doRspCycles(word);
 	// To retreive the debug info of the RSP

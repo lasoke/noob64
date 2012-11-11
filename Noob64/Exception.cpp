@@ -25,7 +25,7 @@
 #include "StdAfx.h"
 
 #define UPDATE_REGS()															\
-		EPC = (word) (delay_slot ? pc - 4 : pc);								\
+		Epc = (word) (delay_slot ? pc - 4 : pc);								\
 		Cause = (word) (delay_slot ? Cause | CAUSE_BD : Cause & ~CAUSE_BD);		\
 		Status |= STATUS_EXL;													\
 		pc = 0x80000180;
@@ -39,7 +39,7 @@
 
 void R4300i::check_interrupt(void)
 {
-	if (memory->mi_regs.getIntr() & memory->mi_regs.getIntrMask())	// An interrupt is detected.
+	if (rcp.getMI().getIntr() & rcp.getMI().getIntrMask())	// An interrupt is detected.
 		Cause |= CAUSE_IP2;											// Sets the IP2 bit (ExcCode mask should be clear at this point!).
 	else
 		Cause &= ~CAUSE_IP2;										// Clears the IP2 bit
@@ -48,7 +48,7 @@ void R4300i::check_interrupt(void)
 	interrupt_detected = true;										// We detected an interrupt, we now notify the handler
 }
 
-void R4300i::trigger_address_error(dword address, bool from_read)
+void R4300i::trigger_address_error(word address, bool from_read)
 {
 	PRINT_EXC("AddressError");
 	Cause = from_read ? ADDRESS_ERROR_INSTRUCTION_FETCH << 2 : ADDRESS_ERROR_DATA_ACCESS << 2;
@@ -80,7 +80,7 @@ void R4300i::trigger_intr_exception()
     UPDATE_REGS();
 }
 
-void R4300i::trigger_tlb_miss(dword address)
+void R4300i::trigger_tlb_miss(word address)
 {
     Cause = TLB_INVALID_INSTRUCTION_FETCH << 2;
     BadVAddr = (word) address;
@@ -91,11 +91,11 @@ void R4300i::trigger_tlb_miss(dword address)
     if (!(Status & STATUS_EXL))
 	{
 		UPDATE_REGS();
-		pc = is_address_defined(address) ? 0x80000180 : 0x80000000;
+		pc = mmu.is_address_defined(address) ? 0x80000180 : 0x80000000;
 	}
 	else
 	{
-		cerr << "EXL Set\nAddress Defined: " << (is_address_defined(address) ? "TRUE" : "FALSE") << endl;
+		cerr << "EXL Set\nAddress Defined: " << (mmu.is_address_defined(address) ? "TRUE" : "FALSE") << endl;
 		pc = 0x80000180;
 	}
 }

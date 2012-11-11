@@ -22,43 +22,17 @@
  *
  */
 
-#include "StdAfx.h"
+#pragma once
 
-ROM::ROM(string filename) : MEM_SEG(ROM_SEG_BEGINING, ROM_SEG_END)
-{
-	file.open(filename, ios::ate | ios::in | ios::binary);
-	if (!file.is_open())
-		throw ROM_FAILED_TO_LOAD;
+#include "Si.h"
 
-	int size = (int) file.tellg();
-	data = (char*) malloc(size);
-	file.seekg (0, ios::beg);
-    file.read(data, size);
-	file.close();
-	ptr = data;
-	header = (ROM_HEADER*) data;
+inline void SI::setDramAddr(word w)		{ data.dram_addr = w; }
+inline void SI::setPifAddrRd64b(word w)	{ data.pif_addr_rd64b = w; }
+inline void SI::setPifAddrWr64b(word w)	{ data.pif_addr_wr64b = w; }
+inline void SI::setStatus(word w)			{ data.status = w; }
+inline void SI::setSpecialStatus(word w)	{ /*TODO*/ }
 
-	word type = ((word*) data)[0];
-	if (type == 0x40123780)
-		; // BIG ENDIAN
-	else if (type == 0x12408037)
-	{
-		// MIDDLE ENDIAN
-		for (int i = 0; i < size - 1; i += 2)
-		{
-			char temp = data[i];
-			data[i] = data[i+1];
-			data[i+1] = temp;
-		}
-	}
-	else throw ROM_UNKNOWN_FORMAT;
-}
-
-ROM::~ROM()
-{
-	delete[] data;
-}
-
-
-
-
+inline word SI::getDramAddr()				{ return data.dram_addr; }
+inline word SI::getPifAddrRd64b()			{ return data.pif_addr_rd64b; }
+inline word SI::getPifAddrWr64b()			{ return data.pif_addr_wr64b; }
+inline word SI::getStatus()				{ return data.status; }
