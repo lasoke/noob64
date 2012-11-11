@@ -28,9 +28,9 @@
 //** RCP																	**
 //****************************************************************************
 
-RCP::RCP(ROM* r) :
+RCP::RCP(ROM* rom) :
 	cpu			(*new R4300i(this)),
-	rom			(*r),
+	rom			(*rom),
 	rdram		(*new RDRAM()),
 	rdram_regs	(*new RDRAM_REGS()),
 	sp			(*new SP()),
@@ -73,26 +73,24 @@ void RCP::RefreshScreen()
 
 	if (OLD_VI_V_SYNC_REG != vi.getVsync())
 	{
-		if (vi.getVsync() == 0)
-		{
+		if (!vi.getVsync())
 			VI_INTR_TIME = 500000;
-		} 
 		else 
 		{
 			VI_INTR_TIME = (vi.getVsync() + 1) * 1500;
-			if ((vi.getVsync() % 1) != 0)
+			if (vi.getVsync() % 1)
 				VI_INTR_TIME -= 38;
 		}
 	}
-	/* FIXME:
+
 	TimerHandler& t = cpu.getTimerHandler();
-	t.ChangeTimer(ViTimer, t.Timer + t.NextTimer[ViTimer] + VI_INTR_TIME, Compare, Count);
+	t.change_timer(VI_TIMER, t.timer + t.next_timer[VI_TIMER] + VI_INTR_TIME, cpu.getCop0(COMPARE), cpu.getCop0(COUNT));
 	
 	if ((VI_STATUS_REG & 0x10) != 0)
-		ViFieldNumber = (ViFieldNumber == 0) ? 1 : 0;
+		cpu.setViFieldNumber(!cpu.getViFieldNumber() ? 1 : 0);
 	else
-		ViFieldNumber = 0;
-	*/
+		cpu.setViFieldNumber(0);
+
 	gfx->updateScreen();
 }
 
@@ -118,8 +116,8 @@ AI::AI() : MEM_SEG(AI_SEG_BEGINING, AI_SEG_END)									{ INIT(&data) }
 PI::PI() : MEM_SEG(PI_SEG_BEGINING, PI_SEG_END)									{ INIT(&data) }
 RI::RI() : MEM_SEG(RI_SEG_BEGINING, RI_SEG_END)									{ INIT(&data) }
 SI::SI() : MEM_SEG(SI_SEG_BEGINING, SI_SEG_END)									{ INIT(&data) }
-PIF_ROM::PIF_ROM() : MEM_SEG(PIF_ROM_SEG_BEGINING, PIF_ROM_SEG_END)				{ INIT(&data) }
-PIF_RAM::PIF_RAM() : MEM_SEG(PIF_RAM_SEG_BEGINING, PIF_RAM_SEG_END)				{ INIT(&data) }
+PIF_ROM::PIF_ROM() : MEM_SEG(PIF_ROM_SEG_BEGINING, PIF_ROM_SEG_END)				{ INIT(data) }
+PIF_RAM::PIF_RAM() : MEM_SEG(PIF_RAM_SEG_BEGINING, PIF_RAM_SEG_END)				{ INIT(data) }
 
 void* MEM_SEG::operator[] (const word address) const
 {

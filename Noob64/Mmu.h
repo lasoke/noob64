@@ -24,24 +24,56 @@
 
 #pragma once
 
+typedef struct {
+   short			mask;	// Comparison MASK
+   long				vpn2;	// Virtual Page Number / 2
+   char				g;		// Global bit
+   unsigned char	asid;	// Address Space Identifier
+   long				pfn0;	// [EVEN] Physical Page Number (upper 20 bits of the physical address)
+   char				c0;		// [EVEN] Cache Algorithm (011=cached; 010=uncached)
+   char				d0;		// [EVEN] If set, page is writable
+   char				v0;		// [EVEN] If set, entry is valid
+   long				pfn1;	// [ODD] Physical Page Number (upper 20 bits of the physical address)
+   char				c1;		// [ODD] Cache Algorithm (011=cached; 010=uncached)
+   char				d1;		// [ODD] If set, page is writable
+   char				v1;		// [ODD] If set, entry is valid
+
+   char				r;		// Region used to match VAddr63..62
+   unsigned long	start0;
+   unsigned long	end0;
+   unsigned long	phys0;
+   unsigned long	start1;
+   unsigned long	end1;
+   unsigned long	phys1;
+} tlb_entry;
+
 class MMU
 {
 public:
 	MMU(R4300i&, RCP&);
 	~MMU(void);
 
+	void reset(void);
+
 	void* operator[] (const word address);
 	template <typename Type> inline Type read(word address);
 	template <typename Type> inline void write(Type data, word address);
 
+	inline bool is_address_defined(word address) const;
+
+	// TODO: Add getters and setters
+	tlb_entry	tlb[32];
+	word		tlb_lut_r[0x100000];
+	word		tlb_lut_w[0x100000];
+	char		invalid_code[0x100000];
+
 private:
-	R4300i	&cpu;
-	RCP		&rcp;
+	R4300i		&cpu;
+	RCP			&rcp;
 
 	inline void* virtual_to_physical(word address);
 	inline bool read_from_register(word *data, word address);
 	inline bool write_in_register(word data, word address);
 };
 
-bool is_address_defined(word address);
 

@@ -40,52 +40,21 @@ void R4300i::reset()
 		r[i]				= (dword) 0;
 		f[i]				= (dword) 0;
 		cop0[i]				= (word)  0;
-		tlb_e[i].mask		= 0;
-		tlb_e[i].vpn2		= 0;
-		tlb_e[i].g			= 0;
-		tlb_e[i].asid		= 0;
-		tlb_e[i].pfn_even	= 0;
-		tlb_e[i].c_even		= 0;
-		tlb_e[i].d_even		= 0;
-		tlb_e[i].v_even		= 0;
-		tlb_e[i].pfn_odd	= 0;
-		tlb_e[i].c_odd		= 0;
-		tlb_e[i].d_odd		= 0;
-		tlb_e[i].v_odd		= 0;
-		tlb_e[i].r			= 0;
-		//tlb_e[i].check_parity_mask=0x1000;
-		tlb_e[i].start_even = 0;
-		tlb_e[i].end_even	= 0;
-		tlb_e[i].phys_even	= 0;
-		tlb_e[i].start_odd	= 0;
-		tlb_e[i].end_odd	= 0;
-		tlb_e[i].phys_odd	= 0;
 	}
 
-	for (int i = 0; i < 0x100000; i++)
-	{ 
-		tlb_lut_r[i] = 0;
-		tlb_lut_w[i] = 0;
-	}
+	pc						= 0;
+	hi						= 0;
+	lo						= 0;
+	fcr0					= 0;
+	fcr31					= 0x01000800;
+	ll						= false;
+	delay_slot				= false;
+	running					= true;
+	cic_chip				= 0;
+	interrupt_detected		= false;
 
-	pc			= 0;
-	hi			= 0;
-	lo			= 0;
-	fcr0		= 0;
-	fcr31		= 0x01000800;
-	ll			= false;
-	delay_slot	= false;
-	running		= true;
-	cic_chip	= 0;
-
-	interrupt_detected	= false;
-	
-	timer_handler.CurrentTimerType = -1;
-	timer_handler.Timer = 0;
-	for (int i = 0; i < MaxTimers; ++i) 
-		timer_handler.Active[i]= FALSE;
-	timer_handler.ChangeTimer(ViTimer,5000, Compare, Count); 
-	timer_handler.ChangeCompareTimer(Compare, Count);
+	mmu.reset();
+	timer_handler.reset();
 }
 
 void R4300i::pif_init()
@@ -169,7 +138,7 @@ void R4300i::start()
 		if ((pc & 0xFFFFFFFF) == 0x80246DD8)
 			++i;
 		decode(mmu.read<word>((word) pc));
-		if (timer_handler.Timer < 0)
-			TimerDone();
+		if (timer_handler.timer < 0)
+			timer_done();
 	}
 }

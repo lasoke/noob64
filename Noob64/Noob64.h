@@ -28,7 +28,7 @@
 
 using namespace std;
 
-#define DEBUG
+//#define DEBUG
 
 #define KSEG0					0x80000000
 #define KSEG1					0xA0000000

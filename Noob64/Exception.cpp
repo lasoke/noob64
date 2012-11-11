@@ -25,7 +25,7 @@
 #include "StdAfx.h"
 
 #define UPDATE_REGS()															\
-		EPC = (word) (delay_slot ? pc - 4 : pc);								\
+		Epc = (word) (delay_slot ? pc - 4 : pc);								\
 		Cause = (word) (delay_slot ? Cause | CAUSE_BD : Cause & ~CAUSE_BD);		\
 		Status |= STATUS_EXL;													\
 		pc = 0x80000180;
@@ -91,11 +91,11 @@ void R4300i::trigger_tlb_miss(word address)
     if (!(Status & STATUS_EXL))
 	{
 		UPDATE_REGS();
-		pc = is_address_defined(address) ? 0x80000180 : 0x80000000;
+		pc = mmu.is_address_defined(address) ? 0x80000180 : 0x80000000;
 	}
 	else
 	{
-		cerr << "EXL Set\nAddress Defined: " << (is_address_defined(address) ? "TRUE" : "FALSE") << endl;
+		cerr << "EXL Set\nAddress Defined: " << (mmu.is_address_defined(address) ? "TRUE" : "FALSE") << endl;
 		pc = 0x80000180;
 	}
 }

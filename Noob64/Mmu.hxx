@@ -516,3 +516,23 @@ inline void* MMU::virtual_to_physical(word a)
 	cerr << endl << "ERROR: Virtual address 0x" << hex << a << " not handled" << endl;
 	throw VIRTUAL_ADDRESS_ERROR;
 }
+
+//****************************************************************************
+//** IS ADDRESS DEFINED														**
+//****************************************************************************
+inline bool MMU::is_address_defined(word address) const
+{
+	if (KSEG0 <= address && address <= KSEG2-1)
+		return true;
+	/* TODO:
+	dword i;
+	for (i = 0; i < 64; i++)
+	{
+		if (FastTlb[i].ValidEntry == false)
+			continue;
+		if (address >= FastTlb[i].VSTART && address <= FastTlb[i].VEND)
+			return true;
+	}
+	*/
+	return false; 
+}

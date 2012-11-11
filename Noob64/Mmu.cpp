@@ -36,20 +36,34 @@ void* MMU::operator[] (const word address)
 	return virtual_to_physical(address);
 }
 
-bool is_address_defined(word address)
+void MMU::reset(void)
 {
-	if (KSEG0 <= address && address <= KSEG2-1)
-		return true;
-	// TODO
-	/*
-	dword i;
-	for (i = 0; i < 64; i++)
+	for (int i = 0; i < 32; i++)
 	{
-		if (FastTlb[i].ValidEntry == false)
-			continue;
-		if (address >= FastTlb[i].VSTART && address <= FastTlb[i].VEND)
-			return true;
+		tlb[i].mask		= 0;
+		tlb[i].vpn2		= 0;
+		tlb[i].g		= 0;
+		tlb[i].asid		= 0;
+		tlb[i].pfn0		= 0;
+		tlb[i].c0		= 0;
+		tlb[i].d0		= 0;
+		tlb[i].v0		= 0;
+		tlb[i].pfn1		= 0;
+		tlb[i].c1		= 0;
+		tlb[i].d1		= 0;
+		tlb[i].v1		= 0;
+		tlb[i].r		= 0;
+		tlb[i].start0	= 0;
+		tlb[i].end0		= 0;
+		tlb[i].phys0	= 0;
+		tlb[i].start1	= 0;
+		tlb[i].end1		= 0;
+		tlb[i].phys1	= 0;
 	}
-	*/
-	return false; 
+	for (int i = 0; i < 0x100000; i++)
+	{ 
+		tlb_lut_r[i] = 0;
+		tlb_lut_w[i] = 0;
+	}
 }
+

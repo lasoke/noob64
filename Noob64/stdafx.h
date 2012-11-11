@@ -84,7 +84,6 @@
 #include "Exception.h"
 #include "Helper.h"
 #include "Helper.hxx"
-#include "Tlb.h"
 #include "TimerHandler.h"
 #include "R4300i.h"
 #include "R4300i.hxx"

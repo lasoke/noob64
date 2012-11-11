@@ -4,100 +4,110 @@ TimerHandler::TimerHandler()
 {
 }
 
-void TimerHandler::ChangeCompareTimer(word compare, word count)
+void TimerHandler::reset(void)
+{
+	current_timer_type = -1;
+	timer = 0;
+	for (int i = 0; i < MAX_TIMERS; ++i) 
+		active[i]= FALSE;
+	change_timer(VI_TIMER, 5000, 0/*Compare*/, 0/*Count*/); 
+	change_compare_timer(0/*Compare*/, 0/*Count*/);
+}
+
+void TimerHandler::change_compare_timer(word compare, word count)
 {
 	word NextCompare = compare - count;
 	if ((NextCompare & 0x80000000) != 0)
 		NextCompare = 0x7FFFFFFF;
 	if (NextCompare == 0) 
 		NextCompare = 0x1;
-	ChangeTimer(CompareTimer,NextCompare, compare, count);
+	change_timer(COMPARE_TIMER,NextCompare, compare, count);
 }
 
-void TimerHandler::ChangeTimer(int Type, int Value, word compare, word count)
+void TimerHandler::change_timer(int type, int value, word compare, word count)
 {	
-	if (Value == 0) 
+	if (value == 0) 
 	{ 
-		NextTimer[Type] = 0;
-		Active[Type] = false; 
+		next_timer[type] = 0;
+		active[type] = false; 
 		return;
 	}
-	NextTimer[Type] = Value - Timer;
-	Active[Type] = true;
-	CheckTimer(compare, count);
+	next_timer[type] = value - timer;
+	active[type] = true;
+	check_timer(compare, count);
 }
 
-void TimerHandler::CheckTimer(word compare, word count)
+void TimerHandler::check_timer(word compare, word count)
 {
 	int i;
 
-	for (i = 0; i < MaxTimers; i++) 
+	for (i = 0; i < MAX_TIMERS; i++) 
 	{
-		if (!Active[i])
+		if (!active[i])
 			continue;
-		if (!(i == CompareTimer && NextTimer[i] == 0x7FFFFFFF))
-			NextTimer[i] += Timer;
+		if (!(i == COMPARE_TIMER && next_timer[i] == 0x7FFFFFFF))
+			next_timer[i] += timer;
 	}
-	CurrentTimerType = -1;
-	Timer = 0x7FFFFFFF;
-	for (i = 0; i < MaxTimers; i++) 
+	current_timer_type = -1;
+	timer = 0x7FFFFFFF;
+	for (i = 0; i < MAX_TIMERS; i++) 
 	{
-		if (NextTimer[i] >= Timer || !Active[i])
+		if (next_timer[i] >= timer || !active[i])
 			continue;
-		Timer = NextTimer[i];
-		CurrentTimerType = i;
+		timer = next_timer[i];
+		current_timer_type = i;
 	}
-	if (CurrentTimerType == -1) 
+	if (current_timer_type == -1) 
 	{
 		cerr << "No active timer_handler ???\nEmulation Stoped" << endl;
 		ExitThread(0);
 	}
-	for (i = 0; i < MaxTimers; i++)
+	for (i = 0; i < MAX_TIMERS; i++)
 	{
-		if (!Active[i]) 
+		if (!active[i]) 
 			continue;
-		if (!(i == CompareTimer && NextTimer[i] == 0x7FFFFFFF))
-			NextTimer[i] -= Timer;
+		if (!(i == COMPARE_TIMER && next_timer[i] == 0x7FFFFFFF))
+			next_timer[i] -= timer;
 	}
 	
-	if (NextTimer[CompareTimer] == 0x7FFFFFFF) 
+	if (next_timer[COMPARE_TIMER] == 0x7FFFFFFF) 
 	{
 		word NextCompare = compare - count;
 		if ((NextCompare & 0x80000000) == 0 && NextCompare != 0x7FFFFFFF)
-			ChangeCompareTimer(compare, count);
+			change_compare_timer(compare, count);
 	}
 }
 
-void R4300i::TimerDone()
+void R4300i::timer_done()
 {
-	switch (timer_handler.CurrentTimerType) 
+	switch (timer_handler.current_timer_type) 
 	{
-		case CompareTimer:
+		case COMPARE_TIMER:
 			Cause |= CAUSE_IP7;
 			check_interrupt();
-			timer_handler.ChangeCompareTimer(Compare, Count);
+			timer_handler.change_compare_timer(Compare, Count);
 			break;
-		case SiTimer:
-			timer_handler.ChangeTimer(SiTimer, 0, Compare, Count);
+		case SI_TIMER:
+			timer_handler.change_timer(SI_TIMER, 0, Compare, Count);
 			rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_SI);
 			rcp.getSI().setStatus(rcp.getSI().getStatus() | SI_STATUS_INTERRUPT);
 			check_interrupt();
 			break;
-		case PiTimer:
-			timer_handler.ChangeTimer(PiTimer, 0, Compare, Count);
+		case PI_TIMER:
+			timer_handler.change_timer(PI_TIMER, 0, Compare, Count);
 			rcp.getPI().setStatus(rcp.getPI().getStatus() & ~PI_STATUS_DMA_BUSY);
 			rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_PI);
 			check_interrupt();
 			break;
-		case ViTimer:
+		case VI_TIMER:
 			//RefreshScreen();
 			rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_VI);
 			check_interrupt();
 			break;
-		case RspTimer:
-			timer_handler.ChangeTimer(RspTimer,0, Compare, Count);
+		case RSP_TIMER:
+			timer_handler.change_timer(RSP_TIMER,0, Compare, Count);
 			//RunRsp();
 			break;
 	}
-	timer_handler.CheckTimer(Compare, Count);
+	timer_handler.check_timer(Compare, Count);
 }
