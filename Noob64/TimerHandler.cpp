@@ -126,7 +126,7 @@ void R4300i::timer_done()
 			break;
 		case RSP_TIMER:
 			timer_handler.change_timer(RSP_TIMER,0, Compare, Count);
-			rcp.run();
+			rcp.run_rsp();
 			break;
 	}
 	timer_handler.check_timer(Compare, Count);

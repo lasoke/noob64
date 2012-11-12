@@ -79,7 +79,7 @@ public:
 	void dma_sp_write(void);
 	void dma_sp_read(void);
 
-	void run(void);
+	void run_rsp(void);
 	void refresh_screen(void);	// Refreshs the screen when the vi timer is done
 	void updateCurrentHalfLine (void);
 	inline bool isCheckInterrupt(void) const;

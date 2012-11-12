@@ -295,11 +295,11 @@ inline bool MMU::write_in_register(word data, word address)
 		if (data & SP_CLR_INTR)
 		{ 
 			rcp.getMI().setIntr(rcp.getMI().getIntr() & ~MI_INTR_SP);
-			rcp.run();
+			rcp.run_rsp();
 			rcp.setCheckInterrupt(true);
 		}
 		else
-			rcp.run();
+			rcp.run_rsp();
 	}
 	else if (address == SP_DMA_FULL_REG)
 		rcp.getSP().setDmaFull(data);
