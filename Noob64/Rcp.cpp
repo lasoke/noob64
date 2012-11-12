@@ -152,6 +152,19 @@ void RCP::refresh_screen()
 }
 
 
+void RCP::updateCurrentHalfLine ()
+{
+	TimerHandler& t = cpu.getTimerHandler();
+    if (t.timer < 0) { 
+		halfline = 0;
+		return;
+	}
+
+	halfline = (t.timer / 1500);
+	halfline &= ~1;
+	halfline += cpu.getViFieldNumber();
+}
+
 //****************************************************************************
 //** SEGMENTS																**
 //****************************************************************************

@@ -60,6 +60,7 @@ inline PIF_ROM&		RCP::getPifRom(void) const				{ return pif_rom; }
 inline PIF_RAM&		RCP::getPifRam(void) const				{ return pif_ram; }
 inline RSP*			RCP::getRSP(void) const					{ return rsp; }
 inline GFX*			RCP::getGFX(void) const					{ return gfx; }
+inline word 		RCP::getHalfline(void)					{ return halfline; }
 
 inline bool RCP::isCheckInterrupt() const					{ return check_intr; }
 inline void RCP::setCheckInterrupt(bool isCheckInterrupt)	{ check_intr = isCheckInterrupt; }

@@ -132,8 +132,8 @@ inline bool MMU::read_from_register(word *data, word address)
 		*data = rcp.getVI().getIntr();
 	else if (address == VI_CURRENT_REG)
 	{
-		*data = rcp.getVI().getCurrent();
-		//UpdateCurrentHalfLine();
+		rcp.updateCurrentHalfLine();
+		*data = rcp.getHalfline();
 	}
 	else if (address == VI_BURST_REG)
 		*data = rcp.getVI().getBurst();
@@ -295,11 +295,11 @@ inline bool MMU::write_in_register(word data, word address)
 		if (data & SP_CLR_INTR)
 		{ 
 			rcp.getMI().setIntr(rcp.getMI().getIntr() & ~MI_INTR_SP);
-			// TODO: RunRsp();
+			rcp.run();
 			rcp.setCheckInterrupt(true);
 		}
 		else
-			;// TODO: RunRsp();
+			rcp.run();
 	}
 	else if (address == SP_DMA_FULL_REG)
 		rcp.getSP().setDmaFull(data);
@@ -348,19 +348,24 @@ inline bool MMU::write_in_register(word data, word address)
 		rcp.getMI().setSpecialIntrMask(data);
 
 	else if (address == VI_STATUS_REG)
+	{
 		rcp.getVI().setStatus(data);
+		rcp.getGFX()->viStatusChanged();
+	}
 	else if (address == VI_ORIGIN_REG)
 		rcp.getVI().setOrigin(data);
 	else if (address == VI_WIDTH_REG)
-		rcp.getVI().setWidth(data);
-	else if (address == VI_INTR_REG)
 	{
+		rcp.getVI().setWidth(data);
+		rcp.getGFX()->viWidthChanged();
+	}
+	else if (address == VI_INTR_REG)
 		rcp.getVI().setVintr(data);
+	else if (address == VI_CURRENT_REG)
+	{
 		rcp.getMI().setIntr(rcp.getMI().getIntr() & ~MI_INTR_VI);
 		rcp.setCheckInterrupt(true);
 	}
-	else if (address == VI_CURRENT_REG)
-		rcp.getVI().setCurrent(data);
 	else if (address == VI_BURST_REG)
 		rcp.getVI().setBurst(data);
 	else if (address == VI_V_SYNC_REG)

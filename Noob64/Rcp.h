@@ -81,6 +81,7 @@ public:
 
 	void run(void);
 	void refresh_screen(void);	// Refreshs the screen when the vi timer is done
+	void updateCurrentHalfLine (void);
 	inline bool isCheckInterrupt(void) const;
 	inline void setCheckInterrupt(bool);
 
@@ -101,6 +102,7 @@ public:
 	inline PIF_RAM&		getPifRam(void) const;
 	inline RSP*			getRSP(void) const;
 	inline GFX*			getGFX(void) const;
+	inline word			getHalfline(void);
 
 private:
 	R4300i		&cpu;
@@ -125,6 +127,7 @@ private:
 	byte		SRAM[0x8000];
 	word		cic_chip;
 	bool		check_intr;
+	word		halfline;
 
 	inline void checkDMA(word address);
 };

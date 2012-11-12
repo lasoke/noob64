@@ -1104,7 +1104,7 @@ inline void R4300i::DSLLV(int rd, int rt, int rs)
 inline void R4300i::DSRA(int rd, int rt, int sa)
 {
 	PRINT_PC("DSRA " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa);
-	r[rd] = r[rt] >> sa;
+	r[rd] = extend_sign_word(r[rt] >> sa);
 	PRINT(" r" << dec << rd << hex << "=0x" << r[rd]);
 	pc += 4;
 }
@@ -1112,7 +1112,7 @@ inline void R4300i::DSRA(int rd, int rt, int sa)
 inline void R4300i::DSRA32(int rd, int rt, int sa)
 {
 	PRINT_PC("DSRA32 " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << sa);
-	r[rd] = r[rt] >> (sa + 32);
+	r[rd] = extend_sign_word(r[rt] >> (sa + 32));
 	PRINT(" r" << dec << rd << hex << "=0x" << r[rd]);
 	pc += 4;
 }
@@ -1120,7 +1120,7 @@ inline void R4300i::DSRA32(int rd, int rt, int sa)
 inline void R4300i::DSRAV(int rd, int rt, int rs)
 {
 	PRINT_PC("DSRAV " << dec << "r" << rd << " " << dec << "r" << rt << " " << dec << "r" << rs);
-	r[rd] = r[rt] >> r[rs];
+	r[rd] = extend_sign_word(r[rt] >> r[rs]);
 	PRINT(" r" << dec << rd << hex << "=0x" << r[rd]);
 	pc += 4;
 }
