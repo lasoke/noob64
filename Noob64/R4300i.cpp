@@ -139,9 +139,7 @@ void R4300i::start()
 		}
 		++Count;
 		if ((pc & 0xFFFFFFFF) == 0x80322DF0)
-		{
 			++i;
-		}
 		if (i >= 51 && (pc & 0xFFFFFFFF) == 0x8027F55C)
 			j = i;
 		if (j == i && ((pc & 0xFFFFFFFF) < 0x8027f500 || (pc & 0xFFFFFFFF) > 0x8027f574))
