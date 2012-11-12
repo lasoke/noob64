@@ -487,7 +487,7 @@ inline bool MMU::write_in_register(word data, word address)
 //****************************************************************************
 //** VIRTUAL TO PHYSICAL													**
 //****************************************************************************
-inline void* MMU::virtual_to_physical(word a)
+inline char* MMU::virtual_to_physical(word a)
 {
 	if (rcp.getRDRAM().contains(a))			return rcp.getRDRAM()[a];
 	if (rcp.getRdramRegs().contains(a))		return rcp.getRdramRegs()[a];

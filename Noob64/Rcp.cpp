@@ -176,8 +176,8 @@ SI::SI() : MEM_SEG(SI_SEG_BEGINING, SI_SEG_END)									{ INIT() }
 PIF_ROM::PIF_ROM() : MEM_SEG(PIF_ROM_SEG_BEGINING, PIF_ROM_SEG_END)				{ INIT() }
 PIF_RAM::PIF_RAM() : MEM_SEG(PIF_RAM_SEG_BEGINING, PIF_RAM_SEG_END)				{ INIT() }
 
-void* MEM_SEG::operator[] (const word address) const
+char* MEM_SEG::operator[] (const word address) const
 {
-	return (char*) ptr + address - begining;
+	return ptr + address - begining;
 }
 
