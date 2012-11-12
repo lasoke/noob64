@@ -38,5 +38,7 @@ class PIF_ROM : public MEM_SEG
 public:
 	PIF_ROM();
 private:
-	byte data[0x7C0];
+	struct {
+		byte prom[0x7C0];
+	} data;
 };
