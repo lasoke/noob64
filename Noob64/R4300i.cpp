@@ -124,6 +124,7 @@ void R4300i::start()
 	pif_init();
 
 	int i = 0;
+	int j = -1;
 	while (running)
 	{
 		if (rcp.isCheckInterrupt())
@@ -137,8 +138,14 @@ void R4300i::start()
 			}
 		}
 		++Count;
-		if ((pc & 0xFFFFFFFF) == 0x80246DD8)
+		if ((pc & 0xFFFFFFFF) == 0x80322DF0)
+		{
 			++i;
+		}
+		if (i >= 51 && (pc & 0xFFFFFFFF) == 0x8027F55C)
+			j = i;
+		if (j == i && ((pc & 0xFFFFFFFF) < 0x8027f500 || (pc & 0xFFFFFFFF) > 0x8027f574))
+			j= i;
 		decode(mmu.read<word>((word) pc));
 		if (timer_handler.timer < 0)
 			timer_done();
