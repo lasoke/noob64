@@ -31,7 +31,7 @@ MMU::MMU(R4300i& cpu, RCP& rcp) : cpu(cpu), rcp(rcp) {}
 
 MMU::~MMU(void) {}
 
-void* MMU::operator[] (const word address)
+char* MMU::operator[] (const word address)
 {
 	return virtual_to_physical(address);
 }

@@ -55,7 +55,7 @@ public:
 
 	void reset(void);
 
-	void* operator[] (const word address);
+	char* operator[] (const word address);
 	template <typename Type> inline Type read(word address);
 	template <typename Type> inline void write(Type data, word address);
 
@@ -71,7 +71,7 @@ private:
 	R4300i		&cpu;
 	RCP			&rcp;
 
-	inline void* virtual_to_physical(word address);
+	inline char* virtual_to_physical(word address);
 	inline bool read_from_register(word *data, word address);
 	inline bool write_in_register(word data, word address);
 };

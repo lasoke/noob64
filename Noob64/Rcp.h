@@ -51,10 +51,10 @@ class MEM_SEG
 public:
 	MEM_SEG(word, word);
 	virtual ~MEM_SEG() = 0;
-	const char *ptr;
 	inline bool contains(word address) const;
-	void* operator[] (const word address) const;
+	char* operator[] (const word address) const;
 protected:
+	char* ptr;
 	const word begining;
 	const word end;
 };
