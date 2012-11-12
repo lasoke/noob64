@@ -75,11 +75,11 @@ void RSP::init(RCP *rcp)
 	rsp_info->dpc_tmem_reg		= (word*) memory[DPC_TMEM_REG];
 
 	// TODO:
-	rsp_info->CheckInterrupts	= NULL;
-	rsp_info->ProcessDlistList  = NULL;
-	rsp_info->ProcessAlistList  = NULL;
-	rsp_info->ProcessRdpList	= NULL;
-	rsp_info->ShowCFB			= NULL;
+	rsp_info->CheckInterrupts	= dummy;
+	rsp_info->ProcessDlistList  = dummy;
+	rsp_info->ProcessAlistList  = dummy;
+	rsp_info->ProcessRdpList	= dummy;
+	rsp_info->ShowCFB			= dummy;
 
 	int cycles;
 	initiateRSP((word*)&cycles);

@@ -25,11 +25,6 @@
 #include "StdAfx.h"
 #include "Gfx.h"
 
-void dummy()
-{
-	return;
-}
-
 GFX::GFX(wstring filename, HWND hWnd) : PLUGIN(filename, hWnd)
 {
 	captureScreen_				= (CAPTURESCREEN) GetProcAddress(hDLL, "CaptureScreen");

@@ -88,3 +88,10 @@ void dump_array(word start_addr, const byte *data, unsigned int size, int type)
 		cout << endl;
 	}
 }
+
+void dummy()
+{
+	cout << "DUMMY" << endl;
+	getchar();
+	return;
+}

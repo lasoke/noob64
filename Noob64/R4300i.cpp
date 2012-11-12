@@ -137,7 +137,7 @@ void R4300i::start()
 			}
 		}
 		++Count;
-		if ((pc & 0xFFFFFFFF) == 0x80246DD8)
+		if ((pc & 0xFFFFFFFF) == 0x80322DF0)
 			++i;
 		decode(mmu.read<word>((word) pc));
 		if (timer_handler.timer < 0)
