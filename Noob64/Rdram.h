@@ -50,5 +50,7 @@ class RDRAM : public MEM_SEG
 public:
 	RDRAM();
 private:
-	byte data[0x800000];
+	struct {
+		byte ram[0x800000];
+	} data;
 };

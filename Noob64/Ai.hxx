@@ -26,7 +26,7 @@
 
 #include "Ai.h"
 
-inline void AI::setDramAddr(word w)		{ data.dram_addr = w; }
+inline void AI::setDramAddr(word w)			{ data.dram_addr = w; }
 inline void AI::setLen(word w)
 {
 	data.len = w;
@@ -40,6 +40,6 @@ inline void AI::setBitrate(word w)			{ data.bitrate = w; }
 inline word AI::getDramAddr()				{ return data.dram_addr; }
 inline word AI::getLen()					{ return data.len; }
 inline word AI::getControl()				{ return data.control; }
-inline word AI::getStatus()				{ return data.status; }
+inline word AI::getStatus()					{ return data.status; }
 inline word AI::getDacrate()				{ return data.dacrate; }
 inline word AI::getBitrate()				{ return data.bitrate; }

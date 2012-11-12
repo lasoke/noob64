@@ -38,5 +38,8 @@ class PIF_RAM : public MEM_SEG
 public:
 	PIF_RAM();
 private:
-	byte data[0x40];
+	struct {
+		byte pram[0x40];
+	} data;
+	
 };
