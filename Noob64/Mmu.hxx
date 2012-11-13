@@ -30,11 +30,15 @@
 //** READ																	**
 //****************************************************************************
 template <typename Type>
-Type MMU::read(word address)
+Type MMU::read(word address) { return read<Type>(address, true); }
+
+template <typename Type>
+Type MMU::read(word address, bool trigger_event)
 {
 	Type res;
-	if (typeid(Type) == typeid(word) && read_from_register((word *) &res, address))
+	if (trigger_event && typeid(Type) == typeid(word) && read_from_register((word *) &res, address))
 		return res;
+
 	byte dst[sizeof(Type)];
 	memcpy(dst, virtual_to_physical(address), sizeof(Type));
 	res = binary_to_type<Type>(dst);
@@ -231,9 +235,12 @@ inline bool MMU::read_from_register(word *data, word address)
 //** WRITE																	**
 //****************************************************************************
 template <typename Type>
-inline void MMU::write(Type data, word address)
+inline void MMU::write(Type data, word address) { return write<Type>(data, address, true); }
+
+template <typename Type>
+inline void MMU::write(Type data, word address, bool trigger_event)
 {
-	if (typeid(Type) == typeid(word) && write_in_register((word) data, address))
+	if (trigger_event && typeid(Type) == typeid(word) && write_in_register((word) data, address))
 		return;
 
 	void *dst = virtual_to_physical(address);

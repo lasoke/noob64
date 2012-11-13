@@ -57,7 +57,9 @@ public:
 
 	char* operator[] (const word address);
 	template <typename Type> inline Type read(word address);
+	template <typename Type> inline Type read(word address, bool trigger_event);
 	template <typename Type> inline void write(Type data, word address);
+	template <typename Type> inline void write(Type data, word address, bool trigger_event);
 
 	inline bool is_address_defined(word address) const;
 

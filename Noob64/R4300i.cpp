@@ -52,6 +52,8 @@ void R4300i::reset()
 	running					= true;
 	cic_chip				= 0;
 	interrupt_detected		= false;
+
+	vi_field_number			= 0;
 	alist_counter			= 0;
 	dlist_counter			= 0;
 
@@ -87,13 +89,13 @@ void R4300i::pif_init()
 	PRevID	= 0x00000B00;
 	Random	= 0x0000001F;
 
-	mmu.write<word>(0x02020202, MI_VERSION_REG);
-	mmu.write<word>(0x00000041, SP_STATUS_REG);
-	mmu.write<word>(0x00000088, DPC_STATUS_REG);
-	mmu.write<word>(0x00000040, PI_BSD_DOM1_LAT_REG);
-	mmu.write<word>(0x00000012, PI_BSD_DOM1_PWD_REG);
-	mmu.write<word>(0x00000007, PI_BSD_DOM1_PGS_REG);
-	mmu.write<word>(0x00000003, PI_BSD_DOM1_RLS_REG);
+	mmu.write<word>(0x02020202, MI_VERSION_REG, false);
+	mmu.write<word>(0x00000041, SP_STATUS_REG, false);
+	mmu.write<word>(0x00000088, DPC_STATUS_REG, false);
+	mmu.write<word>(0x00000040, PI_BSD_DOM1_LAT_REG, false);
+	mmu.write<word>(0x00000012, PI_BSD_DOM1_PWD_REG, false);
+	mmu.write<word>(0x00000007, PI_BSD_DOM1_PGS_REG, false);
+	mmu.write<word>(0x00000003, PI_BSD_DOM1_RLS_REG, false);
 
 	fcr0 = 0x511;
 
@@ -105,17 +107,16 @@ void R4300i::pif_init()
 	// Sets PC right after the ROM header
 	pc = 0xA4000040;
 
-	mmu.write<word>(0xBDA807FC, 0x04001004);
-	mmu.write<word>(0x3C0DBFC0, 0x04001000);
-	mmu.write<word>(0x25AD07C0, 0x04001008);
-	mmu.write<word>(0x31080080, 0x0400100C);
-	mmu.write<word>(0x5500FFFC, 0x04001010);
-	mmu.write<word>(0x3C0DBFC0, 0x04001014);
-	mmu.write<word>(0x8DA80024, 0x04001018);
-	mmu.write<word>(0x3C0BB000, 0x0400101C);
-	mmu.write<word>(0x6886A9C1, 0x04001F94);
-	mmu.write<word>(0x915F5B7E, 0x04001F90);
-
+	mmu.write<word>(0x3C0DBFC0, SP_IMEM, false);
+	mmu.write<word>(0xBDA807FC, SP_IMEM + 0x004, false);
+	mmu.write<word>(0x25AD07C0, SP_IMEM + 0x008, false);
+	mmu.write<word>(0x31080080, SP_IMEM + 0x00C, false);
+	mmu.write<word>(0x5500FFFC, SP_IMEM + 0x010, false);
+	mmu.write<word>(0x3C0DBFC0, SP_IMEM + 0x014, false);
+	mmu.write<word>(0x8DA80024, SP_IMEM + 0x018, false);
+	mmu.write<word>(0x3C0BB000, SP_IMEM + 0x01C, false);
+	mmu.write<word>(0x6886A9C1, SP_IMEM + 0xF94, false);
+	mmu.write<word>(0x915F5B7E, SP_IMEM + 0xF90, false);
 }
 
 void R4300i::start()
