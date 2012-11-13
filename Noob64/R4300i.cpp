@@ -125,8 +125,10 @@ void R4300i::start()
 
 	int i = 0;
 	int j = -1;
+	word content = 0;
 	while (running)
 	{
+		content = mmu.read<word>(0x803359A8);
 		if (rcp.isCheckInterrupt())
 		{
 			check_interrupt();
@@ -138,6 +140,7 @@ void R4300i::start()
 			}
 		}
 		++Count;
+		timer_handler.timer -= 2;
 		if ((pc & 0xFFFFFFFF) == 0x80322DF0)
 			++i;
 		if (i >= 51 && (pc & 0xFFFFFFFF) == 0x8027F55C)
