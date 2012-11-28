@@ -29,6 +29,9 @@ void RCP::dma_pi_read()
 	memcpy(rom[ROM_SEG_BEGINING] + (pi.getCartAddr() & 0xFFFFFFF),
 		rdram[RDRAM_SEG_BEGINING] + (pi.getDramAddr() & 0xFFFFFFF),
 		(pi.getRdLen() & 0xFFFFFFF) + 1);
+	mi.setIntr(mi.getIntr() | MI_INTR_PI);
+	pi.setStatus(pi.getStatus() & ~PI_STATUS_DMA_BUSY);
+	cpu.check_interrupt();
 }
 
 void RCP::dma_pi_write()
@@ -36,6 +39,9 @@ void RCP::dma_pi_write()
 	memcpy(rdram[RDRAM_SEG_BEGINING] + (pi.getDramAddr() & 0xFFFFFFF),
 		rom[ROM_SEG_BEGINING] + (pi.getCartAddr() & 0xFFFFFFF),
 		(pi.getWrLen() & 0xFFFFFFF) + 1);
+	mi.setIntr(mi.getIntr() | MI_INTR_PI);
+	pi.setStatus(pi.getStatus() & ~PI_STATUS_DMA_BUSY);
+	cpu.check_interrupt();
 }
 
 void RCP::dma_sp_write()
@@ -60,7 +66,10 @@ void RCP::dma_si_write()
 		cout << "unknown SI use" << endl;
 	memcpy(rdram[RDRAM_SEG_BEGINING] + (si.getDramAddr() & 0xFFFFFFF),
 		pif_ram[PIF_RAM_SEG_BEGINING] + (si.getPifAddrWr64b() & 0xFF), 64);
-
+	
+	mi.setIntr(mi.getIntr() | MI_INTR_SI);
+	si.setStatus(si.getStatus() | SI_STATUS_INTERRUPT);
+	cpu.check_interrupt();
 }
 
 void RCP::dma_si_read()
@@ -69,4 +78,7 @@ void RCP::dma_si_read()
 		cout << "unknown SI use" << endl;
 	memcpy(pif_ram[PIF_RAM_SEG_BEGINING] + (si.getPifAddrRd64b() & 0xFF),
 		rdram[RDRAM_SEG_BEGINING] + (si.getDramAddr() & 0xFFFFFFF), 64);
+	mi.setIntr(mi.getIntr() | MI_INTR_SI);
+	si.setStatus(si.getStatus() | SI_STATUS_INTERRUPT);
+	cpu.check_interrupt();
 }
