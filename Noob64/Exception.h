@@ -98,5 +98,5 @@ enum InterruptType
 	HW2		= CAUSE_IP4,	// External level 5 pending - INT2
 	HW3		= CAUSE_IP5,	// External level 6 pending - INT3
 	HW4		= CAUSE_IP6,	// External level 7 pending - INT4
-	COMPARE	= CAUSE_IP7		// External level 8 pending - COMPARE
+	COMP	= CAUSE_IP7		// External level 8 pending - COMPARE
 };

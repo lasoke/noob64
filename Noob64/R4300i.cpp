@@ -101,11 +101,9 @@ void R4300i::pif_init()
 
 	sdword CRC = 0;
 	
-	// Copies first 0x1000 bytes of ROM to first 0x1000 bytes of SP_MEM
-	for(int i = 0; i < 0x1000; i++)
+	for(int i = 0; i < 0x1000; i++) // Copies first 0x1000 bytes of ROM to first 0x1000 bytes of SP_MEM
 		mmu.write<byte>(*((byte*) mmu[ROM_SEG_BEGINING+i]), SP_SEG_BEGINING+i);
-	// Sets PC right after the ROM header
-	pc = 0xA4000040;
+	pc = 0xA4000040; // Sets PC right after the ROM header
 
 	mmu.write<word>(0x3C0DBFC0, SP_IMEM, false);
 	mmu.write<word>(0xBDA807FC, SP_IMEM + 0x004, false);
