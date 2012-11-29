@@ -24,8 +24,6 @@
 
 #pragma once
 
-#include "Mmu.h"
-
 //****************************************************************************
 //** READ																	**
 //****************************************************************************
@@ -297,13 +295,13 @@ inline bool MMU::write_in_register(word data, word address)
 		if (data & SP_SET_SIG0) 
 		{
 			rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_SP);
-			rcp.setCheckInterrupt(true);
+			cpu.check_interrupt();
 		}
 		if (data & SP_CLR_INTR)
 		{ 
 			rcp.getMI().setIntr(rcp.getMI().getIntr() & ~MI_INTR_SP);
 			rcp.run_rsp();
-			rcp.setCheckInterrupt(true);
+			cpu.check_interrupt();
 		}
 		else
 			rcp.run_rsp();
@@ -371,7 +369,7 @@ inline bool MMU::write_in_register(word data, word address)
 	else if (address == VI_CURRENT_REG)
 	{
 		rcp.getMI().setIntr(rcp.getMI().getIntr() & ~MI_INTR_VI);
-		rcp.setCheckInterrupt(true);
+		cpu.check_interrupt();
 	}
 	else if (address == VI_BURST_REG)
 		rcp.getVI().setBurst(data);
@@ -401,7 +399,6 @@ inline bool MMU::write_in_register(word data, word address)
 	else if (address == AI_STATUS_REG)
 	{
 		rcp.getMI().setIntr(rcp.getMI().getIntr() & ~MI_INTR_AI);
-		rcp.setCheckInterrupt(true);
 		cpu.check_interrupt();
 	}
 	else if (address == AI_DACRATE_REG)
@@ -417,22 +414,16 @@ inline bool MMU::write_in_register(word data, word address)
 	{
 		rcp.getPI().setRdLen(data);
 		rcp.dma_pi_read();
-		rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_PI);
-		rcp.getPI().setStatus(rcp.getPI().getStatus() & ~PI_STATUS_DMA_BUSY);
-		rcp.setCheckInterrupt(true);
 	}
 	else if (address == PI_WR_LEN_REG)
 	{
 		rcp.getPI().setWrLen(data);
 		rcp.dma_pi_write();
-		rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_PI);
-		rcp.getPI().setStatus(rcp.getPI().getStatus() & ~PI_STATUS_DMA_BUSY);
-		rcp.setCheckInterrupt(true);
 	}
 	else if (address == PI_STATUS_REG)
 	{
 		rcp.getMI().setIntr(rcp.getMI().getIntr() & ~MI_INTR_PI);
-		rcp.setCheckInterrupt(true);
+		cpu.check_interrupt();
 	}
 	else if (address == PI_BSD_DOM1_LAT_REG)
 		rcp.getPI().setBsdDom1Lat(data);
@@ -474,23 +465,17 @@ inline bool MMU::write_in_register(word data, word address)
 	{
 		rcp.getSI().setPifAddrRd64b(data);
 		rcp.dma_si_read();
-		rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_SI);
-		rcp.getSI().setStatus(rcp.getSI().getStatus() | SI_STATUS_INTERRUPT);
-		rcp.setCheckInterrupt(true);
 	}
 	else if (address == SI_PIF_ADDR_WR64B_REG)
 	{
 		rcp.getSI().setPifAddrWr64b(data);
 		rcp.dma_si_write();
-		rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_SI);
-		rcp.getSI().setStatus(rcp.getSI().getStatus() | SI_STATUS_INTERRUPT);
-		rcp.setCheckInterrupt(true);
 	}
 	else if (address == SI_STATUS_REG)
 	{
 		rcp.getSI().setSpecialStatus(data);
 		rcp.getMI().setIntr(rcp.getMI().getIntr() & ~MI_INTR_SI);
-		rcp.setCheckInterrupt(true);
+		cpu.check_interrupt();
 	}
 	else
 		return false;
