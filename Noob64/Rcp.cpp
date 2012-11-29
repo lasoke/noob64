@@ -107,9 +107,9 @@ void RCP::refresh_screen()
 	}
 
 	TimerHandler& t = cpu.getTimerHandler();
-	t.change_timer(VI_TIMER, t.timer + t.next_timer[VI_TIMER] + VI_INTR_TIME, cpu.getCop0(COMPARE), cpu.getCop0(COUNT));
+	t.change_timer(VI_TIMER, t.getTimer() + t.getNextTimer(VI_TIMER) + VI_INTR_TIME);
 	
-	if ((VI_STATUS_REG & 0x10) != 0)
+	if (VI_STATUS_REG & 0x10)
 		cpu.setViFieldNumber(!cpu.getViFieldNumber() ? 1 : 0);
 	else
 		cpu.setViFieldNumber(0);
@@ -121,12 +121,13 @@ void RCP::refresh_screen()
 void RCP::updateCurrentHalfLine ()
 {
 	TimerHandler& t = cpu.getTimerHandler();
-    if (t.timer < 0) { 
+    if (t.getTimer() < 0)
+	{ 
 		halfline = 0;
 		return;
 	}
 
-	halfline = (t.timer / 1500);
+	halfline = (t.getTimer() / 1500);
 	halfline &= ~1;
 	halfline += cpu.getViFieldNumber();
 }

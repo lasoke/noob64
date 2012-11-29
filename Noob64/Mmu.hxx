@@ -402,6 +402,7 @@ inline bool MMU::write_in_register(word data, word address)
 	{
 		rcp.getMI().setIntr(rcp.getMI().getIntr() & ~MI_INTR_AI);
 		rcp.setCheckInterrupt(true);
+		cpu.check_interrupt();
 	}
 	else if (address == AI_DACRATE_REG)
 		rcp.getAI().setDacrate(data);

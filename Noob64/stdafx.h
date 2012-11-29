@@ -79,6 +79,7 @@
 #include "Rcp.hxx"
 #include "Mmu.hxx"
 #include "Instruction.hxx"
+#include "TimerHandler.hxx"
 #include "R4300i.hxx"
 #include "RdramRegs.hxx"
 #include "Sp.hxx"

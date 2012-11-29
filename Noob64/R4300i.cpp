@@ -28,8 +28,7 @@
 R4300i::R4300i(RCP *r) :
 		rcp(*r),
 		mmu(*new MMU(*this, rcp)),
-		timer_handler(*new TimerHandler())
-		
+		timer_handler(*new TimerHandler(rcp, *this))
 {
 }
 
@@ -125,21 +124,13 @@ void R4300i::start()
 	int i = 0;
 	int j = -1;
 	word content = 0;
+
 	while (running)
 	{
 		content = mmu.read<word>(0x803359A8);
-		if (rcp.isCheckInterrupt())
-		{
-			check_interrupt();
-			rcp.setCheckInterrupt(false);
-			if (interrupt_detected)
-			{
-				trigger_intr_exception();
-				interrupt_detected = false;
-			}
-		}
-		++Count;
-		timer_handler.timer -= 2;
+
+		Count += TIME_UNIT;
+		timer_handler.setTimer(timer_handler.getTimer() - TIME_UNIT);
 		if ((pc & 0xFFFFFFFF) == 0x80322DF0)
 			++i;
 		if (i >= 51 && (pc & 0xFFFFFFFF) == 0x8027F55C)
@@ -147,7 +138,14 @@ void R4300i::start()
 		if (j == i && ((pc & 0xFFFFFFFF) < 0x8027f500 || (pc & 0xFFFFFFFF) > 0x8027f574))
 			j= i;
 		decode(mmu.read<word>((word) pc));
-		if (timer_handler.timer < 0)
-			timer_done();
+
+		if (timer_handler.getTimer() < 0)
+			timer_handler.timer_done();
+
+		if (interrupt_detected)
+		{
+			interrupt_detected = false;
+			trigger_intr_exception();
+		}
 	}
 }

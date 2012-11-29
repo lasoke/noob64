@@ -10,16 +10,23 @@
 class TimerHandler
 {
 public:
-	TimerHandler();
+	TimerHandler(RCP&, R4300i&);
+
+	inline int getTimer(void);
+	inline void setTimer(int);
+	inline int getNextTimer(int);
 
 	void reset(void);
+	void change_compare_timer(void);
+	void change_timer (int Type, int Value);
+	void check_timer(void);
+	void timer_done(void);
 
-	void change_compare_timer(word compare, word count);
-	void change_timer (int Type, int Value, word compare, word count);
-	void check_timer(word compare, word count);
-
-	int  current_timer_type;
-	int  timer;
-	int  next_timer[MAX_TIMERS];
-	bool active[MAX_TIMERS];
+private:
+	RCP		&rcp;
+	R4300i	&cpu;
+	int		current_timer_type;
+	int		timer;
+	int		next_timer[MAX_TIMERS];
+	bool	active[MAX_TIMERS];
 };

@@ -24,6 +24,11 @@
 
 #pragma once
 
+#define KSEG0					0x80000000
+#define KSEG1					0xA0000000
+#define KSEG2					0xC0000000
+#define KSEG3					0xE0000000
+
 typedef struct {
    short			mask;	// Comparison MASK
    long				vpn2;	// Virtual Page Number / 2
