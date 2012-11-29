@@ -130,22 +130,14 @@ void R4300i::start()
 		content = mmu.read<word>(0x803359A8);
 
 		Count += TIME_UNIT;
-		timer_handler.setTimer(timer_handler.getTimer() - TIME_UNIT);
+		timer_handler.decTimer();
+
 		if ((pc & 0xFFFFFFFF) == 0x80322DF0)
 			++i;
 		if (i >= 51 && (pc & 0xFFFFFFFF) == 0x8027F55C)
 			j = i;
 		if (j == i && ((pc & 0xFFFFFFFF) < 0x8027f500 || (pc & 0xFFFFFFFF) > 0x8027f574))
-			j= i;
+			j = i;
 		decode(mmu.read<word>((word) pc));
-
-		if (timer_handler.getTimer() < 0)
-			timer_handler.timer_done();
-
-		if (interrupt_detected)
-		{
-			interrupt_detected = false;
-			trigger_intr_exception();
-		}
 	}
 }

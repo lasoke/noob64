@@ -356,14 +356,10 @@ inline char* MMU::virtual_to_physical(word a)
 	if (rcp.getPifRom().contains(a))		return rcp.getPifRom()[a];
 	if (rcp.getPifRam().contains(a))		return rcp.getPifRam()[a];
 
-	if (KSEG0 <= a && a <= KSEG1-1)		// Mirror of 0x0000 0000 to 0x1FFF FFFF
-		return (virtual_to_physical(a-KSEG0));
-	if (KSEG1 <= a && a <= KSEG2-1)		// Mirror of 0x0000 0000 to 0x1FFF FFFF
-		return (virtual_to_physical(a-KSEG1));
-	if (KSEG2 <= a && a <= KSEG3-1)		// TLB mapped
-		throw TLB_NOT_HANDLED;
-	if (KSEG3 <= a && a <= 0xFFFFFFFF)	// TLB mapped
-		throw TLB_NOT_HANDLED;
+	if (KSEG0 <= a && a <= KSEG1-1)			return (virtual_to_physical(a-KSEG0)); // Mirror of 0x0000 0000 to 0x1FFF FFFF
+	if (KSEG1 <= a && a <= KSEG2-1)			return (virtual_to_physical(a-KSEG1)); // Mirror of 0x0000 0000 to 0x1FFF FFFF
+	if (KSEG2 <= a && a <= KSEG3-1)			throw TLB_NOT_HANDLED; // TLB mapped
+	if (KSEG3 <= a && a <= 0xFFFFFFFF)		throw TLB_NOT_HANDLED; // TLB mapped
 
 	cerr << endl << "ERROR: Virtual address 0x" << hex << a << " not handled" << endl;
 	throw VIRTUAL_ADDRESS_ERROR;

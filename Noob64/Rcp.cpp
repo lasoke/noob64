@@ -47,7 +47,6 @@ RCP::RCP(ROM* rom) :
 {
 	memset(SRAM, 0, sizeof(SRAM));
 	cic_chip = 0;
-	check_intr = false;
 }
 
 void RCP::start()

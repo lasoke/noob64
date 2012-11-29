@@ -14,6 +14,7 @@ public:
 
 	inline int getTimer(void);
 	inline void setTimer(int);
+	inline void decTimer(void);
 	inline int getNextTimer(int);
 
 	void reset(void);

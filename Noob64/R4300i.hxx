@@ -662,6 +662,17 @@ inline void R4300i::decode_fpu(const word i)
 #	define PRINT(instr)
 #endif
 
+#define CHECK_TIMER()					\
+	if (timer_handler.getTimer() < 0)	\
+		timer_handler.timer_done()
+
+#define CHECK_INTERRUPT()				\
+	if (interrupt_detected)				\
+	{									\
+		interrupt_detected = false;		\
+		trigger_intr_exception();		\
+	}
+
 inline void R4300i::LB(int rt, int immed, int rs)
 {
 	PRINT_PC("LB " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
@@ -1397,31 +1408,18 @@ inline void R4300i::BEQ(int rs, int rt, int immed)
 #	endif
 	sdword local_rs = r[rs];
 	sdword local_rt = r[rt];
-	if ((word) (pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == (word) pc)
-	{
-		if (rcp.getSP().getStatus() & 0x1)
-		{
-			if (local_rs == local_rt)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
-		}
-	}
 	pc += 4;
 	delay_slot = true;
+
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = false;
 	if (local_rs == local_rt)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BEQL(int rs, int rt, int immed)
@@ -1433,35 +1431,20 @@ inline void R4300i::BEQL(int rs, int rt, int immed)
 
 	sdword local_rs = r[rs];
 	sdword local_rt = r[rt];
-	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-	{
-		if (rcp.getSP().getStatus() & 0x1)
-		{
-			if (local_rs == local_rt)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
-		}
-	}
 	if (local_rs == local_rt)
 	{
 		pc += 4;
 		delay_slot = true;
 		decode(mmu.read<word>((word) pc));
-		++Count;
-		timer_handler.setTimer(timer_handler.getTimer() - 2);
+		Count += TIME_UNIT;
+		timer_handler.decTimer();
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
 	else
 		pc += 8;
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BGEZ(int immed, int rs)
@@ -1469,27 +1452,16 @@ inline void R4300i::BGEZ(int immed, int rs)
 	PRINT_PC("BGEZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
 	sdword local_rs = r[rs];
-	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.getSP().getStatus() & 0x1)
-			if (local_rs >= 0)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
 	pc += 4;
 	delay_slot = true;
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = false;
 	if (local_rs >= 0)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BGEZAL(int immed, int rs)
@@ -1500,28 +1472,17 @@ inline void R4300i::BGEZAL(int immed, int rs)
 #	endif
 
 	sdword local_rs = r[rs];
-	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.getSP().getStatus() & 0x1)
-			if (local_rs >= 0)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
 	pc += 4;
 	delay_slot = true;
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = false;
 	r[31] = pc;
 	if (local_rs >= 0)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BGEZALL(int immed, int rs)
@@ -1529,32 +1490,21 @@ inline void R4300i::BGEZALL(int immed, int rs)
 	PRINT_PC("BGEZALL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
 	sdword local_rs = r[rs];
-	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.getSP().getStatus() & 0x1)
-			if (local_rs >= 0)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
 	if (local_rs >= 0)
 	{
 		pc += 4;
 		delay_slot = true;
 		decode(mmu.read<word>((word) pc));
-		++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+		Count += TIME_UNIT;
+	timer_handler.decTimer();
 		delay_slot = false;
 		r[31] = pc;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
 	else
 		pc += 8;
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BGEZL(int immed, int rs)
@@ -1562,31 +1512,20 @@ inline void R4300i::BGEZL(int immed, int rs)
 	PRINT_PC("BGEZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
 	sdword local_rs = r[rs];
-	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.getSP().getStatus() & 0x1)
-			if (local_rs >= 0)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
 	if (local_rs >= 0)
 	{
 		pc += 4;
 		delay_slot = true;
 		decode(mmu.read<word>((word) pc));
-		++Count;
-		timer_handler.setTimer(timer_handler.getTimer() - 2);
+		Count += TIME_UNIT;
+		timer_handler.decTimer();
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
 	else
 		pc += 8;
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BGTZ(int rs, int immed)
@@ -1594,31 +1533,16 @@ inline void R4300i::BGTZ(int rs, int immed)
 	PRINT_PC("BGTZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
 	sdword local_rs = r[rs];
-	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-	{
-		if (rcp.getSP().getStatus() & 0x1)
-		{
-			if (local_rs > 0)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
-		}
-	}
 	pc += 4;
 	delay_slot = true;
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = false;
 	if (local_rs > 0)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BGTZL(int immed, int rs)
@@ -1626,35 +1550,20 @@ inline void R4300i::BGTZL(int immed, int rs)
 	PRINT_PC("BGTZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
 	sdword local_rs = r[rs];
-	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-	{
-		if (rcp.getSP().getStatus() & 0x1)
-		{
-			if (local_rs > 0)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
-		}
-	}
 	if (local_rs > 0)
 	{
 		pc += 4;
 		delay_slot = true;
 		decode(mmu.read<word>((word) pc));
-		++Count;
-		timer_handler.setTimer(timer_handler.getTimer() - 2);
+		Count += TIME_UNIT;
+		timer_handler.decTimer();
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
 	else
 		pc += 8;
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BLEZ(int rs, int immed)
@@ -1662,31 +1571,16 @@ inline void R4300i::BLEZ(int rs, int immed)
 	PRINT_PC("BLEZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
 	sdword local_rs = r[rs];
-	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-	{
-		if (rcp.getSP().getStatus() & 0x1)
-		{
-			if (local_rs <= 0)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
-		}
-	}
 	pc += 4;
 	delay_slot = true;
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = false;
 	if (local_rs <= 0)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BLEZL(int immed, int rs)
@@ -1694,35 +1588,20 @@ inline void R4300i::BLEZL(int immed, int rs)
 	PRINT_PC("BLEZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
 	sdword local_rs = r[rs];
-	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-	{
-		if (rcp.getSP().getStatus() & 0x1)
-		{
-			if (local_rs <= 0)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
-		}
-	}
 	if (local_rs <= 0)
 	{
 		pc += 4;
 		delay_slot = true;
 		decode(mmu.read<word>((word) pc));
-		++Count;
-		timer_handler.setTimer(timer_handler.getTimer() - 2);
+		Count += TIME_UNIT;
+		timer_handler.decTimer();
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
 	else
 		pc += 8;
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BLTZ(int immed, int rs)
@@ -1730,27 +1609,16 @@ inline void R4300i::BLTZ(int immed, int rs)
 	PRINT_PC("BLTZ " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
 	sdword local_rs = r[rs];
-	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.getSP().getStatus() & 0x1)
-			if (local_rs < 0)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
 	pc += 4;
 	delay_slot = true;
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = false;
 	if (local_rs < 0)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BLTZAL(int immed, int rs)
@@ -1758,28 +1626,17 @@ inline void R4300i::BLTZAL(int immed, int rs)
 	PRINT_PC("BLTZAL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
 	sdword local_rs = r[rs];
-	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.getSP().getStatus() & 0x1)
-			if (local_rs < 0)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
 	pc += 4;
 	delay_slot = true;
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = false;
 	r[31] = pc;
 	if (local_rs < 0)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BLTZALL(int immed, int rs)
@@ -1787,32 +1644,21 @@ inline void R4300i::BLTZALL(int immed, int rs)
 	PRINT_PC("BLTZALL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
 	sdword local_rs = r[rs];
-	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.getSP().getStatus() & 0x1)
-			if (local_rs < 0)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
 	if (local_rs < 0)
 	{
 		pc += 4;
 		delay_slot = true;
 		decode(mmu.read<word>((word) pc));
-		++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+		Count += TIME_UNIT;
+	timer_handler.decTimer();
 		delay_slot = false;
 		r[31] = pc;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
 	else
 		pc += 8;
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BLTZL(int immed, int rs)
@@ -1820,31 +1666,20 @@ inline void R4300i::BLTZL(int immed, int rs)
 	PRINT_PC("BLTZL " << dec << "r" << rs << " " << hex << "0x" << extend_sign_halfword(immed));
 
 	sdword local_rs = r[rs];
-	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-		if (rcp.getSP().getStatus() & 0x1)
-			if (local_rs < 0)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
 	if (local_rs < 0)
 	{
 		pc += 4;
 		delay_slot = true;
 		decode(mmu.read<word>((word) pc));
-		++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+		Count += TIME_UNIT;
+	timer_handler.decTimer();
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
 	else
 		pc += 8;
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BNE(int rs, int rt, int immed)
@@ -1856,31 +1691,16 @@ inline void R4300i::BNE(int rs, int rt, int immed)
 
 	dword local_rs = r[rs];
 	dword local_rt = r[rt];
-	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-	{
-		if (rcp.getSP().getStatus() & 0x1)
-		{
-			if (local_rs != local_rt)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
-		}
-	}
 	pc += 4;
 	delay_slot = true;
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = false;
 	if (local_rs != local_rt)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BNEL(int rs, int rt, int immed)
@@ -1892,89 +1712,50 @@ inline void R4300i::BNEL(int rs, int rt, int immed)
 
 	dword local_rs = r[rs];
 	dword local_rt = r[rt];
-	if ((pc + (extend_sign_halfword(extend_sign_halfword(immed) + 1) << 2)) == pc)
-	{
-		if (rcp.getSP().getStatus() & 0x1)
-		{
-			if (local_rs != local_rt)
-			{
-				if (probe_nop((word) (pc+4)))
-				{
-					if (timer_handler.getTimer() > 0)
-					{
-						Count += timer_handler.getTimer() + 1;
-						timer_handler.setTimer(-1);
-					}
-				}
-			}
-		}
-	}
 	if (local_rs != local_rt)
 	{
 		pc += 4;
 		delay_slot = true;
 		decode(mmu.read<word>((word) pc));
-		++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+		Count += TIME_UNIT;
+	timer_handler.decTimer();
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
 	else
 		pc += 8;
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::J(int address)
 {
 	PRINT_PC("J " << address);
 
-	if (((pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2)) == pc)
-	{
-		if (rcp.getSP().getStatus() & 0x1)
-		{
-			if (probe_nop((word) (pc+4)))
-			{
-				if (timer_handler.getTimer() > 0)
-				{
-					Count += timer_handler.getTimer() + 1;
-					timer_handler.setTimer(-1);
-				}
-			}
-		}
-	}
 	pc += 4;
 	delay_slot = true;
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = false;
 	pc = (pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2);
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::JAL(int address)
 {
 	PRINT_PC("JAL " << address);
-	if (((pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2)) == pc)
-	{
-		if (rcp.getSP().getStatus() & 0x1)
-		{
-			if (probe_nop((word) (pc+4)))
-			{
-				if (timer_handler.getTimer() > 0)
-				{
-					Count += timer_handler.getTimer() + 1;
-					timer_handler.setTimer(-1);
-				}
-			}
-		}
-	}
 	pc += 4;
 	delay_slot = true;
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = false;
 	r[31] = extend_sign_word(pc);
 	pc = (pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2);
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::JALR(int rs, int rd)
@@ -1982,28 +1763,16 @@ inline void R4300i::JALR(int rs, int rd)
 	PRINT_PC("JALR " << dec << "r" << rs << " " << dec << "r" << rd);
 
 	dword local_rs = r[rs];
-	if (local_rs == pc)
-	{
-		if (rcp.getSP().getStatus() & 0x1)
-		{
-			if (probe_nop((word) (pc+4)))
-			{
-				if (timer_handler.getTimer() > 0)
-				{
-					Count += timer_handler.getTimer() + 1;
-					timer_handler.setTimer(-1);
-				}
-			}
-		}
-	}
 	pc += 4;
 	delay_slot = true;
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = false;
 	r[rd] = extend_sign_word(pc);
 	pc = local_rs;
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::JR(int rs)
@@ -2011,27 +1780,15 @@ inline void R4300i::JR(int rs)
 	PRINT_PC("JR " << dec << "r" << rs);
 
 	dword local_rs = r[rs];
-	if (local_rs == pc)
-	{
-		if (rcp.getSP().getStatus() & 0x1)
-		{
-			if (probe_nop((word) (pc+4)))
-			{
-				if (timer_handler.getTimer() > 0)
-				{
-					Count += timer_handler.getTimer() + 1;
-					timer_handler.setTimer(-1);
-				}
-			}
-		}
-	}
 	pc += 4;
 	delay_slot = true;
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = false;
 	pc = local_rs;
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BREAK(int immed)
@@ -2128,8 +1885,8 @@ int jump_marker = 0;
 
 inline void R4300i::ERET(void)
 {
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	PRINT_PC("ERET");
 	if (Status & 0x4)
 	{
@@ -2184,8 +1941,8 @@ inline void R4300i::MTC0(int rt, int fs)
 	case 8:    // BadVAddr
 		break;
 	case 9:    // Count
-		++Count;
-		timer_handler.setTimer(timer_handler.getTimer() - 2);
+		Count += TIME_UNIT;
+		timer_handler.decTimer();
 		Count = r[rt] & 0xFFFFFFFF;
 		timer_handler.change_compare_timer();
 		break;
@@ -2199,8 +1956,8 @@ inline void R4300i::MTC0(int rt, int fs)
 		break;
 	case 12:   // Status
 		Status = r[rt] & 0xFFFFFFFF;
-		++Count;
-		timer_handler.setTimer(timer_handler.getTimer() - 2);
+		Count += TIME_UNIT;
+		timer_handler.decTimer();
 //		check_interupt();
 		break;
 	case 13:   // Cause
@@ -2359,8 +2116,8 @@ inline void R4300i::TLBWR(void)
 {
 	PRINT_PC("TLBWR");
 	unsigned int i;
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	Random = (Count/2 % (32 - Wired)) + Wired;
 	if (mmu.tlb[Random].v0)
 	{
@@ -2468,8 +2225,8 @@ inline void R4300i::BC1F(int immed)
 	pc += 4;
 	delay_slot = 1;
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = 0;
 	if ((fcr31 & 0x800000)==0)
 		pc = pc_tmp;
@@ -2486,8 +2243,8 @@ inline void R4300i::BC1FL(int immed)
 	pc += 4;
 	delay_slot = true;
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = false;
 	if ((fcr31 & 0x800000)==0)
 		pc = pc_tmp;
@@ -2504,8 +2261,8 @@ inline void R4300i::BC1T(int immed)
 	pc += 4;
 	delay_slot = 1;
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = 0;
 	if ((fcr31 & 0x800000)!=0)
 		pc = pc_tmp;
@@ -2522,8 +2279,8 @@ inline void R4300i::BC1TL(int immed)
 	pc += 4;
 	delay_slot = true;
 	decode(mmu.read<word>((word) pc));
-	++Count;
-	timer_handler.setTimer(timer_handler.getTimer() - 2);
+	Count += TIME_UNIT;
+	timer_handler.decTimer();
 	delay_slot = false;
 	if ((fcr31 & 0x800000) != 0)
 		pc = pc_tmp;

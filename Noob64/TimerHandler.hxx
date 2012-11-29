@@ -28,4 +28,5 @@
 
 inline int TimerHandler::getTimer(void)			{ return timer; }
 inline void TimerHandler::setTimer(int t)		{ timer = t; }
+inline void TimerHandler::decTimer(void)		{ timer -= TIME_UNIT; }
 inline int TimerHandler::getNextTimer(int type)	{ return next_timer[type]; }

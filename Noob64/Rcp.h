@@ -82,8 +82,6 @@ public:
 	void run_rsp(void);
 	void refresh_screen(void);	// Refreshs the screen when the vi timer is done
 	void updateCurrentHalfLine (void);
-	inline bool isCheckInterrupt(void) const;
-	inline void setCheckInterrupt(bool);
 
 	inline R4300i&		getCPU(void) const;
 	inline ROM&			getROM(void) const;
@@ -126,7 +124,6 @@ private:
 
 	byte		SRAM[0x8000];
 	word		cic_chip;
-	bool		check_intr;
 	word		halfline;
 
 	inline void checkDMA(word address);
