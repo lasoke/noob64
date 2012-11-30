@@ -37,9 +37,8 @@ Type MMU::read(word address, bool trigger_event)
 	if (trigger_event && typeid(Type) == typeid(word) && read_from_register((word *) &res, address))
 		return res;
 
-	byte dst[sizeof(Type)];
-	memcpy(dst, virtual_to_physical(address), sizeof(Type));
-	res = binary_to_type<Type>(dst);
+	memcpy(&res, virtual_to_physical(address), sizeof(Type));
+	res = binary_to_type<Type>(res);
 	return res;
 }
 
@@ -163,7 +162,7 @@ inline void MMU::write(Type data, word address, bool trigger_event)
 	if (trigger_event && typeid(Type) == typeid(word) && write_in_register((word) data, address))
 		return;
 
-	void *dst = virtual_to_physical(address);
+	char *dst = virtual_to_physical(address);
 	data = type_to_binary<Type>(data);
 	memcpy(dst, &data, sizeof(Type));
 }
@@ -203,19 +202,17 @@ inline bool MMU::write_in_register(word data, word address)
 	else if (address == SP_STATUS_REG)
 	{
 		rcp.getSP().setSpecialStatus(data);
-		if (data & SP_SET_SIG0) 
+		if (data & SP_SET_INTR)
 		{
 			rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_SP);
 			cpu.check_interrupt();
 		}
 		if (data & SP_CLR_INTR)
-		{ 
+		{
 			rcp.getMI().setIntr(rcp.getMI().getIntr() & ~MI_INTR_SP);
-			rcp.run_rsp();
 			cpu.check_interrupt();
 		}
-		else
-			rcp.run_rsp();
+		rcp.run_rsp();
 	}
 	else if (address == SP_DMA_FULL_REG)			rcp.getSP().setDmaFull(data);
 	else if (address == SP_DMA_BUSY_REG)			rcp.getSP().setDmaBusy(data);

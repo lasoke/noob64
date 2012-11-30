@@ -68,27 +68,6 @@ byte getByte(char **ptr)
 	return value;
 }
 
-void dump_array(word start_addr, const byte *data, unsigned int size, int type)
-{
-	word line = 0;
-	for (unsigned int i = 0; i < size; i += (sizeof(word) * 4))
-	{
-		// print address
-		char addr[8];
-		_itoa_s(start_addr + i, addr, 16);
-		cout << format_number(string(8 - strlen(addr), '0') + addr, ' ', 2) << " : ";
-		// print data
-		for (unsigned int j = 0; j < 4; ++j)
-		{
-			line = binary_to_type<word>(data + i + j * 4);
-			char mem[32];
-			_itoa_s(line, mem, type);
-			cout << format_number(string(sizeof(word) * 2 - strlen(mem), '0') + mem, ' ', 8) << " ";
-		}
-		cout << endl;
-	}
-}
-
 void dummy()
 {
 	cout << "DUMMY" << endl;

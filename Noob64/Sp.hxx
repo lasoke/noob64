@@ -27,7 +27,7 @@
 #include "Sp.h"
 
 inline void SP::setMemAddr(word w)			{ data.mem_addr = w; }
-inline void SP::setDramAddr(word w)		{ data.dram_addr = w; }
+inline void SP::setDramAddr(word w)			{ data.dram_addr = w; }
 inline void SP::setRdLen(word w)			{ data.rd_len = w; }
 inline void SP::setWrLen(word w)			{ data.wr_len = w; }
 inline void SP::setStatus(word w)			{ data.status = w; }

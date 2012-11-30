@@ -19,7 +19,7 @@ public:
 
 	void reset(void);
 	void change_compare_timer(void);
-	void change_timer (int Type, int Value);
+	void change_timer(int Type, int Value);
 	void check_timer(void);
 	void timer_done(void);
 

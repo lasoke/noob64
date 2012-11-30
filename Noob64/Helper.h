@@ -37,7 +37,7 @@ byte getByte(char **ptr);
 void dump_array(word start_addr, const byte *data, unsigned int size, int type);
 
 // Converts a byte array to its type representation
-template <typename Type> inline Type binary_to_type(const byte *address);
+template <typename Type> inline Type binary_to_type(Type toSwap);
 
 // Converts a type to its binary representation
 template <typename Type> inline Type type_to_binary(Type data);

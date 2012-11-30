@@ -74,7 +74,7 @@ void RCP::run_rsp(void)
 
 	if (task == 1 && (dpc.getStatus() & DPC_STATUS_FREEZE)) 
 		return;
-                        
+	
 	if (task == 1)
 		cpu.incDList();
 	else if (task == 2)
@@ -82,7 +82,7 @@ void RCP::run_rsp(void)
 
 	rsp->doRspCycles(100);
 
-#	ifdef CFB_READ	
+#	ifdef CFB_READ
 		if (VI_ORIGIN_REG > 0x280) 
 			SetFrameBuffer(VI_ORIGIN_REG, (word)(VI_WIDTH_REG * (VI_WIDTH_REG *.75)));
 #	endif
@@ -91,29 +91,11 @@ void RCP::run_rsp(void)
 
 void RCP::refresh_screen()
 {
-	static word OLD_VI_V_SYNC_REG = 0, VI_INTR_TIME = 500000;
-
-	if (OLD_VI_V_SYNC_REG != vi.getVsync())
-	{
-		if (!vi.getVsync())
-			VI_INTR_TIME = 500000;
-		else 
-		{
-			VI_INTR_TIME = (vi.getVsync() + 1) * 1500;
-			if (vi.getVsync() % 1)
-				VI_INTR_TIME -= 38;
-		}
-	}
-
-	TimerHandler& t = cpu.getTimerHandler();
-	t.change_timer(VI_TIMER, t.getTimer() + t.getNextTimer(VI_TIMER) + VI_INTR_TIME);
-	
-	if (VI_STATUS_REG & 0x10)
-		cpu.setViFieldNumber(!cpu.getViFieldNumber() ? 1 : 0);
-	else
-		cpu.setViFieldNumber(0);
-
 	gfx->updateScreen();
+	word delay = !vi.getVsync() ? 500000 : (vi.getVsync() + 1) * 1500;
+	TimerHandler& t = cpu.getTimerHandler();
+	t.change_timer(VI_TIMER, t.getTimer() + t.getNextTimer(VI_TIMER) + delay);
+	cpu.setViFieldNumber(VI_STATUS_REG & 0x40 ? 1 - cpu.getViFieldNumber() : 0);
 }
 
 

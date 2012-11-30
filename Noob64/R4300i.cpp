@@ -43,7 +43,7 @@ void R4300i::reset()
 	pc						= 0;
 	hi						= 0;
 	lo						= 0;
-	fcr0					= 0;
+	fcr0					= 0x511;
 	fcr31					= 0x01000800;
 	ll						= false;
 
@@ -88,21 +88,13 @@ void R4300i::pif_init()
 	PRevID	= 0x00000B00;
 	Random	= 0x0000001F;
 
-	mmu.write<word>(0x02020202, MI_VERSION_REG, false);
-	mmu.write<word>(0x00000041, SP_STATUS_REG, false);
-	mmu.write<word>(0x00000088, DPC_STATUS_REG, false);
-	mmu.write<word>(0x00000040, PI_BSD_DOM1_LAT_REG, false);
-	mmu.write<word>(0x00000012, PI_BSD_DOM1_PWD_REG, false);
-	mmu.write<word>(0x00000007, PI_BSD_DOM1_PGS_REG, false);
-	mmu.write<word>(0x00000003, PI_BSD_DOM1_RLS_REG, false);
-
-	fcr0 = 0x511;
-
-	sdword CRC = 0;
-	
-	for(int i = 0; i < 0x1000; i++) // Copies first 0x1000 bytes of ROM to first 0x1000 bytes of SP_MEM
-		mmu.write<byte>(*((byte*) mmu[ROM_SEG_BEGINING+i]), SP_SEG_BEGINING+i);
-	pc = 0xA4000040; // Sets PC right after the ROM header
+	rcp.getMI().setVersion(0x02020202);
+	rcp.getSP().setStatus(0x00000041);
+	rcp.getDPC().setStatus(0x00000088);
+	rcp.getPI().setBsdDom1Lat(0x00000040);
+	rcp.getPI().setBsdDom1Pwd(0x00000012);
+	rcp.getPI().setBsdDom1Pgs(0x00000007);
+	rcp.getPI().setBsdDom1Rls(0x00000003);
 
 	mmu.write<word>(0x3C0DBFC0, SP_IMEM, false);
 	mmu.write<word>(0xBDA807FC, SP_IMEM + 0x004, false);
@@ -114,6 +106,10 @@ void R4300i::pif_init()
 	mmu.write<word>(0x3C0BB000, SP_IMEM + 0x01C, false);
 	mmu.write<word>(0x6886A9C1, SP_IMEM + 0xF94, false);
 	mmu.write<word>(0x915F5B7E, SP_IMEM + 0xF90, false);
+	
+	for(int i = 0; i < 0x1000; i++) // Copies first 0x1000 bytes of ROM to first 0x1000 bytes of SP_MEM
+		mmu.write<byte>(*((byte*) mmu[ROM_SEG_BEGINING+i]), SP_SEG_BEGINING+i);
+	pc = 0xA4000040; // Sets PC right after the ROM header
 }
 
 void R4300i::start()
@@ -121,23 +117,11 @@ void R4300i::start()
 	reset();
 	pif_init();
 
-	int i = 0;
-	int j = -1;
-	word content = 0;
-
 	while (running)
 	{
-		content = mmu.read<word>(0x803359A8);
-
 		Count += TIME_UNIT;
 		timer_handler.decTimer();
 
-		if ((pc & 0xFFFFFFFF) == 0x80322DF0)
-			++i;
-		if (i >= 51 && (pc & 0xFFFFFFFF) == 0x8027F55C)
-			j = i;
-		if (j == i && ((pc & 0xFFFFFFFF) < 0x8027f500 || (pc & 0xFFFFFFFF) > 0x8027f574))
-			j = i;
 		decode(mmu.read<word>((word) pc));
 	}
 }

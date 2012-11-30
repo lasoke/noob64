@@ -27,11 +27,11 @@
 #include "Helper.h"
 
 template <typename Type>
-inline Type binary_to_type(const byte *address)
+inline Type binary_to_type(Type toSwap)
 {
 	Type result = 0;
 	for (unsigned int i = 0; i < sizeof(result); i++)
-		result = (result << 8) + address[i];
+		result = (result << 8) + ((byte*) &toSwap)[i];
 	return result;
 }
 
