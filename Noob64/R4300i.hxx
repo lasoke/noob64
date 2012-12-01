@@ -1849,12 +1849,12 @@ int jump_marker = 0;
 
 inline void R4300i::ERET(void)
 {
-	Count += TIME_UNIT;
-	timer_handler.decTimer();
 	PRINT_PC("ERET");
-	if (Status & 0x4)
+	if (Status & STATUS_ERL)
 	{
-		PRINT_PC(" : ERROR IN ERET");
+		PRINT_PC(" : ERROR");
+		Status &= ~STATUS_ERL;
+		pc = ErrorEpc;
 	}
 	else
 	{
@@ -1863,7 +1863,7 @@ inline void R4300i::ERET(void)
 	}
 	ll = 0;
 	check_interrupt();
-	//CHECK_TIMER();
+	CHECK_TIMER();
 	CHECK_INTERRUPT();
 }
 
