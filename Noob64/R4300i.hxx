@@ -1845,24 +1845,24 @@ inline void R4300i::CACHE(int rt, int immed, int rs)
 	pc += 4;
 }
 
-int jump_marker = 0;
+static bool first_eret = true;
 
 inline void R4300i::ERET(void)
 {
 	PRINT_PC("ERET");
-	if (Status & STATUS_ERL)
-	{
-		PRINT_PC(" : ERROR");
-		Status &= ~STATUS_ERL;
-		pc = ErrorEpc;
-	}
-	else
-	{
-		Status &= 0xFFFFFFFD;
-		pc = Epc;
-	}
+	Status &= (Status & STATUS_ERL) ? ~STATUS_ERL : 0xFFFFFFFD;
+	pc = (Status & STATUS_ERL) ? ErrorEpc : Epc;
 	ll = 0;
 	check_interrupt();
+
+	// Workaround to trigger the PI timer that what supposed to occure
+	// when we copied the first 0x1000 bytes of the ROM to the RAM
+	if (first_eret)
+	{
+		first_eret = false;
+		timer_handler.force_pi_timer_done();
+	}
+
 	CHECK_TIMER();
 	CHECK_INTERRUPT();
 }

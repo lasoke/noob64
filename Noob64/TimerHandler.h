@@ -23,7 +23,16 @@ public:
 	void check_timer(void);
 	void timer_done(void);
 
+	// Temporary workaround to trigger the PI timer from outside the class
+	inline void force_pi_timer_done();
+
 private:
+	inline void compare_timer_done();
+	inline void si_timer_done();
+	inline void pi_timer_done();
+	inline void vi_timer_done();
+	inline void rsp_timer_done();
+
 	RCP		&rcp;
 	R4300i	&cpu;
 	int		current_timer_type;
