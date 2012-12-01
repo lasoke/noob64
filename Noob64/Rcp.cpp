@@ -46,7 +46,7 @@ RCP::RCP(ROM* rom) :
 	pif_ram		(*new PIF_RAM())
 {
 	memset(SRAM, 0, sizeof(SRAM));
-	cic_chip = 0;
+	vi_field_number	= 0;
 }
 
 void RCP::start()
@@ -69,25 +69,11 @@ void RCP::run_rsp(void)
 {
 	if (sp.getStatus() & SP_STATUS_HALT || sp.getStatus() & SP_STATUS_BROKE)
 		return;
-
 	word task = *(word*)(cpu.getMMU()[SP_DMEM + 0xFC0]);
-
 	if (task == 1 && (dpc.getStatus() & DPC_STATUS_FREEZE)) 
 		return;
-	
-	if (task == 1)
-		cpu.incDList();
-	else if (task == 2)
-		cpu.incAList();
-
 	rsp->doRspCycles(100);
-
-#	ifdef CFB_READ
-		if (VI_ORIGIN_REG > 0x280) 
-			SetFrameBuffer(VI_ORIGIN_REG, (word)(VI_WIDTH_REG * (VI_WIDTH_REG *.75)));
-#	endif
 }
-
 
 void RCP::refresh_screen()
 {
@@ -95,11 +81,10 @@ void RCP::refresh_screen()
 	word delay = !vi.getVsync() ? 500000 : (vi.getVsync() + 1) * 1500;
 	TimerHandler& t = cpu.getTimerHandler();
 	t.change_timer(VI_TIMER, t.getTimer() + t.getNextTimer(VI_TIMER) + delay);
-	cpu.setViFieldNumber(VI_STATUS_REG & 0x40 ? 1 - cpu.getViFieldNumber() : 0);
+	vi_field_number = VI_STATUS_REG & 0x40 ? 1 - vi_field_number : 0;
 }
 
-
-void RCP::updateCurrentHalfLine ()
+void RCP::update_current_halfLine()
 {
 	TimerHandler& t = cpu.getTimerHandler();
     if (t.getTimer() < 0)
@@ -107,10 +92,9 @@ void RCP::updateCurrentHalfLine ()
 		halfline = 0;
 		return;
 	}
-
 	halfline = (t.getTimer() / 1500);
 	halfline &= ~1;
-	halfline += cpu.getViFieldNumber();
+	halfline += vi_field_number;
 }
 
 //****************************************************************************
@@ -121,21 +105,21 @@ void RCP::updateCurrentHalfLine ()
 	memset(&data, 0, sizeof(data));	\
 	ptr = (char*) &data;
 
-MEM_SEG::MEM_SEG(word b, word e) : ptr(0), begining(b), end(e)					{}
-MEM_SEG::~MEM_SEG()																{}
-RDRAM::RDRAM() : MEM_SEG(RDRAM_SEG_BEGINING, RDRAM_SEG_END)						{ INIT() }
-RDRAM_REGS::RDRAM_REGS() : MEM_SEG(RDRAM_REGS_SEG_BEGINING, RDRAM_REGS_SEG_END) { INIT() }
-SP::SP() : MEM_SEG(SP_SEG_BEGINING, SP_SEG_END)									{ INIT() }
-DPC::DPC() : MEM_SEG(DPC_SEG_BEGINING, DPC_SEG_END)								{ INIT() }
-DPS::DPS() : MEM_SEG(DPS_SEG_BEGINING, DPS_SEG_END)								{ INIT() }
-MI::MI() : MEM_SEG(MI_SEG_BEGINING, MI_SEG_END)									{ INIT() }
-VI::VI() : MEM_SEG(VI_SEG_BEGINING, VI_SEG_END)									{ INIT() }
-AI::AI() : MEM_SEG(AI_SEG_BEGINING, AI_SEG_END)									{ INIT() }
-PI::PI() : MEM_SEG(PI_SEG_BEGINING, PI_SEG_END)									{ INIT() }
-RI::RI() : MEM_SEG(RI_SEG_BEGINING, RI_SEG_END)									{ INIT() }
-SI::SI() : MEM_SEG(SI_SEG_BEGINING, SI_SEG_END)									{ INIT() }
-PIF_ROM::PIF_ROM() : MEM_SEG(PIF_ROM_SEG_BEGINING, PIF_ROM_SEG_END)				{ INIT() }
-PIF_RAM::PIF_RAM() : MEM_SEG(PIF_RAM_SEG_BEGINING, PIF_RAM_SEG_END)				{ INIT() }
+MEM_SEG::MEM_SEG(word b, word e) : ptr(0), begining(b), end(e)				{}
+MEM_SEG::~MEM_SEG()															{}
+RDRAM::RDRAM() : MEM_SEG(RDRAM_SEG_BEG, RDRAM_SEG_END)						{ INIT() }
+RDRAM_REGS::RDRAM_REGS() : MEM_SEG(RDRAM_REGS_SEG_BEG, RDRAM_REGS_SEG_END)	{ INIT() }
+SP::SP() : MEM_SEG(SP_SEG_BEG, SP_SEG_END)									{ INIT() }
+DPC::DPC() : MEM_SEG(DPC_SEG_BEG, DPC_SEG_END)								{ INIT() }
+DPS::DPS() : MEM_SEG(DPS_SEG_BEG, DPS_SEG_END)								{ INIT() }
+MI::MI() : MEM_SEG(MI_SEG_BEG, MI_SEG_END)									{ INIT() }
+VI::VI() : MEM_SEG(VI_SEG_BEG, VI_SEG_END)									{ INIT() }
+AI::AI() : MEM_SEG(AI_SEG_BEG, AI_SEG_END)									{ INIT() }
+PI::PI() : MEM_SEG(PI_SEG_BEG, PI_SEG_END)									{ INIT() }
+RI::RI() : MEM_SEG(RI_SEG_BEG, RI_SEG_END)									{ INIT() }
+SI::SI() : MEM_SEG(SI_SEG_BEG, SI_SEG_END)									{ INIT() }
+PIF_ROM::PIF_ROM() : MEM_SEG(PIF_ROM_SEG_BEG, PIF_ROM_SEG_END)				{ INIT() }
+PIF_RAM::PIF_RAM() : MEM_SEG(PIF_RAM_SEG_BEG, PIF_RAM_SEG_END)				{ INIT() }
 
 char* MEM_SEG::operator[] (const word address) const
 {

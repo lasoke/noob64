@@ -24,7 +24,7 @@
 
 #include "StdAfx.h"
 
-ROM::ROM(string filename) : MEM_SEG(ROM_SEG_BEGINING, ROM_SEG_END)
+ROM::ROM(string filename) : MEM_SEG(ROM_SEG_BEG, ROM_SEG_END)
 {
 	file.open(filename, ios::ate | ios::in | ios::binary);
 	if (!file.is_open())

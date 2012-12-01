@@ -26,7 +26,7 @@
 
 #include "Rcp.h"
 
-#define RI_SEG_BEGINING			0x04700000
+#define RI_SEG_BEG				0x04700000
 #define RI_SEG_END				0x047FFFFF
 
 #define RI_MODE_REG				0x04700000

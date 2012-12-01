@@ -26,7 +26,7 @@
 
 #include "Rcp.h"
 
-#define AI_SEG_BEGINING			0x04500000
+#define AI_SEG_BEG				0x04500000
 #define AI_SEG_END				0x045FFFFF
 
 #define AI_DRAM_ADDR_REG		0x04500000

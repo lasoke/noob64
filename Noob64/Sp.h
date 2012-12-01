@@ -26,7 +26,7 @@
 
 #include "Rcp.h"
 
-#define SP_SEG_BEGINING			0x04000000
+#define SP_SEG_BEG				0x04000000
 #define SP_SEG_END				0x040FFFFF
 
 #define SP_DMEM					0x04000000

@@ -26,7 +26,7 @@
 
 #include "Rcp.h"
 
-#define MI_SEG_BEGINING			0x04300000
+#define MI_SEG_BEG				0x04300000
 #define MI_SEG_END				0x043FFFFF
 
 #define MI_INIT_MODE_REG		0x04300000

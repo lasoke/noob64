@@ -26,7 +26,7 @@
 
 #include "Rcp.h"
 
-#define DPC_SEG_BEGINING		0x04100000
+#define DPC_SEG_BEG				0x04100000
 #define DPC_SEG_END				0x041FFFFF
 
 #define DPC_START_REG			0x04100000

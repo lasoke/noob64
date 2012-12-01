@@ -52,10 +52,6 @@ void R4300i::reset()
 	cic_chip				= 0;
 	interrupt_detected		= false;
 
-	vi_field_number			= 0;
-	alist_counter			= 0;
-	dlist_counter			= 0;
-
 	mmu.reset();
 	timer_handler.reset();
 }
@@ -108,7 +104,7 @@ void R4300i::pif_init()
 	mmu.write<word>(0x915F5B7E, SP_IMEM + 0xF90, false);
 	
 	for(int i = 0; i < 0x1000; i++) // Copies first 0x1000 bytes of ROM to first 0x1000 bytes of SP_MEM
-		mmu.write<byte>(*((byte*) mmu[ROM_SEG_BEGINING+i]), SP_SEG_BEGINING+i);
+		mmu.write<byte>(*((byte*) mmu[ROM_SEG_BEG+i]), SP_SEG_BEG+i);
 	pc = 0xA4000040; // Sets PC right after the ROM header
 }
 
@@ -119,9 +115,6 @@ void R4300i::start()
 
 	while (running)
 	{
-		Count += TIME_UNIT;
-		timer_handler.decTimer();
-
 		decode(mmu.read<word>((word) pc));
 	}
 }

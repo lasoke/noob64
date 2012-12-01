@@ -49,7 +49,7 @@ void RSP::init(RCP *rcp)
 
 	rsp_info->hInst				= hDLL;
 	rsp_info->memoryBswaped		= plugin_info->memoryBswaped;
-	rsp_info->rdram				= (byte*) memory[RDRAM_SEG_BEGINING];
+	rsp_info->rdram				= (byte*) memory[RDRAM_SEG_BEG];
 
 	rsp_info->mi_intr_reg		= (word*) memory[MI_INTR_REG];
 

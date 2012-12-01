@@ -72,16 +72,16 @@ public:
 	void setRSP(RSP*);
 	void setGFX(GFX*);
 
+	void run_rsp(void);
+	void refresh_screen(void);	// Refreshs the screen. Called when the video timer is done.
+	void update_current_halfLine(void);
+
 	void dma_pi_write(void);
 	void dma_pi_read(void);
 	void dma_si_write(void);
 	void dma_si_read(void);
 	void dma_sp_write(void);
 	void dma_sp_read(void);
-
-	void run_rsp(void);
-	void refresh_screen(void);	// Refreshs the screen when the vi timer is done
-	void updateCurrentHalfLine (void);
 
 	inline R4300i&		getCPU(void) const;
 	inline ROM&			getROM(void) const;
@@ -100,32 +100,35 @@ public:
 	inline PIF_RAM&		getPifRam(void) const;
 	inline RSP*			getRSP(void) const;
 	inline GFX*			getGFX(void) const;
-	inline word			getHalfline(void);
+
+	inline word			getViFieldNumber(void) const;
+	inline void			setViFieldNumber(word);
+	inline word			getHalfline(void) const;
 
 private:
-	R4300i		&cpu;
-	ROM			&rom;
-	RDRAM		&rdram;
-	RDRAM_REGS	&rdram_regs;
-	SP			&sp;
-	DPC			&dpc;
-	DPS			&dps;
-	MI			&mi;
-	VI			&vi;
-	AI			&ai;
-	PI			&pi;
-	RI			&ri;
-	SI			&si;
-	PIF_ROM		&pif_rom;
-	PIF_RAM		&pif_ram;
+	R4300i				&cpu;
+	ROM					&rom;
+	RDRAM				&rdram;
+	RDRAM_REGS			&rdram_regs;
+	SP					&sp;
+	DPC					&dpc;
+	DPS					&dps;
+	MI					&mi;
+	VI					&vi;
+	AI					&ai;
+	PI					&pi;
+	RI					&ri;
+	SI					&si;
+	PIF_ROM				&pif_rom;
+	PIF_RAM				&pif_ram;
 
-	RSP			*rsp;
-	GFX			*gfx;
+	RSP					*rsp;
+	GFX					*gfx;
 
-	byte		SRAM[0x8000];
-	word		cic_chip;
-	word		halfline;
+	byte				SRAM[0x8000];
+	word				halfline;
+	word				vi_field_number;
 
-	inline void checkDMA(word address);
+	inline void			checkDMA(word address);
 };
 

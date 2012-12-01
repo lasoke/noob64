@@ -58,8 +58,8 @@ void GFX::init(RCP *rcp)
 	gfx_info->hStatusBar		= 0;	// if render window does not have a status bar then this is NULL
 	gfx_info->memoryBswaped		= plugin_info->memoryBswaped;
 
-	gfx_info->rom_header		= (byte*) memory[ROM_SEG_BEGINING];
-	gfx_info->rdram				= (byte*) memory[RDRAM_SEG_BEGINING];
+	gfx_info->rom_header		= (byte*) memory[ROM_SEG_BEG];
+	gfx_info->rdram				= (byte*) memory[RDRAM_SEG_BEG];
 	gfx_info->dmem				= (byte*) memory[SP_DMEM];
 	gfx_info->imem				= (byte*) memory[SP_IMEM];
 

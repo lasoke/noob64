@@ -26,7 +26,7 @@
 
 #include "Rcp.h"
 
-#define DPS_SEG_BEGINING		0x04200000
+#define DPS_SEG_BEG				0x04200000
 #define DPS_SEG_END				0x042FFFFF
 
 #define DPS_TBIST_REG			0x04200000

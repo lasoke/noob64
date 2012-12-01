@@ -29,7 +29,7 @@
 #define ROM_HEADER_SIZE			0x1000
 #define ROM_BOOT_CODE_SIZE		1008
 
-#define ROM_SEG_BEGINING		0x10000000
+#define ROM_SEG_BEG				0x10000000
 #define ROM_SEG_END				0x1F39FFFF
 
 #define INIT_BSD_DOM1_LAT_REG	0x10000000
@@ -67,27 +67,27 @@ public:
 	inline hword	getCountry();
 
 private:
-	ifstream	file;
-	char		*data;
+	ifstream		file;
+	char			*data;
 
 	typedef struct {
-	   byte		pi_bsd_dom1_lat;
-	   byte		pi_bsd_dom1_pwd;
-	   byte		pi_bsd_dom1_pgs;
-	   byte		pi_bsd_dom1_rls;
-	   word		clock;
-	   word		pc;
-	   word		release;
-	   word		crc1;
-	   word		crc2;
-	   word		Unknown[2];
-	   byte		name[20];
-	   word		unknown;
-	   word		manufacturer;
-	   hword	cartridge;
-	   hword	country;
-	   word		bootcode[ROM_BOOT_CODE_SIZE];
+	   byte			pi_bsd_dom1_lat;
+	   byte			pi_bsd_dom1_pwd;
+	   byte			pi_bsd_dom1_pgs;
+	   byte			pi_bsd_dom1_rls;
+	   word			clock;
+	   word			pc;
+	   word			release;
+	   word			crc1;
+	   word			crc2;
+	   word			Unknown[2];
+	   byte			name[20];
+	   word			unknown;
+	   word			manufacturer;
+	   hword		cartridge;
+	   hword		country;
+	   word			bootcode[ROM_BOOT_CODE_SIZE];
 	} ROM_HEADER;
 
-	ROM_HEADER	*header;
+	ROM_HEADER		*header;
 };

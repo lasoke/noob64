@@ -26,7 +26,7 @@
 
 #include "Rcp.h"
 
-#define PI_SEG_BEGINING			0x04600000
+#define PI_SEG_BEG				0x04600000
 #define PI_SEG_END				0x046FFFFF
 
 #define PI_DRAM_ADDR_REG		0x04600000

@@ -26,7 +26,7 @@
 
 #include "Rcp.h"
 
-#define SI_SEG_BEGINING			0x04800000
+#define SI_SEG_BEG				0x04800000
 #define SI_SEG_END				0x048FFFFF
 
 #define SI_DRAM_ADDR_REG		0x04800000

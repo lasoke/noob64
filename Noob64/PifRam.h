@@ -30,8 +30,8 @@
 //** PIF RAM																**
 //****************************************************************************
 
-#define PIF_RAM_SEG_BEGINING		0x1FC007C0
-#define PIF_RAM_SEG_END				0x1FC007FF
+#define PIF_RAM_SEG_BEG		0x1FC007C0
+#define PIF_RAM_SEG_END		0x1FC007FF
 
 class PIF_RAM : public MEM_SEG
 {

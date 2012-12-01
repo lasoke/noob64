@@ -96,12 +96,9 @@ public:
 	inline MMU& getMMU(void) const;
 	inline TimerHandler& getTimerHandler(void) const;
 	inline word getCop0(int) const;
-	inline word getViFieldNumber(void) const;
+	
 	/* SETTERS */
 	inline void setCop0(int, word);
-	inline void incAList(void);
-	inline void incDList(void);
-	inline void setViFieldNumber(word);
 
 private:
 	RCP				&rcp;
@@ -151,9 +148,6 @@ private:
 	bool	delay_slot;											// for branch instructions
 	bool	running;											// Status of the CPU
 	dword	cic_chip;											// To hack the security check of the n64
-	word	vi_field_number;									//
-	int		alist_counter;										//
-	int		dlist_counter;										//
 	//****************************************************************************
 	//** LOAD AND STORE INSTRUCTIONS                                            **
 	//****************************************************************************

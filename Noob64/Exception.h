@@ -91,12 +91,12 @@ enum Exception
 
 enum InterruptType
 {
-	SW1		= CAUSE_IP0,	// Software level 1 pending
-	SW2		= CAUSE_IP1,	// Software level 2 pending
-	HW0		= CAUSE_IP2,	// External level 3 pending - INT0
-	HW1		= CAUSE_IP3,	// External level 4 pending - INT1
-	HW2		= CAUSE_IP4,	// External level 5 pending - INT2
-	HW3		= CAUSE_IP5,	// External level 6 pending - INT3
-	HW4		= CAUSE_IP6,	// External level 7 pending - INT4
-	COMP	= CAUSE_IP7		// External level 8 pending - COMPARE
+	SW1	= CAUSE_IP0,	// Software level 1 pending
+	SW2	= CAUSE_IP1,	// Software level 2 pending
+	HW0	= CAUSE_IP2,	// External level 3 pending - INT0
+	HW1	= CAUSE_IP3,	// External level 4 pending - INT1
+	HW2	= CAUSE_IP4,	// External level 5 pending - INT2
+	HW3	= CAUSE_IP5,	// External level 6 pending - INT3
+	HW4	= CAUSE_IP6,	// External level 7 pending - INT4
+	CMP	= CAUSE_IP7		// External level 8 pending - COMPARE
 };

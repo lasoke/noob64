@@ -30,8 +30,8 @@
 //** PIF ROM																**
 //****************************************************************************
 
-#define PIF_ROM_SEG_BEGINING		0x1FC00000
-#define PIF_ROM_SEG_END				0x1FC007BF
+#define PIF_ROM_SEG_BEG		0x1FC00000
+#define PIF_ROM_SEG_END		0x1FC007BF
 
 class PIF_ROM : public MEM_SEG
 {
