@@ -52,6 +52,13 @@
 #define UPDATE_TIME()					\
 	Count += TIME_UNIT;					\
 	timer_handler.decTimer()			\
+	
+//#define TEST_COP1_USABLE_EXCEPTION
+#define TEST_COP1_USABLE_EXCEPTION \
+	if ((Status & STATUS_CU1) == 0) {\
+		trigger_copunusable_exception(1);\
+		return;\
+	}
 
 //****************************************************************************
 //** GETTERS																**
@@ -2170,6 +2177,7 @@ template<typename Type>
 inline void R4300i::ABS(int fd, int fs)
 {
 	PRINT_PC("ABS " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fd] = (dword) abs((Type) f[fs]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
@@ -2179,6 +2187,7 @@ template<typename Type>
 inline void R4300i::ADD(int fd, int fs, int ft)
 {
 	PRINT_PC("ADD " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fd] = (dword) ((Type) f[fs] + (Type) f[ft]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
@@ -2187,6 +2196,7 @@ inline void R4300i::ADD(int fd, int fs, int ft)
 inline void R4300i::BC1F(int immed)
 {
 	PRINT_PC("BC1F " << hex << "0x" << extend_sign_halfword(immed));
+	TEST_COP1_USABLE_EXCEPTION
 	dword pc_tmp = pc + extend_sign_halfword(immed);
 	pc += 4;
 	delay_slot = 1;
@@ -2205,6 +2215,7 @@ inline void R4300i::BC1F(int immed)
 inline void R4300i::BC1FL(int immed)
 {
 	PRINT_PC("BC1FL " << hex << "0x" << extend_sign_halfword(immed));
+	TEST_COP1_USABLE_EXCEPTION
 	dword pc_tmp = pc + extend_sign_halfword(immed);
 	pc += 4;
 	delay_slot = true;
@@ -2223,6 +2234,7 @@ inline void R4300i::BC1FL(int immed)
 inline void R4300i::BC1T(int immed)
 {
 	PRINT_PC("BC1T " << hex << "0x" << extend_sign_halfword(immed));
+	TEST_COP1_USABLE_EXCEPTION
 	dword pc_tmp = pc + extend_sign_halfword(immed);
 	pc += 4;
 	delay_slot = 1;
@@ -2241,6 +2253,7 @@ inline void R4300i::BC1T(int immed)
 inline void R4300i::BC1TL(int immed)
 {
 	PRINT_PC("BC1TL " << hex << "0x" << extend_sign_halfword(immed));
+	TEST_COP1_USABLE_EXCEPTION
 	dword pc_tmp = pc + extend_sign_halfword(immed);
 	pc += 4;
 	delay_slot = true;
@@ -2258,6 +2271,7 @@ template<typename Type>
 inline void R4300i::C(int fs, int ft, int cond)
 {
 	PRINT_PC("C " << dec << "f" << fs << " " << dec << "f" << ft << " " << dec << "cond " << cond);
+	TEST_COP1_USABLE_EXCEPTION
 	switch (cond) {
 	case 0:
 		F<Type>((Type) f[fs], (Type) f[ft]);
@@ -2318,6 +2332,7 @@ template<typename Type, typename toType>
 inline void R4300i::CEIL(int fd, int fs)
 {
 	PRINT_PC("CEIL " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fd] = (toType) ((Type) f[fs]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
@@ -2326,6 +2341,7 @@ inline void R4300i::CEIL(int fd, int fs)
 inline void R4300i::CFC1(int rt, int fs)
 {
 	PRINT_PC("CFC1 " << dec << "r" << rt << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	if (fs == 0)
 		r[rt] = extend_sign_word(fcr0);
 	else
@@ -2337,6 +2353,7 @@ inline void R4300i::CFC1(int rt, int fs)
 inline void R4300i::CTC1(int rt, int fs)
 {
 	PRINT_PC("CTC1 " << dec << "r" << rt << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	if (fs == 0)
 		fcr0 = r[rt] & 0xFFFFFFFF;
 	else
@@ -2349,6 +2366,7 @@ template<typename Type, typename toType>
 inline void R4300i::CVT(int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fd] = (dword) ((toType) ((Type) f[fs]));
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
@@ -2358,6 +2376,7 @@ template<typename Type>
 inline void R4300i::DIV(int fd, int fs, int ft)
 {
 	PRINT_PC("DIV " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fd] = (dword) ((Type) f[fs] / (Type) f[ft]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
@@ -2366,6 +2385,7 @@ inline void R4300i::DIV(int fd, int fs, int ft)
 inline void R4300i::DMFC1(int rt, int fs)
 {
 	PRINT_PC("DMFC1 " << dec << "r" << rt << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	r[rt] = f[fs];
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
@@ -2374,6 +2394,7 @@ inline void R4300i::DMFC1(int rt, int fs)
 inline void R4300i::DMTC1(int rt, int fs)
 {
 	PRINT_PC("DMTC1 " << dec << "r" << rt << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fs] = r[rt];
 	PRINT_PC(" f" << dec << fs << hex << "=0x" << f[fs]);
 	pc += 4;
@@ -2383,6 +2404,7 @@ template<typename Type, typename toType>
 inline void R4300i::FLOOR(int fd, int fs)
 {
 	PRINT_PC("FLOOR " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fd] = (toType) ((Type) f[fs]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
@@ -2391,6 +2413,7 @@ inline void R4300i::FLOOR(int fd, int fs)
 inline void R4300i::LDC1(int ft, int immed, int rs)
 {
 	PRINT_PC("LDC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
+	TEST_COP1_USABLE_EXCEPTION
 	f[ft] = mmu.read<dword>((word) (r[rs] + extend_sign_halfword(immed) * sizeof(dword)));
 	PRINT_PC(" f" << dec << ft << hex << "=0x" << f[ft]);
 	pc += 4;
@@ -2399,6 +2422,7 @@ inline void R4300i::LDC1(int ft, int immed, int rs)
 inline void R4300i::LWC1(int ft, int immed, int rs)
 {
 	PRINT_PC("LWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
+	TEST_COP1_USABLE_EXCEPTION
 	f[ft] = mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT_PC(" f" << dec << ft << hex << "=0x" << f[ft]);
 	pc += 4;
@@ -2407,6 +2431,7 @@ inline void R4300i::LWC1(int ft, int immed, int rs)
 inline void R4300i::MFC1(int rt, int fs)
 {
 	PRINT_PC("MFC1 " << dec << "r" << rt << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	r[rt] = extend_sign_word(f[fs]);
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
@@ -2416,6 +2441,7 @@ template<typename Type>
 inline void R4300i::MOV(int fd, int fs)
 {
 	PRINT_PC("MOV " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fd] = (dword) ((Type) f[fs]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
@@ -2424,6 +2450,7 @@ inline void R4300i::MOV(int fd, int fs)
 inline void R4300i::MTC1(int rt, int fs)
 {
 	PRINT_PC("MTC1 " << dec << "r" << rt << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fs] = r[rt] & 0xFFFFFFFF;
 	PRINT_PC(" f" << dec << fs << hex << "=0x" << f[fs]);
 	pc += 4;
@@ -2433,6 +2460,7 @@ template<typename Type>
 inline void R4300i::MUL(int fd, int fs, int ft)
 {
 	PRINT_PC("MUL " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fd] = (dword) ((Type) f[fs] * (Type) f[ft]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
@@ -2442,6 +2470,7 @@ template<typename Type>
 inline void R4300i::NEG(int fd, int fs)
 {
 	PRINT_PC("NEG " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fd] = (dword) (- (Type) f[fs]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
@@ -2451,6 +2480,7 @@ template<typename Type, typename toType>
 inline void R4300i::ROUND(int fd, int fs)
 {
 	PRINT_PC("ROUND " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fd] = (toType) ((Type) f[fs]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
@@ -2459,6 +2489,7 @@ inline void R4300i::ROUND(int fd, int fs)
 inline void R4300i::SDC1(int ft, int immed, int rs)
 {
 	PRINT_PC("SDC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
+	TEST_COP1_USABLE_EXCEPTION
 	mmu.write<dword>(f[ft], (word) (r[rs] + extend_sign_halfword(immed) * sizeof(dword)));
 	pc += 4;
 }
@@ -2467,6 +2498,7 @@ template<>
 inline void R4300i::SQRT<w>(int fd, int fs)
 {
 	PRINT_PC("SQRT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fd] = (dword) sqrt((double)f[fs]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
@@ -2476,6 +2508,7 @@ template<>
 inline void R4300i::SQRT<l>(int fd, int fs)
 {
 	PRINT_PC("SQRT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fd] = (dword) sqrt((double)f[fs]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
@@ -2485,6 +2518,7 @@ template<typename Type>
 inline void R4300i::SQRT(int fd, int fs)
 {
 	PRINT_PC("SQRT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fd] = (dword) sqrt((Type)f[fs]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
@@ -2494,6 +2528,7 @@ template<typename Type>
 inline void R4300i::SUB(int fd, int fs, int ft)
 {
 	PRINT_PC("SUB " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fd] = (dword) ((Type) f[fs] - (Type) f[ft]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
@@ -2502,6 +2537,7 @@ inline void R4300i::SUB(int fd, int fs, int ft)
 inline void R4300i::SWC1(int ft, int immed, int rs)
 {
 	PRINT_PC("SWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
+	TEST_COP1_USABLE_EXCEPTION
 	mmu.write<word>((word) f[ft], (r[rs] + extend_sign_halfword(immed) & 0xFFFFFFFF));
 	pc += 4;
 }
@@ -2510,6 +2546,7 @@ template<typename Type, typename toType>
 inline void R4300i::TRUNC(int fd, int fs)
 {
 	PRINT_PC("TRUNC " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
 	f[fd] = (toType) ((Type) f[fs]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;

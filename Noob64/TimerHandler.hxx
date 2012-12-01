@@ -69,6 +69,7 @@ inline void TimerHandler::rsp_timer_done()
 
 inline void TimerHandler::force_pi_timer_done()
 {
+	rcp.getMI().setIntr(rcp.getMI().getIntr() & (~MI_INTR_VI));
 	pi_timer_done();
 	check_timer();
 }
