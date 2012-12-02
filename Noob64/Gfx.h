@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * The Gfx files contains the functions, macro and structure to represente
+ * and connect our emulator to the Gfx plugin.
+ *
+ */
+
 #pragma once
 
 #include "Plugin.h"

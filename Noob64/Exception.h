@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * The Exception files contains the functions, macro and structure to represente
+ * and execute the interruption and exception of the n64.
+ *
+ */
+
 #pragma once
 
 // The next defines are extract from the MIPS manual

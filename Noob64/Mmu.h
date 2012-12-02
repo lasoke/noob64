@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * The Mmu files contains the functions, macro and structure to represente
+ * and emulate the whole memory of the n64.
+ *
+ */
+
 #pragma once
 
 // Memory segments from 0x80000000 to 0xFFFFFFFF

@@ -22,6 +22,13 @@
  *
  */
 
+/*
+ * The Mi files contains the functions, macro and structure to represente
+ * and access the Mips interface register of the n64 memory.
+ * the MIPS interface is related to the insterruption
+ *
+ */
+
 #pragma once
 
 #include "Rcp.h"

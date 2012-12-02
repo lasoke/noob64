@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * The Helper files contains the functions, use by the emulator but not related
+ * to any component in particular
+ *
+ */
+
 #pragma once
 
 // Formats the string "s" representing a number:

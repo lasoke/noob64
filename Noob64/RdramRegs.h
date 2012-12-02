@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * The RdramRegs files contains the functions, macro and structure to represente
+ * and access the RDram register of the n64 memory.
+ *
+ */
+
 #pragma once
 
 #include "Rcp.h"

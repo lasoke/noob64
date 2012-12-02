@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * The noob64 files contains the main function with the creator
+ * of the windows of the application
+ *
+ */
+
 #pragma once
 
 #include "resource.h"

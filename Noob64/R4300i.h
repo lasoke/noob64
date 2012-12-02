@@ -22,6 +22,13 @@
  *
  */
 
+/*
+ * The R4300i files contains the functions which concerns the emulation
+ * of the R4300i processor. like the instructions, and the main loop of
+ * the n64 emulator.
+ *
+ */
+
 #pragma once
 
 // Cop0 Macros
