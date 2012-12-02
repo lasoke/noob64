@@ -26,6 +26,10 @@
 
 #include "Plugin.h"
 
+/*
+** The GFX structure that connects
+** the plugin to the RCP
+*/
 typedef struct {
 	HWND hWnd;			// Render window
 	HWND hStatusBar;    // if render window does not have a status bar then this is NULL
@@ -79,7 +83,7 @@ typedef void (_cdecl* VISTATUSCHANGED)(void);
 typedef void (_cdecl* VIWIDTHCHANGED)(void);
 
 /*
-** The GFX class handles the video plugins
+** The GFX class that handles the video plugins
 */
 class GFX : public PLUGIN
 {
@@ -87,20 +91,20 @@ public:
 	GFX(wstring filename, HWND hWnd);
 	~GFX();
 
-	void init(RCP* mem);
+	void init(RCP* mem);		// Plugs the DLL into the RCP
 
-	void captureScreen(char*);
-	void changeWindow(void);
-	void drawScreen(void);
-	bool initiateGFX(void);
-	void moveScreen(int, int);
-	void processDList(void);
-	void processRDPList(void);
-	void romOpen(void);
-	void showCFB(void);
-	void updateScreen(void);
-	void viStatusChanged(void);
-	void viWidthChanged(void);
+	void captureScreen(char*);	// Makes a screenshot
+	void changeWindow(void);	// Switches between fullscreen and window mode
+	void drawScreen(void);		// Renders the screen. Called when receiving a WM_PAINT message
+	bool initiateGFX(void);		// Initializes the video.
+	void moveScreen(int, int);	// Moves the screen. Called when receiving a WM_MOVE message
+	void processDList(void);	// Processes the high level GFX list
+	void processRDPList(void);	// Processes the low level GFX list
+	void romOpen(void);			// To call when we open the ROM
+	void showCFB(void);			// Displays again the CFB when ignored (after displaying Dlist)
+	void updateScreen(void);	// Updates the screen. Called when there is a VI interrupt
+	void viStatusChanged(void);	// Notifies the DLL that ViStatus registers changed
+	void viWidthChanged(void);	// Notifies the DLL that ViWidth registers changed
 
 private:
 	CAPTURESCREEN		captureScreen_;

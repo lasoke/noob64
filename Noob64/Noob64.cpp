@@ -45,11 +45,10 @@ INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 FILE *stream;
 void inline enableConsole()
 {
-    errno_t err;
 	AllocConsole();
-	err = freopen_s(&stream, "conin$","r", stdin);
-	err = freopen_s(&stream, "conout$","w", stdout);
-	err = freopen_s(&stream, "conout$","w", stderr);
+	freopen_s(&stream, "conin$","r", stdin);
+	freopen_s(&stream, "conout$","w", stdout);
+	freopen_s(&stream, "conout$","w", stderr);
 }
 
 wstring rsp_path = _T("C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll");
@@ -58,13 +57,13 @@ string  rom_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z6
 
 HANDLE emuThread;
 
-RCP*	rcp;
-RSP*	rsp;
-GFX*	gfx;
+RCP*	rcp; // Reality Coprocessor
+RSP*	rsp; // RSP plugin
+GFX*	gfx; // GFX plugin
 
 DWORD WINAPI boot(LPVOID lpParameter)
 {
-	enableConsole();						// Displays the console
+	//enableConsole();						// Displays the console
 
 	rcp	= new RCP(new ROM(rom_path));		// Sets up the RCP with the given ROM
 	rcp->setRSP(rsp);						// Initializes the RSP plugin
@@ -202,11 +201,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// Parse the menu selections:
 		switch (wmId)
 		{
-		case ID_FILE_PLAY:
-			EnableMenuItem(GetMenu(hWnd), ID_FILE_PLAY, MF_BYCOMMAND | MF_GRAYED);
-			rsp	= new RSP(rsp_path, hWnd);
-			gfx	= new GFX(gfx_path, hWnd);
-			emuThread = CreateThread(0, 0, boot, 0, 0, 0);
+		case ID_FILE_PLAY:															// When we click on Play:
+			EnableMenuItem(GetMenu(hWnd), ID_FILE_PLAY, MF_BYCOMMAND | MF_GRAYED);	// We disable the Play button
+			rsp	= new RSP(rsp_path, hWnd);											// We create the RSP plugin
+			gfx	= new GFX(gfx_path, hWnd);											// We create the GFX plugin
+			emuThread = CreateThread(0, 0, boot, 0, 0, 0);							// Create the emulation thread
 			break;
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);

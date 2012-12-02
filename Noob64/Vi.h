@@ -26,7 +26,7 @@
 
 #include "Rcp.h"
 
-#define VI_SEG_BEG					0x04400000
+#define VI_SEG_BEG				0x04400000
 #define VI_SEG_END				0x044FFFFF
 
 #define VI_STATUS_REG			0x04400000

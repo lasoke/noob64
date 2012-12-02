@@ -101,12 +101,11 @@ public:
 	inline void setCop0(int, word);
 
 private:
-	RCP				&rcp;
-	MMU				&mmu;
-	TimerHandler	&timer_handler;
+	RCP				&rcp;										// A pointer to the RCP
+	MMU				&mmu;										// A pointer to the MMU
+	TimerHandler	&timer_handler;								// A pointer to the timer handler
 
-	// Workaround to pass the CRC check which prevents a fake game from loading
-	void pif_init(void);
+	void pif_init(void); // Workaround to pass the CRC check which prevents a fake game from loading
 
 	//****************************************************************************
 	//** EXCEPTION PROCESSING UNIT												**
@@ -121,16 +120,16 @@ private:
 	//****************************************************************************
 	//** DECODER																**
 	//****************************************************************************
-	inline void	decode(const word instr);
-	inline void decode_r(const word instr);
-	inline void decode_i(const word instr);
-	inline void decode_cop0(const word instr);
-	inline void decode_tlb(const word instr);
-	inline void decode_cop1(const word instr);
-	inline void decode_bc1(const word instr);
+	inline void	decode(const word instr);						// Decodes the given instruction
+	inline void decode_r(const word instr);						// Decodes the given R-typed instruction
+	inline void decode_i(const word instr);						// Decodes the given I-typed instruction
+	inline void decode_cop0(const word instr);					// Decodes the given COP0-typed instruction
+	inline void decode_tlb(const word instr);					// Decodes the given TLB-typed instruction
+	inline void decode_cop1(const word instr);					// Decodes the given COP1-typed instruction
+	inline void decode_bc1(const word instr);					// Decodes the given BC1-typed instruction
 	template<typename Type>
-	inline void decode_fpu(const word instr);
-	inline int	probe_nop(word address);						// Checks whether the next instruction is a nop
+	inline void decode_fpu(const word instr);					// Decodes the given FPU-typed instruction
+	inline int	probe_nop(word address);						// Checks whether the next instruction is a nop or not
 	//****************************************************************************
 	//** REGISTERS					                                            **
 	//****************************************************************************

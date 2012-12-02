@@ -26,7 +26,7 @@
 
 #include "Rcp.h"
 
-#define RDRAM_SEG_BEG		0x00000000
+#define RDRAM_SEG_BEG			0x00000000
 #define RDRAM_SEG_END			0x03EFFFFF
 
 #define RDRAM_CONFIG_REG		0x03F00000

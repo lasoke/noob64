@@ -123,15 +123,12 @@ public:
 	RSP(wstring filename, HWND hWnd);
 	~RSP();
 
-	void init(RCP* mem);
-	// Allows the RSP to run in parrel with the CPU
-	word doRspCycles(word);
-	// To retreive the debug info of the RSP
-	void getRspDebugInfo(void);
-	// To initialize the value of the RSP variables
-	void initiateRSP(word*);
-	// To initialize the value of the RSP debugger variables
-	void initiateRSPDebugger(void);
+	void init(RCP* mem);			// Plugs the DLL into the RCP
+
+	word doRspCycles(word);			// Allows the RSP to run in parrel with the CPU
+	void getRspDebugInfo(void);		// Retreives the debug info of the RSP
+	void initiateRSP(word*);		// Initializes the value of the RSP variables
+	void initiateRSPDebugger(void); // Initializes the value of the RSP debugger variables
 
 private:
 	DORSPCYCLES				doRspCycles_;

@@ -24,7 +24,7 @@
 
 #pragma once
 
-// The next defines are extract from the MIPS 
+// The next defines are extract from the MIPS manual
 // http://doc.kodewerx.org/documents/mips32_vol3.pdf
 
 #define STATUS_IE		0x00000000
@@ -52,7 +52,7 @@
 #define CAUSE_ExcCode	0x0000007C
 #define CAUSE_IP		0x0000FF00
 #define CAUSE_CE		0x30000000
-#define CAUSE_BD		0x10000000
+#define CAUSE_BD		0x40000000
 
 #define CAUSE_IP0		0x00000100
 #define CAUSE_IP1		0x00000200
@@ -63,7 +63,8 @@
 #define CAUSE_IP6		0x00004000
 #define CAUSE_IP7		0x00008000
 
-// The enum Exception, useful to identify the exception triggered
+// The following enum lists every exception with their ExCode.
+// Useful to identify which exception has been triggered.
 enum Exception
 {
 	INTERRUPT						= 0,
@@ -90,6 +91,7 @@ enum Exception
 	TLB_REFILL_DATA_ACCESS,
 };
 
+// The different types of exception
 enum InterruptType
 {
 	SW1	= CAUSE_IP0,	// Software level 1 pending
@@ -99,5 +101,5 @@ enum InterruptType
 	HW2	= CAUSE_IP4,	// External level 5 pending - INT2
 	HW3	= CAUSE_IP5,	// External level 6 pending - INT3
 	HW4	= CAUSE_IP6,	// External level 7 pending - INT4
-	CMP	= CAUSE_IP7		// External level 8 pending - COMPARE
+	CMP	= CAUSE_IP7		// External level 8 pending - COMPARE/TIMER
 };

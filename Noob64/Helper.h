@@ -24,22 +24,22 @@
 
 #pragma once
 
-// Format a number
+// Formats the string "s" representing a number:
+// adds a character "c" every "frequency" character
 string format_number(string s, char c, int frequency);
 
-// Prints an address in the standard representation
+// Prints an address in the standard representation:
+// e.g. FFFFFFFF will print "FFFF FFFF : "
 string print_addr(word address);
 
 // Returns the word contained at the address pointed by ptr
 byte getByte(char **ptr);
 
-// Prints the memory contained in the array data
-void dump_array(word start_addr, const byte *data, unsigned int size, int type);
-
-// Converts a byte array to its type representation
+// Converts a byte array to its "type" representation
 template <typename Type> inline Type binary_to_type(Type toSwap);
 
-// Converts a type to its binary representation
+// Converts a "type" to its binary representation
 template <typename Type> inline Type type_to_binary(Type data);
 
+// Temporary dummy function
 void dummy();

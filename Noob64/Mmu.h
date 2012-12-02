@@ -24,11 +24,13 @@
 
 #pragma once
 
-#define KSEG0					0x80000000
-#define KSEG1					0xA0000000
-#define KSEG2					0xC0000000
-#define KSEG3					0xE0000000
+// Memory segments from 0x80000000 to 0xFFFFFFFF
+#define KSEG0		0x80000000
+#define KSEG1		0xA0000000
+#define KSEG2		0xC0000000
+#define KSEG3		0xE0000000
 
+// The TLB entry structure
 typedef struct {
    short			mask;	// Comparison MASK
    long				vpn2;	// Virtual Page Number / 2
@@ -52,24 +54,36 @@ typedef struct {
    unsigned long	phys1;
 } tlb_entry;
 
+//****************************************************************************
+//** MEMORY MANAGEMENT UNIT					                                **
+//****************************************************************************
 class MMU
 {
 public:
 	MMU(R4300i&, RCP&);
 	~MMU(void);
 
+	// Clears the MMU
 	void reset(void);
 
+	// Returns a pointer to the physical location of the given virtual address
 	char* operator[] (const word address);
+
+	// Reads a Type at the given address and returns it
 	template <typename Type> inline Type read(word address);
+	// Function read + Triggers read events if trigger_event is true
 	template <typename Type> inline Type read(word address, bool trigger_event);
+
+	// Writes a data of the type Type at the given address
 	template <typename Type> inline void write(Type data, word address);
+	// Function Write + Triggers write events if trigger_event is true
 	template <typename Type> inline void write(Type data, word address, bool trigger_event);
 
+	// Returns true if the given address is valid
 	inline bool is_address_defined(word address) const;
 
 	// TODO: Add getters and setters
-	tlb_entry	tlb[32];
+	tlb_entry	tlb[32]; // The TLB
 	word		tlb_lut_r[0x100000];
 	word		tlb_lut_w[0x100000];
 	char		invalid_code[0x100000];
@@ -78,9 +92,9 @@ private:
 	R4300i		&cpu;
 	RCP			&rcp;
 
-	inline char* virtual_to_physical(word address);
-	inline bool read_from_register(word *data, word address);
-	inline bool write_in_register(word data, word address);
+	inline char* virtual_to_physical(word address);				// Returns a physical address given a virtual address
+	inline bool read_from_register(word *data, word address);	// Reads a register value with it's getter
+	inline bool write_in_register(word data, word address);		// Writes a value in a register with it's setter
 };
 
 

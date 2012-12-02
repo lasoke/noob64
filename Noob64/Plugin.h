@@ -30,8 +30,8 @@
 #define PLUGIN_TYPE_CONTROLLER		4
 
 /*
-** The PLUGIN_INFO structure is common to every plugin and contains
-** general info on it
+** The PLUGIN_INFO structure is common to every plugin
+** and contains general info on it
 */
 typedef struct {
 	hword	version;        /* Should be set to 0x0101 */
@@ -61,11 +61,11 @@ public:
 
 	void init(RCP*);
 
-	void closeDLL(void);
-	void dllAbout(HWND);
-	void dllConfig(HWND);
-	void dllTest(HWND);
-	void romClosed(void);
+	void closeDLL(void);	// Closes the DLL
+	void dllAbout(HWND);	// Open the About window of the plugin
+	void dllConfig(HWND);	// Open the Config window of the plugin
+	void dllTest(HWND);		// Notifies the user whether the plugin is correctly loaded or not
+	void romClosed(void);	// To call when the ROM is closed
 
 protected:
 	HINSTANCE				hDLL;

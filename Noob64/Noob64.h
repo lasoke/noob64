@@ -30,6 +30,8 @@ using namespace std;
 
 //#define DEBUG
 
+// The time unit used by the Count register
+// and the timer handler
 #define	TIME_UNIT				1
 
 typedef unsigned __int8			byte;
@@ -47,13 +49,14 @@ typedef double					d; // Double-Precision	Floating-Point Format:	[63:sign;62-52:
 typedef long					w; // Word				Fixed-Point Format:		[31:sign;30-0:int]
 typedef long long int			l; // Longword			Fixed-Point Format:		[63:sign;62-0:int]
 
+// The Noob64 exceptions
 enum NOOB64_EXCEPTION
 {
-	PLUGIN_FAILED_TO_LOAD,
-	PLUGIN_FAILED_TO_INIT,
-	ROM_FAILED_TO_LOAD,
-	ROM_UNKNOWN_FORMAT,
-	VIRTUAL_ADDRESS_ERROR,
-	TLB_NOT_HANDLED,
-	TIMER_BROKEN
+	PLUGIN_FAILED_TO_LOAD,	// Thrown when a plugin were unable to load
+	PLUGIN_FAILED_TO_INIT,	// Thrown when a plugin failed to initialize
+	ROM_FAILED_TO_LOAD,		// Thrown when a ROM failed to load
+	ROM_UNKNOWN_FORMAT,		// Thrown when the ROM is corrupted
+	VIRTUAL_ADDRESS_ERROR,	// Thrown when we try to access an unhandled virtual address
+	TLB_NOT_HANDLED,		// Thrown when we try to access an unregister TLB address
+	TIMER_BROKEN			// Thrown when there is a problem with the timer handler
 };

@@ -24,47 +24,47 @@
 
 #pragma once
 
-//extend the negative bit to a dword if 1 in word
+// Extends the negative bit to a dword if 1 in word
 inline dword extend_sign_word(dword d);
 
-//extend the negative bit to a dword if 1 in halfword
+// Extends the negative bit to a dword if 1 in halfword
 inline dword extend_sign_halfword(dword d);
 
-//extend the negative bit to a dword if 1 in byte
+// Extends the negative bit to a dword if 1 in byte
 inline dword extend_sign_byte(dword d);
 
-//getOpCode retreives the Op code from an instruction
+// Retreives the Op code from an instruction
 inline int getOpCode(word instr);
 
-//getRs retreives the source register from an instruction
+// Retreives the source register from an instruction
 inline int getRs(word instr);
 
-//getRt retreives the target register from an instruction
+// Retreives the target register from an instruction
 inline int getRt(word instr);
 
-//getRd retreives the destination register from an instruction
+// Retreives the destination register from an instruction
 inline int getRd(word instr);
 
-//getSa retreives the shift amount from an instruction
+// Retreives the shift amount from an instruction
 inline int getSa(word instr);
 
-//getFunct retreives the function from the instruction
+// Retreives the function from the instruction
 inline int getFunct(word instr);
 
-//getImmediate retreives the immediate from the instruction
+// Retreives the immediate from the instruction
 inline int getImmediate(word instr);
 
-//getTarget retreives the jump target address from the instruction
+// Retreives the jump target address from the instruction
 inline int getTarget(word instr);
 
-//getCond retreives the jump condition from the instruction
+// Retreives the jump condition from the instruction
 inline int getCond(word instr);
 
-//getNd retreives the nd from the instruction useful for the bc instruction
+// Retreives the nd from the instruction useful for the bc instruction
 inline int getNd(word instr);
 
-//getTf retreives the tf from the instruction useful for the bc instruction
+// Retreives the tf from the instruction useful for the bc instruction
 inline int getTf(word instr);
 
-//getNdTf retreives the nd and tf from the instruction useful for the bc instruction
+// Retreives the nd and tf from the instruction useful for the bc instruction
 inline int getNdTf(word instr);

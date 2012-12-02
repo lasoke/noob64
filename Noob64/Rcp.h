@@ -68,20 +68,20 @@ class RCP
 public:
 	RCP(ROM* rom);
 
-	void start();
-	void setRSP(RSP*);
-	void setGFX(GFX*);
+	void start();						// Starts the Nintendo 64 - starts the CPU
+	void setRSP(RSP*);					// Sets and initializes the RSP plugin
+	void setGFX(GFX*);					// Sets and initializes the GFX plugin
 
-	void run_rsp(void);
-	void refresh_screen(void);	// Refreshs the screen. Called when the video timer is done.
-	void update_current_halfLine(void);
+	void run_rsp(void);					// Runs the RSP to perform a task
+	void refresh_screen(void);			// Refreshs the screen. Called when the video timer is done.
+	void update_current_halfLine(void);	// Updates the current halfline of the video plugin
 
-	void dma_pi_write(void);
-	void dma_pi_read(void);
-	void dma_si_write(void);
-	void dma_si_read(void);
-	void dma_sp_write(void);
-	void dma_sp_read(void);
+	void dma_pi_write(void);			// DMA write to a PI register
+	void dma_pi_read(void);				// DMA read to a PI register
+	void dma_si_write(void);			// DMA write to a SI register
+	void dma_si_read(void);				// DMA read to a SI register
+	void dma_sp_write(void);			// DMA write to a SP register
+	void dma_sp_read(void);				// DMA read to a SP register
 
 	inline R4300i&		getCPU(void) const;
 	inline ROM&			getROM(void) const;
@@ -106,29 +106,27 @@ public:
 	inline word			getHalfline(void) const;
 
 private:
-	R4300i				&cpu;
-	ROM					&rom;
-	RDRAM				&rdram;
-	RDRAM_REGS			&rdram_regs;
-	SP					&sp;
-	DPC					&dpc;
-	DPS					&dps;
-	MI					&mi;
-	VI					&vi;
-	AI					&ai;
-	PI					&pi;
-	RI					&ri;
-	SI					&si;
-	PIF_ROM				&pif_rom;
-	PIF_RAM				&pif_ram;
+	R4300i				&cpu;			// Reference of the CPU
+	ROM					&rom;			// Reference of the ROM
+	RDRAM				&rdram;			// Reference of the RDRAM
+	RDRAM_REGS			&rdram_regs;	// Reference of the RDRAM registers
+	SP					&sp;			// Reference of the Signal Processor registers
+	DPC					&dpc;			// Reference of the DP Command registers
+	DPS					&dps;			// Reference of the DP Span registers
+	MI					&mi;			// Reference of the MIPS Interface registers
+	VI					&vi;			// Reference of the Video Interface registers
+	AI					&ai;			// Reference of the Audio Interface registers
+	PI					&pi;			// Reference of the Peripheral Interface registers
+	RI					&ri;			// Reference of the RDRAM Interface registers
+	SI					&si;			// Reference of the Sound Interface registers
+	PIF_ROM				&pif_rom;		// Reference of the PIF ROM
+	PIF_RAM				&pif_ram;		// Reference of the PIF RAM
 
-	RSP					*rsp;
-	GFX					*gfx;
+	RSP					*rsp;			// Pointer to the RSP plugin
+	GFX					*gfx;			// Pointer to the GFX plugin
 
-	byte				SRAM[0x8000];
-	word				halfline;
-	word				vi_field_number;
-
-	inline void			checkDMA(word address);
+	byte				SRAM[0x8000];	// RCP' Static RAM
+	word				halfline;		// Refers to a vertical line with respect to interlaced video modes
+	word				vi_field_number;//
 };
 

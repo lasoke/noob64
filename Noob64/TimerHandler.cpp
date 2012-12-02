@@ -7,7 +7,7 @@ void TimerHandler::reset(void)
 	current_timer_type = -1;
 	timer = 0;
 	for (int i = 0; i < MAX_TIMERS; ++i) 
-		active[i]= FALSE;
+		active[i] = false;
 	change_timer(VI_TIMER, 5000); 
 	change_compare_timer();
 }
