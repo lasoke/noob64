@@ -39,6 +39,8 @@ void R4300i::reset()
 		r[i]				= (dword) 0;
 		f[i]				= (dword) 0;
 		cop0[i]				= (word)  0;
+		reg_cop1_double[i]	= (double *) &f[i];
+		reg_cop1_simple[i]	= (float *) &f[i];
 	}
 	pc						= 0;
 	hi						= 0;
@@ -110,11 +112,15 @@ void R4300i::pif_init()
 
 void R4300i::start()
 {
+	int i = 0;
 	reset();
 	pif_init();
+	cout << "s=" << sizeof(s) << " d=" << sizeof(d) << " w=" << sizeof(w) << " l=" << sizeof(l);
 
 	while (running)
 	{
+		if ((pc & 0xFFFFFFFF) == 0x80325984)
+			i++;
 		decode(mmu.read<word>((word) pc));
 	}
 }

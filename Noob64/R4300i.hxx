@@ -60,6 +60,12 @@
 		return;\
 	}
 
+#define set_rounding() _controlfp(rounding_mode, _MCW_RC)
+#define set_trunc() _controlfp(trunc_mode, _MCW_RC)
+#define set_round() _controlfp(round_mode, _MCW_RC)
+#define set_ceil() _controlfp(ceil_mode, _MCW_RC)
+#define set_floor() _controlfp(floor_mode, _MCW_RC)
+
 //****************************************************************************
 //** GETTERS																**
 //****************************************************************************
@@ -2178,7 +2184,13 @@ inline void R4300i::ABS(int fd, int fs)
 {
 	PRINT_PC("ABS " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION
-	f[fd] = (dword) abs((Type) f[fs]);
+	set_rounding();
+	if (sizeof(Type) == sizeof(s))
+		*reg_cop1_simple[fd] = fabs(*reg_cop1_simple[fs]);
+	else if (sizeof(Type) == sizeof(d))
+		*reg_cop1_double[fd] = fabs(*reg_cop1_double[fs]);
+	else
+		cerr << "ABS not define for this type";
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
@@ -2354,10 +2366,23 @@ inline void R4300i::CTC1(int rt, int fs)
 {
 	PRINT_PC("CTC1 " << dec << "r" << rt << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION
-	if (fs == 0)
-		fcr0 = r[rt] & 0xFFFFFFFF;
-	else
+	if (fs = 31)
 		fcr31 = r[rt] & 0xFFFFFFFF;
+	switch((fcr31 & 3))
+	{
+	case 0:
+		rounding_mode = 0x33F;
+		break;
+    case 1:
+		rounding_mode = 0xF3F;
+		break;
+    case 2:
+		rounding_mode = 0xB3F;
+		break;
+    case 3:
+		rounding_mode = 0x73F;
+		break;
+    }
 	PRINT_PC(" f" << dec << fs << hex << "=0x" << f[fs]);
 	pc += 4;
 }
@@ -2367,7 +2392,11 @@ inline void R4300i::CVT(int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION
-	f[fd] = (dword) ((toType) ((Type) f[fs]));
+	set_rounding();
+	if (sizeof(Type) == sizeof(w) && sizeof(toType) == sizeof(s))
+		*reg_cop1_simple[fd] = *((long*)reg_cop1_simple[fs]);
+	else
+		cerr << "CVT not define for this combinaison of type";
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
@@ -2432,7 +2461,7 @@ inline void R4300i::MFC1(int rt, int fs)
 {
 	PRINT_PC("MFC1 " << dec << "r" << rt << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION
-	r[rt] = extend_sign_word(f[fs]);
+	r[rt] = extend_sign_word(*((long*)reg_cop1_simple[f[fs]]));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -2451,7 +2480,7 @@ inline void R4300i::MTC1(int rt, int fs)
 {
 	PRINT_PC("MTC1 " << dec << "r" << rt << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION
-	f[fs] = r[rt] & 0xFFFFFFFF;
+	*((long*)reg_cop1_simple[fs]) = r[rt] & 0xFFFFFFFF;
 	PRINT_PC(" f" << dec << fs << hex << "=0x" << f[fs]);
 	pc += 4;
 }

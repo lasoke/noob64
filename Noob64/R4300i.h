@@ -137,10 +137,13 @@ private:
 	// TODO: r[0] is always 0
 	dword	r[32];												// General Purpose Registers (GPRs)
 	dword	f[32];												// FP General Purpose Registers (FGRs)
+	double	*reg_cop1_double[32];
+	float	*reg_cop1_simple[32];
 	word	cop0[32];											// Cop0 registers
 	dword	pc;													// Program Counter
 	dword	hi, lo;												// Multiply/Divide result
 	word	fcr0, fcr31;										// Floating Point Control Registers
+	int		rounding_mode, trunc_mode, round_mode, ceil_mode, floor_mode;
 	bool	ll;													// Load/Link Register
 	//****************************************************************************
 	//** MISC																	**
