@@ -60,12 +60,6 @@
 		return;\
 	}
 
-#define set_rounding() _controlfp(rounding_mode, _MCW_RC)
-#define set_trunc() _controlfp(trunc_mode, _MCW_RC)
-#define set_round() _controlfp(round_mode, _MCW_RC)
-#define set_ceil() _controlfp(ceil_mode, _MCW_RC)
-#define set_floor() _controlfp(floor_mode, _MCW_RC)
-
 //****************************************************************************
 //** GETTERS																**
 //****************************************************************************
@@ -2179,18 +2173,55 @@ inline void R4300i::TLBWR(void)
 	pc += 4;
 }
 
+template<>
+inline void R4300i::ABS <s> (int fd, int fs)
+{
+	PRINT_PC("ABS " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(rounding_mode, _MCW_RC);
+	*reg_cop1_simple[fd] = fabs(*reg_cop1_simple[fs]);
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::ABS <d> (int fd, int fs)
+{
+	PRINT_PC("ABS " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(rounding_mode, _MCW_RC);
+	*reg_cop1_double[fd] = fabs(*reg_cop1_double[fs]);
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
 template<typename Type>
 inline void R4300i::ABS(int fd, int fs)
 {
 	PRINT_PC("ABS " << dec << "f" << fd << " " << dec << "f" << fs);
+	cerr << "ABS type not handle";
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::ADD <s> (int fd, int fs, int ft)
+{
+	PRINT_PC("ADD " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
 	TEST_COP1_USABLE_EXCEPTION
-	set_rounding();
-	if (sizeof(Type) == sizeof(s))
-		*reg_cop1_simple[fd] = fabs(*reg_cop1_simple[fs]);
-	else if (sizeof(Type) == sizeof(d))
-		*reg_cop1_double[fd] = fabs(*reg_cop1_double[fs]);
-	else
-		cerr << "ABS not define for this type";
+	_controlfp(rounding_mode, _MCW_RC);
+    *reg_cop1_simple[fd] = *reg_cop1_simple[fs] + *reg_cop1_simple[ft];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::ADD <d> (int fd, int fs, int ft)
+{
+	PRINT_PC("ADD " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(rounding_mode, _MCW_RC);
+    *reg_cop1_double[fd] = *reg_cop1_double[fs] + *reg_cop1_double[ft];
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
@@ -2199,8 +2230,7 @@ template<typename Type>
 inline void R4300i::ADD(int fd, int fs, int ft)
 {
 	PRINT_PC("ADD " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
-	TEST_COP1_USABLE_EXCEPTION
-	f[fd] = (dword) ((Type) f[fs] + (Type) f[ft]);
+	cerr << "ADD type not handle";
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
@@ -2220,8 +2250,8 @@ inline void R4300i::BC1F(int immed)
 		pc = pc_tmp;
 	else
 		pc += 4;
-	
-		
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BC1FL(int immed)
@@ -2229,18 +2259,20 @@ inline void R4300i::BC1FL(int immed)
 	PRINT_PC("BC1FL " << hex << "0x" << extend_sign_halfword(immed));
 	TEST_COP1_USABLE_EXCEPTION
 	dword pc_tmp = pc + extend_sign_halfword(immed);
-	pc += 4;
-	delay_slot = true;
-	decode(mmu.read<word>((word) pc));
-	Count += TIME_UNIT;
-	timer_handler.decTimer();
-	delay_slot = false;
 	if ((fcr31 & 0x800000)==0)
-		pc = pc_tmp;
-	else
+	{
 		pc += 4;
-	
-		
+		delay_slot = true;
+		decode(mmu.read<word>((word) pc));
+		Count += TIME_UNIT;
+		timer_handler.decTimer();
+		delay_slot = false;
+		pc = pc_tmp;
+	}
+	else
+		pc += 8;
+	CHECK_TIMER();
+	CHECK_INTERRUPT();	
 }
 
 inline void R4300i::BC1T(int immed)
@@ -2258,8 +2290,8 @@ inline void R4300i::BC1T(int immed)
 		pc = pc_tmp;
 	else
 		pc += 4;
-	
-		
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 inline void R4300i::BC1TL(int immed)
@@ -2267,16 +2299,20 @@ inline void R4300i::BC1TL(int immed)
 	PRINT_PC("BC1TL " << hex << "0x" << extend_sign_halfword(immed));
 	TEST_COP1_USABLE_EXCEPTION
 	dword pc_tmp = pc + extend_sign_halfword(immed);
-	pc += 4;
-	delay_slot = true;
-	decode(mmu.read<word>((word) pc));
-	Count += TIME_UNIT;
-	timer_handler.decTimer();
-	delay_slot = false;
 	if ((fcr31 & 0x800000) != 0)
-		pc = pc_tmp;
-	else
+	{
 		pc += 4;
+		delay_slot = true;
+		decode(mmu.read<word>((word) pc));
+		Count += TIME_UNIT;
+		timer_handler.decTimer();
+		delay_slot = false;
+		pc = pc_tmp;
+	}
+	else
+		pc += 8;
+	CHECK_TIMER();
+	CHECK_INTERRUPT();
 }
 
 template<typename Type>
@@ -2286,52 +2322,52 @@ inline void R4300i::C(int fs, int ft, int cond)
 	TEST_COP1_USABLE_EXCEPTION
 	switch (cond) {
 	case 0:
-		F<Type>((Type) f[fs], (Type) f[ft]);
+		F<Type>(fs, ft);
 		break;
 	case 1:
-		UN<Type>((Type) f[fs], (Type) f[ft]);
+		UN<Type>(fs, ft);
 		break;
 	case 2:
-		EQ<Type>((Type) f[fs], (Type) f[ft]);
+		EQ<Type>(fs, ft);
 		break;
 	case 3:
-		UEQ<Type>((Type) f[fs], (Type) f[ft]);
+		UEQ<Type>(fs, ft);
 		break;
 	case 4:
-		OLT<Type>((Type) f[fs], (Type) f[ft]);
+		OLT<Type>(fs, ft);
 		break;
 	case 5:
-		ULT<Type>((Type) f[fs], (Type) f[ft]);
+		ULT<Type>(fs, ft);
 		break;
 	case 6:
-		OLE<Type>((Type) f[fs], (Type) f[ft]);
+		OLE<Type>(fs, ft);
 		break;
 	case 7:
-		ULE<Type>((Type) f[fs], (Type) f[ft]);
+		ULE<Type>(fs, ft);
 		break;
 	case 8:
-		SF<Type>((Type) f[fs], (Type) f[ft]);
+		SF<Type>(fs, ft);
 		break;
 	case 9:
-		NGLE<Type>((Type) f[fs], (Type) f[ft]);
+		NGLE<Type>(fs, ft);
 		break;
 	case 10:
-		SEQ<Type>((Type) f[fs], (Type) f[ft]);
+		SEQ<Type>(fs, ft);
 		break;
 	case 11:
-		NGL<Type>((Type) f[fs], (Type) f[ft]);
+		NGL<Type>(fs, ft);
 		break;
 	case 12:
-		LT<Type>((Type) f[fs], (Type) f[ft]);
+		LT<Type>(fs, ft);
 		break;
 	case 13:
-		NGE<Type>((Type) f[fs], (Type) f[ft]);
+		NGE<Type>(fs, ft);
 		break;
 	case 14:
-		LE<Type>((Type) f[fs], (Type) f[ft]);
+		LE<Type>(fs, ft);
 		break;
 	case 15:
-		NGT<Type>((Type) f[fs], (Type) f[ft]);
+		NGT<Type>(fs, ft);
 		break;
 	default:
 		cout << endl << "Unknown Condition";
@@ -2340,12 +2376,55 @@ inline void R4300i::C(int fs, int ft, int cond)
 	pc += 4;
 }
 
+template<>
+inline void R4300i::CEIL <s, l> (int fd, int fs)
+{
+	PRINT_PC("CEIL " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+    _controlfp(ceil_mode, _MCW_RC);
+    *((long long*)(reg_cop1_double[fd])) = (long long) *reg_cop1_simple[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::CEIL <d, l> (int fd, int fs)
+{
+	PRINT_PC("CEIL " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+    _controlfp(ceil_mode, _MCW_RC);
+    *((long long*)(reg_cop1_double[fd])) = (long long) *reg_cop1_double[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::CEIL <s, w> (int fd, int fs)
+{
+	PRINT_PC("CEIL " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+    _controlfp(ceil_mode, _MCW_RC);
+    *((long *)(reg_cop1_simple[fd])) = (long) *reg_cop1_simple[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::CEIL <d, w> (int fd, int fs)
+{
+	PRINT_PC("CEIL " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+    _controlfp(ceil_mode, _MCW_RC);
+    *((long *)(reg_cop1_simple[fd])) = (long) *reg_cop1_double[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
 template<typename Type, typename toType>
 inline void R4300i::CEIL(int fd, int fs)
 {
 	PRINT_PC("CEIL " << dec << "f" << fd << " " << dec << "f" << fs);
-	TEST_COP1_USABLE_EXCEPTION
-	f[fd] = (toType) ((Type) f[fs]);
+	cerr << "CEIL type not handle"
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
@@ -2387,16 +2466,164 @@ inline void R4300i::CTC1(int rt, int fs)
 	pc += 4;
 }
 
+template<>
+inline void R4300i::CVT <s, d> (int fd, int fs)
+{
+	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(rounding_mode, _MCW_RC);
+	*reg_cop1_double[fd] = *reg_cop1_simple[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::CVT <s, w> (int fd, int fs)
+{
+	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(rounding_mode, _MCW_RC);
+	*((long *)reg_cop1_simple[fd]) = (long) *reg_cop1_simple[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::CVT <s, l> (int fd, int fs)
+{
+	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(rounding_mode, _MCW_RC);
+	*((long long *)reg_cop1_double[fd]) = (long long) *reg_cop1_simple[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::CVT <d, s> (int fd, int fs)
+{
+	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(rounding_mode, _MCW_RC);
+	*reg_cop1_simple[fd] = (float) *reg_cop1_double[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::CVT <d, w> (int fd, int fs)
+{
+	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(rounding_mode, _MCW_RC);
+	*((long *)reg_cop1_simple[fd]) = (long) *reg_cop1_double[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::CVT <d, l> (int fd, int fs)
+{
+	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(rounding_mode, _MCW_RC);
+	*((long long *)reg_cop1_double[fd]) = (long long) *reg_cop1_double[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::CVT <w, s> (int fd, int fs)
+{
+	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(rounding_mode, _MCW_RC);
+	*reg_cop1_simple[fd] = (float) *((long *)reg_cop1_simple[fs]);
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::CVT <w, d> (int fd, int fs)
+{
+	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(rounding_mode, _MCW_RC);
+	*reg_cop1_double[fd] = *((long *)reg_cop1_simple[fs]);
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::CVT <w, l> (int fd, int fs)
+{
+	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(rounding_mode, _MCW_RC);
+	*((long long *)reg_cop1_double[fd]) = *((long *)reg_cop1_double[fs]);
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::CVT <l, s> (int fd, int fs)
+{
+	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(rounding_mode, _MCW_RC);
+	*reg_cop1_simple[fd] = (float) *((long long *)reg_cop1_double[fd]);
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::CVT <l, d> (int fd, int fs)
+{
+	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(rounding_mode, _MCW_RC);
+	*reg_cop1_double[fd] = (double) *((long long *)reg_cop1_double[fd]);
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::CVT <l, w> (int fd, int fs)
+{
+	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(rounding_mode, _MCW_RC);
+	*((long *)reg_cop1_simple[fd]) = (long) *((long long *)reg_cop1_double[fd]);
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
 template<typename Type, typename toType>
 inline void R4300i::CVT(int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION
-	set_rounding();
-	if (sizeof(Type) == sizeof(w) && sizeof(toType) == sizeof(s))
-		*reg_cop1_simple[fd] = *((long*)reg_cop1_simple[fs]);
-	else
-		cerr << "CVT not define for this combinaison of type";
+	cerr << "CVT not define for this combinaison of type";
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::DIV <s> (int fd, int fs, int ft)
+{
+	PRINT_PC("DIV " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
+	TEST_COP1_USABLE_EXCEPTION
+	*reg_cop1_simple[fd] = *reg_cop1_simple[fs] / *reg_cop1_simple[ft];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::DIV <d> (int fd, int fs, int ft)
+{
+	PRINT_PC("DIV " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
+	TEST_COP1_USABLE_EXCEPTION
+	*reg_cop1_double[fd] = *reg_cop1_double[fs] / *reg_cop1_double[ft];
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
@@ -2405,8 +2632,7 @@ template<typename Type>
 inline void R4300i::DIV(int fd, int fs, int ft)
 {
 	PRINT_PC("DIV " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
-	TEST_COP1_USABLE_EXCEPTION
-	f[fd] = (dword) ((Type) f[fs] / (Type) f[ft]);
+	cerr << "DIV type undefine";
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
@@ -2415,7 +2641,7 @@ inline void R4300i::DMFC1(int rt, int fs)
 {
 	PRINT_PC("DMFC1 " << dec << "r" << rt << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION
-	r[rt] = f[fs];
+	r[rt] = *((long long*)(reg_cop1_double[fs]));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -2424,8 +2650,52 @@ inline void R4300i::DMTC1(int rt, int fs)
 {
 	PRINT_PC("DMTC1 " << dec << "r" << rt << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION
-	f[fs] = r[rt];
+	*((long long*)reg_cop1_double[fs]) = r[rt];
 	PRINT_PC(" f" << dec << fs << hex << "=0x" << f[fs]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::FLOOR <s, l> (int fd, int fs)
+{
+	PRINT_PC("FLOOR " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(floor_mode, _MCW_RC);
+    *((long long*)(reg_cop1_double[fd])) = (long long) *reg_cop1_simple[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::FLOOR <d, l> (int fd, int fs)
+{
+	PRINT_PC("FLOOR " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(floor_mode, _MCW_RC);
+    *((long long*)(reg_cop1_double[fd])) = (long long) *reg_cop1_double[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::FLOOR <s, w> (int fd, int fs)
+{
+	PRINT_PC("FLOOR " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(floor_mode, _MCW_RC);
+    *((long *)(reg_cop1_simple[fd])) = (long) *reg_cop1_simple[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::FLOOR <d, w> (int fd, int fs)
+{
+	PRINT_PC("FLOOR " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(floor_mode, _MCW_RC);
+    *((long *)(reg_cop1_simple[fd])) = (long) *reg_cop1_double[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
 
@@ -2433,8 +2703,7 @@ template<typename Type, typename toType>
 inline void R4300i::FLOOR(int fd, int fs)
 {
 	PRINT_PC("FLOOR " << dec << "f" << fd << " " << dec << "f" << fs);
-	TEST_COP1_USABLE_EXCEPTION
-	f[fd] = (toType) ((Type) f[fs]);
+	cerr << "FLOOR type not define";
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
@@ -2443,7 +2712,7 @@ inline void R4300i::LDC1(int ft, int immed, int rs)
 {
 	PRINT_PC("LDC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
 	TEST_COP1_USABLE_EXCEPTION
-	f[ft] = mmu.read<dword>((word) (r[rs] + extend_sign_halfword(immed) * sizeof(dword)));
+	*((long long*)reg_cop1_double[ft]) = mmu.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT_PC(" f" << dec << ft << hex << "=0x" << f[ft]);
 	pc += 4;
 }
@@ -2452,7 +2721,7 @@ inline void R4300i::LWC1(int ft, int immed, int rs)
 {
 	PRINT_PC("LWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
 	TEST_COP1_USABLE_EXCEPTION
-	f[ft] = mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
+	*((long*)reg_cop1_simple[ft]) = mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT_PC(" f" << dec << ft << hex << "=0x" << f[ft]);
 	pc += 4;
 }
@@ -2461,8 +2730,30 @@ inline void R4300i::MFC1(int rt, int fs)
 {
 	PRINT_PC("MFC1 " << dec << "r" << rt << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION
-	r[rt] = extend_sign_word(*((long*)reg_cop1_simple[f[fs]]));
+	r[rt] = extend_sign_word(*((long*)reg_cop1_simple[fs]));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::MOV <s> (int fd, int fs)
+{
+	PRINT_PC("MOV " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+    _controlfp(rounding_mode, _MCW_RC);
+	reg_cop1_simple[fd] = reg_cop1_simple[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::MOV <d> (int fd, int fs)
+{
+	PRINT_PC("MOV " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+    _controlfp(rounding_mode, _MCW_RC);
+	reg_cop1_double[fd] = reg_cop1_double[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
 
@@ -2470,8 +2761,7 @@ template<typename Type>
 inline void R4300i::MOV(int fd, int fs)
 {
 	PRINT_PC("MOV " << dec << "f" << fd << " " << dec << "f" << fs);
-	TEST_COP1_USABLE_EXCEPTION
-	f[fd] = (dword) ((Type) f[fs]);
+	cerr << "MOV type not handle";
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
@@ -2485,12 +2775,55 @@ inline void R4300i::MTC1(int rt, int fs)
 	pc += 4;
 }
 
+template<>
+inline void R4300i::MUL <s> (int fd, int fs, int ft)
+{
+	PRINT_PC("MUL " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
+	TEST_COP1_USABLE_EXCEPTION
+    _controlfp(rounding_mode, _MCW_RC);
+    *reg_cop1_simple[fd] = *reg_cop1_simple[fs] * *reg_cop1_simple[ft];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::MUL <d> (int fd, int fs, int ft)
+{
+	PRINT_PC("MUL " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
+	TEST_COP1_USABLE_EXCEPTION
+    _controlfp(rounding_mode, _MCW_RC);
+    *reg_cop1_double[fd] = *reg_cop1_double[fs] * *reg_cop1_double[ft];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
 template<typename Type>
 inline void R4300i::MUL(int fd, int fs, int ft)
 {
 	PRINT_PC("MUL " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
+	cerr << "MUL type not handle";
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::NEG <s> (int fd, int fs)
+{
+	PRINT_PC("NEG " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION
-	f[fd] = (dword) ((Type) f[fs] * (Type) f[ft]);
+    _controlfp(rounding_mode, _MCW_RC);
+    *reg_cop1_simple[fd] = -(*reg_cop1_simple[fs]);
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::NEG <d> (int fd, int fs)
+{
+	PRINT_PC("NEG " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+    _controlfp(rounding_mode, _MCW_RC);
+    *reg_cop1_double[fd] = -(*reg_cop1_double[fs]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
@@ -2499,8 +2832,51 @@ template<typename Type>
 inline void R4300i::NEG(int fd, int fs)
 {
 	PRINT_PC("NEG " << dec << "f" << fd << " " << dec << "f" << fs);
+	cerr << "NEG type not handle";
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::ROUND <s, l> (int fd, int fs)
+{
+	PRINT_PC("ROUND " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION
-	f[fd] = (dword) (- (Type) f[fs]);
+	_controlfp(round_mode, _MCW_RC);
+	*((long long*)(reg_cop1_double[fd])) = (long long) *reg_cop1_simple[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::ROUND <d, l> (int fd, int fs)
+{
+	PRINT_PC("ROUND " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(round_mode, _MCW_RC);
+	*((long long*)(reg_cop1_double[fd])) = (long long) *reg_cop1_double[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::ROUND <s, w> (int fd, int fs)
+{
+	PRINT_PC("ROUND " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(round_mode, _MCW_RC);
+	*((long *)(reg_cop1_simple[fd])) = (long) *reg_cop1_simple[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::ROUND <d, w> (int fd, int fs)
+{
+	PRINT_PC("ROUND " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+	_controlfp(round_mode, _MCW_RC);
+	*((long *)(reg_cop1_simple[fd])) = (long) *reg_cop1_double[fs];
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
@@ -2509,8 +2885,7 @@ template<typename Type, typename toType>
 inline void R4300i::ROUND(int fd, int fs)
 {
 	PRINT_PC("ROUND " << dec << "f" << fd << " " << dec << "f" << fs);
-	TEST_COP1_USABLE_EXCEPTION
-	f[fd] = (toType) ((Type) f[fs]);
+	cerr << "ROUND type not handle";
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
@@ -2519,26 +2894,27 @@ inline void R4300i::SDC1(int ft, int immed, int rs)
 {
 	PRINT_PC("SDC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
 	TEST_COP1_USABLE_EXCEPTION
-	mmu.write<dword>(f[ft], (word) (r[rs] + extend_sign_halfword(immed) * sizeof(dword)));
+	mmu.write<dword>(*((unsigned long long*)reg_cop1_double[ft]), (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
 template<>
-inline void R4300i::SQRT<w>(int fd, int fs)
+inline void R4300i::SQRT <s> (int fd, int fs)
 {
 	PRINT_PC("SQRT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION
-	f[fd] = (dword) sqrt((double)f[fs]);
+    _controlfp(rounding_mode, _MCW_RC);
+    *reg_cop1_simple[fd] = sqrt(*reg_cop1_simple[fs]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
 
 template<>
-inline void R4300i::SQRT<l>(int fd, int fs)
+inline void R4300i::SQRT<d>(int fd, int fs)
 {
 	PRINT_PC("SQRT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION
-	f[fd] = (dword) sqrt((double)f[fs]);
+    *reg_cop1_double[fd] = sqrt(*reg_cop1_double[fs]);
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
@@ -2547,8 +2923,27 @@ template<typename Type>
 inline void R4300i::SQRT(int fd, int fs)
 {
 	PRINT_PC("SQRT " << dec << "f" << fd << " " << dec << "f" << fs);
-	TEST_COP1_USABLE_EXCEPTION
-	f[fd] = (dword) sqrt((Type)f[fs]);
+	cerr << "SQRT type not define";
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::SUB <s> (int fd, int fs, int ft)
+{
+	PRINT_PC("SUB " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
+	_controlfp(rounding_mode, _MCW_RC);
+	*reg_cop1_simple[fd] = *reg_cop1_simple[fs] - *reg_cop1_simple[ft];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::SUB <d> (int fd, int fs, int ft)
+{
+	PRINT_PC("SUB " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
+	_controlfp(rounding_mode, _MCW_RC);
+	*reg_cop1_double[fd] = *reg_cop1_double[fs] - *reg_cop1_double[ft];
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
@@ -2557,8 +2952,7 @@ template<typename Type>
 inline void R4300i::SUB(int fd, int fs, int ft)
 {
 	PRINT_PC("SUB " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
-	TEST_COP1_USABLE_EXCEPTION
-	f[fd] = (dword) ((Type) f[fs] - (Type) f[ft]);
+	cerr << "SUB type not define";
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
@@ -2567,7 +2961,51 @@ inline void R4300i::SWC1(int ft, int immed, int rs)
 {
 	PRINT_PC("SWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
 	TEST_COP1_USABLE_EXCEPTION
-	mmu.write<word>((word) f[ft], (r[rs] + extend_sign_halfword(immed) & 0xFFFFFFFF));
+	mmu.write<word>(*((long*)reg_cop1_simple[ft]), (word) (r[rs] + extend_sign_halfword(immed)));
+	pc += 4;
+}
+
+template<>
+inline void R4300i::TRUNC <s, l>(int fd, int fs)
+{
+	PRINT_PC("TRUNC " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+    _controlfp(trunc_mode, _MCW_RC);
+    *((long long*)(reg_cop1_double[fd])) = (long long) *reg_cop1_simple[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::TRUNC <d, l>(int fd, int fs)
+{
+	PRINT_PC("TRUNC " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+    _controlfp(trunc_mode, _MCW_RC);
+    *((long long*)(reg_cop1_double[fd])) = (long long) *reg_cop1_double[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::TRUNC <s, w>(int fd, int fs)
+{
+	PRINT_PC("TRUNC " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+    _controlfp(trunc_mode, _MCW_RC);
+    *((long *)(reg_cop1_simple[fd])) = (long) *reg_cop1_simple[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
+	pc += 4;
+}
+
+template<>
+inline void R4300i::TRUNC <d, w>(int fd, int fs)
+{
+	PRINT_PC("TRUNC " << dec << "f" << fd << " " << dec << "f" << fs);
+	TEST_COP1_USABLE_EXCEPTION
+    _controlfp(trunc_mode, _MCW_RC);
+    *((long *)(reg_cop1_simple[fd])) = (long) *reg_cop1_double[fs];
+	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
 
@@ -2575,85 +3013,199 @@ template<typename Type, typename toType>
 inline void R4300i::TRUNC(int fd, int fs)
 {
 	PRINT_PC("TRUNC " << dec << "f" << fd << " " << dec << "f" << fs);
-	TEST_COP1_USABLE_EXCEPTION
-	f[fd] = (toType) ((Type) f[fs]);
+	cerr << "TRUNC type not handle";
 	PRINT_PC(" f" << dec << fd << hex << "=0x" << f[fd]);
 	pc += 4;
 }
 
 template<typename Type>
-inline void R4300i::F(Type a, Type b)
+inline void R4300i::F(int fs, int ft)
 {
 	fcr31 &= ~0x800000;
 }
 
-template<typename Type>
-inline void R4300i::UN(Type a, Type b)
+template<>
+inline void R4300i::UN <s> (int fs, int ft)
 {
-	if (_isnan((double) a) || _isnan((double) b))
+	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
+		fcr31 |= 0x800000;
+	else
+		fcr31 &= ~0x800000;
+}
+
+template<>
+inline void R4300i::UN <d> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
 		fcr31 |= 0x800000;
 	else
 		fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-inline void R4300i::EQ(Type a, Type b)
+inline void R4300i::UN(int fs, int ft)
 {
-	if (!_isnan((double) a) && !_isnan((double) b) && a == b)
+	cerr << "C UN type not define";
+}
+
+template<>
+inline void R4300i::EQ <s> (int fs, int ft)
+{
+	if (!_isnan(*reg_cop1_simple[fs]) && !_isnan(*reg_cop1_simple[ft]) && *reg_cop1_simple[fs] == *reg_cop1_simple[ft])
+		fcr31 |= 0x800000;
+	else
+		fcr31 &= ~0x800000;
+}
+
+template<>
+inline void R4300i::EQ <d> (int fs, int ft)
+{
+	if (!_isnan(*reg_cop1_double[fs]) && !_isnan(*reg_cop1_double[ft]) && *reg_cop1_double[fs] == *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
 		fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-inline void R4300i::UEQ(Type a, Type b)
+inline void R4300i::EQ(int fs, int ft)
 {
-	if (_isnan((double) a) || _isnan((double) b) || a == b)
+	cerr << "C EQ type not handle";
+}
+
+template<>
+inline void R4300i::UEQ <s> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]) || *reg_cop1_simple[fs] == *reg_cop1_simple[ft])
+		fcr31 |= 0x800000;
+	else
+		fcr31 &= ~0x800000;
+}
+
+template<>
+inline void R4300i::UEQ <d> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]) || *reg_cop1_double[fs] == *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
 		fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-inline void R4300i::OLT(Type a, Type b)
+inline void R4300i::UEQ(int fs, int ft)
 {
-	if (!_isnan((double) a) && !_isnan((double) b) && a < b)
+	cerr << "C UEQ type not handle";
+}
+
+template<>
+inline void R4300i::OLT <s> (int fs, int ft)
+{
+	if (!_isnan(*reg_cop1_simple[fs]) && !_isnan(*reg_cop1_simple[ft]) && *reg_cop1_simple[fs] < *reg_cop1_simple[ft])
+		fcr31 |= 0x800000;
+	else
+		fcr31 &= ~0x800000;
+}
+
+template<>
+inline void R4300i::OLT <d> (int fs, int ft)
+{
+	if (!_isnan(*reg_cop1_double[fs]) && !_isnan(*reg_cop1_double[ft]) && *reg_cop1_double[fs] < *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
 		fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-inline void R4300i::ULT(Type a, Type b)
+inline void R4300i::OLT(int fs, int ft)
 {
-	if (_isnan((double) a) || _isnan((double) b) || a < b)
+	cerr << "C OLT type not handle";
+}
+
+template<>
+inline void R4300i::ULT <s> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]) || *reg_cop1_simple[fs] < *reg_cop1_simple[ft])
+		fcr31 |= 0x800000;
+	else
+		fcr31 &= ~0x800000;
+}
+
+template<>
+inline void R4300i::ULT <d> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]) || *reg_cop1_double[fs] < *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
 		fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-inline void R4300i::OLE(Type a, Type b)
+inline void R4300i::ULT(int fs, int ft)
 {
-	if (!_isnan((double) a) && !_isnan((double) b) && a <= b)
+	cerr << "C ULT type not handle";
+}
+
+template<>
+inline void R4300i::OLE <s> (int fs, int ft)
+{
+	if (!_isnan(*reg_cop1_simple[fs]) && !_isnan(*reg_cop1_simple[ft]) && *reg_cop1_simple[fs] <= *reg_cop1_simple[ft])
+		fcr31 |= 0x800000;
+	else
+		fcr31 &= ~0x800000;
+}
+
+template<>
+inline void R4300i::OLE <d> (int fs, int ft)
+{
+	if (!_isnan(*reg_cop1_double[fs]) && !_isnan(*reg_cop1_double[ft]) && *reg_cop1_double[fs] <= *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
 		fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-inline void R4300i::ULE(Type a, Type b)
+inline void R4300i::OLE(int fs, int ft)
 {
-	if (_isnan((double) a) || _isnan((double) b) || a <= b)
+	cerr << "C OLE type not handle";
+}
+
+template<>
+inline void R4300i::ULE <s> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]) || *reg_cop1_simple[fs] <= *reg_cop1_simple[ft])
+		fcr31 |= 0x800000;
+	else
+		fcr31 &= ~0x800000;
+}
+
+template<>
+inline void R4300i::ULE <d> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]) || *reg_cop1_double[fs] <= *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
 		fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-inline void R4300i::SF(Type a, Type b)
+inline void R4300i::ULE(int fs, int ft)
 {
-	if (_isnan((double) a) || _isnan((double) b))
+	cerr << "C ULE type not handle";
+}
+
+template<>
+inline void R4300i::SF <s> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
+	{
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
+	}
+	fcr31 &= ~0x800000;
+}
+
+template<>
+inline void R4300i::SF <d> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
 	{
 		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
@@ -2661,92 +3213,227 @@ inline void R4300i::SF(Type a, Type b)
 }
 
 template<typename Type>
-inline void R4300i::NGLE(Type a, Type b)
+inline void R4300i::SF(int fs, int ft)
 {
-	if (_isnan((double) a) || _isnan((double) b))
+	cerr << "C SF type not handle";
+}
+
+template<>
+inline void R4300i::NGLE <s> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
 	{
 		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
 	fcr31 &= ~0x800000;
 }
 
-
-template<typename Type>
-inline void R4300i::SEQ(Type a, Type b)
+template<>
+inline void R4300i::NGLE <d> (int fs, int ft)
 {
-	if (_isnan((double) a) || _isnan((double) b))
+	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
 	{
 		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
-	if (a == b)
+	fcr31 &= ~0x800000;
+}
+
+template<typename Type>
+inline void R4300i::NGLE(int fs, int ft)
+{
+	cerr << "C NGLE type noy handle";
+}
+
+template<>
+inline void R4300i::SEQ <s> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
+	{
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
+	}
+	if (*reg_cop1_simple[fs] == *reg_cop1_simple[ft])
+		fcr31 |= 0x800000;
+	else
+		fcr31 &= ~0x800000;
+}
+
+template<>
+inline void R4300i::SEQ <d> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
+	{
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
+	}
+	if (*reg_cop1_double[fs] == *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
 		fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-inline void R4300i::NGL(Type a, Type b)
+inline void R4300i::SEQ(int fs, int ft)
 {
-	if (_isnan((double) a) || _isnan((double) b))
+	cerr << "C SEQ type not handle";
+}
+
+template<>
+inline void R4300i::NGL <s> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
 	{
 		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
-	if (a == b)
+	if (*reg_cop1_simple[fs] == *reg_cop1_simple[ft])
+		fcr31 |= 0x800000;
+	else
+		fcr31 &= ~0x800000;
+}
+
+template<>
+inline void R4300i::NGL <d> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
+	{
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
+	}
+	if (*reg_cop1_double[fs] == *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
 		fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-inline void R4300i::LT(Type a, Type b)
+inline void R4300i::NGL(int fs, int ft)
 {
-	if (_isnan((double) a) || _isnan((double) b))
+	cerr << "C NGL type not handle";
+}
+
+template<>
+inline void R4300i::LT <s> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
 	{
 		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
-	if (a < b)
+	if (*reg_cop1_simple[fs] < *reg_cop1_simple[ft])
+		fcr31 |= 0x800000;
+	else
+		fcr31 &= ~0x800000;
+}
+
+template<>
+inline void R4300i::LT <d> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
+	{
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
+	}
+	if (*reg_cop1_double[fs] < *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
 		fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-inline void R4300i::NGE(Type a, Type b)
+inline void R4300i::LT(int fs, int ft)
 {
-	if (_isnan((double) a) || _isnan((double) b))
+	cerr << "C LT type not handle";
+}
+
+template<>
+inline void R4300i::NGE <s> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
 	{
 		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
-	if (a < b)
+	if (*reg_cop1_simple[fs] < *reg_cop1_simple[ft])
+		fcr31 |= 0x800000;
+	else
+		fcr31 &= ~0x800000;
+}
+
+template<>
+inline void R4300i::NGE <d> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
+	{
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
+	}
+	if (*reg_cop1_double[fs] < *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
 		fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-inline void R4300i::LE(Type a, Type b)
+inline void R4300i::NGE(int fs, int ft)
 {
-	if (_isnan((double) a) || _isnan((double) b))
+	cerr << "C NGE type not handle";
+}
+
+template<>
+inline void R4300i::LE <s> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
 	{
 		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
-	if (a <= b)
+	if (*reg_cop1_simple[fs] <= *reg_cop1_simple[ft])
+		fcr31 |= 0x800000;
+	else
+		fcr31 &= ~0x800000;
+}
+
+template<>
+inline void R4300i::LE <d> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
+	{
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
+	}
+	if (*reg_cop1_double[fs] <= *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
 		fcr31 &= ~0x800000;
 }
 
 template<typename Type>
-inline void R4300i::NGT(Type a, Type b)
+inline void R4300i::LE(int fs, int ft)
 {
-	if (_isnan((double) a) || _isnan((double) b))
+	cerr << "C LE type not handle";
+}
+
+template<>
+inline void R4300i::NGT <s> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
 	{
 		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
 	}
-	if (a <= b)
+	if (*reg_cop1_simple[fs] <= *reg_cop1_simple[ft])
 		fcr31 |= 0x800000;
 	else
 		fcr31 &= ~0x800000;
+}
+
+template<>
+inline void R4300i::NGT <d> (int fs, int ft)
+{
+	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
+	{
+		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
+	}
+	if (*reg_cop1_double[fs] <= *reg_cop1_double[ft])
+		fcr31 |= 0x800000;
+	else
+		fcr31 &= ~0x800000;
+}
+
+template<typename Type>
+inline void R4300i::NGT(int fs, int ft)
+{
+	cerr << "C NGT type not handle";
 }
 
 inline int R4300i::probe_nop(word address)

@@ -115,7 +115,6 @@ void R4300i::start()
 	int i = 0;
 	reset();
 	pif_init();
-	cout << "s=" << sizeof(s) << " d=" << sizeof(d) << " w=" << sizeof(w) << " l=" << sizeof(l);
 
 	while (running)
 	{
