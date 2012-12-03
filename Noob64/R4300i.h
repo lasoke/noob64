@@ -330,37 +330,21 @@ private:
 	//****************************************************************************
 	//** CONDITIONS		                                                        **
 	//****************************************************************************
-	template<typename Type>
-	inline void F(Type a, Type b);		// False
-	template<typename Type>
-	inline void UN(Type a, Type b);		// Unordered
-	template<typename Type>
-	inline void EQ(Type a, Type b);		// Equal
-	template<typename Type>
-	inline void UEQ(Type a, Type b);	// Unordered or Equal
-	template<typename Type>
-	inline void OLT(Type a, Type b);	// Ordered or Less Than
-	template<typename Type>
-	inline void ULT(Type a, Type b);	// Unordered or Less Than
-	template<typename Type>
-	inline void OLE(Type a, Type b);	// Ordered or Less than or Equal
-	template<typename Type>
-	inline void ULE(Type a, Type b);	// Unordered or Less than or Equal
-	template<typename Type>
-	inline void SF(Type a, Type b);		// Signaling False
-	template<typename Type>
-	inline void NGLE(Type a, Type b);	// Not Greater than or Less than or Equal
-	template<typename Type>
-	inline void SEQ(Type a, Type b);	// Signaling Equal
-	template<typename Type>
-	inline void NGL(Type a, Type b);	// Not Greater than or Less than
-	template<typename Type>
-	inline void LT(Type a, Type b);		// Less Than
-	template<typename Type>
-	inline void NGE(Type a, Type b);	// Not Greater than or Equal
-	template<typename Type>
-	inline void LE(Type a, Type b);		// Less than or Equal
-	template<typename Type>
-	inline void NGT(Type a, Type b);	// Not Greater Than
+	template<typename Type>	inline void F(Type a, Type b);		// False
+	template<typename Type>	inline void UN(Type a, Type b);		// Unordered
+	template<typename Type>	inline void EQ(Type a, Type b);		// Equal
+	template<typename Type>	inline void UEQ(Type a, Type b);	// Unordered or Equal
+	template<typename Type>	inline void OLT(Type a, Type b);	// Ordered or Less Than
+	template<typename Type>	inline void ULT(Type a, Type b);	// Unordered or Less Than
+	template<typename Type>	inline void OLE(Type a, Type b);	// Ordered or Less than or Equal
+	template<typename Type>	inline void ULE(Type a, Type b);	// Unordered or Less than or Equal
+	template<typename Type>	inline void SF(Type a, Type b);		// Signaling False
+	template<typename Type>	inline void NGLE(Type a, Type b);	// Not Greater than or Less than or Equal
+	template<typename Type>	inline void SEQ(Type a, Type b);	// Signaling Equal
+	template<typename Type>	inline void NGL(Type a, Type b);	// Not Greater than or Less than
+	template<typename Type>	inline void LT(Type a, Type b);		// Less Than
+	template<typename Type>	inline void NGE(Type a, Type b);	// Not Greater than or Equal
+	template<typename Type>	inline void LE(Type a, Type b);		// Less than or Equal
+	template<typename Type>	inline void NGT(Type a, Type b);	// Not Greater Than
 };
 
