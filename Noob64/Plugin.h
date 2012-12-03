@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * The Plugin files contains the functions, macro and structure to generically 
+ * represent a plugin.
+ *
+ */
+
 #pragma once
 
 #define PLUGIN_TYPE_RSP				1

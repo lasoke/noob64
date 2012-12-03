@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * The Rcp files contains the functions, macro and structure to represente
+ * and handle every interaction between the R4300i and the Rcp.
+ *
+ */
+
 #pragma once
 
 class ROM;

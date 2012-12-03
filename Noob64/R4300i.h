@@ -22,6 +22,13 @@
  *
  */
 
+/*
+ * The R4300i files contains the functions which concerns the emulation
+ * of the R4300i processor. like the instructions, and the main loop of
+ * the n64 emulator.
+ *
+ */
+
 #pragma once
 
 // Cop0 Macros
@@ -136,10 +143,13 @@ private:
 	// TODO: r[0] is always 0
 	dword	r[32];												// General Purpose Registers (GPRs)
 	dword	f[32];												// FP General Purpose Registers (FGRs)
+	double	*reg_cop1_double[32];
+	float	*reg_cop1_simple[32];
 	word	cop0[32];											// Cop0 registers
 	dword	pc;													// Program Counter
 	dword	hi, lo;												// Multiply/Divide result
 	word	fcr0, fcr31;										// Floating Point Control Registers
+	int		rounding_mode, trunc_mode, round_mode, ceil_mode, floor_mode;
 	bool	ll;													// Load/Link Register
 	//****************************************************************************
 	//** MISC																	**
@@ -283,7 +293,7 @@ private:
 	inline void TLBWI			(void);							//	Write Indexed TLB Entry
 	inline void TLBWR			(void);							//	Write Random TLB Entry
 	//****************************************************************************
-	//** FLOATING-POINT UNIT, FPU (COP1) INSTRUCTIONS                          **
+	//** FLOATING-POINT UNIT, FPU (COP1) INSTRUCTIONS                           **
 	//****************************************************************************
 	template<typename Type>
 	inline void ABS				(int fd, int fs);				//	floating-point ABSolute value
@@ -330,21 +340,21 @@ private:
 	//****************************************************************************
 	//** CONDITIONS		                                                        **
 	//****************************************************************************
-	template<typename Type>	inline void F(Type a, Type b);		// False
-	template<typename Type>	inline void UN(Type a, Type b);		// Unordered
-	template<typename Type>	inline void EQ(Type a, Type b);		// Equal
-	template<typename Type>	inline void UEQ(Type a, Type b);	// Unordered or Equal
-	template<typename Type>	inline void OLT(Type a, Type b);	// Ordered or Less Than
-	template<typename Type>	inline void ULT(Type a, Type b);	// Unordered or Less Than
-	template<typename Type>	inline void OLE(Type a, Type b);	// Ordered or Less than or Equal
-	template<typename Type>	inline void ULE(Type a, Type b);	// Unordered or Less than or Equal
-	template<typename Type>	inline void SF(Type a, Type b);		// Signaling False
-	template<typename Type>	inline void NGLE(Type a, Type b);	// Not Greater than or Less than or Equal
-	template<typename Type>	inline void SEQ(Type a, Type b);	// Signaling Equal
-	template<typename Type>	inline void NGL(Type a, Type b);	// Not Greater than or Less than
-	template<typename Type>	inline void LT(Type a, Type b);		// Less Than
-	template<typename Type>	inline void NGE(Type a, Type b);	// Not Greater than or Equal
-	template<typename Type>	inline void LE(Type a, Type b);		// Less than or Equal
-	template<typename Type>	inline void NGT(Type a, Type b);	// Not Greater Than
+	template<typename Type>	inline void F(int fs, int ft);		// False
+	template<typename Type>	inline void UN(int fs, int ft);		// Unordered
+	template<typename Type>	inline void EQ(int fs, int ft);		// Equal
+	template<typename Type>	inline void UEQ(int fs, int ft);	// Unordered or Equal
+	template<typename Type>	inline void OLT(int fs, int ft);	// Ordered or Less Than
+	template<typename Type>	inline void ULT(int fs, int ft);	// Unordered or Less Than
+	template<typename Type>	inline void OLE(int fs, int ft);	// Ordered or Less than or Equal
+	template<typename Type>	inline void ULE(int fs, int ft);	// Unordered or Less than or Equal
+	template<typename Type>	inline void SF(int fs, int ft);		// Signaling False
+	template<typename Type>	inline void NGLE(int fs, int ft);	// Not Greater than or Less than or Equal
+	template<typename Type>	inline void SEQ(int fs, int ft);	// Signaling Equal
+	template<typename Type>	inline void NGL(int fs, int ft);	// Not Greater than or Less than
+	template<typename Type>	inline void LT(int fs, int ft);		// Less Than
+	template<typename Type>	inline void NGE(int fs, int ft);	// Not Greater than or Equal
+	template<typename Type>	inline void LE(int fs, int ft);		// Less than or Equal
+	template<typename Type>	inline void NGT(int fs, int ft);	// Not Greater Than
 };
 

@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * The Dps files contains the functions, macro and structure to represente
+ * and access the DP span register of the n64 memory.
+ *
+ */
+
 #pragma once
 
 #include "Rcp.h"

@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * The Exception files contains the functions, macro and structure to represente
+ * and execute the interruption and exception of the n64.
+ *
+ */
+
 #pragma once
 
 // The next defines are extract from the MIPS manual
@@ -51,6 +57,7 @@
 
 #define CAUSE_ExcCode	0x0000007C
 #define CAUSE_IP		0x0000FF00
+#define CAUSE_C0		0x10000000
 #define CAUSE_CE		0x30000000
 #define CAUSE_BD		0x40000000
 

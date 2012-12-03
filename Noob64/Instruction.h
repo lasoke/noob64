@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * The Instuction files contains the functions used to retreive
+ * information from an OPCODE and to extend the sign of a register.
+ *
+ */
+
 #pragma once
 
 // Extends the negative bit to a dword if 1 in word

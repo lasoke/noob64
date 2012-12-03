@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * The RSP files contains the functions, macro and structure to represente
+ * and interface our emulator with the RSP plugin.
+ *
+ */
+
 #pragma once
 
 #include "Plugin.h"

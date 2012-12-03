@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * The Pi files contains the functions, macro and structure to represente
+ * and access the peripheral interface register of the n64 memory.
+ *
+ */
+
 #pragma once
 
 #include "Rcp.h"
