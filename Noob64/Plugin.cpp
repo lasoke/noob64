@@ -25,7 +25,23 @@
 #include "StdAfx.h"
 #include "Plugin.h"
 
-PLUGIN::PLUGIN(wstring filename, HWND h)
+bool			PLUGIN::loaded = false;
+HINSTANCE		PLUGIN::hDLL = 0;
+HWND			PLUGIN::hWnd = 0;
+CLOSEDLL		PLUGIN::closeDLL_ = 0;
+DLLABOUT		PLUGIN::dllAbout_ = 0;
+DLLCONFIG		PLUGIN::dllConfig_ = 0;
+DLLTEST			PLUGIN::dllTest_ = 0;
+GETDLLINFO		PLUGIN::getDllInfo_ = 0;
+ROMCLOSED		PLUGIN::romClosed_ = 0;
+PLUGIN_INFO*	PLUGIN::plugin_info = 0;
+
+bool PLUGIN::isLoaded(void)
+{
+	return loaded;
+}
+
+void PLUGIN::load(wstring filename, HWND h)
 {
 	if (!(hDLL = LoadLibrary(filename.c_str())))
 		throw PLUGIN_FAILED_TO_LOAD;
@@ -41,17 +57,6 @@ PLUGIN::PLUGIN(wstring filename, HWND h)
 
 	plugin_info				= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
 	getDllInfo_(plugin_info);
-}
-
-PLUGIN::~PLUGIN(void)
-{
-	// TODO
-	FreeLibrary(hDLL);
-}
-
-void PLUGIN::init(RCP *r)
-{
-	rcp = r;
 }
 
 void PLUGIN::closeDLL()

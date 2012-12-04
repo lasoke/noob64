@@ -26,58 +26,58 @@
 
 void RCP::dma_pi_read()
 {
-	memcpy(rom[ROM_SEG_BEG] + (pi.getCartAddr() & 0xFFFFFFF),
-		rdram[RDRAM_SEG_BEG] + (pi.getDramAddr() & 0xFFFFFFF),
-		(pi.getRdLen() & 0xFFFFFFF) + 1);
-	mi.setIntr(mi.getIntr() | MI_INTR_PI);
-	pi.setStatus(pi.getStatus() & ~PI_STATUS_DMA_BUSY);
-	cpu.check_interrupt();
+	memcpy((*rom)[ROM_SEG_BEG] + (pi->getCartAddr() & 0xFFFFFFF),
+		(*rdram)[RDRAM_SEG_BEG] + (pi->getDramAddr() & 0xFFFFFFF),
+		(pi->getRdLen() & 0xFFFFFFF) + 1);
+	mi->setIntr(mi->getIntr() | MI_INTR_PI);
+	pi->setStatus(pi->getStatus() & ~PI_STATUS_DMA_BUSY);
+	R4300i::check_interrupt();
 }
 
 void RCP::dma_pi_write()
 {
-	memcpy(rdram[RDRAM_SEG_BEG] + (pi.getDramAddr() & 0xFFFFFFF),
-		rom[ROM_SEG_BEG] + (pi.getCartAddr() & 0xFFFFFFF),
-		(pi.getWrLen() & 0xFFFFFFF) + 1);
-	mi.setIntr(mi.getIntr() | MI_INTR_PI);
-	pi.setStatus(pi.getStatus() & ~PI_STATUS_DMA_BUSY);
-	cpu.check_interrupt();
+	memcpy((*rdram)[RDRAM_SEG_BEG] + (pi->getDramAddr() & 0xFFFFFFF),
+		(*rom)[ROM_SEG_BEG] + (pi->getCartAddr() & 0xFFFFFFF),
+		(pi->getWrLen() & 0xFFFFFFF) + 1);
+	mi->setIntr(mi->getIntr() | MI_INTR_PI);
+	pi->setStatus(pi->getStatus() & ~PI_STATUS_DMA_BUSY);
+	R4300i::check_interrupt();
 }
 
 void RCP::dma_sp_write()
 {
-	byte* mem = ((sp.getWrLen() & 0x1000) > 0) ? sp.getImem() : sp.getDmem();
-	memcpy(rdram[RDRAM_SEG_BEG] + (sp.getDramAddr() & 0xFFFFFFF),
-		mem + (sp.getMemAddr() & 0xFFF),
-		(sp.getWrLen() & 0xFFF) + 1);
+	byte* mem = ((sp->getWrLen() & 0x1000) > 0) ? sp->getImem() : sp->getDmem();
+	memcpy((*rdram)[RDRAM_SEG_BEG] + (sp->getDramAddr() & 0xFFFFFFF),
+		mem + (sp->getMemAddr() & 0xFFF),
+		(sp->getWrLen() & 0xFFF) + 1);
 }
 
 void RCP::dma_sp_read()
 {
-	byte* mem = ((sp.getRdLen() & 0x1000) > 0) ? sp.getImem() : sp.getDmem();
-	memcpy(mem + (sp.getMemAddr() & 0xFFF),
-		rdram[RDRAM_SEG_BEG] + (sp.getDramAddr() & 0xFFFFFFF),
-		(sp.getRdLen() & 0xFFF) + 1);
+	byte* mem = ((sp->getRdLen() & 0x1000) > 0) ? sp->getImem() : sp->getDmem();
+	memcpy(mem + (sp->getMemAddr() & 0xFFF),
+		(*rdram)[RDRAM_SEG_BEG] + (sp->getDramAddr() & 0xFFFFFFF),
+		(sp->getRdLen() & 0xFFF) + 1);
 }
 
 void RCP::dma_si_write()
 {
-	if (si.getPifAddrWr64b() != 0x1FC007C0)
+	if (si->getPifAddrWr64b() != 0x1FC007C0)
 		cout << "unknown SI use" << endl;
-	memcpy(rdram[RDRAM_SEG_BEG] + (si.getDramAddr() & 0xFFFFFFF),
-		pif_ram[PIF_RAM_SEG_BEG] + (si.getPifAddrWr64b() & 0xFF), 64);
-	mi.setIntr(mi.getIntr() | MI_INTR_SI);
-	si.setStatus(si.getStatus() | SI_STATUS_INTERRUPT);
-	cpu.check_interrupt();
+	memcpy((*rdram)[RDRAM_SEG_BEG] + (si->getDramAddr() & 0xFFFFFFF),
+		(*pif_ram)[PIF_RAM_SEG_BEG] + (si->getPifAddrWr64b() & 0xFF), 64);
+	mi->setIntr(mi->getIntr() | MI_INTR_SI);
+	si->setStatus(si->getStatus() | SI_STATUS_INTERRUPT);
+	R4300i::check_interrupt();
 }
 
 void RCP::dma_si_read()
 {
-	if (si.getPifAddrRd64b() != 0x1FC007C0)
+	if (si->getPifAddrRd64b() != 0x1FC007C0)
 		cout << "unknown SI use" << endl;
-	memcpy(pif_ram[PIF_RAM_SEG_BEG] + (si.getPifAddrRd64b() & 0xFF),
-		rdram[RDRAM_SEG_BEG] + (si.getDramAddr() & 0xFFFFFFF), 64);
-	mi.setIntr(mi.getIntr() | MI_INTR_SI);
-	si.setStatus(si.getStatus() | SI_STATUS_INTERRUPT);
-	cpu.check_interrupt();
+	memcpy((*pif_ram)[PIF_RAM_SEG_BEG] + (si->getPifAddrRd64b() & 0xFF),
+		(*rdram)[RDRAM_SEG_BEG] + (si->getDramAddr() & 0xFFFFFFF), 64);
+	mi->setIntr(mi->getIntr() | MI_INTR_SI);
+	si->setStatus(si->getStatus() | SI_STATUS_INTERRUPT);
+	R4300i::check_interrupt();
 }

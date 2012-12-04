@@ -39,7 +39,7 @@
 
 void R4300i::check_interrupt(void)
 {
-	if (rcp.getMI().getIntr() & rcp.getMI().getIntrMask())			// An interrupt is detected.
+	if (RCP::getMI()->getIntr() & RCP::getMI()->getIntrMask())			// An interrupt is detected.
 		Cause |= CAUSE_IP2;											// Sets the IP2 bit (ExcCode mask should be clear at this point!).
 	else
 		Cause &= ~CAUSE_IP2;										// Clears the IP2 bit
@@ -91,11 +91,11 @@ void R4300i::trigger_tlb_miss(word address)
     if (!(Status & STATUS_EXL))
 	{
 		UPDATE_REGS();
-		pc = mmu.is_address_defined(address) ? 0x80000180 : 0x80000000;
+		pc = MMU::is_address_defined(address) ? 0x80000180 : 0x80000000;
 	}
 	else
 	{
-		cerr << "EXL Set\nAddress Defined: " << (mmu.is_address_defined(address) ? "TRUE" : "FALSE") << endl;
+		cerr << "EXL Set\nAddress Defined: " << (MMU::is_address_defined(address) ? "TRUE" : "FALSE") << endl;
 		pc = 0x80000180;
 	}
 }

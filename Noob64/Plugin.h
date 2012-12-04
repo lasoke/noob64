@@ -62,29 +62,27 @@ typedef void (_cdecl* ROMCLOSED)(void);
 class PLUGIN
 {
 public:
-	PLUGIN(wstring filename, HWND hWnd);
-	~PLUGIN();
-
-	void init(RCP*);
-
-	void closeDLL(void);	// Closes the DLL
-	void dllAbout(HWND);	// Open the About window of the plugin
-	void dllConfig(HWND);	// Open the Config window of the plugin
-	void dllTest(HWND);		// Notifies the user whether the plugin is correctly loaded or not
-	void romClosed(void);	// To call when the ROM is closed
-
+	static bool isLoaded(void);
 protected:
-	HINSTANCE				hDLL;
-	HWND					hWnd;
-	RCP						*rcp;
+	static void load(wstring filename, HWND hWnd);
+	static bool loaded;
 
-	CLOSEDLL				closeDLL_;
-	DLLABOUT				dllAbout_;
-	DLLCONFIG				dllConfig_;
-	DLLTEST					dllTest_;
-	GETDLLINFO				getDllInfo_;
-	ROMCLOSED				romClosed_;
+	static void closeDLL(void);		// Closes the DLL
+	static void dllAbout(HWND);		// Open the About window of the plugin
+	static void dllConfig(HWND);	// Open the Config window of the plugin
+	static void dllTest(HWND);		// Notifies the user whether the plugin is correctly loaded or not
+	static void romClosed(void);	// To call when the ROM is closed
 
-	PLUGIN_INFO				*plugin_info;
+	static HINSTANCE		hDLL;
+	static HWND				hWnd;
+
+	static CLOSEDLL			closeDLL_;
+	static DLLABOUT			dllAbout_;
+	static DLLCONFIG		dllConfig_;
+	static DLLTEST			dllTest_;
+	static GETDLLINFO		getDllInfo_;
+	static ROMCLOSED		romClosed_;
+
+	static PLUGIN_INFO*		plugin_info;
 };
 

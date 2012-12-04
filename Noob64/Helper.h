@@ -48,4 +48,8 @@ template <typename Type> inline Type binary_to_type(Type toSwap);
 template <typename Type> inline Type type_to_binary(Type data);
 
 // Temporary dummy function
-void dummy();
+void dummyCheckInterrupts();
+void dummyProcessDList();
+void dummyProcessAList();
+void dummyProcessRdpList();
+void dummyShowCFB();

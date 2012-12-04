@@ -24,7 +24,7 @@
 
 /*
  * The Rcp files contains the functions, macro and structure to represente
- * and handle every interaction between the R4300i and the Rcp.
+ * and handle every interaction between the R4300i and the RCP::
  *
  */
 
@@ -72,67 +72,60 @@ protected:
 class RCP
 {
 public:
-	RCP(ROM* rom);
+	//RCP(ROM* rom);
 
-	void start();						// Starts the Nintendo 64 - starts the CPU
-	void setRSP(RSP*);					// Sets and initializes the RSP plugin
-	void setGFX(GFX*);					// Sets and initializes the GFX plugin
+	void static start();						// Starts the Nintendo 64 - starts the CPU
+	void static setROM(ROM*);					// Sets and initializes the ROM
 
-	void run_rsp(void);					// Runs the RSP to perform a task
-	void refresh_screen(void);			// Refreshs the screen. Called when the video timer is done.
-	void update_current_halfLine(void);	// Updates the current halfline of the video plugin
+	void static run_rsp(void);					// Runs the RSP to perform a task
+	void static refresh_screen(void);			// Refreshs the screen. Called when the video timer is done.
+	void static update_current_halfLine(void);	// Updates the current halfline of the video plugin
 
-	void dma_pi_write(void);			// DMA write to a PI register
-	void dma_pi_read(void);				// DMA read to a PI register
-	void dma_si_write(void);			// DMA write to a SI register
-	void dma_si_read(void);				// DMA read to a SI register
-	void dma_sp_write(void);			// DMA write to a SP register
-	void dma_sp_read(void);				// DMA read to a SP register
+	void static dma_pi_write(void);				// DMA write to a PI register
+	void static dma_pi_read(void);				// DMA read to a PI register
+	void static dma_si_write(void);				// DMA write to a SI register
+	void static dma_si_read(void);				// DMA read to a SI register
+	void static dma_sp_write(void);				// DMA write to a SP register
+	void static dma_sp_read(void);				// DMA read to a SP register
 
-	inline R4300i&		getCPU(void) const;
-	inline ROM&			getROM(void) const;
-	inline RDRAM&		getRDRAM(void) const;
-	inline RDRAM_REGS&	getRdramRegs(void) const;
-	inline SP&			getSP(void) const;
-	inline DPC&			getDPC(void) const;
-	inline DPS&			getDPS(void) const;
-	inline MI&			getMI(void) const;
-	inline VI&			getVI(void) const;
-	inline AI&			getAI(void) const;
-	inline PI&			getPI(void) const;
-	inline RI&			getRI(void) const;
-	inline SI&			getSI(void) const;
-	inline PIF_ROM&		getPifRom(void) const;
-	inline PIF_RAM&		getPifRam(void) const;
-	inline RSP*			getRSP(void) const;
-	inline GFX*			getGFX(void) const;
+	static inline RDRAM*		getRDRAM(void);
+	static inline RDRAM_REGS*	getRdramRegs(void);
+	static inline SP*			getSP(void);
+	static inline DPC*			getDPC(void);
+	static inline DPS*			getDPS(void);
+	static inline MI*			getMI(void);
+	static inline VI*			getVI(void);
+	static inline AI*			getAI(void);
+	static inline PI*			getPI(void);
+	static inline RI*			getRI(void);
+	static inline SI*			getSI(void);
+	static inline PIF_ROM*		getPifRom(void);
+	static inline PIF_RAM*		getPifRam(void);
 
-	inline word			getViFieldNumber(void) const;
-	inline void			setViFieldNumber(word);
-	inline word			getHalfline(void) const;
+	static inline ROM*			getROM(void);
+
+	static inline word			getViFieldNumber(void);
+	static inline void			setViFieldNumber(word);
+	static inline word			getHalfline(void);
 
 private:
-	R4300i				&cpu;			// Reference of the CPU
-	ROM					&rom;			// Reference of the ROM
-	RDRAM				&rdram;			// Reference of the RDRAM
-	RDRAM_REGS			&rdram_regs;	// Reference of the RDRAM registers
-	SP					&sp;			// Reference of the Signal Processor registers
-	DPC					&dpc;			// Reference of the DP Command registers
-	DPS					&dps;			// Reference of the DP Span registers
-	MI					&mi;			// Reference of the MIPS Interface registers
-	VI					&vi;			// Reference of the Video Interface registers
-	AI					&ai;			// Reference of the Audio Interface registers
-	PI					&pi;			// Reference of the Peripheral Interface registers
-	RI					&ri;			// Reference of the RDRAM Interface registers
-	SI					&si;			// Reference of the Sound Interface registers
-	PIF_ROM				&pif_rom;		// Reference of the PIF ROM
-	PIF_RAM				&pif_ram;		// Reference of the PIF RAM
+	static RDRAM		*rdram;			// Pointer to the RDRAM
+	static RDRAM_REGS	*rdram_regs;	// Pointer to the RDRAM registers
+	static SP			*sp;			// Pointer to the Signal Processor registers
+	static DPC			*dpc;			// Pointer to the DP Command registers
+	static DPS			*dps;			// Pointer to the DP Span registers
+	static MI			*mi;			// Pointer to the MIPS Interface registers
+	static VI			*vi;			// Pointer to the Video Interface registers
+	static AI			*ai;			// Pointer to the Audio Interface registers
+	static PI			*pi;			// Pointer to the Peripheral Interface registers
+	static RI			*ri;			// Pointer to the RDRAM Interface registers
+	static SI			*si;			// Pointer to the Sound Interface registers
+	static PIF_ROM		*pif_rom;		// Pointer to the PIF ROM
+	static PIF_RAM		*pif_ram;		// Pointer to the PIF RAM
+	static ROM			*rom;			// Pointer to the ROM
 
-	RSP					*rsp;			// Pointer to the RSP plugin
-	GFX					*gfx;			// Pointer to the GFX plugin
-
-	byte				SRAM[0x8000];	// RCP' Static RAM
-	word				halfline;		// Refers to a vertical line with respect to interlaced video modes
-	word				vi_field_number;//
+	static byte			SRAM[0x8000];	// RCP' Static RAM
+	static word			halfline;		// Refers to a vertical line with respect to interlaced video modes
+	static word			vi_field_number;//
 };
 

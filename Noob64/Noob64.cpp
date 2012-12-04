@@ -57,19 +57,10 @@ string  rom_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z6
 
 HANDLE emuThread;
 
-RCP*	rcp; // Reality Coprocessor
-RSP*	rsp; // RSP plugin
-GFX*	gfx; // GFX plugin
-
 DWORD WINAPI boot(LPVOID lpParameter)
 {
 	//enableConsole();						// Displays the console
-
-	rcp	= new RCP(new ROM(rom_path));		// Sets up the RCP with the given ROM
-	rcp->setRSP(rsp);						// Initializes the RSP plugin
-	rcp->setGFX(gfx);						// Initializes the GFX plugin
-	rcp->start();							// Initializes the CPU and boots the ROM
-
+	RCP::start();							// Initializes the CPU and boots the ROM
 	return 0;
 }
 
@@ -203,8 +194,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 		case ID_FILE_PLAY:															// When we click on Play:
 			EnableMenuItem(GetMenu(hWnd), ID_FILE_PLAY, MF_BYCOMMAND | MF_GRAYED);	// We disable the Play button
-			rsp	= new RSP(rsp_path, hWnd);											// We create the RSP plugin
-			gfx	= new GFX(gfx_path, hWnd);											// We create the GFX plugin
+			RCP::setROM(new ROM(rom_path));											// Sets up the RCP with the given ROM
+			RSP::load(rsp_path, hWnd);												// We create the RSP plugin
+			GFX::load(gfx_path, hWnd);												// We create the GFX plugin
 			emuThread = CreateThread(0, 0, boot, 0, 0, 0);							// Create the emulation thread
 			break;
 		case IDM_ABOUT:
@@ -220,9 +212,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		// TODO: Add any drawing code here...
-		if (gfx)
+		if (GFX::isLoaded())
 		{
-			gfx->drawScreen();
+			GFX::drawScreen();
 		}
 		EndPaint(hWnd, &ps);
 		break;

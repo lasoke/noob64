@@ -1,6 +1,9 @@
 #include "StdAfx.h"
 
-TimerHandler::TimerHandler(RCP& rcp, R4300i& cpu) : rcp(rcp), cpu(cpu) {}
+int		TimerHandler::current_timer_type = -1;
+int		TimerHandler::timer = 0;
+int		TimerHandler::next_timer[MAX_TIMERS] = {0};
+bool	TimerHandler::active[MAX_TIMERS] = {0};
 
 void TimerHandler::reset(void)
 {
@@ -14,7 +17,7 @@ void TimerHandler::reset(void)
 
 void TimerHandler::change_compare_timer()
 {
-	word NextCompare = cpu.getCop0(COMPARE) - cpu.getCop0(COUNT);
+	word NextCompare = R4300i::getCop0(COMPARE) - R4300i::getCop0(COUNT);
 	if ((NextCompare & 0x80000000) != 0)
 		NextCompare = 0x7FFFFFFF;
 	if (NextCompare == 0) 
@@ -65,7 +68,7 @@ void TimerHandler::check_timer()
 	
 	if (next_timer[COMPARE_TIMER] == 0x7FFFFFFF)
 	{
-		word NextCompare = cpu.getCop0(COMPARE) - cpu.getCop0(COUNT);
+		word NextCompare = R4300i::getCop0(COMPARE) - R4300i::getCop0(COUNT);
 		if (!(NextCompare & 0x80000000) && NextCompare != 0x7FFFFFFF)
 			change_compare_timer();
 	}

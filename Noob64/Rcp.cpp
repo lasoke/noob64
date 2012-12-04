@@ -24,75 +24,71 @@
 
 #include "StdAfx.h"
 
+	ROM*		RCP::rom		= 0;
+	RDRAM*		RCP::rdram		= new RDRAM();
+	RDRAM_REGS* RCP::rdram_regs = new RDRAM_REGS();
+	SP*			RCP::sp			= new SP();
+	DPC*		RCP::dpc		= new DPC();
+	DPS*		RCP::dps		= new DPS();
+	MI*			RCP::mi			= new MI();
+	VI*			RCP::vi			= new VI();
+	AI*			RCP::ai			= new AI();
+	PI*			RCP::pi			= new PI();
+	RI*			RCP::ri			= new RI();
+	SI*			RCP::si			= new SI();
+	PIF_ROM*	RCP::pif_rom	= new PIF_ROM();
+	PIF_RAM*	RCP::pif_ram	= new PIF_RAM();
+
+	word		RCP::vi_field_number = 0;
+	word		RCP::halfline = 0;
+	byte		RCP::SRAM[0x8000] = {0};
+
 //****************************************************************************
 //** RCP																	**
 //****************************************************************************
 
-RCP::RCP(ROM* rom) :
-	cpu			(*new R4300i(this)),
-	rom			(*rom),
-	rdram		(*new RDRAM()),
-	rdram_regs	(*new RDRAM_REGS()),
-	sp			(*new SP()),
-	dpc			(*new DPC()),
-	dps			(*new DPS()),
-	mi			(*new MI()),
-	vi			(*new VI()),
-	ai			(*new AI()),
-	pi			(*new PI()),
-	ri			(*new RI()),
-	si			(*new SI()),
-	pif_rom		(*new PIF_ROM()),
-	pif_ram		(*new PIF_RAM())
+void RCP::start()
 {
 	memset(SRAM, 0, sizeof(SRAM));
 	vi_field_number	= 0;
+
+	//rsp->init();
+	//gfx->init();
+
+	R4300i::start();
 }
 
-void RCP::start()
+void RCP::setROM(ROM* r)
 {
-	cpu.start();
-}
-
-void RCP::setRSP(RSP* r)
-{
-	rsp = r;
-	rsp->init(this);
-}
-void RCP::setGFX(GFX* g)
-{
-	gfx = g;
-	gfx->init(this);
+	rom = r;
 }
 
 void RCP::run_rsp(void) 
 {
-	if (sp.getStatus() & SP_STATUS_HALT || sp.getStatus() & SP_STATUS_BROKE)
+	if (sp->getStatus() & SP_STATUS_HALT || sp->getStatus() & SP_STATUS_BROKE)
 		return;
-	word task = *(word*)(cpu.getMMU()[SP_DMEM + 0xFC0]);
-	if (task == 1 && (dpc.getStatus() & DPC_STATUS_FREEZE)) 
+	word task = *(word*)(MMU::get(SP_DMEM + 0xFC0));
+	if (task == 1 && (dpc->getStatus() & DPC_STATUS_FREEZE)) 
 		return;
-	rsp->doRspCycles(100);
+	RSP::doRspCycles(100);
 }
 
 void RCP::refresh_screen()
 {
-	gfx->updateScreen();
-	word delay = !vi.getVsync() ? 500000 : (vi.getVsync() + 1) * 1500;
-	TimerHandler& t = cpu.getTimerHandler();
-	t.change_timer(VI_TIMER, t.getTimer() + t.getNextTimer(VI_TIMER) + delay);
+	GFX::updateScreen();
+	word delay = !vi->getVsync() ? 500000 : (vi->getVsync() + 1) * 1500;
+	TimerHandler::change_timer(VI_TIMER, TimerHandler::getTimer() + TimerHandler::getNextTimer(VI_TIMER) + delay);
 	vi_field_number = VI_STATUS_REG & 0x40 ? 1 - vi_field_number : 0;
 }
 
 void RCP::update_current_halfLine()
 {
-	TimerHandler& t = cpu.getTimerHandler();
-    if (t.getTimer() < 0)
+    if (TimerHandler::getTimer() < 0)
 	{ 
 		halfline = 0;
 		return;
 	}
-	halfline = (t.getTimer() / 1500);
+	halfline = (TimerHandler::getTimer() / 1500);
 	halfline &= ~1;
 	halfline += vi_field_number;
 }
