@@ -53,6 +53,11 @@ void R4300i::reset()
 	running					= true;
 	cic_chip				= 0;
 	interrupt_detected		= false;
+	rounding_mode			= 0x33F;
+	round_mode				= 0x33F;
+	trunc_mode				= 0xF3F;
+	ceil_mode				= 0xB3F;
+	floor_mode				= 0x73F;
 
 	mmu.reset();
 	timer_handler.reset();
@@ -118,8 +123,6 @@ void R4300i::start()
 
 	while (running)
 	{
-		if ((pc & 0xFFFFFFFF) == 0x80325984)
-			i++;
 		decode(mmu.read<word>((word) pc));
 	}
 }

@@ -1923,8 +1923,7 @@ inline void R4300i::MTC0(int rt, int fs)
 	case 8:    // BadVAddr
 		break;
 	case 9:    // Count
-		Count += TIME_UNIT;
-		timer_handler.decTimer();
+		UPDATE_TIME();
 		Count = r[rt] & 0xFFFFFFFF;
 		timer_handler.change_compare_timer();
 		break;
@@ -1938,8 +1937,7 @@ inline void R4300i::MTC0(int rt, int fs)
 		break;
 	case 12:   // Status
 		Status = r[rt] & 0xFFFFFFFF;
-		Count += TIME_UNIT;
-		timer_handler.decTimer();
+		UPDATE_TIME();
 		//		check_interupt();
 		break;
 	case 13:   // Cause
@@ -2098,8 +2096,7 @@ inline void R4300i::TLBWR(void)
 {
 	PRINT_PC("TLBWR");
 	unsigned int i;
-	Count += TIME_UNIT;
-	timer_handler.decTimer();
+	UPDATE_TIME();
 	Random = (Count/2 % (32 - Wired)) + Wired;
 	if (mmu.tlb[Random].v0)
 	{
@@ -2252,8 +2249,7 @@ inline void R4300i::BC1F(int immed)
 	pc += 4;
 	delay_slot = 1;
 	decode(mmu.read<word>((word) pc));
-	Count += TIME_UNIT;
-	timer_handler.decTimer();
+	UPDATE_TIME();
 	delay_slot = 0;
 	if ((fcr31 & 0x800000)==0)
 		pc = pc_tmp;
@@ -2273,8 +2269,7 @@ inline void R4300i::BC1FL(int immed)
 		pc += 4;
 		delay_slot = true;
 		decode(mmu.read<word>((word) pc));
-		Count += TIME_UNIT;
-		timer_handler.decTimer();
+		UPDATE_TIME();
 		delay_slot = false;
 		pc = pc_tmp;
 	}
@@ -2292,8 +2287,7 @@ inline void R4300i::BC1T(int immed)
 	pc += 4;
 	delay_slot = 1;
 	decode(mmu.read<word>((word) pc));
-	Count += TIME_UNIT;
-	timer_handler.decTimer();
+	UPDATE_TIME();
 	delay_slot = 0;
 	if ((fcr31 & 0x800000)!=0)
 		pc = pc_tmp;
@@ -2313,8 +2307,7 @@ inline void R4300i::BC1TL(int immed)
 		pc += 4;
 		delay_slot = true;
 		decode(mmu.read<word>((word) pc));
-		Count += TIME_UNIT;
-		timer_handler.decTimer();
+		UPDATE_TIME();
 		delay_slot = false;
 		pc = pc_tmp;
 	}
