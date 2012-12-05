@@ -66,41 +66,35 @@ typedef struct {
 class MMU
 {
 public:
-	MMU(R4300i&, RCP&);
-	~MMU(void);
-
 	// Clears the MMU
-	void reset(void);
+	static void reset(void);
 
 	// Returns a pointer to the physical location of the given virtual address
-	char* operator[] (const word address);
+	static inline char* get(const word address);
 
 	// Reads a Type at the given address and returns it
-	template <typename Type> inline Type read(word address);
+	template <typename Type> static inline Type read(word address);
 	// Function read + Triggers read events if trigger_event is true
-	template <typename Type> inline Type read(word address, bool trigger_event);
+	template <typename Type> static inline Type read(word address, bool trigger_event);
 
 	// Writes a data of the type Type at the given address
-	template <typename Type> inline void write(Type data, word address);
+	template <typename Type> static inline void write(Type data, word address);
 	// Function Write + Triggers write events if trigger_event is true
-	template <typename Type> inline void write(Type data, word address, bool trigger_event);
+	template <typename Type> static inline void write(Type data, word address, bool trigger_event);
 
 	// Returns true if the given address is valid
-	inline bool is_address_defined(word address) const;
+	static inline bool is_address_defined(word address);
 
 	// TODO: Add getters and setters
-	tlb_entry	tlb[32]; // The TLB
-	word		tlb_lut_r[0x100000];
-	word		tlb_lut_w[0x100000];
-	char		invalid_code[0x100000];
+	static tlb_entry	tlb[32]; // The TLB
+	static word			tlb_lut_r[0x100000];
+	static word			tlb_lut_w[0x100000];
+	static char			invalid_code[0x100000];
 
 private:
-	R4300i		&cpu;
-	RCP			&rcp;
-
-	inline char* virtual_to_physical(word address);				// Returns a physical address given a virtual address
-	inline bool read_from_register(word *data, word address);	// Reads a register value with it's getter
-	inline bool write_in_register(word data, word address);		// Writes a value in a register with it's setter
+	static inline char* virtual_to_physical(word address);				// Returns a physical address given a virtual address
+	static inline bool read_from_register(word *data, word address);	// Reads a register value with it's getter
+	static inline bool write_in_register(word data, word address);		// Writes a value in a register with it's setter
 };
 
 

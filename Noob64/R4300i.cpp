@@ -25,12 +25,26 @@
 #include "StdAfx.h"
 #include "R4300i.h"
 
-R4300i::R4300i(RCP *r) :
-		rcp(*r),
-		mmu(*new MMU(*this, rcp)),
-		timer_handler(*new TimerHandler(rcp, *this))
-{
-}
+bool	R4300i::interrupt_detected = false;
+bool	R4300i::delay_slot = false;
+dword	R4300i::r[32] = {0};
+dword	R4300i::f[32] = {0};
+double*	R4300i::reg_cop1_double[32] = {0};
+float*	R4300i::reg_cop1_simple[32] = {0};
+word	R4300i::cop0[32] = {0};
+dword	R4300i::pc = 0;
+dword	R4300i::hi = 0;
+dword	R4300i::lo = 0;
+word	R4300i::fcr0 = 0;
+word	R4300i::fcr31 = 0;
+int		R4300i::rounding_mode = 0;
+int		R4300i::trunc_mode = 0;
+int		R4300i::round_mode = 0;
+int		R4300i::ceil_mode = 0;
+int		R4300i::floor_mode = 0;
+bool	R4300i::ll = false;
+bool	R4300i::running = true;
+dword	R4300i::cic_chip = 0;
 
 void R4300i::reset()
 {
@@ -59,8 +73,8 @@ void R4300i::reset()
 	ceil_mode				= 0xB3F;
 	floor_mode				= 0x73F;
 
-	mmu.reset();
-	timer_handler.reset();
+	MMU::reset();
+	TimerHandler::reset();
 }
 
 void R4300i::pif_init()
@@ -91,27 +105,27 @@ void R4300i::pif_init()
 	PRevID	= 0x00000B00;
 	Random	= 0x0000001F;
 
-	rcp.getMI().setVersion(0x02020202);
-	rcp.getSP().setStatus(0x00000041);
-	rcp.getDPC().setStatus(0x00000088);
-	rcp.getPI().setBsdDom1Lat(0x00000040);
-	rcp.getPI().setBsdDom1Pwd(0x00000012);
-	rcp.getPI().setBsdDom1Pgs(0x00000007);
-	rcp.getPI().setBsdDom1Rls(0x00000003);
+	RCP::getMI()->setVersion(0x02020202);
+	RCP::getSP()->setStatus(0x00000041);
+	RCP::getDPC()->setStatus(0x00000088);
+	RCP::getPI()->setBsdDom1Lat(0x00000040);
+	RCP::getPI()->setBsdDom1Pwd(0x00000012);
+	RCP::getPI()->setBsdDom1Pgs(0x00000007);
+	RCP::getPI()->setBsdDom1Rls(0x00000003);
 
-	mmu.write<word>(0x3C0DBFC0, SP_IMEM, false);
-	mmu.write<word>(0xBDA807FC, SP_IMEM + 0x004, false);
-	mmu.write<word>(0x25AD07C0, SP_IMEM + 0x008, false);
-	mmu.write<word>(0x31080080, SP_IMEM + 0x00C, false);
-	mmu.write<word>(0x5500FFFC, SP_IMEM + 0x010, false);
-	mmu.write<word>(0x3C0DBFC0, SP_IMEM + 0x014, false);
-	mmu.write<word>(0x8DA80024, SP_IMEM + 0x018, false);
-	mmu.write<word>(0x3C0BB000, SP_IMEM + 0x01C, false);
-	mmu.write<word>(0x6886A9C1, SP_IMEM + 0xF94, false);
-	mmu.write<word>(0x915F5B7E, SP_IMEM + 0xF90, false);
+	MMU::write<word>(0x3C0DBFC0, SP_IMEM, false);
+	MMU::write<word>(0xBDA807FC, SP_IMEM + 0x004, false);
+	MMU::write<word>(0x25AD07C0, SP_IMEM + 0x008, false);
+	MMU::write<word>(0x31080080, SP_IMEM + 0x00C, false);
+	MMU::write<word>(0x5500FFFC, SP_IMEM + 0x010, false);
+	MMU::write<word>(0x3C0DBFC0, SP_IMEM + 0x014, false);
+	MMU::write<word>(0x8DA80024, SP_IMEM + 0x018, false);
+	MMU::write<word>(0x3C0BB000, SP_IMEM + 0x01C, false);
+	MMU::write<word>(0x6886A9C1, SP_IMEM + 0xF94, false);
+	MMU::write<word>(0x915F5B7E, SP_IMEM + 0xF90, false);
 	
 	for(int i = 0; i < 0x1000; i++) // Copies first 0x1000 bytes of ROM to first 0x1000 bytes of SP_MEM
-		mmu.write<byte>(*((byte*) mmu[ROM_SEG_BEG+i]), SP_SEG_BEG+i);
+		MMU::write<byte>(*((byte*) MMU::get(ROM_SEG_BEG+i)), SP_SEG_BEG+i);
 	pc = 0xA4000040; // Sets PC right after the ROM header
 }
 
@@ -123,6 +137,6 @@ void R4300i::start()
 
 	while (running)
 	{
-		decode(mmu.read<word>((word) pc));
+		decode(MMU::read<word>((word) pc));
 	}
 }

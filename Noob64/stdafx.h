@@ -77,7 +77,7 @@
 #include "PifRam.h"
 
 #include "Helper.hxx"
-#include "Rcp.hxx"
+#include "RCP.hxx"
 #include "Mmu.hxx"
 #include "Instruction.hxx"
 #include "TimerHandler.hxx"

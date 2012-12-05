@@ -67,8 +67,8 @@ typedef struct {
 	word* dpc_tmem_reg;
 
 	void (*CheckInterrupts)(void);
-	void (*ProcessDlistList)(void);
-	void (*ProcessAlistList)(void);
+	void (*ProcessDList)(void);
+	void (*ProcessAList)(void);
 	void (*ProcessRdpList)(void);
 	void (*ShowCFB)(void);
 } RSP_INFO;
@@ -96,7 +96,6 @@ typedef struct {
 	
 	/* RSP command Window */
 	void (*Enter_RSP_Commands_Window) (void);
-
 } RSPDEBUG_INFO;
 
 /*
@@ -126,24 +125,21 @@ typedef void (_cdecl* INITIATERSPDEBUGGER)(DEBUG_INFO);
 class RSP : public PLUGIN
 {
 public:
-	RSP(wstring filename, HWND hWnd);
-	~RSP();
+	static void load(wstring filename, HWND hWnd);	// Plugs the DLL into the RCP
 
-	void init(RCP* mem);			// Plugs the DLL into the RCP
-
-	word doRspCycles(word);			// Allows the RSP to run in parrel with the CPU
-	void getRspDebugInfo(void);		// Retreives the debug info of the RSP
-	void initiateRSP(word*);		// Initializes the value of the RSP variables
-	void initiateRSPDebugger(void); // Initializes the value of the RSP debugger variables
+	static word doRspCycles(word);			// Allows the RSP to run in parrel with the CPU
+	static void getRspDebugInfo(void);		// Retreives the debug info of the RSP
+	static void initiateRSP(word*);		// Initializes the value of the RSP variables
+	static void initiateRSPDebugger(void); // Initializes the value of the RSP debugger variables
 
 private:
-	DORSPCYCLES				doRspCycles_;
-	GETRSPDEBUGINFO			getRspDebugInfo_;
-	INITIATERSP				initiateRSP_;
-	INITIATERSPDEBUGGER		initiateRSPDebugger_;
+	static DORSPCYCLES				doRspCycles_;
+	static GETRSPDEBUGINFO			getRspDebugInfo_;
+	static INITIATERSP				initiateRSP_;
+	static INITIATERSPDEBUGGER		initiateRSPDebugger_;
 	
-	RSP_INFO				*rsp_info;
-	RSPDEBUG_INFO			*rspdebug_info;
-	DEBUG_INFO				*debug_info;
+	static RSP_INFO*				rsp_info;
+	static RSPDEBUG_INFO*			rspdebug_info;
+	static DEBUG_INFO*				debug_info;
 };
 

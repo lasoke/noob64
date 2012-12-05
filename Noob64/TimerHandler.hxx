@@ -33,43 +33,43 @@ inline int TimerHandler::getNextTimer(int type)	{ return next_timer[type]; }
 
 inline void TimerHandler::compare_timer_done()
 {
-	cpu.setCop0(CAUSE, cpu.getCop0(CAUSE) | CAUSE_IP7);
-	cpu.check_interrupt();
+	R4300i::setCop0(CAUSE, R4300i::getCop0(CAUSE) | CAUSE_IP7);
+	R4300i::check_interrupt();
 	change_compare_timer();
 }
 
 inline void TimerHandler::si_timer_done()
 {
 	change_timer(SI_TIMER, 0);
-	rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_SI);
-	rcp.getSI().setStatus(rcp.getSI().getStatus() | SI_STATUS_INTERRUPT);
-	cpu.check_interrupt();
+	RCP::getMI()->setIntr(RCP::getMI()->getIntr() | MI_INTR_SI);
+	RCP::getSI()->setStatus(RCP::getSI()->getStatus() | SI_STATUS_INTERRUPT);
+	R4300i::check_interrupt();
 }
 
 inline void TimerHandler::pi_timer_done()
 {
 	change_timer(PI_TIMER, 0);
-	rcp.getPI().setStatus(rcp.getPI().getStatus() & ~PI_STATUS_DMA_BUSY);
-	rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_PI);
-	cpu.check_interrupt();
+	RCP::getPI()->setStatus(RCP::getPI()->getStatus() & ~PI_STATUS_DMA_BUSY);
+	RCP::getMI()->setIntr(RCP::getMI()->getIntr() | MI_INTR_PI);
+	R4300i::check_interrupt();
 }
 
 inline void TimerHandler::vi_timer_done()
 {
-	rcp.refresh_screen();
-	rcp.getMI().setIntr(rcp.getMI().getIntr() | MI_INTR_VI);
-	cpu.check_interrupt();
+	RCP::refresh_screen();
+	RCP::getMI()->setIntr(RCP::getMI()->getIntr() | MI_INTR_VI);
+	R4300i::check_interrupt();
 }
 
 inline void TimerHandler::rsp_timer_done()
 {
 	change_timer(RSP_TIMER, 0);
-	rcp.run_rsp();
+	RCP::run_rsp();
 }
 
 inline void TimerHandler::force_pi_timer_done()
 {
-	rcp.getMI().setIntr(rcp.getMI().getIntr() & (~MI_INTR_VI));
+	RCP::getMI()->setIntr(RCP::getMI()->getIntr() & ~MI_INTR_VI);
 	pi_timer_done();
 	check_timer();
 }

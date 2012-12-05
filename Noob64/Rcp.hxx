@@ -41,30 +41,27 @@
 #include "PifRom.h"
 #include "PifRam.h"
 
-inline bool MEM_SEG::contains(word address) const			{ return begining <= address && address <= end; }
+inline bool MEM_SEG::contains(word address) const	{ return begining <= address && address <= end; }
 
-inline R4300i&		RCP::getCPU(void) const					{ return cpu; }
-inline ROM&			RCP::getROM(void) const					{ return rom; }
-inline RDRAM&		RCP::getRDRAM(void) const				{ return rdram; }
-inline RDRAM_REGS&	RCP::getRdramRegs(void) const			{ return rdram_regs; }
-inline SP&			RCP::getSP(void) const					{ return sp; }
-inline DPC&			RCP::getDPC(void) const					{ return dpc; }
-inline DPS&			RCP::getDPS(void) const					{ return dps; }
-inline MI&			RCP::getMI(void) const					{ return mi; }
-inline VI&			RCP::getVI(void) const					{ return vi; }
-inline AI&			RCP::getAI(void) const					{ return ai; }
-inline PI&			RCP::getPI(void) const					{ return pi; }
-inline RI&			RCP::getRI(void) const					{ return ri; }
-inline SI&			RCP::getSI(void) const					{ return si; }
-inline PIF_ROM&		RCP::getPifRom(void) const				{ return pif_rom; }
-inline PIF_RAM&		RCP::getPifRam(void) const				{ return pif_ram; }
-inline RSP*			RCP::getRSP(void) const					{ return rsp; }
-inline GFX*			RCP::getGFX(void) const					{ return gfx; }
+inline RDRAM*		RCP::getRDRAM(void)				{ return rdram; }
+inline RDRAM_REGS*	RCP::getRdramRegs(void)			{ return rdram_regs; }
+inline SP*			RCP::getSP(void)				{ return sp; }
+inline DPC*			RCP::getDPC(void)				{ return dpc; }
+inline DPS*			RCP::getDPS(void)				{ return dps; }
+inline MI*			RCP::getMI(void)				{ return mi; }
+inline VI*			RCP::getVI(void)				{ return vi; }
+inline AI*			RCP::getAI(void)				{ return ai; }
+inline PI*			RCP::getPI(void)				{ return pi; }
+inline RI*			RCP::getRI(void)				{ return ri; }
+inline SI*			RCP::getSI(void)				{ return si; }
+inline PIF_ROM*		RCP::getPifRom(void)			{ return pif_rom; }
+inline PIF_RAM*		RCP::getPifRam(void)			{ return pif_ram; }
+inline ROM*			RCP::getROM(void)				{ return rom; }
 
-inline word 		RCP::getHalfline(void) const			{ return halfline; }
-inline word			RCP::getViFieldNumber(void) const		{ return vi_field_number; }
+inline word 		RCP::getHalfline(void)			{ return halfline; }
+inline word			RCP::getViFieldNumber(void)		{ return vi_field_number; }
 
-inline void			RCP::setViFieldNumber(word n)			{ vi_field_number = n; }
+inline void			RCP::setViFieldNumber(word n)	{ vi_field_number = n; }
 
 
 

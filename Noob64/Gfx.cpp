@@ -25,8 +25,24 @@
 #include "StdAfx.h"
 #include "Gfx.h"
 
-GFX::GFX(wstring filename, HWND hWnd) : PLUGIN(filename, hWnd)
+CAPTURESCREEN	GFX::captureScreen_ = 0;
+CHANGEWINDOW	GFX::changeWindow_ = 0;
+DRAWSCREEN		GFX::drawScreen_ = 0;
+INITIATEGFX		GFX::initiateGFX_ = 0;
+MOVESCREEN		GFX::moveScreen_ = 0;
+PROCESSDLIST	GFX::processDList_ = 0;
+PROCESSRDPLIST	GFX::processRDPList_ = 0;
+ROMOPEN			GFX::romOpen_ = 0;
+SHOWCFB			GFX::showCFB_ = 0;
+UPDATESCREEN	GFX::updateScreen_ = 0;
+VISTATUSCHANGED	GFX::viStatusChanged_ = 0;
+VIWIDTHCHANGED	GFX::viWidthChanged_ = 0;
+GFX_INFO*		GFX::gfx_info = 0;
+
+void GFX::load(wstring filename, HWND hWnd)
 {
+	PLUGIN::load(filename, hWnd);
+
 	captureScreen_				= (CAPTURESCREEN) GetProcAddress(hDLL, "CaptureScreen");
 	changeWindow_				= (CHANGEWINDOW) GetProcAddress(hDLL, "ChangeWindow");
 	drawScreen_					= (DRAWSCREEN) GetProcAddress(hDLL, "DrawScreen");
@@ -39,60 +55,49 @@ GFX::GFX(wstring filename, HWND hWnd) : PLUGIN(filename, hWnd)
 	updateScreen_				= (UPDATESCREEN) GetProcAddress(hDLL, "UpdateScreen");
 	viStatusChanged_			= (VISTATUSCHANGED) GetProcAddress(hDLL, "ViStatusChanged");
 	viWidthChanged_				= (VIWIDTHCHANGED) GetProcAddress(hDLL, "ViWidthChanged");
-}
-
-GFX::~GFX(void)
-{
-	// TODO
-}
-
-void GFX::init(RCP *rcp)
-{
-	PLUGIN::init(rcp);
 
 	gfx_info					= (GFX_INFO*) malloc(sizeof(GFX_INFO));
-
-	MMU& memory					= rcp->getCPU().getMMU();
 
 	gfx_info->hWnd				= hWnd;	// Render window
 	gfx_info->hStatusBar		= 0;	// if render window does not have a status bar then this is NULL
 	gfx_info->memoryBswaped		= plugin_info->memoryBswaped;
 
-	gfx_info->rom_header		= (byte*) memory[ROM_SEG_BEG];
-	gfx_info->rdram				= (byte*) memory[RDRAM_SEG_BEG];
-	gfx_info->dmem				= (byte*) memory[SP_DMEM];
-	gfx_info->imem				= (byte*) memory[SP_IMEM];
+	gfx_info->rom_header		= (byte*) MMU::get(ROM_SEG_BEG);
+	gfx_info->rdram				= (byte*) MMU::get(RDRAM_SEG_BEG);
+	gfx_info->dmem				= (byte*) MMU::get(SP_DMEM);
+	gfx_info->imem				= (byte*) MMU::get(SP_IMEM);
 
-	gfx_info->mi_intr_reg		= (word*) memory[MI_INTR_REG];
+	gfx_info->mi_intr_reg		= (word*) MMU::get(MI_INTR_REG);
 
-	gfx_info->dpc_start_reg		= (word*) memory[DPC_START_REG];
-	gfx_info->dpc_end_reg		= (word*) memory[DPC_END_REG];
-	gfx_info->dpc_current_reg	= (word*) memory[DPC_CURRENT_REG];
-	gfx_info->dpc_status_reg	= (word*) memory[DPC_STATUS_REG];
-	gfx_info->dpc_clock_reg		= (word*) memory[DPC_CLOCK_REG];
-	gfx_info->dpc_bufbusy_reg	= (word*) memory[DPC_BUFBUSY_REG];
-	gfx_info->dpc_pipebusy_reg	= (word*) memory[DPC_PIPEBUSY_REG];
-	gfx_info->dpc_tmem_reg		= (word*) memory[DPC_TMEM_REG];
+	gfx_info->dpc_start_reg		= (word*) MMU::get(DPC_START_REG);
+	gfx_info->dpc_end_reg		= (word*) MMU::get(DPC_END_REG);
+	gfx_info->dpc_current_reg	= (word*) MMU::get(DPC_CURRENT_REG);
+	gfx_info->dpc_status_reg	= (word*) MMU::get(DPC_STATUS_REG);
+	gfx_info->dpc_clock_reg		= (word*) MMU::get(DPC_CLOCK_REG);
+	gfx_info->dpc_bufbusy_reg	= (word*) MMU::get(DPC_BUFBUSY_REG);
+	gfx_info->dpc_pipebusy_reg	= (word*) MMU::get(DPC_PIPEBUSY_REG);
+	gfx_info->dpc_tmem_reg		= (word*) MMU::get(DPC_TMEM_REG);
 
-	gfx_info->vi_status_reg		= (word*) memory[VI_STATUS_REG];
-	gfx_info->vi_origin_reg		= (word*) memory[VI_ORIGIN_REG];
-	gfx_info->vi_width_reg		= (word*) memory[VI_WIDTH_REG];
-	gfx_info->vi_intr_reg		= (word*) memory[VI_INTR_REG];
-	gfx_info->vi_v_current_line_reg	= (word*) memory[VI_CURRENT_REG];
-	gfx_info->vi_timing_reg		= (word*) memory[VI_BURST_REG];
-	gfx_info->vi_v_sync_reg		= (word*) memory[VI_V_SYNC_REG];
-	gfx_info->vi_h_sync_reg		= (word*) memory[VI_H_SYNC_REG];
-	gfx_info->vi_leap_reg		= (word*) memory[VI_LEAP_REG];
-	gfx_info->vi_h_start_reg	= (word*) memory[VI_H_START_REG];
-	gfx_info->vi_v_start_reg	= (word*) memory[VI_V_START_REG];
-	gfx_info->vi_v_burst_reg	= (word*) memory[VI_V_BURST_REG];
-	gfx_info->vi_x_scale_reg	= (word*) memory[VI_X_SCALE_REG];
-	gfx_info->vi_y_scale_reg	= (word*) memory[VI_Y_SCALE_REG];
+	gfx_info->vi_status_reg		= (word*) MMU::get(VI_STATUS_REG);
+	gfx_info->vi_origin_reg		= (word*) MMU::get(VI_ORIGIN_REG);
+	gfx_info->vi_width_reg		= (word*) MMU::get(VI_WIDTH_REG);
+	gfx_info->vi_intr_reg		= (word*) MMU::get(VI_INTR_REG);
+	gfx_info->vi_v_current_line_reg	= (word*) MMU::get(VI_CURRENT_REG);
+	gfx_info->vi_timing_reg		= (word*) MMU::get(VI_BURST_REG);
+	gfx_info->vi_v_sync_reg		= (word*) MMU::get(VI_V_SYNC_REG);
+	gfx_info->vi_h_sync_reg		= (word*) MMU::get(VI_H_SYNC_REG);
+	gfx_info->vi_leap_reg		= (word*) MMU::get(VI_LEAP_REG);
+	gfx_info->vi_h_start_reg	= (word*) MMU::get(VI_H_START_REG);
+	gfx_info->vi_v_start_reg	= (word*) MMU::get(VI_V_START_REG);
+	gfx_info->vi_v_burst_reg	= (word*) MMU::get(VI_V_BURST_REG);
+	gfx_info->vi_x_scale_reg	= (word*) MMU::get(VI_X_SCALE_REG);
+	gfx_info->vi_y_scale_reg	= (word*) MMU::get(VI_Y_SCALE_REG);
 
-	// TODO:
-	gfx_info->CheckInterrupts	= dummy;
+	gfx_info->CheckInterrupts	= dummyCheckInterrupts;//&R4300i::check_interrupt;
 	initiateGFX();
 	romOpen();
+
+	loaded = true;
 }
 
 void GFX::captureScreen(char* directory)

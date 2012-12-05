@@ -94,38 +94,35 @@ typedef void (_cdecl* VIWIDTHCHANGED)(void);
 class GFX : public PLUGIN
 {
 public:
-	GFX(wstring filename, HWND hWnd);
-	~GFX();
+	static void load(wstring filename, HWND hWnd);	// Plugs the DLL into the RCP
 
-	void init(RCP* mem);		// Plugs the DLL into the RCP
-
-	void captureScreen(char*);	// Makes a screenshot
-	void changeWindow(void);	// Switches between fullscreen and window mode
-	void drawScreen(void);		// Renders the screen. Called when receiving a WM_PAINT message
-	bool initiateGFX(void);		// Initializes the video.
-	void moveScreen(int, int);	// Moves the screen. Called when receiving a WM_MOVE message
-	void processDList(void);	// Processes the high level GFX list
-	void processRDPList(void);	// Processes the low level GFX list
-	void romOpen(void);			// To call when we open the ROM
-	void showCFB(void);			// Displays again the CFB when ignored (after displaying Dlist)
-	void updateScreen(void);	// Updates the screen. Called when there is a VI interrupt
-	void viStatusChanged(void);	// Notifies the DLL that ViStatus registers changed
-	void viWidthChanged(void);	// Notifies the DLL that ViWidth registers changed
+	static void captureScreen(char*);	// Makes a screenshot
+	static void changeWindow(void);	// Switches between fullscreen and window mode
+	static void drawScreen(void);		// Renders the screen. Called when receiving a WM_PAINT message
+	static bool initiateGFX(void);		// Initializes the video.
+	static void moveScreen(int, int);	// Moves the screen. Called when receiving a WM_MOVE message
+	static void processDList(void);	// Processes the high level GFX list
+	static void processRDPList(void);	// Processes the low level GFX list
+	static void romOpen(void);			// To call when we open the ROM
+	static void showCFB(void);			// Displays again the CFB when ignored (after displaying Dlist)
+	static void updateScreen(void);	// Updates the screen. Called when there is a VI interrupt
+	static void viStatusChanged(void);	// Notifies the DLL that ViStatus registers changed
+	static void viWidthChanged(void);	// Notifies the DLL that ViWidth registers changed
 
 private:
-	CAPTURESCREEN		captureScreen_;
-	CHANGEWINDOW		changeWindow_;
-	DRAWSCREEN			drawScreen_;
-	INITIATEGFX			initiateGFX_;
-	MOVESCREEN			moveScreen_;
-	PROCESSDLIST		processDList_;
-	PROCESSRDPLIST		processRDPList_;
-	ROMOPEN				romOpen_;
-	SHOWCFB				showCFB_;
-	UPDATESCREEN		updateScreen_;
-	VISTATUSCHANGED		viStatusChanged_;
-	VIWIDTHCHANGED		viWidthChanged_;
+	static CAPTURESCREEN	captureScreen_;
+	static CHANGEWINDOW		changeWindow_;
+	static DRAWSCREEN		drawScreen_;
+	static INITIATEGFX		initiateGFX_;
+	static MOVESCREEN		moveScreen_;
+	static PROCESSDLIST		processDList_;
+	static PROCESSRDPLIST	processRDPList_;
+	static ROMOPEN			romOpen_;
+	static SHOWCFB			showCFB_;
+	static UPDATESCREEN		updateScreen_;
+	static VISTATUSCHANGED	viStatusChanged_;
+	static VIWIDTHCHANGED	viWidthChanged_;
 
-	GFX_INFO			*gfx_info;
+	static GFX_INFO*		gfx_info;
 };
 

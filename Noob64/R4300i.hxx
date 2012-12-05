@@ -42,22 +42,22 @@
 
 // Checks if the current timer has reached 0
 #define CHECK_TIMER()						\
-	if (timer_handler.getTimer() < 0)		\
-	timer_handler.timer_done()			\
+	if (TimerHandler::getTimer() < 0)		\
+		TimerHandler::timer_done()			\
 
 // Checks if an interrupt has been detected
 // and launches the interrupt handler if so
 #define CHECK_INTERRUPT()					\
 	if (interrupt_detected)					\
 	{										\
-	interrupt_detected = false;			\
-	trigger_intr_exception();			\
+		interrupt_detected = false;			\
+		trigger_intr_exception();			\
 	}										\
 
 // Update the count register and the timer handler
 #define UPDATE_TIME()						\
 	Count += TIME_UNIT;						\
-	timer_handler.decTimer()				\
+	TimerHandler::decTimer()				\
 
 // Checks if a copunusable exception has been
 // detected and launches the copunusable exception
@@ -65,17 +65,15 @@
 #define TEST_COP1_USABLE_EXCEPTION()		\
 	if (!(Status & STATUS_CU1))				\
 	{										\
-	trigger_copunusable_exception(1);	\
-	return;								\
+		trigger_copunusable_exception(1);	\
+		return;								\
 	}										\
 
 //****************************************************************************
 //** GETTERS																**
 //****************************************************************************
 
-inline MMU& R4300i::getMMU(void) const						{ return mmu; }
-inline TimerHandler& R4300i::getTimerHandler(void) const	{ return timer_handler; }
-inline word R4300i::getCop0(int i) const					{ return cop0[i]; }
+inline word R4300i::getCop0(int i)					{ return cop0[i]; }
 
 //****************************************************************************
 //** SETTERS																**
@@ -698,7 +696,7 @@ inline void R4300i::decode_fpu(const word i)
 inline void R4300i::LB(int rt, int immed, int rs)
 {
 	PRINT_PC("LB " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = extend_sign_byte(mmu.read<sbyte>((word) (r[rs] + extend_sign_halfword(immed))));
+	r[rt] = extend_sign_byte(MMU::read<sbyte>((word) (r[rs] + extend_sign_halfword(immed))));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -706,7 +704,7 @@ inline void R4300i::LB(int rt, int immed, int rs)
 inline void R4300i::LBU(int rt, int immed, int rs)
 {
 	PRINT_PC("LBU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = mmu.read<byte>((word) (r[rs] + extend_sign_halfword(immed)));
+	r[rt] = MMU::read<byte>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -714,7 +712,7 @@ inline void R4300i::LBU(int rt, int immed, int rs)
 inline void R4300i::LD(int rt, int immed, int rs)
 {
 	PRINT_PC("LD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = mmu.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
+	r[rt] = MMU::read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -722,7 +720,7 @@ inline void R4300i::LD(int rt, int immed, int rs)
 inline void R4300i::LDL(int rt, int immed, int rs)
 {
 	PRINT_PC("LDL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	dword tmp = mmu.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
+	dword tmp = MMU::read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
 	r[rt] |= (tmp << ((r[rs] + extend_sign_halfword(immed)) & 7) * 8);
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
@@ -731,7 +729,7 @@ inline void R4300i::LDL(int rt, int immed, int rs)
 inline void R4300i::LDR(int rt, int immed, int rs)
 {
 	PRINT_PC("LDR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	dword tmp = mmu.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
+	dword tmp = MMU::read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
 	r[rt] |= (tmp >> (( 7 - (r[rs] + extend_sign_halfword(immed)) & 7)) * 8);
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
@@ -740,7 +738,7 @@ inline void R4300i::LDR(int rt, int immed, int rs)
 inline void R4300i::LH(int rt, int immed, int rs)
 {
 	PRINT_PC("LH " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = extend_sign_halfword(mmu.read<shword>((word) (r[rs] + extend_sign_halfword(immed))));
+	r[rt] = extend_sign_halfword(MMU::read<shword>((word) (r[rs] + extend_sign_halfword(immed))));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -748,7 +746,7 @@ inline void R4300i::LH(int rt, int immed, int rs)
 inline void R4300i::LHU(int rt, int immed, int rs)
 {
 	PRINT_PC("LHU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = mmu.read<hword>((word) (r[rs] + extend_sign_halfword(immed)));
+	r[rt] = MMU::read<hword>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -756,7 +754,7 @@ inline void R4300i::LHU(int rt, int immed, int rs)
 inline void R4300i::LL(int rt, int immed, int rs)
 {
 	PRINT_PC("LL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = extend_sign_word(mmu.read<sword>((word) (r[rs] + extend_sign_halfword(immed))));
+	r[rt] = extend_sign_word(MMU::read<sword>((word) (r[rs] + extend_sign_halfword(immed))));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	ll = 1;
 	pc += 4;
@@ -765,7 +763,7 @@ inline void R4300i::LL(int rt, int immed, int rs)
 inline void R4300i::LLD(int rt, int immed, int rs)
 {
 	PRINT_PC("LLD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = mmu.read<sdword>((word) (r[rs] + extend_sign_halfword(immed)));
+	r[rt] = MMU::read<sdword>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	ll = 1;
 	pc += 4;
@@ -774,7 +772,7 @@ inline void R4300i::LLD(int rt, int immed, int rs)
 inline void R4300i::LW(int rt, int immed, int rs)
 {
 	PRINT_PC("LW " << dec << "r" << rt << " 0x" << hex << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = extend_sign_word(mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed))));
+	r[rt] = extend_sign_word(MMU::read<word>((word) (r[rs] + extend_sign_halfword(immed))));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -782,7 +780,7 @@ inline void R4300i::LW(int rt, int immed, int rs)
 inline void R4300i::LWL(int rt, int immed, int rs)
 {
 	PRINT_PC("LWL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	word tmp = mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
+	word tmp = MMU::read<word>((word) (r[rs] + extend_sign_halfword(immed)));
 	r[rt] |= (tmp << (3 - (r[rs] + extend_sign_halfword(immed)) & 3) * 8);
 	r[rt] = extend_sign_word(r[rt]);
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
@@ -792,7 +790,7 @@ inline void R4300i::LWL(int rt, int immed, int rs)
 inline void R4300i::LWR(int rt, int immed, int rs)
 {
 	PRINT_PC("LWR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	word tmp = mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
+	word tmp = MMU::read<word>((word) (r[rs] + extend_sign_halfword(immed)));
 	r[rt] |= (tmp >> ((3 - (r[rs] + extend_sign_halfword(immed)) & 3)) * 8);
 	r[rt] = extend_sign_word(r[rt]);
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
@@ -802,7 +800,7 @@ inline void R4300i::LWR(int rt, int immed, int rs)
 inline void R4300i::LWU(int rt, int immed, int rs)
 {
 	PRINT_PC("LWU " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	r[rt] = mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
+	r[rt] = MMU::read<word>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -810,7 +808,7 @@ inline void R4300i::LWU(int rt, int immed, int rs)
 inline void R4300i::SB(int rt, int immed, int rs)
 {
 	PRINT_PC("SB " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	mmu.write<byte>(r[rt] & 0xFF, (word) (r[rs] + extend_sign_halfword(immed)));
+	MMU::write<byte>(r[rt] & 0xFF, (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
@@ -819,7 +817,7 @@ inline void R4300i::SC(int rt, int immed, int rs)
 	if (ll)
 	{
 		PRINT_PC("SC " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-		mmu.write<word>(r[rt] & 0xFFFFFFFF, (word) (r[rs] + extend_sign_halfword(immed)));
+		MMU::write<word>(r[rt] & 0xFFFFFFFF, (word) (r[rs] + extend_sign_halfword(immed)));
 		//maybe something to do here...
 		ll = 0;
 	}
@@ -833,7 +831,7 @@ inline void R4300i::SCD(int rt, int immed, int rs)
 	if (ll)
 	{
 		PRINT_PC("SCD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-		mmu.write<dword>(r[rt], (word) (r[rs] + extend_sign_halfword(immed)));
+		MMU::write<dword>(r[rt], (word) (r[rs] + extend_sign_halfword(immed)));
 		//maybe something to do here...
 		ll = 0;
 	}
@@ -847,7 +845,7 @@ inline void R4300i::SCD(int rt, int immed, int rs)
 inline void R4300i::SD(int rt, int immed, int rs)
 {
 	PRINT_PC("SD " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	mmu.write<dword>(r[rt], (word) (r[rs] + extend_sign_halfword(immed)));
+	MMU::write<dword>(r[rt], (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
@@ -855,9 +853,9 @@ inline void R4300i::SDL(int rt, int immed, int rs)
 {
 	dword old_word = 0;
 	PRINT_PC("SDL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	old_word = mmu.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
+	old_word = MMU::read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
 	old_word = (r[rt] >> (8 * (r[rs] + extend_sign_halfword(immed)) & 7)) | old_word;
-	mmu.write<dword>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
+	MMU::write<dword>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
@@ -865,23 +863,23 @@ inline void R4300i::SDR(int rt, int immed, int rs)
 {
 	dword old_word = 0;
 	PRINT_PC("SDR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	old_word = mmu.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
+	old_word = MMU::read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
 	old_word = (r[rt] << (8 * (7 - (r[rs] + extend_sign_halfword(immed)) & 7))) | old_word;
-	mmu.write<dword>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
+	MMU::write<dword>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
 inline void R4300i::SH(int rt, int immed, int rs)
 {
 	PRINT_PC("SH " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	mmu.write<hword>(r[rt] & 0xFFFF, (word) (r[rs] + extend_sign_halfword(immed)));
+	MMU::write<hword>(r[rt] & 0xFFFF, (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
 inline void R4300i::SW(int rt, int immed, int rs)
 {
 	PRINT_PC("SW " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	mmu.write<word>(r[rt] & 0xFFFFFFFF, (word) (r[rs] + extend_sign_halfword(immed)));
+	MMU::write<word>(r[rt] & 0xFFFFFFFF, (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
@@ -889,9 +887,9 @@ inline void R4300i::SWL(int rt, int immed, int rs)
 {
 	word old_word = 0;
 	PRINT_PC("SWL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	old_word = mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
+	old_word = MMU::read<word>((word) (r[rs] + extend_sign_halfword(immed)));
 	old_word = (r[rt] >> (8 * (r[rs] + extend_sign_halfword(immed)) & 3)) & 0xFFFFFFFF | old_word;
-	mmu.write<word>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
+	MMU::write<word>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
@@ -899,9 +897,9 @@ inline void R4300i::SWR(int rt, int immed, int rs)
 {
 	word old_word = 0;
 	PRINT_PC("SWR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	old_word = mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
+	old_word = MMU::read<word>((word) (r[rs] + extend_sign_halfword(immed)));
 	old_word = (r[rt] << (8 * (3 - (r[rs] + extend_sign_halfword(immed)) & 3))) & 0xFFFFFFFF | old_word;
-	mmu.write<word>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
+	MMU::write<word>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
@@ -1432,7 +1430,7 @@ inline void R4300i::BEQ(int rs, int rt, int immed)
 	sdword local_rt = r[rt];
 	pc += 4;
 	delay_slot = true;
-	decode(mmu.read<word>((word) pc));
+	decode(MMU::read<word>((word) pc));
 	delay_slot = false;
 	if (local_rs == local_rt)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1453,7 +1451,7 @@ inline void R4300i::BEQL(int rs, int rt, int immed)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(mmu.read<word>((word) pc));
+		decode(MMU::read<word>((word) pc));
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
@@ -1470,7 +1468,7 @@ inline void R4300i::BGEZ(int immed, int rs)
 	sdword local_rs = r[rs];
 	pc += 4;
 	delay_slot = true;
-	decode(mmu.read<word>((word) pc));
+	decode(MMU::read<word>((word) pc));
 	delay_slot = false;
 	if (local_rs >= 0)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1488,7 +1486,7 @@ inline void R4300i::BGEZAL(int immed, int rs)
 	sdword local_rs = r[rs];
 	pc += 4;
 	delay_slot = true;
-	decode(mmu.read<word>((word) pc));
+	decode(MMU::read<word>((word) pc));
 	delay_slot = false;
 	r[31] = pc;
 	if (local_rs >= 0)
@@ -1506,7 +1504,7 @@ inline void R4300i::BGEZALL(int immed, int rs)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(mmu.read<word>((word) pc));
+		decode(MMU::read<word>((word) pc));
 		delay_slot = false;
 		r[31] = pc;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1526,7 +1524,7 @@ inline void R4300i::BGEZL(int immed, int rs)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(mmu.read<word>((word) pc));
+		decode(MMU::read<word>((word) pc));
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
@@ -1543,7 +1541,7 @@ inline void R4300i::BGTZ(int rs, int immed)
 	sdword local_rs = r[rs];
 	pc += 4;
 	delay_slot = true;
-	decode(mmu.read<word>((word) pc));
+	decode(MMU::read<word>((word) pc));
 	delay_slot = false;
 	if (local_rs > 0)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1560,7 +1558,7 @@ inline void R4300i::BGTZL(int immed, int rs)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(mmu.read<word>((word) pc));
+		decode(MMU::read<word>((word) pc));
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
@@ -1577,7 +1575,7 @@ inline void R4300i::BLEZ(int rs, int immed)
 	sdword local_rs = r[rs];
 	pc += 4;
 	delay_slot = true;
-	decode(mmu.read<word>((word) pc));
+	decode(MMU::read<word>((word) pc));
 	delay_slot = false;
 	if (local_rs <= 0)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1594,7 +1592,7 @@ inline void R4300i::BLEZL(int immed, int rs)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(mmu.read<word>((word) pc));
+		decode(MMU::read<word>((word) pc));
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
@@ -1611,7 +1609,7 @@ inline void R4300i::BLTZ(int immed, int rs)
 	sdword local_rs = r[rs];
 	pc += 4;
 	delay_slot = true;
-	decode(mmu.read<word>((word) pc));
+	decode(MMU::read<word>((word) pc));
 	delay_slot = false;
 	if (local_rs < 0)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1626,7 +1624,7 @@ inline void R4300i::BLTZAL(int immed, int rs)
 	sdword local_rs = r[rs];
 	pc += 4;
 	delay_slot = true;
-	decode(mmu.read<word>((word) pc));
+	decode(MMU::read<word>((word) pc));
 	delay_slot = false;
 	r[31] = pc;
 	if (local_rs < 0)
@@ -1644,7 +1642,7 @@ inline void R4300i::BLTZALL(int immed, int rs)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(mmu.read<word>((word) pc));
+		decode(MMU::read<word>((word) pc));
 		delay_slot = false;
 		r[31] = pc;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1664,7 +1662,7 @@ inline void R4300i::BLTZL(int immed, int rs)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(mmu.read<word>((word) pc));
+		decode(MMU::read<word>((word) pc));
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
@@ -1685,7 +1683,7 @@ inline void R4300i::BNE(int rs, int rt, int immed)
 	dword local_rt = r[rt];
 	pc += 4;
 	delay_slot = true;
-	decode(mmu.read<word>((word) pc));
+	decode(MMU::read<word>((word) pc));
 	delay_slot = false;
 	if (local_rs != local_rt)
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
@@ -1706,7 +1704,7 @@ inline void R4300i::BNEL(int rs, int rt, int immed)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(mmu.read<word>((word) pc));
+		decode(MMU::read<word>((word) pc));
 		delay_slot = false;
 		pc += (extend_sign_halfword(extend_sign_halfword(immed) - 1) << 2);
 	}
@@ -1722,7 +1720,7 @@ inline void R4300i::J(int address)
 
 	pc += 4;
 	delay_slot = true;
-	decode(mmu.read<word>((word) pc));
+	decode(MMU::read<word>((word) pc));
 	delay_slot = false;
 	pc = (pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2);
 	CHECK_TIMER();
@@ -1734,7 +1732,7 @@ inline void R4300i::JAL(int address)
 	PRINT_PC("JAL " << address);
 	pc += 4;
 	delay_slot = true;
-	decode(mmu.read<word>((word) pc));
+	decode(MMU::read<word>((word) pc));
 	delay_slot = false;
 	r[31] = extend_sign_word(pc);
 	pc = (pc & 0xF0000000) | ((address & 0x03FFFFFF) << 2);
@@ -1749,7 +1747,7 @@ inline void R4300i::JALR(int rs, int rd)
 	dword local_rs = r[rs];
 	pc += 4;
 	delay_slot = true;
-	decode(mmu.read<word>((word) pc));
+	decode(MMU::read<word>((word) pc));
 	delay_slot = false;
 	r[rd] = extend_sign_word(pc);
 	pc = local_rs;
@@ -1764,7 +1762,7 @@ inline void R4300i::JR(int rs)
 	dword local_rs = r[rs];
 	pc += 4;
 	delay_slot = true;
-	decode(mmu.read<word>((word) pc));
+	decode(MMU::read<word>((word) pc));
 	delay_slot = false;
 	pc = local_rs;
 	CHECK_TIMER();
@@ -1867,6 +1865,9 @@ inline void R4300i::ERET(void)
 {
 	PRINT_PC("ERET");
 	Status &= (Status & STATUS_ERL) ? ~STATUS_ERL : 0xFFFFFFFD;
+	// Workaround to clear the ExCode after we triggered an exception
+	Cause &= ~CAUSE_ExcCode;
+	//
 	pc = (Status & STATUS_ERL) ? ErrorEpc : Epc;
 	ll = 0;
 	check_interrupt();
@@ -1876,7 +1877,7 @@ inline void R4300i::ERET(void)
 	if (first_eret)
 	{
 		first_eret = false;
-		timer_handler.force_pi_timer_done();
+		TimerHandler::force_pi_timer_done();
 	}
 
 	CHECK_TIMER();
@@ -1925,7 +1926,7 @@ inline void R4300i::MTC0(int rt, int fs)
 	case 9:    // Count
 		UPDATE_TIME();
 		Count = r[rt] & 0xFFFFFFFF;
-		timer_handler.change_compare_timer();
+		TimerHandler::change_compare_timer();
 		break;
 	case 10:   // EntryHi
 		EntryHi = r[rt] & 0xFFFFE0FF;
@@ -1933,7 +1934,7 @@ inline void R4300i::MTC0(int rt, int fs)
 	case 11:   // Compare
 		Compare = r[rt] & 0xFFFFFFFF;
 		Cause = Cause & 0xFFFFFFFFFFFF7FFF; //Timer interupt is clear
-		timer_handler.change_compare_timer();
+		TimerHandler::change_compare_timer();
 		break;
 	case 12:   // Status
 		Status = r[rt] & 0xFFFFFFFF;
@@ -1966,7 +1967,7 @@ inline void R4300i::MTC0(int rt, int fs)
 		TagHi = 0;
 		break;
 	default:
-		cout << endl << "Unknown mtc0 mmu.write";
+		cout << endl << "Unknown mtc0 MMU::write";
 	}
 	pc += 4;
 }
@@ -1978,12 +1979,12 @@ inline void R4300i::TLBP(void)
 	Index = 0x80000000;
 	/*  for (i = 0; i < 32; i++)
 	{
-	if (((mmu.tlb[i].vpn2 & (~mmu.tlb[i].mask)) ==
-	(((EntryHi & 0xFFFFE000) >> 13) & (~mmu.tlb[i].mask))) &&
-	((mmu.tlb[i].g) ||
-	(mmu.tlb[i].asid == (EntryHi & 0xFF))))
+	if (((MMU::tlb[i].vpn2 & (~MMU::tlb[i].mask)) ==
+	(((EntryHi & 0xFFFFE000) >> 13) & (~MMU::tlb[i].mask))) &&
+	((MMU::tlb[i].g) ||
+	(MMU::tlb[i].asid == (EntryHi & 0xFF))))
 	{
-	cout << hex << "vpn2 " << mmu.tlb[i].vpn2 << " ~mask " << (~mmu.tlb[i].mask) << " EntryHi " << ((EntryHi & 0xFFFFE000) >> 13) << " g " << (mmu.tlb[i].g) << " asid " << mmu.tlb[i].asid << endl;
+	cout << hex << "vpn2 " << MMU::tlb[i].vpn2 << " ~mask " << (~MMU::tlb[i].mask) << " EntryHi " << ((EntryHi & 0xFFFFE000) >> 13) << " g " << (MMU::tlb[i].g) << " asid " << MMU::tlb[i].asid << endl;
 	Index = i;
 	break;
 	}
@@ -1996,14 +1997,14 @@ inline void R4300i::TLBR(void)
 	PRINT_PC("TLBR");
 	int index;
 	index = Index & 0x1F;
-	PageMask = mmu.tlb[index].mask << 13;
-	EntryHi = ((mmu.tlb[index].vpn2 << 13) | mmu.tlb[index].asid);
-	EntryLo0 = (mmu.tlb[index].pfn0 << 6) | (mmu.tlb[index].c0 << 3)
-		| (mmu.tlb[index].d0 << 2) | (mmu.tlb[index].v0 << 1)
-		| mmu.tlb[index].g;
-	EntryLo1 = (mmu.tlb[index].pfn1 << 6) | (mmu.tlb[index].c1 << 3)
-		| (mmu.tlb[index].d1 << 2) | (mmu.tlb[index].v1 << 1)
-		| mmu.tlb[index].g;
+	PageMask = MMU::tlb[index].mask << 13;
+	EntryHi = ((MMU::tlb[index].vpn2 << 13) | MMU::tlb[index].asid);
+	EntryLo0 = (MMU::tlb[index].pfn0 << 6) | (MMU::tlb[index].c0 << 3)
+		| (MMU::tlb[index].d0 << 2) | (MMU::tlb[index].v0 << 1)
+		| MMU::tlb[index].g;
+	EntryLo1 = (MMU::tlb[index].pfn1 << 6) | (MMU::tlb[index].c1 << 3)
+		| (MMU::tlb[index].d1 << 2) | (MMU::tlb[index].v1 << 1)
+		| MMU::tlb[index].g;
 	pc += 4;
 }
 
@@ -2011,82 +2012,82 @@ inline void R4300i::TLBWI(void)
 {
 	PRINT_PC("TLBWI");
 	unsigned int i;
-	if (mmu.tlb[Index&0x3F].v0)
+	if (MMU::tlb[Index&0x3F].v0)
 	{
-		for (i=mmu.tlb[Index&0x3F].start0; i<mmu.tlb[Index&0x3F].end0; i++)
+		for (i=MMU::tlb[Index&0x3F].start0; i<MMU::tlb[Index&0x3F].end0; i++)
 		{
-			mmu.tlb_lut_r[i>>12] = 0;
-			mmu.invalid_code[i>>12] = 1;
+			MMU::tlb_lut_r[i>>12] = 0;
+			MMU::invalid_code[i>>12] = 1;
 		}
-		if (mmu.tlb[Index&0x3F].d0)
-			for (i=mmu.tlb[Index&0x3F].start0; i<mmu.tlb[Index&0x3F].end0; i++)
-				mmu.tlb_lut_w[i>>12] = 0;
+		if (MMU::tlb[Index&0x3F].d0)
+			for (i=MMU::tlb[Index&0x3F].start0; i<MMU::tlb[Index&0x3F].end0; i++)
+				MMU::tlb_lut_w[i>>12] = 0;
 	}
-	if (mmu.tlb[Index&0x3F].v1)
+	if (MMU::tlb[Index&0x3F].v1)
 	{
-		for (i=mmu.tlb[Index&0x3F].start1; i<mmu.tlb[Index&0x3F].end1; i++)
+		for (i=MMU::tlb[Index&0x3F].start1; i<MMU::tlb[Index&0x3F].end1; i++)
 		{
-			mmu.tlb_lut_r[i>>12] = 0;
-			mmu.invalid_code[i>>12] = 1;
+			MMU::tlb_lut_r[i>>12] = 0;
+			MMU::invalid_code[i>>12] = 1;
 		}
-		if (mmu.tlb[Index&0x3F].d1)
-			for (i=mmu.tlb[Index&0x3F].start1; i<mmu.tlb[Index&0x3F].end1; i++)
-				mmu.tlb_lut_w[i>>12] = 0;
+		if (MMU::tlb[Index&0x3F].d1)
+			for (i=MMU::tlb[Index&0x3F].start1; i<MMU::tlb[Index&0x3F].end1; i++)
+				MMU::tlb_lut_w[i>>12] = 0;
 	}
-	mmu.tlb[Index&0x3F].g = (EntryLo0 & EntryLo1 & 1);
-	mmu.tlb[Index&0x3F].pfn0 = (EntryLo0 & 0x3FFFFFC0) >> 6;
-	mmu.tlb[Index&0x3F].pfn1 = (EntryLo1 & 0x3FFFFFC0) >> 6;
-	mmu.tlb[Index&0x3F].c0 = (EntryLo0 & 0x38) >> 3;
-	mmu.tlb[Index&0x3F].c1 = (EntryLo1 & 0x38) >> 3;
-	mmu.tlb[Index&0x3F].d0 = (EntryLo0 & 0x4) >> 2;
-	mmu.tlb[Index&0x3F].d1 = (EntryLo1 & 0x4) >> 2;
-	mmu.tlb[Index&0x3F].v0 = (EntryLo0 & 0x2) >> 1;
-	mmu.tlb[Index&0x3F].v1 = (EntryLo1 & 0x2) >> 1;
-	mmu.tlb[Index&0x3F].asid = (EntryHi & 0xFF);
-	mmu.tlb[Index&0x3F].vpn2 = (EntryHi & 0xFFFFE000) >> 13;
-	mmu.tlb[Index&0x3F].r = (EntryHi & 0xC000000000000000LL) >> 62;
-	mmu.tlb[Index&0x3F].mask = (PageMask & 0x1FFE000) >> 13;
+	MMU::tlb[Index&0x3F].g = (EntryLo0 & EntryLo1 & 1);
+	MMU::tlb[Index&0x3F].pfn0 = (EntryLo0 & 0x3FFFFFC0) >> 6;
+	MMU::tlb[Index&0x3F].pfn1 = (EntryLo1 & 0x3FFFFFC0) >> 6;
+	MMU::tlb[Index&0x3F].c0 = (EntryLo0 & 0x38) >> 3;
+	MMU::tlb[Index&0x3F].c1 = (EntryLo1 & 0x38) >> 3;
+	MMU::tlb[Index&0x3F].d0 = (EntryLo0 & 0x4) >> 2;
+	MMU::tlb[Index&0x3F].d1 = (EntryLo1 & 0x4) >> 2;
+	MMU::tlb[Index&0x3F].v0 = (EntryLo0 & 0x2) >> 1;
+	MMU::tlb[Index&0x3F].v1 = (EntryLo1 & 0x2) >> 1;
+	MMU::tlb[Index&0x3F].asid = (EntryHi & 0xFF);
+	MMU::tlb[Index&0x3F].vpn2 = (EntryHi & 0xFFFFE000) >> 13;
+	MMU::tlb[Index&0x3F].r = (EntryHi & 0xC000000000000000LL) >> 62;
+	MMU::tlb[Index&0x3F].mask = (PageMask & 0x1FFE000) >> 13;
 
-	mmu.tlb[Index&0x3F].start0 = mmu.tlb[Index&0x3F].vpn2 << 13;
-	mmu.tlb[Index&0x3F].end0 = mmu.tlb[Index&0x3F].start0+
-		(mmu.tlb[Index&0x3F].mask << 12) + 0xFFF;
-	mmu.tlb[Index&0x3F].phys0 = mmu.tlb[Index&0x3F].pfn0 << 12;
+	MMU::tlb[Index&0x3F].start0 = MMU::tlb[Index&0x3F].vpn2 << 13;
+	MMU::tlb[Index&0x3F].end0 = MMU::tlb[Index&0x3F].start0+
+		(MMU::tlb[Index&0x3F].mask << 12) + 0xFFF;
+	MMU::tlb[Index&0x3F].phys0 = MMU::tlb[Index&0x3F].pfn0 << 12;
 
-	if (mmu.tlb[Index&0x3F].v0)
+	if (MMU::tlb[Index&0x3F].v0)
 	{
-		if (mmu.tlb[Index&0x3F].start0 < mmu.tlb[Index&0x3F].end0 &&
-			!(mmu.tlb[Index&0x3F].start0 >= 0x80000000 &&
-			mmu.tlb[Index&0x3F].end0 < 0xC0000000) &&
-			mmu.tlb[Index&0x3F].phys0 < 0x20000000)
+		if (MMU::tlb[Index&0x3F].start0 < MMU::tlb[Index&0x3F].end0 &&
+			!(MMU::tlb[Index&0x3F].start0 >= 0x80000000 &&
+			MMU::tlb[Index&0x3F].end0 < 0xC0000000) &&
+			MMU::tlb[Index&0x3F].phys0 < 0x20000000)
 		{
-			for (i=mmu.tlb[Index&0x3F].start0;i<mmu.tlb[Index&0x3F].end0;i++)
-				mmu.tlb_lut_r[i>>12] = 0x80000000 | 
-				(mmu.tlb[Index&0x3F].phys0 + (i - mmu.tlb[Index&0x3F].start0));
-			if (mmu.tlb[Index&0x3F].d0)
-				for (i=mmu.tlb[Index&0x3F].start0;i<mmu.tlb[Index&0x3F].end0;i++)
-					mmu.tlb_lut_w[i>>12] = 0x80000000 | 
-					(mmu.tlb[Index&0x3F].phys0 + (i - mmu.tlb[Index&0x3F].start0));
+			for (i=MMU::tlb[Index&0x3F].start0;i<MMU::tlb[Index&0x3F].end0;i++)
+				MMU::tlb_lut_r[i>>12] = 0x80000000 | 
+				(MMU::tlb[Index&0x3F].phys0 + (i - MMU::tlb[Index&0x3F].start0));
+			if (MMU::tlb[Index&0x3F].d0)
+				for (i=MMU::tlb[Index&0x3F].start0;i<MMU::tlb[Index&0x3F].end0;i++)
+					MMU::tlb_lut_w[i>>12] = 0x80000000 | 
+					(MMU::tlb[Index&0x3F].phys0 + (i - MMU::tlb[Index&0x3F].start0));
 		}
 	}
-	mmu.tlb[Index&0x3F].start1 = mmu.tlb[Index&0x3F].end0+1;
-	mmu.tlb[Index&0x3F].end1 = mmu.tlb[Index&0x3F].start1+
-		(mmu.tlb[Index&0x3F].mask << 12) + 0xFFF;
-	mmu.tlb[Index&0x3F].phys1 = mmu.tlb[Index&0x3F].pfn1 << 12;
+	MMU::tlb[Index&0x3F].start1 = MMU::tlb[Index&0x3F].end0+1;
+	MMU::tlb[Index&0x3F].end1 = MMU::tlb[Index&0x3F].start1+
+		(MMU::tlb[Index&0x3F].mask << 12) + 0xFFF;
+	MMU::tlb[Index&0x3F].phys1 = MMU::tlb[Index&0x3F].pfn1 << 12;
 
-	if (mmu.tlb[Index&0x3F].v1)
+	if (MMU::tlb[Index&0x3F].v1)
 	{
-		if (mmu.tlb[Index&0x3F].start1 < mmu.tlb[Index&0x3F].end1 &&
-			!(mmu.tlb[Index&0x3F].start1 >= 0x80000000 &&
-			mmu.tlb[Index&0x3F].end1 < 0xC0000000) &&
-			mmu.tlb[Index&0x3F].phys1 < 0x20000000)
+		if (MMU::tlb[Index&0x3F].start1 < MMU::tlb[Index&0x3F].end1 &&
+			!(MMU::tlb[Index&0x3F].start1 >= 0x80000000 &&
+			MMU::tlb[Index&0x3F].end1 < 0xC0000000) &&
+			MMU::tlb[Index&0x3F].phys1 < 0x20000000)
 		{
-			for (i=mmu.tlb[Index&0x3F].start1;i<mmu.tlb[Index&0x3F].end1;i++)
-				mmu.tlb_lut_r[i>>12] = 0x80000000 | 
-				(mmu.tlb[Index&0x3F].phys1 + (i - mmu.tlb[Index&0x3F].start1));
-			if (mmu.tlb[Index&0x3F].d1)
-				for (i=mmu.tlb[Index&0x3F].start1;i<mmu.tlb[Index&0x3F].end1;i++)
-					mmu.tlb_lut_w[i>>12] = 0x80000000 | 
-					(mmu.tlb[Index&0x3F].phys1 + (i - mmu.tlb[Index&0x3F].start1));
+			for (i=MMU::tlb[Index&0x3F].start1;i<MMU::tlb[Index&0x3F].end1;i++)
+				MMU::tlb_lut_r[i>>12] = 0x80000000 | 
+				(MMU::tlb[Index&0x3F].phys1 + (i - MMU::tlb[Index&0x3F].start1));
+			if (MMU::tlb[Index&0x3F].d1)
+				for (i=MMU::tlb[Index&0x3F].start1;i<MMU::tlb[Index&0x3F].end1;i++)
+					MMU::tlb_lut_w[i>>12] = 0x80000000 | 
+					(MMU::tlb[Index&0x3F].phys1 + (i - MMU::tlb[Index&0x3F].start1));
 		}
 	}
 	pc += 4;
@@ -2098,82 +2099,82 @@ inline void R4300i::TLBWR(void)
 	unsigned int i;
 	UPDATE_TIME();
 	Random = (Count/2 % (32 - Wired)) + Wired;
-	if (mmu.tlb[Random].v0)
+	if (MMU::tlb[Random].v0)
 	{
-		for (i=mmu.tlb[Random].start0; i<mmu.tlb[Random].end0; i++)
+		for (i=MMU::tlb[Random].start0; i<MMU::tlb[Random].end0; i++)
 		{
-			mmu.tlb_lut_r[i>>12] = 0;
-			mmu.invalid_code[i>>12] = 1;
+			MMU::tlb_lut_r[i>>12] = 0;
+			MMU::invalid_code[i>>12] = 1;
 		}
-		if (mmu.tlb[Random].d0)
-			for (i=mmu.tlb[Random].start0; i<mmu.tlb[Random].end0; i++)
-				mmu.tlb_lut_w[i>>12] = 0;
+		if (MMU::tlb[Random].d0)
+			for (i=MMU::tlb[Random].start0; i<MMU::tlb[Random].end0; i++)
+				MMU::tlb_lut_w[i>>12] = 0;
 	}
-	if (mmu.tlb[Random].v1)
+	if (MMU::tlb[Random].v1)
 	{
-		for (i=mmu.tlb[Random].start1; i<mmu.tlb[Random].end1; i++)
+		for (i=MMU::tlb[Random].start1; i<MMU::tlb[Random].end1; i++)
 		{
-			mmu.tlb_lut_r[i>>12] = 0;
-			mmu.invalid_code[i>>12] = 1;
+			MMU::tlb_lut_r[i>>12] = 0;
+			MMU::invalid_code[i>>12] = 1;
 		}
-		if (mmu.tlb[Random].d1)
-			for (i=mmu.tlb[Random].start1; i<mmu.tlb[Random].end1; i++)
-				mmu.tlb_lut_w[i>>12] = 0;
+		if (MMU::tlb[Random].d1)
+			for (i=MMU::tlb[Random].start1; i<MMU::tlb[Random].end1; i++)
+				MMU::tlb_lut_w[i>>12] = 0;
 	}
-	mmu.tlb[Random].g = (EntryLo0 & EntryLo1 & 1);
-	mmu.tlb[Random].pfn0 = (EntryLo0 & 0x3FFFFFC0) >> 6;
-	mmu.tlb[Random].pfn1 = (EntryLo1 & 0x3FFFFFC0) >> 6;
-	mmu.tlb[Random].c0 = (EntryLo0 & 0x38) >> 3;
-	mmu.tlb[Random].c1 = (EntryLo1 & 0x38) >> 3;
-	mmu.tlb[Random].d0 = (EntryLo0 & 0x4) >> 2;
-	mmu.tlb[Random].d1 = (EntryLo1 & 0x4) >> 2;
-	mmu.tlb[Random].v0 = (EntryLo0 & 0x2) >> 1;
-	mmu.tlb[Random].v1 = (EntryLo1 & 0x2) >> 1;
-	mmu.tlb[Random].asid = (EntryHi & 0xFF);
-	mmu.tlb[Random].vpn2 = (EntryHi & 0xFFFFE000) >> 13;
-	mmu.tlb[Random].r = (EntryHi & 0xC000000000000000LL) >> 62;
-	mmu.tlb[Random].mask = (PageMask & 0x1FFE000) >> 13;
+	MMU::tlb[Random].g = (EntryLo0 & EntryLo1 & 1);
+	MMU::tlb[Random].pfn0 = (EntryLo0 & 0x3FFFFFC0) >> 6;
+	MMU::tlb[Random].pfn1 = (EntryLo1 & 0x3FFFFFC0) >> 6;
+	MMU::tlb[Random].c0 = (EntryLo0 & 0x38) >> 3;
+	MMU::tlb[Random].c1 = (EntryLo1 & 0x38) >> 3;
+	MMU::tlb[Random].d0 = (EntryLo0 & 0x4) >> 2;
+	MMU::tlb[Random].d1 = (EntryLo1 & 0x4) >> 2;
+	MMU::tlb[Random].v0 = (EntryLo0 & 0x2) >> 1;
+	MMU::tlb[Random].v1 = (EntryLo1 & 0x2) >> 1;
+	MMU::tlb[Random].asid = (EntryHi & 0xFF);
+	MMU::tlb[Random].vpn2 = (EntryHi & 0xFFFFE000) >> 13;
+	MMU::tlb[Random].r = (EntryHi & 0xC000000000000000LL) >> 62;
+	MMU::tlb[Random].mask = (PageMask & 0x1FFE000) >> 13;
 
-	mmu.tlb[Random].start0 = mmu.tlb[Random].vpn2 << 13;
-	mmu.tlb[Random].end0 = mmu.tlb[Random].start0+
-		(mmu.tlb[Random].mask << 12) + 0xFFF;
-	mmu.tlb[Random].phys0 = mmu.tlb[Random].pfn0 << 12;
+	MMU::tlb[Random].start0 = MMU::tlb[Random].vpn2 << 13;
+	MMU::tlb[Random].end0 = MMU::tlb[Random].start0+
+		(MMU::tlb[Random].mask << 12) + 0xFFF;
+	MMU::tlb[Random].phys0 = MMU::tlb[Random].pfn0 << 12;
 
-	if (mmu.tlb[Random].v0)
+	if (MMU::tlb[Random].v0)
 	{
-		if (mmu.tlb[Random].start0 < mmu.tlb[Random].end0 &&
-			!(mmu.tlb[Random].start0 >= 0x80000000 &&
-			mmu.tlb[Random].end0 < 0xC0000000) &&
-			mmu.tlb[Random].phys0 < 0x20000000)
+		if (MMU::tlb[Random].start0 < MMU::tlb[Random].end0 &&
+			!(MMU::tlb[Random].start0 >= 0x80000000 &&
+			MMU::tlb[Random].end0 < 0xC0000000) &&
+			MMU::tlb[Random].phys0 < 0x20000000)
 		{
-			for (i=mmu.tlb[Random].start0;i<mmu.tlb[Random].end0;i++)
-				mmu.tlb_lut_r[i>>12] = 0x80000000 | 
-				(mmu.tlb[Random].phys0 + (i - mmu.tlb[Random].start0));
-			if (mmu.tlb[Random].d0)
-				for (i=mmu.tlb[Random].start0;i<mmu.tlb[Random].end0;i++)
-					mmu.tlb_lut_w[i>>12] = 0x80000000 | 
-					(mmu.tlb[Random].phys0 + (i - mmu.tlb[Random].start0));
+			for (i=MMU::tlb[Random].start0;i<MMU::tlb[Random].end0;i++)
+				MMU::tlb_lut_r[i>>12] = 0x80000000 | 
+				(MMU::tlb[Random].phys0 + (i - MMU::tlb[Random].start0));
+			if (MMU::tlb[Random].d0)
+				for (i=MMU::tlb[Random].start0;i<MMU::tlb[Random].end0;i++)
+					MMU::tlb_lut_w[i>>12] = 0x80000000 | 
+					(MMU::tlb[Random].phys0 + (i - MMU::tlb[Random].start0));
 		}
 	}
-	mmu.tlb[Random].start1 = mmu.tlb[Random].end0+1;
-	mmu.tlb[Random].end1 = mmu.tlb[Random].start1+
-		(mmu.tlb[Random].mask << 12) + 0xFFF;
-	mmu.tlb[Random].phys1 = mmu.tlb[Random].pfn1 << 12;
+	MMU::tlb[Random].start1 = MMU::tlb[Random].end0+1;
+	MMU::tlb[Random].end1 = MMU::tlb[Random].start1+
+		(MMU::tlb[Random].mask << 12) + 0xFFF;
+	MMU::tlb[Random].phys1 = MMU::tlb[Random].pfn1 << 12;
 
-	if (mmu.tlb[Random].v1)
+	if (MMU::tlb[Random].v1)
 	{
-		if (mmu.tlb[Random].start1 < mmu.tlb[Random].end1 &&
-			!(mmu.tlb[Random].start1 >= 0x80000000 &&
-			mmu.tlb[Random].end1 < 0xC0000000) &&
-			mmu.tlb[Random].phys1 < 0x20000000)
+		if (MMU::tlb[Random].start1 < MMU::tlb[Random].end1 &&
+			!(MMU::tlb[Random].start1 >= 0x80000000 &&
+			MMU::tlb[Random].end1 < 0xC0000000) &&
+			MMU::tlb[Random].phys1 < 0x20000000)
 		{
-			for (i=mmu.tlb[Random].start1;i<mmu.tlb[Random].end1;i++)
-				mmu.tlb_lut_r[i>>12] = 0x80000000 | 
-				(mmu.tlb[Random].phys1 + (i - mmu.tlb[Random].start1));
-			if (mmu.tlb[Random].d1)
-				for (i=mmu.tlb[Random].start1;i<mmu.tlb[Random].end1;i++)
-					mmu.tlb_lut_w[i>>12] = 0x80000000 | 
-					(mmu.tlb[Random].phys1 + (i - mmu.tlb[Random].start1));
+			for (i=MMU::tlb[Random].start1;i<MMU::tlb[Random].end1;i++)
+				MMU::tlb_lut_r[i>>12] = 0x80000000 | 
+				(MMU::tlb[Random].phys1 + (i - MMU::tlb[Random].start1));
+			if (MMU::tlb[Random].d1)
+				for (i=MMU::tlb[Random].start1;i<MMU::tlb[Random].end1;i++)
+					MMU::tlb_lut_w[i>>12] = 0x80000000 | 
+					(MMU::tlb[Random].phys1 + (i - MMU::tlb[Random].start1));
 		}
 	}
 	pc += 4;
@@ -2248,7 +2249,7 @@ inline void R4300i::BC1F(int immed)
 	dword pc_tmp = pc + extend_sign_halfword(immed);
 	pc += 4;
 	delay_slot = 1;
-	decode(mmu.read<word>((word) pc));
+	decode(MMU::read<word>((word) pc));
 	UPDATE_TIME();
 	delay_slot = 0;
 	if ((fcr31 & 0x800000)==0)
@@ -2268,7 +2269,7 @@ inline void R4300i::BC1FL(int immed)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(mmu.read<word>((word) pc));
+		decode(MMU::read<word>((word) pc));
 		UPDATE_TIME();
 		delay_slot = false;
 		pc = pc_tmp;
@@ -2286,7 +2287,7 @@ inline void R4300i::BC1T(int immed)
 	dword pc_tmp = pc + extend_sign_halfword(immed);
 	pc += 4;
 	delay_slot = 1;
-	decode(mmu.read<word>((word) pc));
+	decode(MMU::read<word>((word) pc));
 	UPDATE_TIME();
 	delay_slot = 0;
 	if ((fcr31 & 0x800000)!=0)
@@ -2306,7 +2307,7 @@ inline void R4300i::BC1TL(int immed)
 	{
 		pc += 4;
 		delay_slot = true;
-		decode(mmu.read<word>((word) pc));
+		decode(MMU::read<word>((word) pc));
 		UPDATE_TIME();
 		delay_slot = false;
 		pc = pc_tmp;
@@ -2379,7 +2380,7 @@ inline void R4300i::C(int fs, int ft, int cond)
 }
 
 template<>
-inline void R4300i::CEIL <s, l> (int fd, int fs)
+inline void R4300i::CEIL<s, l> (int fd, int fs)
 {
 	PRINT_PC("CEIL " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2390,7 +2391,7 @@ inline void R4300i::CEIL <s, l> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::CEIL <d, l> (int fd, int fs)
+inline void R4300i::CEIL<d, l> (int fd, int fs)
 {
 	PRINT_PC("CEIL " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2401,7 +2402,7 @@ inline void R4300i::CEIL <d, l> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::CEIL <s, w> (int fd, int fs)
+inline void R4300i::CEIL<s, w> (int fd, int fs)
 {
 	PRINT_PC("CEIL " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2412,7 +2413,7 @@ inline void R4300i::CEIL <s, w> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::CEIL <d, w> (int fd, int fs)
+inline void R4300i::CEIL<d, w> (int fd, int fs)
 {
 	PRINT_PC("CEIL " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2469,7 +2470,7 @@ inline void R4300i::CTC1(int rt, int fs)
 }
 
 template<>
-inline void R4300i::CVT <s, d> (int fd, int fs)
+inline void R4300i::CVT<s, d> (int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2480,7 +2481,7 @@ inline void R4300i::CVT <s, d> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::CVT <s, w> (int fd, int fs)
+inline void R4300i::CVT<s, w> (int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2491,7 +2492,7 @@ inline void R4300i::CVT <s, w> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::CVT <s, l> (int fd, int fs)
+inline void R4300i::CVT<s, l> (int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2502,7 +2503,7 @@ inline void R4300i::CVT <s, l> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::CVT <d, s> (int fd, int fs)
+inline void R4300i::CVT<d, s> (int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2513,7 +2514,7 @@ inline void R4300i::CVT <d, s> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::CVT <d, w> (int fd, int fs)
+inline void R4300i::CVT<d, w> (int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2524,7 +2525,7 @@ inline void R4300i::CVT <d, w> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::CVT <d, l> (int fd, int fs)
+inline void R4300i::CVT<d, l> (int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2535,7 +2536,7 @@ inline void R4300i::CVT <d, l> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::CVT <w, s> (int fd, int fs)
+inline void R4300i::CVT<w, s> (int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2546,7 +2547,7 @@ inline void R4300i::CVT <w, s> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::CVT <w, d> (int fd, int fs)
+inline void R4300i::CVT<w, d> (int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2557,7 +2558,7 @@ inline void R4300i::CVT <w, d> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::CVT <w, l> (int fd, int fs)
+inline void R4300i::CVT<w, l> (int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2568,7 +2569,7 @@ inline void R4300i::CVT <w, l> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::CVT <l, s> (int fd, int fs)
+inline void R4300i::CVT<l, s> (int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2579,7 +2580,7 @@ inline void R4300i::CVT <l, s> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::CVT <l, d> (int fd, int fs)
+inline void R4300i::CVT<l, d> (int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2590,7 +2591,7 @@ inline void R4300i::CVT <l, d> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::CVT <l, w> (int fd, int fs)
+inline void R4300i::CVT<l, w> (int fd, int fs)
 {
 	PRINT_PC("CVT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2611,7 +2612,7 @@ inline void R4300i::CVT(int fd, int fs)
 }
 
 template<>
-inline void R4300i::DIV <s> (int fd, int fs, int ft)
+inline void R4300i::DIV<s> (int fd, int fs, int ft)
 {
 	PRINT_PC("DIV " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2658,7 +2659,7 @@ inline void R4300i::DMTC1(int rt, int fs)
 }
 
 template<>
-inline void R4300i::FLOOR <s, l> (int fd, int fs)
+inline void R4300i::FLOOR<s, l> (int fd, int fs)
 {
 	PRINT_PC("FLOOR " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2669,7 +2670,7 @@ inline void R4300i::FLOOR <s, l> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::FLOOR <d, l> (int fd, int fs)
+inline void R4300i::FLOOR<d, l> (int fd, int fs)
 {
 	PRINT_PC("FLOOR " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2680,7 +2681,7 @@ inline void R4300i::FLOOR <d, l> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::FLOOR <s, w> (int fd, int fs)
+inline void R4300i::FLOOR<s, w> (int fd, int fs)
 {
 	PRINT_PC("FLOOR " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2691,7 +2692,7 @@ inline void R4300i::FLOOR <s, w> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::FLOOR <d, w> (int fd, int fs)
+inline void R4300i::FLOOR<d, w> (int fd, int fs)
 {
 	PRINT_PC("FLOOR " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2714,7 +2715,7 @@ inline void R4300i::LDC1(int ft, int immed, int rs)
 {
 	PRINT_PC("LDC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
 	TEST_COP1_USABLE_EXCEPTION();
-	*((long long*)reg_cop1_double[ft]) = mmu.read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
+	*((long long*)reg_cop1_double[ft]) = MMU::read<dword>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT_PC(" f" << dec << ft << hex << "=0x" << f[ft]);
 	pc += 4;
 }
@@ -2723,7 +2724,7 @@ inline void R4300i::LWC1(int ft, int immed, int rs)
 {
 	PRINT_PC("LWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
 	TEST_COP1_USABLE_EXCEPTION();
-	*((long*)reg_cop1_simple[ft]) = mmu.read<word>((word) (r[rs] + extend_sign_halfword(immed)));
+	*((long*)reg_cop1_simple[ft]) = MMU::read<word>((word) (r[rs] + extend_sign_halfword(immed)));
 	PRINT_PC(" f" << dec << ft << hex << "=0x" << f[ft]);
 	pc += 4;
 }
@@ -2738,7 +2739,7 @@ inline void R4300i::MFC1(int rt, int fs)
 }
 
 template<>
-inline void R4300i::MOV <s> (int fd, int fs)
+inline void R4300i::MOV<s> (int fd, int fs)
 {
 	PRINT_PC("MOV " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2749,7 +2750,7 @@ inline void R4300i::MOV <s> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::MOV <d> (int fd, int fs)
+inline void R4300i::MOV<d> (int fd, int fs)
 {
 	PRINT_PC("MOV " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2778,7 +2779,7 @@ inline void R4300i::MTC1(int rt, int fs)
 }
 
 template<>
-inline void R4300i::MUL <s> (int fd, int fs, int ft)
+inline void R4300i::MUL<s> (int fd, int fs, int ft)
 {
 	PRINT_PC("MUL " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2789,7 +2790,7 @@ inline void R4300i::MUL <s> (int fd, int fs, int ft)
 }
 
 template<>
-inline void R4300i::MUL <d> (int fd, int fs, int ft)
+inline void R4300i::MUL<d> (int fd, int fs, int ft)
 {
 	PRINT_PC("MUL " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2809,7 +2810,7 @@ inline void R4300i::MUL(int fd, int fs, int ft)
 }
 
 template<>
-inline void R4300i::NEG <s> (int fd, int fs)
+inline void R4300i::NEG<s> (int fd, int fs)
 {
 	PRINT_PC("NEG " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2820,7 +2821,7 @@ inline void R4300i::NEG <s> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::NEG <d> (int fd, int fs)
+inline void R4300i::NEG<d> (int fd, int fs)
 {
 	PRINT_PC("NEG " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2840,7 +2841,7 @@ inline void R4300i::NEG(int fd, int fs)
 }
 
 template<>
-inline void R4300i::ROUND <s, l> (int fd, int fs)
+inline void R4300i::ROUND<s, l> (int fd, int fs)
 {
 	PRINT_PC("ROUND " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2851,7 +2852,7 @@ inline void R4300i::ROUND <s, l> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::ROUND <d, l> (int fd, int fs)
+inline void R4300i::ROUND<d, l> (int fd, int fs)
 {
 	PRINT_PC("ROUND " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2862,7 +2863,7 @@ inline void R4300i::ROUND <d, l> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::ROUND <s, w> (int fd, int fs)
+inline void R4300i::ROUND<s, w> (int fd, int fs)
 {
 	PRINT_PC("ROUND " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2873,7 +2874,7 @@ inline void R4300i::ROUND <s, w> (int fd, int fs)
 }
 
 template<>
-inline void R4300i::ROUND <d, w> (int fd, int fs)
+inline void R4300i::ROUND<d, w> (int fd, int fs)
 {
 	PRINT_PC("ROUND " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2896,12 +2897,12 @@ inline void R4300i::SDC1(int ft, int immed, int rs)
 {
 	PRINT_PC("SDC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
 	TEST_COP1_USABLE_EXCEPTION();
-	mmu.write<dword>(*((unsigned long long*)reg_cop1_double[ft]), (word) (r[rs] + extend_sign_halfword(immed)));
+	MMU::write<dword>(*((unsigned long long*)reg_cop1_double[ft]), (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
 template<>
-inline void R4300i::SQRT <s> (int fd, int fs)
+inline void R4300i::SQRT<s> (int fd, int fs)
 {
 	PRINT_PC("SQRT " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2931,7 +2932,7 @@ inline void R4300i::SQRT(int fd, int fs)
 }
 
 template<>
-inline void R4300i::SUB <s> (int fd, int fs, int ft)
+inline void R4300i::SUB<s> (int fd, int fs, int ft)
 {
 	PRINT_PC("SUB " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
 	_controlfp(rounding_mode, _MCW_RC);
@@ -2941,7 +2942,7 @@ inline void R4300i::SUB <s> (int fd, int fs, int ft)
 }
 
 template<>
-inline void R4300i::SUB <d> (int fd, int fs, int ft)
+inline void R4300i::SUB<d> (int fd, int fs, int ft)
 {
 	PRINT_PC("SUB " << dec << "f" << fd << " " << dec << "f" << fs << " " << dec << "f" << ft);
 	_controlfp(rounding_mode, _MCW_RC);
@@ -2963,12 +2964,12 @@ inline void R4300i::SWC1(int ft, int immed, int rs)
 {
 	PRINT_PC("SWC1 " << dec << "f" << ft << " " << hex << "0x" << extend_sign_halfword(immed) << " " << dec << "r" << rs);
 	TEST_COP1_USABLE_EXCEPTION();
-	mmu.write<word>(*((long*)reg_cop1_simple[ft]), (word) (r[rs] + extend_sign_halfword(immed)));
+	MMU::write<word>(*((long*)reg_cop1_simple[ft]), (word) (r[rs] + extend_sign_halfword(immed)));
 	pc += 4;
 }
 
 template<>
-inline void R4300i::TRUNC <s, l>(int fd, int fs)
+inline void R4300i::TRUNC<s, l>(int fd, int fs)
 {
 	PRINT_PC("TRUNC " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2979,7 +2980,7 @@ inline void R4300i::TRUNC <s, l>(int fd, int fs)
 }
 
 template<>
-inline void R4300i::TRUNC <d, l>(int fd, int fs)
+inline void R4300i::TRUNC<d, l>(int fd, int fs)
 {
 	PRINT_PC("TRUNC " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -2990,7 +2991,7 @@ inline void R4300i::TRUNC <d, l>(int fd, int fs)
 }
 
 template<>
-inline void R4300i::TRUNC <s, w>(int fd, int fs)
+inline void R4300i::TRUNC<s, w>(int fd, int fs)
 {
 	PRINT_PC("TRUNC " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -3001,7 +3002,7 @@ inline void R4300i::TRUNC <s, w>(int fd, int fs)
 }
 
 template<>
-inline void R4300i::TRUNC <d, w>(int fd, int fs)
+inline void R4300i::TRUNC<d, w>(int fd, int fs)
 {
 	PRINT_PC("TRUNC " << dec << "f" << fd << " " << dec << "f" << fs);
 	TEST_COP1_USABLE_EXCEPTION();
@@ -3027,7 +3028,7 @@ inline void R4300i::F(int fs, int ft)
 }
 
 template<>
-inline void R4300i::UN <s> (int fs, int ft)
+inline void R4300i::UN<s> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
 		fcr31 |= 0x800000;
@@ -3036,7 +3037,7 @@ inline void R4300i::UN <s> (int fs, int ft)
 }
 
 template<>
-inline void R4300i::UN <d> (int fs, int ft)
+inline void R4300i::UN<d> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
 		fcr31 |= 0x800000;
@@ -3051,7 +3052,7 @@ inline void R4300i::UN(int fs, int ft)
 }
 
 template<>
-inline void R4300i::EQ <s> (int fs, int ft)
+inline void R4300i::EQ<s> (int fs, int ft)
 {
 	if (!_isnan(*reg_cop1_simple[fs]) && !_isnan(*reg_cop1_simple[ft]) && *reg_cop1_simple[fs] == *reg_cop1_simple[ft])
 		fcr31 |= 0x800000;
@@ -3060,7 +3061,7 @@ inline void R4300i::EQ <s> (int fs, int ft)
 }
 
 template<>
-inline void R4300i::EQ <d> (int fs, int ft)
+inline void R4300i::EQ<d> (int fs, int ft)
 {
 	if (!_isnan(*reg_cop1_double[fs]) && !_isnan(*reg_cop1_double[ft]) && *reg_cop1_double[fs] == *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
@@ -3075,7 +3076,7 @@ inline void R4300i::EQ(int fs, int ft)
 }
 
 template<>
-inline void R4300i::UEQ <s> (int fs, int ft)
+inline void R4300i::UEQ<s> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]) || *reg_cop1_simple[fs] == *reg_cop1_simple[ft])
 		fcr31 |= 0x800000;
@@ -3084,7 +3085,7 @@ inline void R4300i::UEQ <s> (int fs, int ft)
 }
 
 template<>
-inline void R4300i::UEQ <d> (int fs, int ft)
+inline void R4300i::UEQ<d> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]) || *reg_cop1_double[fs] == *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
@@ -3099,7 +3100,7 @@ inline void R4300i::UEQ(int fs, int ft)
 }
 
 template<>
-inline void R4300i::OLT <s> (int fs, int ft)
+inline void R4300i::OLT<s> (int fs, int ft)
 {
 	if (!_isnan(*reg_cop1_simple[fs]) && !_isnan(*reg_cop1_simple[ft]) && *reg_cop1_simple[fs] < *reg_cop1_simple[ft])
 		fcr31 |= 0x800000;
@@ -3108,7 +3109,7 @@ inline void R4300i::OLT <s> (int fs, int ft)
 }
 
 template<>
-inline void R4300i::OLT <d> (int fs, int ft)
+inline void R4300i::OLT <d>(int fs, int ft)
 {
 	if (!_isnan(*reg_cop1_double[fs]) && !_isnan(*reg_cop1_double[ft]) && *reg_cop1_double[fs] < *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
@@ -3123,7 +3124,7 @@ inline void R4300i::OLT(int fs, int ft)
 }
 
 template<>
-inline void R4300i::ULT <s> (int fs, int ft)
+inline void R4300i::ULT<s> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]) || *reg_cop1_simple[fs] < *reg_cop1_simple[ft])
 		fcr31 |= 0x800000;
@@ -3132,7 +3133,7 @@ inline void R4300i::ULT <s> (int fs, int ft)
 }
 
 template<>
-inline void R4300i::ULT <d> (int fs, int ft)
+inline void R4300i::ULT<d> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]) || *reg_cop1_double[fs] < *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
@@ -3147,7 +3148,7 @@ inline void R4300i::ULT(int fs, int ft)
 }
 
 template<>
-inline void R4300i::OLE <s> (int fs, int ft)
+inline void R4300i::OLE<s> (int fs, int ft)
 {
 	if (!_isnan(*reg_cop1_simple[fs]) && !_isnan(*reg_cop1_simple[ft]) && *reg_cop1_simple[fs] <= *reg_cop1_simple[ft])
 		fcr31 |= 0x800000;
@@ -3156,7 +3157,7 @@ inline void R4300i::OLE <s> (int fs, int ft)
 }
 
 template<>
-inline void R4300i::OLE <d> (int fs, int ft)
+inline void R4300i::OLE<d> (int fs, int ft)
 {
 	if (!_isnan(*reg_cop1_double[fs]) && !_isnan(*reg_cop1_double[ft]) && *reg_cop1_double[fs] <= *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
@@ -3171,7 +3172,7 @@ inline void R4300i::OLE(int fs, int ft)
 }
 
 template<>
-inline void R4300i::ULE <s> (int fs, int ft)
+inline void R4300i::ULE<s> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]) || *reg_cop1_simple[fs] <= *reg_cop1_simple[ft])
 		fcr31 |= 0x800000;
@@ -3180,7 +3181,7 @@ inline void R4300i::ULE <s> (int fs, int ft)
 }
 
 template<>
-inline void R4300i::ULE <d> (int fs, int ft)
+inline void R4300i::ULE<d> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]) || *reg_cop1_double[fs] <= *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
@@ -3191,68 +3192,58 @@ inline void R4300i::ULE <d> (int fs, int ft)
 template<typename Type>
 inline void R4300i::ULE(int fs, int ft)
 {
-	cerr << "C ULE type not handle";
+	PRINT_PC("C ULE type not handle");
 }
 
 template<>
-inline void R4300i::SF <s> (int fs, int ft)
+inline void R4300i::SF<s> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC(" Invalid operation exception in C opcode");
 	fcr31 &= ~0x800000;
 }
 
 template<>
-inline void R4300i::SF <d> (int fs, int ft)
+inline void R4300i::SF<d> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC(" Invalid operation exception in C opcode");
 	fcr31 &= ~0x800000;
 }
 
 template<typename Type>
 inline void R4300i::SF(int fs, int ft)
 {
-	cerr << "C SF type not handle";
+	PRINT_PC("C SF type not handle");
 }
 
 template<>
-inline void R4300i::NGLE <s> (int fs, int ft)
+inline void R4300i::NGLE<s> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC(" Invalid operation exception in C opcode");
 	fcr31 &= ~0x800000;
 }
 
 template<>
-inline void R4300i::NGLE <d> (int fs, int ft)
+inline void R4300i::NGLE<d> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC(" Invalid operation exception in C opcode");
 	fcr31 &= ~0x800000;
 }
 
 template<typename Type>
 inline void R4300i::NGLE(int fs, int ft)
 {
-	cerr << "C NGLE type noy handle";
+	PRINT_PC("C NGLE type noy handle");
 }
 
 template<>
-inline void R4300i::SEQ <s> (int fs, int ft)
+inline void R4300i::SEQ<s> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC(" Invalid operation exception in C opcode");
 	if (*reg_cop1_simple[fs] == *reg_cop1_simple[ft])
 		fcr31 |= 0x800000;
 	else
@@ -3260,12 +3251,10 @@ inline void R4300i::SEQ <s> (int fs, int ft)
 }
 
 template<>
-inline void R4300i::SEQ <d> (int fs, int ft)
+inline void R4300i::SEQ<d> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC(" Invalid operation exception in C opcode");
 	if (*reg_cop1_double[fs] == *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
@@ -3275,16 +3264,14 @@ inline void R4300i::SEQ <d> (int fs, int ft)
 template<typename Type>
 inline void R4300i::SEQ(int fs, int ft)
 {
-	cerr << "C SEQ type not handle";
+	PRINT_PC("C SEQ type not handle");
 }
 
 template<>
-inline void R4300i::NGL <s> (int fs, int ft)
+inline void R4300i::NGL<s> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC(" Invalid operation exception in C opcode");
 	if (*reg_cop1_simple[fs] == *reg_cop1_simple[ft])
 		fcr31 |= 0x800000;
 	else
@@ -3292,12 +3279,10 @@ inline void R4300i::NGL <s> (int fs, int ft)
 }
 
 template<>
-inline void R4300i::NGL <d> (int fs, int ft)
+inline void R4300i::NGL<d> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC(" Invalid operation exception in C opcode");
 	if (*reg_cop1_double[fs] == *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
@@ -3307,16 +3292,14 @@ inline void R4300i::NGL <d> (int fs, int ft)
 template<typename Type>
 inline void R4300i::NGL(int fs, int ft)
 {
-	cerr << "C NGL type not handle";
+	PRINT_PC("C NGL type not handle");
 }
 
 template<>
-inline void R4300i::LT <s> (int fs, int ft)
+inline void R4300i::LT<s> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC("Invalid operation exception in C opcode");
 	if (*reg_cop1_simple[fs] < *reg_cop1_simple[ft])
 		fcr31 |= 0x800000;
 	else
@@ -3324,12 +3307,10 @@ inline void R4300i::LT <s> (int fs, int ft)
 }
 
 template<>
-inline void R4300i::LT <d> (int fs, int ft)
+inline void R4300i::LT<d> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC(" Invalid operation exception in C opcode");
 	if (*reg_cop1_double[fs] < *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
@@ -3339,16 +3320,14 @@ inline void R4300i::LT <d> (int fs, int ft)
 template<typename Type>
 inline void R4300i::LT(int fs, int ft)
 {
-	cerr << "C LT type not handle";
+	PRINT_PC("C LT type not handle");
 }
 
 template<>
-inline void R4300i::NGE <s> (int fs, int ft)
+inline void R4300i::NGE<s> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC(" Invalid operation exception in C opcode");
 	if (*reg_cop1_simple[fs] < *reg_cop1_simple[ft])
 		fcr31 |= 0x800000;
 	else
@@ -3356,12 +3335,10 @@ inline void R4300i::NGE <s> (int fs, int ft)
 }
 
 template<>
-inline void R4300i::NGE <d> (int fs, int ft)
+inline void R4300i::NGE<d> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC("Invalid operation exception in C opcode");
 	if (*reg_cop1_double[fs] < *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
@@ -3371,16 +3348,14 @@ inline void R4300i::NGE <d> (int fs, int ft)
 template<typename Type>
 inline void R4300i::NGE(int fs, int ft)
 {
-	cerr << "C NGE type not handle";
+	PRINT_PC("C NGE type not handle");
 }
 
 template<>
-inline void R4300i::LE <s> (int fs, int ft)
+inline void R4300i::LE<s> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC("Invalid operation exception in C opcode");
 	if (*reg_cop1_simple[fs] <= *reg_cop1_simple[ft])
 		fcr31 |= 0x800000;
 	else
@@ -3388,12 +3363,10 @@ inline void R4300i::LE <s> (int fs, int ft)
 }
 
 template<>
-inline void R4300i::LE <d> (int fs, int ft)
+inline void R4300i::LE<d> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC("Invalid operation exception in C opcode");
 	if (*reg_cop1_double[fs] <= *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
@@ -3403,16 +3376,14 @@ inline void R4300i::LE <d> (int fs, int ft)
 template<typename Type>
 inline void R4300i::LE(int fs, int ft)
 {
-	cerr << "C LE type not handle";
+	PRINT_PC("C LE type not handle");
 }
 
 template<>
-inline void R4300i::NGT <s> (int fs, int ft)
+inline void R4300i::NGT<s> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_simple[fs]) || _isnan(*reg_cop1_simple[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC("Invalid operation exception in C opcode");
 	if (*reg_cop1_simple[fs] <= *reg_cop1_simple[ft])
 		fcr31 |= 0x800000;
 	else
@@ -3420,12 +3391,10 @@ inline void R4300i::NGT <s> (int fs, int ft)
 }
 
 template<>
-inline void R4300i::NGT <d> (int fs, int ft)
+inline void R4300i::NGT<d> (int fs, int ft)
 {
 	if (_isnan(*reg_cop1_double[fs]) || _isnan(*reg_cop1_double[ft]))
-	{
-		cout << print_addr((word) pc) << " Invalid operation exception in C opcode";
-	}
+		PRINT_PC("Invalid operation exception in C opcode");
 	if (*reg_cop1_double[fs] <= *reg_cop1_double[ft])
 		fcr31 |= 0x800000;
 	else
@@ -3435,7 +3404,7 @@ inline void R4300i::NGT <d> (int fs, int ft)
 template<typename Type>
 inline void R4300i::NGT(int fs, int ft)
 {
-	cerr << "C NGT type not handle";
+	PRINT_PC("C NGT type not handle");
 }
 
 inline int R4300i::probe_nop(word address)
@@ -3444,8 +3413,8 @@ inline int R4300i::probe_nop(word address)
 	address = (word) address;
 	if (address < 0x80000000 || address > 0xc0000000)
 	{
-		if (mmu.tlb_lut_r[address >> 12])
-			a = (mmu.tlb_lut_r[address >> 12] & 0xFFFFF000) | (address & 0xFFF);
+		if (MMU::tlb_lut_r[address >> 12])
+			a = (MMU::tlb_lut_r[address >> 12] & 0xFFFFF000) | (address & 0xFFF);
 		else
 			return 0;
 	}
@@ -3454,7 +3423,7 @@ inline int R4300i::probe_nop(word address)
 
 	if ((a >= 0xa4000000 && a < 0xa4001000) || (a >= 0x80000000 && a < 0x80800000))
 	{
-		if (!mmu.read<word>(a)) return 1;
+		if (!MMU::read<word>(a)) return 1;
 		else return 0;
 	}
 	else return 0;

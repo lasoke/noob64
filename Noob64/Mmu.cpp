@@ -25,16 +25,10 @@
 #include "StdAfx.h"
 #include "Mmu.h"
 
-
-MMU::MMU(R4300i& cpu, RCP& rcp) : cpu(cpu), rcp(rcp) {}
-
-
-MMU::~MMU(void) {}
-
-char* MMU::operator[] (const word address)
-{
-	return virtual_to_physical(address);
-}
+tlb_entry	MMU::tlb[32] = {0};
+word		MMU::tlb_lut_r[0x100000] = {0};
+word		MMU::tlb_lut_w[0x100000] = {0};
+char		MMU::invalid_code[0x100000] = {0};
 
 void MMU::reset(void)
 {
