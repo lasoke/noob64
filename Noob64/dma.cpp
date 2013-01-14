@@ -46,7 +46,7 @@ void RCP::dma_pi_write()
 
 void RCP::dma_sp_write()
 {
-	byte* mem = ((sp->getWrLen() & 0x1000) > 0) ? sp->getImem() : sp->getDmem();
+	byte* mem = ((sp->getMemAddr() & 0x1000) > 0) ? sp->getImem() : sp->getDmem();
 	memcpy((*rdram)[RDRAM_SEG_BEG] + (sp->getDramAddr() & 0xFFFFFFF),
 		mem + (sp->getMemAddr() & 0xFFF),
 		(sp->getWrLen() & 0xFFF) + 1);
@@ -54,7 +54,7 @@ void RCP::dma_sp_write()
 
 void RCP::dma_sp_read()
 {
-	byte* mem = ((sp->getRdLen() & 0x1000) > 0) ? sp->getImem() : sp->getDmem();
+	byte* mem = ((sp->getMemAddr() & 0x1000) > 0) ? sp->getImem() : sp->getDmem();
 	memcpy(mem + (sp->getMemAddr() & 0xFFF),
 		(*rdram)[RDRAM_SEG_BEG] + (sp->getDramAddr() & 0xFFFFFFF),
 		(sp->getRdLen() & 0xFFF) + 1);

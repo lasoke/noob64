@@ -52,7 +52,7 @@ void inline enableConsole()
 }
 
 wstring rsp_path = _T("C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll");
-wstring gfx_path = _T("C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\CFB Plugin\\Plugin\\CFB.dll");
+wstring gfx_path = _T("C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Plugin\\CFB.dll");
 string  rom_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
 
 HANDLE emuThread;
@@ -211,12 +211,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		// TODO: Add any drawing code here...
 		if (GFX::isLoaded())
 		{
 			GFX::drawScreen();
 		}
 		EndPaint(hWnd, &ps);
+		break;
+	case WM_MOVE:
+		if (GFX::isLoaded())
+		{
+			int xPos = (int)(short) LOWORD(lParam);
+			int yPos = (int)(short) HIWORD(lParam);
+			GFX::moveScreen(xPos, yPos);
+		}
 		break;
 	case WM_DESTROY:
 		CloseHandle(emuThread);

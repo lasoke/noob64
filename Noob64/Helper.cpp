@@ -70,26 +70,14 @@ byte getByte(char **ptr)
 
 void dummyCheckInterrupts()
 {
-	getchar();
+	//getchar();
+	cout << "dummyCheckInterrupts" << endl;
 	return;
 }
-void dummyProcessDList()
-{
-	getchar();
-	return;
-}
+
 void dummyProcessAList()
 {
-	getchar();
-	return;
-}
-void dummyProcessRdpList()
-{
-	getchar();
-	return;
-}
-void dummyShowCFB()
-{
-	getchar();
+	//getchar();
+	cout << "dummyProcessAList" << endl;
 	return;
 }

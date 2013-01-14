@@ -112,10 +112,10 @@ typedef struct {
 	void (*Enter_Memory_Window)(void);
 } DEBUG_INFO;
 
-typedef word (_cdecl* DORSPCYCLES)(word);
-typedef void (_cdecl* GETRSPDEBUGINFO)(RSPDEBUG_INFO*);
-typedef void (_cdecl* INITIATERSP)(RSP_INFO, word*);
-typedef void (_cdecl* INITIATERSPDEBUGGER)(DEBUG_INFO);
+typedef word (__cdecl* DORSPCYCLES)(word);
+typedef void (__cdecl* GETRSPDEBUGINFO)(RSPDEBUG_INFO*);
+typedef void (__cdecl* INITIATERSP)(RSP_INFO, word*);
+typedef void (__cdecl* INITIATERSPDEBUGGER)(DEBUG_INFO);
 
 /*
 ** The Class RSP is used to load the plugin RSP

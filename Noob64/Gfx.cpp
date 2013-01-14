@@ -60,7 +60,7 @@ void GFX::load(wstring filename, HWND hWnd)
 
 	gfx_info->hWnd				= hWnd;	// Render window
 	gfx_info->hStatusBar		= 0;	// if render window does not have a status bar then this is NULL
-	gfx_info->memoryBswaped		= plugin_info->memoryBswaped;
+	gfx_info->memoryBswaped		= TRUE; // plugin_info->memoryBswaped;
 
 	gfx_info->rom_header		= (byte*) MMU::get(ROM_SEG_BEG);
 	gfx_info->rdram				= (byte*) MMU::get(RDRAM_SEG_BEG);
