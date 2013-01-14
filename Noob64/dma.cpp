@@ -76,7 +76,7 @@ void RCP::dma_si_write()
 	if (si->getPifAddrWr64b() != 0x1FC007C0)
 		cout << "unknown SI use" << endl;
 	memcpy((*rdram)[RDRAM_SEG_BEG] + (si->getDramAddr() & 0xFFFFFFF),
-		(*pif_ram)[PIF_RAM_SEG_BEG] + (si->getPifAddrWr64b() & 0xFF), 64);
+		(*pif_ram)[PIF_RAM_SEG_BEG], 64);
 	mi->setIntr(mi->getIntr() | MI_INTR_SI);
 	si->setStatus(si->getStatus() | SI_STATUS_INTERRUPT);
 	R4300i::check_interrupt();
@@ -86,7 +86,7 @@ void RCP::dma_si_read()
 {
 	if (si->getPifAddrRd64b() != 0x1FC007C0)
 		cout << "unknown SI use" << endl;
-	memcpy((*pif_ram)[PIF_RAM_SEG_BEG] + (si->getPifAddrRd64b() & 0xFF),
+	memcpy((*pif_ram)[PIF_RAM_SEG_BEG],
 		(*rdram)[RDRAM_SEG_BEG] + (si->getDramAddr() & 0xFFFFFFF), 64);
 	mi->setIntr(mi->getIntr() | MI_INTR_SI);
 	si->setStatus(si->getStatus() | SI_STATUS_INTERRUPT);
