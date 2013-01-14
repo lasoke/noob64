@@ -61,7 +61,7 @@ inline void SP::setSpecialStatus(word w)
 inline void SP::setDmaFull(word w)			{ data.dma_full = w; }
 inline void SP::setDmaBusy(word w)			{ data.dma_busy = w; }
 inline void SP::setSemaphore(word w)		{ data.semaphore = w; }
-inline void SP::setSpecialSemaphore(word w){ data.semaphore = 0; }
+inline void SP::setSpecialSemaphore(word w) { data.semaphore = 0; }
 inline void SP::setPc(word w)				{ data.pc = w & 0xFFC; }
 inline void SP::setIbist(word w)			{ data.ibist = w; }
 
@@ -71,9 +71,10 @@ inline word SP::getMemAddr()				{ return data.mem_addr; }
 inline word SP::getDramAddr()				{ return data.dram_addr; }
 inline word SP::getRdLen()					{ return data.rd_len; }
 inline word SP::getWrLen()					{ return data.wr_len; }
-inline word SP::getStatus()				{ return data.status; }
+inline word SP::getStatus()					{ return data.status; }
 inline word SP::getDmaFull()				{ return data.dma_full; }
 inline word SP::getDmaBusy()				{ return data.dma_busy; }
 inline word SP::getSemaphore()				{ return data.semaphore; }
-inline word SP::getPc()					{ return data.pc; }
+inline word SP::getSpecialSemaphore()		{ data.semaphore = 1; return data.semaphore; }
+inline word SP::getPc()						{ return data.pc; }
 inline word SP::getIbist()					{ return data.ibist; }

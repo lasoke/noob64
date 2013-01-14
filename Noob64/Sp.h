@@ -119,6 +119,7 @@ public:
 	inline word getDmaBusy();
 	inline void setDmaBusy(word);
 	inline word getSemaphore();
+	inline word getSpecialSemaphore();
 	inline void setSemaphore(word);
 	inline void setSpecialSemaphore(word);
 	inline word getPc();

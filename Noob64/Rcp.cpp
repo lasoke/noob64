@@ -70,7 +70,16 @@ void RCP::run_rsp(void)
 	word task = *(word*)(MMU::get(SP_DMEM + 0xFC0));
 	if (task == 1 && (dpc->getStatus() & DPC_STATUS_FREEZE)) 
 		return;
+	word * rdram_tmp = (word*)(*rdram)[RDRAM_SEG_BEG];
+	for (int i = 0; i < (0x800000 / 4); i++)
+	{
+		rdram_tmp[i] = type_to_binary<word>(rdram_tmp[i]);
+	}
 	RSP::doRspCycles(100);
+	for (int i = 0; i < (0x800000 / 4); i++)
+	{
+		rdram_tmp[i] = binary_to_type<word>(rdram_tmp[i]);
+	}
 }
 
 void RCP::refresh_screen()

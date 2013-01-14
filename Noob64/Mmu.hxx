@@ -69,7 +69,7 @@ inline bool MMU::read_from_register(word *data, word address)
 	else if (address == SP_STATUS_REG)				*data = RCP::getSP()->getStatus();
 	else if (address == SP_DMA_FULL_REG)			*data = RCP::getSP()->getDmaFull();
 	else if (address == SP_DMA_BUSY_REG)			*data = RCP::getSP()->getDmaBusy();
-	else if (address == SP_SEMAPHORE_REG)			*data = RCP::getSP()->getSemaphore();
+	else if (address == SP_SEMAPHORE_REG)			*data = RCP::getSP()->getSpecialSemaphore();
 	else if (address == SP_PC_REG)					*data = RCP::getSP()->getPc();
 	else if (address == SP_IBIST_REG)				*data = RCP::getSP()->getIbist();
 
@@ -206,7 +206,7 @@ inline bool MMU::write_in_register(word data, word address)
 	else if (address == SP_STATUS_REG)
 	{
 		RCP::getSP()->setSpecialStatus(data);
-		if (data & SP_SET_INTR)
+		if (data & SP_SET_SIG0)
 		{
 			RCP::getMI()->setIntr(RCP::getMI()->getIntr() | MI_INTR_SP);
 			R4300i::check_interrupt();

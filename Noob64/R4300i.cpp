@@ -114,7 +114,7 @@ void R4300i::pif_init()
 	RCP::getPI()->setBsdDom1Rls(0x00000003);
 
 	MMU::write<word>(0x3C0DBFC0, SP_IMEM, false);
-	MMU::write<word>(0xBDA807FC, SP_IMEM + 0x004, false);
+	MMU::write<word>(0x8DA807FC, SP_IMEM + 0x004, false);
 	MMU::write<word>(0x25AD07C0, SP_IMEM + 0x008, false);
 	MMU::write<word>(0x31080080, SP_IMEM + 0x00C, false);
 	MMU::write<word>(0x5500FFFC, SP_IMEM + 0x010, false);
