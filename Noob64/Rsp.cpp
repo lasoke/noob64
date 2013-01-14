@@ -74,11 +74,11 @@ void RSP::load(wstring filename, HWND hWnd)
 	rsp_info->dpc_tmem_reg		= (word*) MMU::get(DPC_TMEM_REG);
 
 	// TODO:
-	rsp_info->CheckInterrupts	= dummyCheckInterrupts;//&R4300i::check_interrupt;
-	rsp_info->ProcessDList		= dummyProcessDList;//&GFX::processDList;
+	rsp_info->CheckInterrupts	= &R4300i::check_interrupt;
+	rsp_info->ProcessDList		= &GFX::processDList;
 	rsp_info->ProcessAList		= dummyProcessAList;//&AUDIO::processAList;
-	rsp_info->ProcessRdpList	= dummyProcessRdpList;//&GFX::processRDPList;
-	rsp_info->ShowCFB			= dummyShowCFB;//&GFX::showCFB;
+	rsp_info->ProcessRdpList	= &GFX::processRDPList;
+	rsp_info->ShowCFB			= &GFX::showCFB;
 
 	int cycles;
 	initiateRSP((word*)&cycles);

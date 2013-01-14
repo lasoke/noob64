@@ -48,12 +48,12 @@ typedef struct {
 	                          bswap on a dword (32 bits) boundry */
 } PLUGIN_INFO;
 
-typedef void (_cdecl* CLOSEDLL)(void);
-typedef void (_cdecl* DLLABOUT)(HWND);
-typedef void (_cdecl* DLLCONFIG)(HWND);
-typedef void (_cdecl* DLLTEST)(HWND);
-typedef void (_cdecl* GETDLLINFO)(PLUGIN_INFO*);
-typedef void (_cdecl* ROMCLOSED)(void);
+typedef void (__cdecl* CLOSEDLL)(void);
+typedef void (__cdecl* DLLABOUT)(HWND);
+typedef void (__cdecl* DLLCONFIG)(HWND);
+typedef void (__cdecl* DLLTEST)(HWND);
+typedef void (__cdecl* GETDLLINFO)(PLUGIN_INFO*);
+typedef void (__cdecl* ROMCLOSED)(void);
 
 /*
 ** The Class PLUGIN will be used by the class of every plugin

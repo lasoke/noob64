@@ -75,18 +75,18 @@ typedef struct {
 	void (*CheckInterrupts)(void);
 } GFX_INFO;
 
-typedef void (_cdecl* CAPTURESCREEN)(char*);
-typedef void (_cdecl* CHANGEWINDOW)(void);
-typedef void (_cdecl* DRAWSCREEN)(void);
-typedef bool (_cdecl* INITIATEGFX)(GFX_INFO);
-typedef void (_cdecl* MOVESCREEN)(int, int);
-typedef void (_cdecl* PROCESSDLIST)(void);
-typedef void (_cdecl* PROCESSRDPLIST)(void);
-typedef void (_cdecl* ROMOPEN)(void);
-typedef void (_cdecl* SHOWCFB)(void);
-typedef void (_cdecl* UPDATESCREEN)(void);
-typedef void (_cdecl* VISTATUSCHANGED)(void);
-typedef void (_cdecl* VIWIDTHCHANGED)(void);
+typedef void (__cdecl* CAPTURESCREEN)(char*);
+typedef void (__cdecl* CHANGEWINDOW)(void);
+typedef void (__cdecl* DRAWSCREEN)(void);
+typedef bool (__cdecl* INITIATEGFX)(GFX_INFO);
+typedef void (__cdecl* MOVESCREEN)(int, int);
+typedef void (__cdecl* PROCESSDLIST)(void);
+typedef void (__cdecl* PROCESSRDPLIST)(void);
+typedef void (__cdecl* ROMOPEN)(void);
+typedef void (__cdecl* SHOWCFB)(void);
+typedef void (__cdecl* UPDATESCREEN)(void);
+typedef void (__cdecl* VISTATUSCHANGED)(void);
+typedef void (__cdecl* VIWIDTHCHANGED)(void);
 
 /*
 ** The GFX class that handles the video plugins
@@ -97,15 +97,15 @@ public:
 	static void load(wstring filename, HWND hWnd);	// Plugs the DLL into the RCP
 
 	static void captureScreen(char*);	// Makes a screenshot
-	static void changeWindow(void);	// Switches between fullscreen and window mode
+	static void changeWindow(void);		// Switches between fullscreen and window mode
 	static void drawScreen(void);		// Renders the screen. Called when receiving a WM_PAINT message
 	static bool initiateGFX(void);		// Initializes the video.
 	static void moveScreen(int, int);	// Moves the screen. Called when receiving a WM_MOVE message
-	static void processDList(void);	// Processes the high level GFX list
+	static void processDList(void);		// Processes the high level GFX list
 	static void processRDPList(void);	// Processes the low level GFX list
 	static void romOpen(void);			// To call when we open the ROM
 	static void showCFB(void);			// Displays again the CFB when ignored (after displaying Dlist)
-	static void updateScreen(void);	// Updates the screen. Called when there is a VI interrupt
+	static void updateScreen(void);		// Updates the screen. Called when there is a VI interrupt
 	static void viStatusChanged(void);	// Notifies the DLL that ViStatus registers changed
 	static void viWidthChanged(void);	// Notifies the DLL that ViWidth registers changed
 
