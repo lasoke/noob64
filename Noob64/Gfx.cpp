@@ -39,7 +39,7 @@ VISTATUSCHANGED	GFX::viStatusChanged_ = 0;
 VIWIDTHCHANGED	GFX::viWidthChanged_ = 0;
 GFX_INFO*		GFX::gfx_info = 0;
 
-void GFX::load(wstring filename, HWND hWnd)
+void GFX::load(string filename, HWND hWnd)
 {
 	PLUGIN::load(filename, hWnd);
 

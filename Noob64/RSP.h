@@ -125,7 +125,7 @@ typedef void (__cdecl* INITIATERSPDEBUGGER)(DEBUG_INFO);
 class RSP : public PLUGIN
 {
 public:
-	static void load(wstring filename, HWND hWnd);	// Plugs the DLL into the RCP
+	static void load(string filename, HWND hWnd);	// Plugs the DLL into the RCP
 
 	static word doRspCycles(word);			// Allows the RSP to run in parrel with the CPU
 	static void getRspDebugInfo(void);		// Retreives the debug info of the RSP

@@ -41,7 +41,7 @@ bool PLUGIN::isLoaded(void)
 	return loaded;
 }
 
-void PLUGIN::load(wstring filename, HWND h)
+void PLUGIN::load(string filename, HWND h)
 {
 	if (!(hDLL = LoadLibrary(filename.c_str())))
 		throw PLUGIN_FAILED_TO_LOAD;
@@ -64,19 +64,19 @@ void PLUGIN::closeDLL()
 	return closeDLL_();
 }
 
-void PLUGIN::dllAbout(HWND h)
+void PLUGIN::dllAbout()
 {
-	return dllAbout_(h);
+	return dllAbout_(hWnd);
 }
 
-void PLUGIN::dllConfig(HWND h)
+void PLUGIN::dllConfig()
 {
-	return dllConfig_(h);
+	return dllConfig_(hWnd);
 }
 
-void PLUGIN::dllTest(HWND h)
+void PLUGIN::dllTest()
 {
-	return dllTest_(h);
+	return dllTest_(hWnd);
 }
 
 void PLUGIN::romClosed()
