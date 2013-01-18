@@ -129,8 +129,8 @@ public:
 
 	static word doRspCycles(word);			// Allows the RSP to run in parrel with the CPU
 	static void getRspDebugInfo(void);		// Retreives the debug info of the RSP
-	static void initiateRSP(word*);		// Initializes the value of the RSP variables
-	static void initiateRSPDebugger(void); // Initializes the value of the RSP debugger variables
+	static void initiateRSP(word*);			// Initializes the value of the RSP variables
+	static void initiateRSPDebugger(void);	// Initializes the value of the RSP debugger variables
 
 private:
 	static DORSPCYCLES				doRspCycles_;

@@ -780,9 +780,22 @@ inline void R4300i::LW(int rt, int immed, int rs)
 inline void R4300i::LWL(int rt, int immed, int rs)
 {
 	PRINT_PC("LWL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	word tmp = MMU::read<word>((word) (r[rs] + extend_sign_halfword(immed)));
-	r[rt] |= (tmp << (3 - (r[rs] + extend_sign_halfword(immed)) & 3) * 8);
-	r[rt] = extend_sign_word(r[rt]);
+	word address = r[rs] + extend_sign_halfword(immed);
+	switch (address & 3)
+	{
+	case 0:
+		r[rt] = extend_sign_word(MMU::read<word>(address));
+		break;
+	case 1:
+		r[rt] = extend_sign_word((r[rt] & 0xFF) | (MMU::read<word>(address & ~3) << 8));
+		break;
+	case 2:
+		r[rt] = extend_sign_word((r[rt] & 0xFFFF) | (MMU::read<word>(address & ~3) << 16));
+		break;
+	case 3:
+		r[rt] = extend_sign_word((r[rt] & 0xFFFFFF) | (MMU::read<word>(address & ~3) << 24));
+		break;
+	}
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -790,9 +803,22 @@ inline void R4300i::LWL(int rt, int immed, int rs)
 inline void R4300i::LWR(int rt, int immed, int rs)
 {
 	PRINT_PC("LWR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	word tmp = MMU::read<word>((word) (r[rs] + extend_sign_halfword(immed)));
-	r[rt] |= (tmp >> ((3 - (r[rs] + extend_sign_halfword(immed)) & 3)) * 8);
-	r[rt] = extend_sign_word(r[rt]);
+   	word address = r[rs] + extend_sign_halfword(immed);
+	switch (address & 3)
+	{
+	case 0:
+		r[rt] = extend_sign_word(MMU::read<word>(address));
+		break;
+	case 1:
+		r[rt] = extend_sign_word((r[rt] & ~0xFFLL) | ((MMU::read<word>(address & ~3) >> 24) & 0xFF));
+		break;
+	case 2:
+		r[rt] = extend_sign_word((r[rt] & ~0xFFFFLL) | ((MMU::read<word>(address & ~3) >> 16) & 0xFFFF));
+		break;
+	case 3:
+		r[rt] = extend_sign_word((r[rt] & ~0xFFFFFFLL) | ((MMU::read<word>(address & ~3) >> 8) & 0xFFFFFF));
+		break;
+	}
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
 	pc += 4;
 }
@@ -885,21 +911,51 @@ inline void R4300i::SW(int rt, int immed, int rs)
 
 inline void R4300i::SWL(int rt, int immed, int rs)
 {
-	word old_word = 0;
 	PRINT_PC("SWL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	old_word = MMU::read<word>((word) (r[rs] + extend_sign_halfword(immed)));
-	old_word = (r[rt] >> (8 * (r[rs] + extend_sign_halfword(immed)) & 3)) & 0xFFFFFFFF | old_word;
-	MMU::write<word>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
+	word address = r[rs] + extend_sign_halfword(immed);
+	switch (address & 3)
+	{
+	case 0:
+		MMU::write<word>(r[rt] & 0xFFFFFFFF, address);
+		break;
+	case 1:
+		address &= ~3;
+		MMU::write<word>((MMU::read<word>(address) & 0xFF000000) | ((r[rt] & 0xFFFFFF00) >> 8), address);
+		break;
+	case 2:
+		address &= ~3;
+		MMU::write<word>((MMU::read<word>(address) & 0xFFFF0000) | ((r[rt] & 0xFFFF0000) >> 16), address);
+		break;
+	case 3:
+		address &= ~3;
+		MMU::write<word>((MMU::read<word>(address) & 0xFFFFFF00) | ((r[rt] & 0xFF000000) >> 24), address);
+		break;
+	}
 	pc += 4;
 }
 
 inline void R4300i::SWR(int rt, int immed, int rs)
 {
-	word old_word = 0;
 	PRINT_PC("SWR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	old_word = MMU::read<word>((word) (r[rs] + extend_sign_halfword(immed)));
-	old_word = (r[rt] << (8 * (3 - (r[rs] + extend_sign_halfword(immed)) & 3))) & 0xFFFFFFFF | old_word;
-	MMU::write<word>(old_word, (word) (r[rs] + extend_sign_halfword(immed)));
+	word address = r[rs] + extend_sign_halfword(immed);
+	switch (address & 3)
+	{
+	case 0:
+		MMU::write<word>((MMU::read<word>(address) & 0x00FFFFFF) | ((r[rt] & 0x000000FF) << 24), address);
+		break;
+	case 1:
+		address &= ~3;
+		MMU::write<word>((MMU::read<word>(address) & 0x0000FFFF) | ((r[rt] & 0x0000FFFF) << 16), address);
+		break;
+	case 2:
+		address &= ~3;
+		MMU::write<word>((MMU::read<word>(address) & 0x000000FF) | ((r[rt] & 0x00FFFFFF) << 8), address);
+		break;
+	case 3:
+		address &= ~3;
+		MMU::write<word>(r[rt] & 0xFFFFFFFF, address);
+		break;
+	}
 	pc += 4;
 }
 
