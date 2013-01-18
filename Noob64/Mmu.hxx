@@ -98,8 +98,15 @@ inline bool MMU::read_from_register(word *data, word address)
 	else if (address == VI_INTR_REG)				*data = RCP::getVI()->getIntr();
 	else if (address == VI_CURRENT_REG)
 	{
-		RCP::update_current_halfLine();
-		*data = RCP::getHalfline();
+		if (TimerHandler::getTimer() < 0)
+		{
+			RCP::getVI()->setCurrent(0);
+			return true;
+		}
+		//vi->setCurrent((delay - (TimerHandler::getNextTimer(VI_TIMER) - R4300i::getCop0(COUNT))) / 1500);
+		RCP::getVI()->setCurrent(TimerHandler::getTimer() / 1500);
+		RCP::getVI()->setCurrent((RCP::getVI()->getCurrent() & ~1) | RCP::getViFieldNumber());
+		*data = RCP::getVI()->getCurrent();
 	}
 	else if (address == VI_BURST_REG)				*data = RCP::getVI()->getBurst();
 	else if (address == VI_V_SYNC_REG)				*data = RCP::getVI()->getVsync();

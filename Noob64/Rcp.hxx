@@ -58,9 +58,7 @@ inline PIF_ROM*		RCP::getPifRom(void)			{ return pif_rom; }
 inline PIF_RAM*		RCP::getPifRam(void)			{ return pif_ram; }
 inline ROM*			RCP::getROM(void)				{ return rom; }
 
-inline word 		RCP::getHalfline(void)			{ return halfline; }
 inline word			RCP::getViFieldNumber(void)		{ return vi_field_number; }
-
 inline void			RCP::setViFieldNumber(word n)	{ vi_field_number = n; }
 
 

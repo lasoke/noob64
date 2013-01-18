@@ -61,7 +61,7 @@ typedef struct {
 	word* vi_origin_reg;
 	word* vi_width_reg;
 	word* vi_intr_reg;
-	word* vi_v_current_line_reg;
+	word* vi_current_reg;
 	word* vi_timing_reg;
 	word* vi_v_sync_reg;
 	word* vi_h_sync_reg;

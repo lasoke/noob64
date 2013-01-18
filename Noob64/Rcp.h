@@ -79,7 +79,6 @@ public:
 
 	void static run_rsp(void);					// Runs the RSP to perform a task
 	void static refresh_screen(void);			// Refreshs the screen. Called when the video timer is done.
-	void static update_current_halfLine(void);	// Updates the current halfline of the video plugin
 
 	void static dma_pi_write(void);				// DMA write to a PI register
 	void static dma_pi_read(void);				// DMA read to a PI register
@@ -106,7 +105,6 @@ public:
 
 	static inline word			getViFieldNumber(void);
 	static inline void			setViFieldNumber(word);
-	static inline word			getHalfline(void);
 
 private:
 	static RDRAM		*rdram;			// Pointer to the RDRAM
@@ -125,7 +123,6 @@ private:
 	static ROM			*rom;			// Pointer to the ROM
 
 	static byte			SRAM[0x8000];	// RCP' Static RAM
-	static word			halfline;		// Refers to a vertical line with respect to interlaced video modes
 	static word			vi_field_number;//
 };
 

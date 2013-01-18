@@ -87,7 +87,7 @@ void GFX::load(string filename, HWND hWnd, HWND hStatusBar)
 	gfx_info->vi_origin_reg		= (word*) MMU::get(VI_ORIGIN_REG);
 	gfx_info->vi_width_reg		= (word*) MMU::get(VI_WIDTH_REG);
 	gfx_info->vi_intr_reg		= (word*) MMU::get(VI_INTR_REG);
-	gfx_info->vi_v_current_line_reg	= (word*) MMU::get(VI_CURRENT_REG);
+	gfx_info->vi_current_reg	= (word*) MMU::get(VI_CURRENT_REG);
 	gfx_info->vi_timing_reg		= (word*) MMU::get(VI_BURST_REG);
 	gfx_info->vi_v_sync_reg		= (word*) MMU::get(VI_V_SYNC_REG);
 	gfx_info->vi_h_sync_reg		= (word*) MMU::get(VI_H_SYNC_REG);
