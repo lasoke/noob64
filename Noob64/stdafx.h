@@ -51,6 +51,7 @@
 #include <string>
 
 #include "Noob64.h"
+#include "Commctrl.h"
 #include "Helper.h"
 #include "Rcp.h"
 #include "Plugin.h"

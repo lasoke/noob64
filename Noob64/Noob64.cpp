@@ -31,9 +31,10 @@
 #define MAX_LOADSTRING 100
 
 // Global Variables:
-HINSTANCE hInst;								// current instance
-TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
-TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
+HINSTANCE	hInst;							// Current instance
+HWND		hStatusBar;						// Status bar
+TCHAR		szTitle[MAX_LOADSTRING];		// The title bar text
+TCHAR		szWindowClass[MAX_LOADSTRING];	// the main window class name
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -169,6 +170,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
       return FALSE;
    }
 
+   hStatusBar = CreateStatusWindow(WS_CHILD | WS_VISIBLE, "", hWnd, 0);
+
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 
@@ -203,7 +206,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EnableMenuItem(GetMenu(hWnd), ID_FILE_PLAY, MF_BYCOMMAND | MF_GRAYED);	// We disable the Play button
 			RCP::setROM(new ROM(rom_path));											// Sets up the RCP with the given ROM
 			RSP::load(rsp_path, hWnd);												// We create the RSP plugin
-			GFX::load(gfx_path, hWnd);												// We create the GFX plugin
+			GFX::load(gfx_path, hWnd, hStatusBar);									// We create the GFX plugin
 			emuThread = CreateThread(0, 0, boot, 0, 0, 0);							// Create the emulation thread
 			break;
 		case ID_SETTINGS_PLUGINS:

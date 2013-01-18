@@ -41,6 +41,11 @@ GFX_INFO*		GFX::gfx_info = 0;
 
 void GFX::load(string filename, HWND hWnd)
 {
+	GFX::load(filename, hWnd, NULL);
+}
+
+void GFX::load(string filename, HWND hWnd, HWND hStatusBar)
+{
 	PLUGIN::load(filename, hWnd);
 
 	captureScreen_				= (CAPTURESCREEN) GetProcAddress(hDLL, "CaptureScreen");
@@ -58,9 +63,9 @@ void GFX::load(string filename, HWND hWnd)
 
 	gfx_info					= (GFX_INFO*) malloc(sizeof(GFX_INFO));
 
-	gfx_info->hWnd				= hWnd;	// Render window
-	gfx_info->hStatusBar		= 0;	// if render window does not have a status bar then this is NULL
-	gfx_info->memoryBswaped		= TRUE; // plugin_info->memoryBswaped;
+	gfx_info->hWnd				= hWnd;			// Render window
+	gfx_info->hStatusBar		= hStatusBar;	// if render window does not have a status bar then this is NULL
+	gfx_info->memoryBswaped		= TRUE;			// plugin_info->memoryBswaped;
 
 	gfx_info->rom_header		= (byte*) MMU::get(ROM_SEG_BEG);
 	gfx_info->rdram				= (byte*) MMU::get(RDRAM_SEG_BEG);

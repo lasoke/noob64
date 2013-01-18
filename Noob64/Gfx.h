@@ -94,7 +94,8 @@ typedef void (__cdecl* VIWIDTHCHANGED)(void);
 class GFX : public PLUGIN
 {
 public:
-	static void load(string filename, HWND hWnd);	// Plugs the DLL into the RCP
+	static void load(string filename, HWND hWnd); // Plugs the DLL into the RCP
+	static void load(string filename, HWND hWnd, HWND hStatusBar);
 
 	static void captureScreen(char*);	// Makes a screenshot
 	static void changeWindow(void);		// Switches between fullscreen and window mode
