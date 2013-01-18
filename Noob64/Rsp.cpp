@@ -33,7 +33,7 @@ RSP_INFO*				RSP::rsp_info = 0;
 RSPDEBUG_INFO*			RSP::rspdebug_info = 0;
 DEBUG_INFO*				RSP::debug_info = 0;
 
-void RSP::load(wstring filename, HWND hWnd)
+void RSP::load(string filename, HWND hWnd)
 {
 	PLUGIN::load(filename, hWnd);
 

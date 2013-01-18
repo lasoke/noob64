@@ -48,7 +48,7 @@ void RCP::dma_sp_write()
 {
 	byte* mem = ((sp->getMemAddr() & 0x1000) > 0) ? sp->getImem() : sp->getDmem();
 	word* rdram_tmp = (word*)(*rdram)[RDRAM_SEG_BEG];
-	for (int i = 0; i <= ((sp->getRdLen() & 0xFFF) / 4); i++)
+	for (unsigned int i = 0; i <= ((sp->getRdLen() & 0xFFF) / 4); i++)
 	{
 		rdram_tmp[((sp->getDramAddr() & 0xFFFFFFF) / 4) + i] = binary_to_type<word>(mem[((sp->getMemAddr() & 0xFFF) / 4) + i]);
 	}
@@ -61,7 +61,7 @@ void RCP::dma_sp_read()
 {
 	word* mem = ((sp->getMemAddr() & 0x1000) > 0) ? (word*) sp->getImem() : (word*) sp->getDmem();
 	word* rdram_tmp = (word*)(*rdram)[RDRAM_SEG_BEG];
-	for (int i = 0; i <= ((sp->getRdLen() & 0xFFF) / 4); i++)
+	for (unsigned int i = 0; i <= ((sp->getRdLen() & 0xFFF) / 4); i++)
 	{
 		mem[((sp->getMemAddr() & 0xFFF) / 4) + i] = type_to_binary<word>(rdram_tmp[((sp->getDramAddr() & 0xFFFFFFF) / 4) + i]);
 	}

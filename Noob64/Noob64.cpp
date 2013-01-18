@@ -51,9 +51,9 @@ void inline enableConsole()
 	freopen_s(&stream, "conout$","w", stderr);
 }
 
-wstring rsp_path = _T("C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll");
-wstring gfx_path = _T("C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Plugin\\CFB.dll");
-string  rom_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
+string rsp_path = "C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll";
+string gfx_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Plugin\\Jabo_Direct3D8_1_0.dll";
+string rom_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
 
 HANDLE emuThread;
 
@@ -74,6 +74,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	// MAIN CODE HERE
+
+	//if (!(LoadLibrary("C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Plugin\\GlideHQ.dll")))
+	//{
+	//	enableConsole();
+	//	cout << GetLastError();
+	//	getchar();
+	//}
 
 	MSG msg;
 	HACCEL hAccelTable;
@@ -198,6 +205,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			RSP::load(rsp_path, hWnd);												// We create the RSP plugin
 			GFX::load(gfx_path, hWnd);												// We create the GFX plugin
 			emuThread = CreateThread(0, 0, boot, 0, 0, 0);							// Create the emulation thread
+			break;
+		case ID_SETTINGS_PLUGINS:
+			if (GFX::isLoaded())
+			{
+				GFX::dllConfig();
+			}
 			break;
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
