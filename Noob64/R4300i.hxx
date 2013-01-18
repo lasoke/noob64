@@ -780,7 +780,7 @@ inline void R4300i::LW(int rt, int immed, int rs)
 inline void R4300i::LWL(int rt, int immed, int rs)
 {
 	PRINT_PC("LWL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	word address = r[rs] + extend_sign_halfword(immed);
+	word address = (word) (r[rs] + extend_sign_halfword(immed));
 	switch (address & 3)
 	{
 	case 0:
@@ -803,7 +803,7 @@ inline void R4300i::LWL(int rt, int immed, int rs)
 inline void R4300i::LWR(int rt, int immed, int rs)
 {
 	PRINT_PC("LWR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-   	word address = r[rs] + extend_sign_halfword(immed);
+   	word address = (word) (r[rs] + extend_sign_halfword(immed));
 	switch (address & 3)
 	{
 	case 0:
@@ -912,7 +912,7 @@ inline void R4300i::SW(int rt, int immed, int rs)
 inline void R4300i::SWL(int rt, int immed, int rs)
 {
 	PRINT_PC("SWL " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	word address = r[rs] + extend_sign_halfword(immed);
+	word address = (word) (r[rs] + extend_sign_halfword(immed));
 	switch (address & 3)
 	{
 	case 0:
@@ -937,7 +937,7 @@ inline void R4300i::SWL(int rt, int immed, int rs)
 inline void R4300i::SWR(int rt, int immed, int rs)
 {
 	PRINT_PC("SWR " << dec << "r" << rt << " " << hex << "0x" << extend_sign_halfword(immed) << "[" << dec << "r" << rs << "]");
-	word address = r[rs] + extend_sign_halfword(immed);
+	word address = (word) (r[rs] + extend_sign_halfword(immed));
 	switch (address & 3)
 	{
 	case 0:
