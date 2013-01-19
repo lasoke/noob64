@@ -25,6 +25,17 @@
 #include "StdAfx.h"
 #include "Rsp.h"
 
+bool					RSP::loaded = false;
+HINSTANCE				RSP::hDLL = 0;
+HWND					RSP::hWnd = 0;
+CLOSEDLL				RSP::closeDLL_ = 0;
+DLLABOUT				RSP::dllAbout_ = 0;
+DLLCONFIG				RSP::dllConfig_ = 0;
+DLLTEST					RSP::dllTest_ = 0;
+GETDLLINFO				RSP::getDllInfo_ = 0;
+ROMCLOSED				RSP::romClosed_ = 0;
+PLUGIN_INFO*			RSP::plugin_info = 0;
+
 DORSPCYCLES				RSP::doRspCycles_ = 0;
 GETRSPDEBUGINFO			RSP::getRspDebugInfo_ = 0;
 INITIATERSP				RSP::initiateRSP_ = 0;
@@ -33,9 +44,22 @@ RSP_INFO*				RSP::rsp_info = 0;
 RSPDEBUG_INFO*			RSP::rspdebug_info = 0;
 DEBUG_INFO*				RSP::debug_info = 0;
 
-void RSP::load(string filename, HWND hWnd)
+void RSP::load(string filename, HWND handle)
 {
-	PLUGIN::load(filename, hWnd);
+	if (!(hDLL = LoadLibrary(filename.c_str())))
+		throw PLUGIN_FAILED_TO_LOAD;
+
+	hWnd						= handle;
+
+	closeDLL_					= (CLOSEDLL) GetProcAddress(hDLL, "CloseDLL");
+	dllAbout_					= (DLLABOUT) GetProcAddress(hDLL, "DllAbout");
+	dllConfig_					= (DLLCONFIG) GetProcAddress(hDLL, "DllConfig");
+	dllTest_					= (DLLTEST)	GetProcAddress(hDLL, "DllTest");
+	getDllInfo_					= (GETDLLINFO) GetProcAddress(hDLL, "GetDllInfo");
+	romClosed_					= (ROMCLOSED) GetProcAddress(hDLL, "RomClosed");
+
+	plugin_info					= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
+	getDllInfo_(plugin_info);
 
 	doRspCycles_				= (DORSPCYCLES) GetProcAddress(hDLL, "DoRspCycles");
 	getRspDebugInfo_			= (GETRSPDEBUGINFO) GetProcAddress(hDLL, "GetRspDebugInfo");
@@ -76,7 +100,7 @@ void RSP::load(string filename, HWND hWnd)
 	// TODO:
 	rsp_info->CheckInterrupts	= &R4300i::check_interrupt;
 	rsp_info->ProcessDList		= &GFX::processDList;
-	rsp_info->ProcessAList		= dummyProcessAList;//&AUDIO::processAList;
+	rsp_info->ProcessAList		= &AUDIO::processAList;
 	rsp_info->ProcessRdpList	= &GFX::processRDPList;
 	rsp_info->ShowCFB			= &GFX::showCFB;
 
@@ -84,6 +108,31 @@ void RSP::load(string filename, HWND hWnd)
 	initiateRSP((word*)&cycles);
 
 	loaded = true;
+}
+
+void RSP::closeDLL()
+{
+	return closeDLL_();
+}
+
+void RSP::dllAbout()
+{
+	return dllAbout_(hWnd);
+}
+
+void RSP::dllConfig()
+{
+	return dllConfig_(hWnd);
+}
+
+void RSP::dllTest()
+{
+	return dllTest_(hWnd);
+}
+
+void RSP::romClosed()
+{
+	return romClosed_();
 }
 
 word RSP::doRspCycles(word w)
@@ -106,3 +155,7 @@ void RSP::initiateRSPDebugger()
 	return initiateRSPDebugger_(*debug_info);
 }
 
+bool RSP::isLoaded(void)
+{
+	return loaded;
+}

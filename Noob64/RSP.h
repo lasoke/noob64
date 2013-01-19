@@ -122,8 +122,30 @@ typedef void (__cdecl* INITIATERSPDEBUGGER)(DEBUG_INFO);
 ** and contains functions and variables defined
 ** in the .dll plugin
 */
-class RSP : public PLUGIN
+class RSP
 {
+public:
+	static void dllAbout();			// Open the About window of the plugin
+	static void dllConfig();		// Open the Config window of the plugin
+	static void closeDLL(void);		// Closes the DLL
+	static bool isLoaded(void);
+private:
+	static void dllTest();			// Notifies the user whether the plugin is correctly loaded or not
+	static void romClosed(void);	// To call when the ROM is closed
+
+	static bool				loaded;
+	static HINSTANCE		hDLL;
+	static HWND				hWnd;
+
+	static CLOSEDLL			closeDLL_;
+	static DLLABOUT			dllAbout_;
+	static DLLCONFIG		dllConfig_;
+	static DLLTEST			dllTest_;
+	static GETDLLINFO		getDllInfo_;
+	static ROMCLOSED		romClosed_;
+
+	static PLUGIN_INFO*		plugin_info;
+
 public:
 	static void load(string filename, HWND hWnd);	// Plugs the DLL into the RCP
 

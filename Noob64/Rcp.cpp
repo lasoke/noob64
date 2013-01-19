@@ -40,6 +40,7 @@
 	PIF_RAM*	RCP::pif_ram	= new PIF_RAM();
 
 	word		RCP::vi_field_number = 0;
+	word		RCP::vi_delay = 0;
 	byte		RCP::SRAM[0x8000] = {0};
 
 //****************************************************************************
@@ -77,16 +78,14 @@ void RCP::run_rsp(void)
 	}
 }
 
-static word delay = 0;
-
 void RCP::refresh_screen()
 {
 	GFX::updateScreen();
-	delay = !vi->getVsync() ? 500000 : (vi->getVsync() + 1) * 1500;
+	vi_delay = !vi->getVsync() ? 500000 : (vi->getVsync() + 1) * 1500;
 	if (vi->getVsync() && vi->getVsync() % 1)
-		delay -= 38;
+		vi_delay -= 38;
 
-	TimerHandler::change_timer(VI_TIMER, TimerHandler::getTimer() + TimerHandler::getNextTimer(VI_TIMER) + delay);
+	TimerHandler::change_timer(VI_TIMER, TimerHandler::getTimer() + TimerHandler::getNextTimer(VI_TIMER) + vi_delay);
 	vi_field_number = vi->getStatus() & 0x40 ? 1 - vi_field_number : 0;
 }
 

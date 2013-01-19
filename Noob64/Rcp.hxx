@@ -61,6 +61,9 @@ inline ROM*			RCP::getROM(void)				{ return rom; }
 inline word			RCP::getViFieldNumber(void)		{ return vi_field_number; }
 inline void			RCP::setViFieldNumber(word n)	{ vi_field_number = n; }
 
+inline word			RCP::getViDelay(void)			{ return vi_delay; }
+inline void			RCP::setViDelay(word n)			{ vi_delay = n; }
+
 
 
 

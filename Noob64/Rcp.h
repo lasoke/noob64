@@ -69,11 +69,13 @@ protected:
 //** REALITY CO-PROCESSOR					                                **
 //****************************************************************************
 
+#define VI_REFRESH_RATE		1500 // 2200 in the very last Pj64
+#define AI_PAL_FREQUENCY	49656530
+#define AI_NTSC_FREQUENCY	48681812
+
 class RCP
 {
 public:
-	//RCP(ROM* rom);
-
 	void static start();						// Starts the Nintendo 64 - starts the CPU
 	void static setROM(ROM*);					// Sets and initializes the ROM
 
@@ -105,6 +107,8 @@ public:
 
 	static inline word			getViFieldNumber(void);
 	static inline void			setViFieldNumber(word);
+	static inline word			getViDelay(void);
+	static inline void			setViDelay(word);
 
 private:
 	static RDRAM		*rdram;			// Pointer to the RDRAM
@@ -124,5 +128,6 @@ private:
 
 	static byte			SRAM[0x8000];	// RCP' Static RAM
 	static word			vi_field_number;//
+	static word			vi_delay;		//
 };
 

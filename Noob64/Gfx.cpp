@@ -25,6 +25,17 @@
 #include "StdAfx.h"
 #include "Gfx.h"
 
+bool			GFX::loaded = false;
+HINSTANCE		GFX::hDLL = 0;
+HWND			GFX::hWnd = 0;
+CLOSEDLL		GFX::closeDLL_ = 0;
+DLLABOUT		GFX::dllAbout_ = 0;
+DLLCONFIG		GFX::dllConfig_ = 0;
+DLLTEST			GFX::dllTest_ = 0;
+GETDLLINFO		GFX::getDllInfo_ = 0;
+ROMCLOSED		GFX::romClosed_ = 0;
+PLUGIN_INFO*	GFX::plugin_info = 0;
+
 CAPTURESCREEN	GFX::captureScreen_ = 0;
 CHANGEWINDOW	GFX::changeWindow_ = 0;
 DRAWSCREEN		GFX::drawScreen_ = 0;
@@ -44,9 +55,22 @@ void GFX::load(string filename, HWND hWnd)
 	GFX::load(filename, hWnd, NULL);
 }
 
-void GFX::load(string filename, HWND hWnd, HWND hStatusBar)
+void GFX::load(string filename, HWND handle, HWND hStatusBar)
 {
-	PLUGIN::load(filename, hWnd);
+	if (!(hDLL = LoadLibrary(filename.c_str())))
+		throw PLUGIN_FAILED_TO_LOAD;
+
+	hWnd						= handle;
+
+	closeDLL_					= (CLOSEDLL) GetProcAddress(hDLL, "CloseDLL");
+	dllAbout_					= (DLLABOUT) GetProcAddress(hDLL, "DllAbout");
+	dllConfig_					= (DLLCONFIG) GetProcAddress(hDLL, "DllConfig");
+	dllTest_					= (DLLTEST)	GetProcAddress(hDLL, "DllTest");
+	getDllInfo_					= (GETDLLINFO) GetProcAddress(hDLL, "GetDllInfo");
+	romClosed_					= (ROMCLOSED) GetProcAddress(hDLL, "RomClosed");
+
+	plugin_info					= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
+	getDllInfo_(plugin_info);
 
 	captureScreen_				= (CAPTURESCREEN) GetProcAddress(hDLL, "CaptureScreen");
 	changeWindow_				= (CHANGEWINDOW) GetProcAddress(hDLL, "ChangeWindow");
@@ -98,11 +122,38 @@ void GFX::load(string filename, HWND hWnd, HWND hStatusBar)
 	gfx_info->vi_x_scale_reg	= (word*) MMU::get(VI_X_SCALE_REG);
 	gfx_info->vi_y_scale_reg	= (word*) MMU::get(VI_Y_SCALE_REG);
 
-	gfx_info->CheckInterrupts	= dummyCheckInterrupts;//&R4300i::check_interrupt;
-	initiateGFX();
-	romOpen();
+	gfx_info->CheckInterrupts	= &R4300i::check_interrupt;
 
+	if (!initiateGFX())
+		throw PLUGIN_FAILED_TO_INIT;
+
+	romOpen();
 	loaded = true;
+}
+
+void GFX::closeDLL()
+{
+	return closeDLL_();
+}
+
+void GFX::dllAbout()
+{
+	return dllAbout_(hWnd);
+}
+
+void GFX::dllConfig()
+{
+	return dllConfig_(hWnd);
+}
+
+void GFX::dllTest()
+{
+	return dllTest_(hWnd);
+}
+
+void GFX::romClosed()
+{
+	return romClosed_();
 }
 
 void GFX::captureScreen(char* directory)
@@ -163,4 +214,9 @@ void GFX::viStatusChanged(void)
 void GFX::viWidthChanged(void)
 {
 	return viWidthChanged_();
+}
+
+bool GFX::isLoaded(void)
+{
+	return loaded;
 }

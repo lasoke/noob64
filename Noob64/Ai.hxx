@@ -27,13 +27,9 @@
 #include "Ai.h"
 
 inline void AI::setDramAddr(word w)			{ data.dram_addr = w; }
-inline void AI::setLen(word w)
-{
-	data.len = w;
-	//AiLenChanged
-}
+inline void AI::setLen(word w)				{ data.len = w; }
 inline void AI::setControl(word w)			{ data.control = w & 0x1; }
-inline void AI::setStatus(word w)			{ /*TODO*/ }
+inline void AI::setStatus(word w)			{ data.status = w; } 
 inline void AI::setDacrate(word w)			{ data.dacrate = w; }
 inline void AI::setBitrate(word w)			{ data.bitrate = w; }
 
