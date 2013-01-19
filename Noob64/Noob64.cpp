@@ -242,6 +242,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_DESTROY:
+		if (GFX::isLoaded())
+		{
+			GFX::closeDLL();
+		}
 		CloseHandle(emuThread);
 		PostQuitMessage(0);
 		break;
