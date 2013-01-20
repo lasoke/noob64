@@ -52,11 +52,13 @@
 #include <Commctrl.h>
 
 #include "Noob64.h"
+#include "Commctrl.h"
 #include "Helper.h"
 #include "Rcp.h"
 #include "Plugin.h"
 #include "Rsp.h"
 #include "Gfx.h"
+#include "Audio.h"
 #include "Mmu.h"
 #include "Instruction.h"
 #include "Exception.h"

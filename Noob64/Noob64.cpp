@@ -31,9 +31,10 @@
 #define MAX_LOADSTRING 100
 
 // Global Variables:
-HINSTANCE hInst;								// current instance
-TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
-TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
+HINSTANCE	hInst;							// Current instance
+HWND		hStatusBar;						// Status bar
+TCHAR		szTitle[MAX_LOADSTRING];		// The title bar text
+TCHAR		szWindowClass[MAX_LOADSTRING];	// the main window class name
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -51,11 +52,20 @@ void inline enableConsole()
 	freopen_s(&stream, "conout$","w", stderr);
 }
 
-string rsp_path = "C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll";
-string gfx_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Plugin\\Jabo_Direct3D8_1_0.dll";
-string rom_path = "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
+string rsp_path		= "C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll";
+string gfx_path		= "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Plugin\\Jabo_Direct3D8_1_0.dll";
+string audio_path	= "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Plugin\\AudioHLE.dll";
+string rom_path		= "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
 
 HANDLE emuThread;
+HANDLE audioThread;
+
+DWORD WINAPI sound(LPVOID lpParameter)
+{
+	//SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+	for (;;) AUDIO::aiUpdate(TRUE);
+	return 0;
+}
 
 DWORD WINAPI boot(LPVOID lpParameter)
 {
@@ -169,6 +179,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
       return FALSE;
    }
 
+   hStatusBar = CreateStatusWindow(WS_CHILD | WS_VISIBLE, "", hWnd, 0);
+
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 
@@ -203,14 +215,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EnableMenuItem(GetMenu(hWnd), ID_FILE_PLAY, MF_BYCOMMAND | MF_GRAYED);	// We disable the Play button
 			RCP::setROM(new ROM(rom_path));											// Sets up the RCP with the given ROM
 			RSP::load(rsp_path, hWnd);												// We create the RSP plugin
-			GFX::load(gfx_path, hWnd);												// We create the GFX plugin
-			emuThread = CreateThread(0, 0, boot, 0, 0, 0);							// Create the emulation thread
+			GFX::load(gfx_path, hWnd, hStatusBar);									// We create the GFX plugin
+			AUDIO::load(audio_path, hWnd);											// We create the AUDIO plugin
+			audioThread = CreateThread(0, 0, sound, 0, 0, 0);						// Creates the audio thread
+			emuThread = CreateThread(0, 0, boot, 0, 0, 0);							// Creates the emulation thread
 			break;
 		case ID_SETTINGS_PLUGINS:
-			if (GFX::isLoaded())
-			{
-				GFX::dllConfig();
-			}
+			if (GFX::isLoaded())	{ GFX::dllConfig(); }
 			break;
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
@@ -224,10 +235,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		if (GFX::isLoaded())
-		{
-			GFX::drawScreen();
-		}
+		if (GFX::isLoaded())	{ GFX::drawScreen(); }
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_MOVE:
@@ -239,6 +247,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_DESTROY:
+		if (GFX::isLoaded())	{ GFX::closeDLL(); }
+		if (AUDIO::isLoaded())	{ AUDIO::closeDLL(); }
+		if (RSP::isLoaded())	{ RSP::closeDLL(); }
 		CloseHandle(emuThread);
 		PostQuitMessage(0);
 		break;

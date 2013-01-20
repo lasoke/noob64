@@ -25,6 +25,17 @@
 #include "StdAfx.h"
 #include "Gfx.h"
 
+bool			GFX::loaded = false;
+HINSTANCE		GFX::hDLL = 0;
+HWND			GFX::hWnd = 0;
+CLOSEDLL		GFX::closeDLL_ = 0;
+DLLABOUT		GFX::dllAbout_ = 0;
+DLLCONFIG		GFX::dllConfig_ = 0;
+DLLTEST			GFX::dllTest_ = 0;
+GETDLLINFO		GFX::getDllInfo_ = 0;
+ROMCLOSED		GFX::romClosed_ = 0;
+PLUGIN_INFO*	GFX::plugin_info = 0;
+
 CAPTURESCREEN	GFX::captureScreen_ = 0;
 CHANGEWINDOW	GFX::changeWindow_ = 0;
 DRAWSCREEN		GFX::drawScreen_ = 0;
@@ -41,7 +52,25 @@ GFX_INFO*		GFX::gfx_info = 0;
 
 void GFX::load(string filename, HWND hWnd)
 {
-	PLUGIN::load(filename, hWnd);
+	GFX::load(filename, hWnd, NULL);
+}
+
+void GFX::load(string filename, HWND handle, HWND hStatusBar)
+{
+	if (!(hDLL = LoadLibrary(filename.c_str())))
+		throw PLUGIN_FAILED_TO_LOAD;
+
+	hWnd						= handle;
+
+	closeDLL_					= (CLOSEDLL) GetProcAddress(hDLL, "CloseDLL");
+	dllAbout_					= (DLLABOUT) GetProcAddress(hDLL, "DllAbout");
+	dllConfig_					= (DLLCONFIG) GetProcAddress(hDLL, "DllConfig");
+	dllTest_					= (DLLTEST)	GetProcAddress(hDLL, "DllTest");
+	getDllInfo_					= (GETDLLINFO) GetProcAddress(hDLL, "GetDllInfo");
+	romClosed_					= (ROMCLOSED) GetProcAddress(hDLL, "RomClosed");
+
+	plugin_info					= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
+	getDllInfo_(plugin_info);
 
 	captureScreen_				= (CAPTURESCREEN) GetProcAddress(hDLL, "CaptureScreen");
 	changeWindow_				= (CHANGEWINDOW) GetProcAddress(hDLL, "ChangeWindow");
@@ -58,9 +87,9 @@ void GFX::load(string filename, HWND hWnd)
 
 	gfx_info					= (GFX_INFO*) malloc(sizeof(GFX_INFO));
 
-	gfx_info->hWnd				= hWnd;	// Render window
-	gfx_info->hStatusBar		= 0;	// if render window does not have a status bar then this is NULL
-	gfx_info->memoryBswaped		= TRUE; // plugin_info->memoryBswaped;
+	gfx_info->hWnd				= hWnd;			// Render window
+	gfx_info->hStatusBar		= hStatusBar;	// if render window does not have a status bar then this is NULL
+	gfx_info->memoryBswaped		= TRUE;			// plugin_info->memoryBswaped;
 
 	gfx_info->rom_header		= (byte*) MMU::get(ROM_SEG_BEG);
 	gfx_info->rdram				= (byte*) MMU::get(RDRAM_SEG_BEG);
@@ -82,7 +111,7 @@ void GFX::load(string filename, HWND hWnd)
 	gfx_info->vi_origin_reg		= (word*) MMU::get(VI_ORIGIN_REG);
 	gfx_info->vi_width_reg		= (word*) MMU::get(VI_WIDTH_REG);
 	gfx_info->vi_intr_reg		= (word*) MMU::get(VI_INTR_REG);
-	gfx_info->vi_v_current_line_reg	= (word*) MMU::get(VI_CURRENT_REG);
+	gfx_info->vi_current_reg	= (word*) MMU::get(VI_CURRENT_REG);
 	gfx_info->vi_timing_reg		= (word*) MMU::get(VI_BURST_REG);
 	gfx_info->vi_v_sync_reg		= (word*) MMU::get(VI_V_SYNC_REG);
 	gfx_info->vi_h_sync_reg		= (word*) MMU::get(VI_H_SYNC_REG);
@@ -93,11 +122,38 @@ void GFX::load(string filename, HWND hWnd)
 	gfx_info->vi_x_scale_reg	= (word*) MMU::get(VI_X_SCALE_REG);
 	gfx_info->vi_y_scale_reg	= (word*) MMU::get(VI_Y_SCALE_REG);
 
-	gfx_info->CheckInterrupts	= dummyCheckInterrupts;//&R4300i::check_interrupt;
-	initiateGFX();
-	romOpen();
+	gfx_info->CheckInterrupts	= &R4300i::check_interrupt;
 
+	if (!initiateGFX())
+		throw PLUGIN_FAILED_TO_INIT;
+
+	romOpen();
 	loaded = true;
+}
+
+void GFX::closeDLL()
+{
+	return closeDLL_();
+}
+
+void GFX::dllAbout()
+{
+	return dllAbout_(hWnd);
+}
+
+void GFX::dllConfig()
+{
+	return dllConfig_(hWnd);
+}
+
+void GFX::dllTest()
+{
+	return dllTest_(hWnd);
+}
+
+void GFX::romClosed()
+{
+	return romClosed_();
 }
 
 void GFX::captureScreen(char* directory)
@@ -158,4 +214,9 @@ void GFX::viStatusChanged(void)
 void GFX::viWidthChanged(void)
 {
 	return viWidthChanged_();
+}
+
+bool GFX::isLoaded(void)
+{
+	return loaded;
 }

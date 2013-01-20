@@ -67,17 +67,3 @@ byte getByte(char **ptr)
     }
 	return value;
 }
-
-void dummyCheckInterrupts()
-{
-	//getchar();
-	cout << "dummyCheckInterrupts" << endl;
-	return;
-}
-
-void dummyProcessAList()
-{
-	//getchar();
-	cout << "dummyProcessAList" << endl;
-	return;
-}

@@ -39,7 +39,7 @@
 
 void R4300i::check_interrupt(void)
 {
-	if (RCP::getMI()->getIntr() & RCP::getMI()->getIntrMask())			// An interrupt is detected.
+	if (RCP::getMI()->getIntr() & RCP::getMI()->getIntrMask())		// An interrupt is detected.
 		Cause |= CAUSE_IP2;											// Sets the IP2 bit (ExcCode mask should be clear at this point!).
 	else
 		Cause &= ~CAUSE_IP2;										// Clears the IP2 bit
@@ -75,7 +75,6 @@ void R4300i::trigger_intr_exception()
 {
 	if ((Status & 7) != 1)
 		return;
-    //Cause = FAKE_Cause;
     Cause |= INTERRUPT << 2;
     UPDATE_REGS();
 }

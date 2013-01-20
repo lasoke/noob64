@@ -75,6 +75,6 @@ inline word SP::getStatus()					{ return data.status; }
 inline word SP::getDmaFull()				{ return data.dma_full; }
 inline word SP::getDmaBusy()				{ return data.dma_busy; }
 inline word SP::getSemaphore()				{ return data.semaphore; }
-inline word SP::getSpecialSemaphore()		{ data.semaphore = 1; return data.semaphore; }
+inline word SP::getSpecialSemaphore()		{ return data.semaphore = 1; }
 inline word SP::getPc()						{ return data.pc; }
 inline word SP::getIbist()					{ return data.ibist; }

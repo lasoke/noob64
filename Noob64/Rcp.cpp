@@ -40,7 +40,7 @@
 	PIF_RAM*	RCP::pif_ram	= new PIF_RAM();
 
 	word		RCP::vi_field_number = 0;
-	word		RCP::halfline = 0;
+	word		RCP::vi_delay = 0;
 	byte		RCP::SRAM[0x8000] = {0};
 
 //****************************************************************************
@@ -78,46 +78,15 @@ void RCP::run_rsp(void)
 	}
 }
 
-static word delay = 0;
-
 void RCP::refresh_screen()
 {
 	GFX::updateScreen();
-	delay = !vi->getVsync() ? 500000 : (vi->getVsync() + 1) * 1500;
+	vi_delay = !vi->getVsync() ? 500000 : (vi->getVsync() + 1) * 1500;
 	if (vi->getVsync() && vi->getVsync() % 1)
-		delay -= 38;
+		vi_delay -= 38;
 
-	TimerHandler::change_timer(VI_TIMER, TimerHandler::getTimer() + TimerHandler::getNextTimer(VI_TIMER) + delay);
+	TimerHandler::change_timer(VI_TIMER, TimerHandler::getTimer() + TimerHandler::getNextTimer(VI_TIMER) + vi_delay);
 	vi_field_number = vi->getStatus() & 0x40 ? 1 - vi_field_number : 0;
-}
-
-void RCP::update_current_halfLine()
-{
-	/*
-		Count_Down(VI_COUNTER_INC_PER_LINE);
-		VI_CURRENT_REG = (Get_VIcounter() / VI_COUNTER_INC_PER_LINE + VI_INTR_REG) % (max_vi_lines + 1);
-		// vi->setCurrent((TimerHandler::getTimer() / vi_count_per_line + vi->getIntr()) % (max_vi_lines + 1));
-		tempGPR = VI_CURRENT_REG & 0xFFFFFFFE + vi_field_number;
-	*/
-
-	if (TimerHandler::getTimer() < 0)
-	{
-		vi->setCurrent(0);
-		return;
-	}
-	
-	//vi->setCurrent((delay - (TimerHandler::getNextTimer(VI_TIMER) - R4300i::getCop0(COUNT))) / 1500);
-	vi->setCurrent(TimerHandler::getTimer() / 1500);
-	vi->setCurrent((vi->getCurrent() & ~1) | vi_field_number);
-
-	//if (TimerHandler::getTimer() < 0)
-	//{ 
-	//	halfline = 0;
-	//	return;
-	//}
-	//halfline = (TimerHandler::getTimer() / 1500);
-	//halfline &= ~1;
-	//halfline += vi_field_number;
 }
 
 //****************************************************************************

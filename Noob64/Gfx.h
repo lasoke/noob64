@@ -61,7 +61,7 @@ typedef struct {
 	word* vi_origin_reg;
 	word* vi_width_reg;
 	word* vi_intr_reg;
-	word* vi_v_current_line_reg;
+	word* vi_current_reg;
 	word* vi_timing_reg;
 	word* vi_v_sync_reg;
 	word* vi_h_sync_reg;
@@ -91,10 +91,32 @@ typedef void (__cdecl* VIWIDTHCHANGED)(void);
 /*
 ** The GFX class that handles the video plugins
 */
-class GFX : public PLUGIN
+class GFX
 {
 public:
-	static void load(string filename, HWND hWnd);	// Plugs the DLL into the RCP
+	static void dllAbout();			// Open the About window of the plugin
+	static void dllConfig();		// Open the Config window of the plugin
+	static void closeDLL(void);		// Closes the DLL
+	static bool isLoaded(void);
+protected:
+	static void dllTest();			// Notifies the user whether the plugin is correctly loaded or not
+	static void romClosed(void);	// To call when the ROM is closed
+
+	static bool				loaded;
+	static HINSTANCE		hDLL;
+	static HWND				hWnd;
+
+	static CLOSEDLL			closeDLL_;
+	static DLLABOUT			dllAbout_;
+	static DLLCONFIG		dllConfig_;
+	static DLLTEST			dllTest_;
+	static GETDLLINFO		getDllInfo_;
+	static ROMCLOSED		romClosed_;
+
+	static PLUGIN_INFO*		plugin_info;
+public:
+	static void load(string filename, HWND hWnd); // Plugs the DLL into the RCP
+	static void load(string filename, HWND hWnd, HWND hStatusBar);
 
 	static void captureScreen(char*);	// Makes a screenshot
 	static void changeWindow(void);		// Switches between fullscreen and window mode

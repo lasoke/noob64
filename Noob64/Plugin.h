@@ -54,36 +54,3 @@ typedef void (__cdecl* DLLCONFIG)(HWND);
 typedef void (__cdecl* DLLTEST)(HWND);
 typedef void (__cdecl* GETDLLINFO)(PLUGIN_INFO*);
 typedef void (__cdecl* ROMCLOSED)(void);
-
-/*
-** The Class PLUGIN will be used by the class of every plugin
-** it contains methods and structure define in every plugins
-*/
-class PLUGIN
-{
-public:
-	static void dllAbout();			// Open the About window of the plugin
-	static void dllConfig();		// Open the Config window of the plugin
-
-	static bool isLoaded(void);
-protected:
-	static void load(string filename, HWND hWnd);
-	static bool loaded;
-
-	static void closeDLL(void);		// Closes the DLL
-	static void dllTest();			// Notifies the user whether the plugin is correctly loaded or not
-	static void romClosed(void);	// To call when the ROM is closed
-
-	static HINSTANCE		hDLL;
-	static HWND				hWnd;
-
-	static CLOSEDLL			closeDLL_;
-	static DLLABOUT			dllAbout_;
-	static DLLCONFIG		dllConfig_;
-	static DLLTEST			dllTest_;
-	static GETDLLINFO		getDllInfo_;
-	static ROMCLOSED		romClosed_;
-
-	static PLUGIN_INFO*		plugin_info;
-};
-

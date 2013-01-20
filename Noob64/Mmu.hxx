@@ -98,8 +98,15 @@ inline bool MMU::read_from_register(word *data, word address)
 	else if (address == VI_INTR_REG)				*data = RCP::getVI()->getIntr();
 	else if (address == VI_CURRENT_REG)
 	{
-		RCP::update_current_halfLine();
-		*data = RCP::getHalfline();
+		if (TimerHandler::getTimer() < 0)
+		{
+			RCP::getVI()->setCurrent(0);
+			return true;
+		}
+		//vi->setCurrent((delay - (TimerHandler::getNextTimer(VI_TIMER) - R4300i::getCop0(COUNT))) / 1500);
+		RCP::getVI()->setCurrent(TimerHandler::getTimer() / VI_REFRESH_RATE);
+		RCP::getVI()->setCurrent((RCP::getVI()->getCurrent() & ~1) | RCP::getViFieldNumber());
+		*data = RCP::getVI()->getCurrent();
 	}
 	else if (address == VI_BURST_REG)				*data = RCP::getVI()->getBurst();
 	else if (address == VI_V_SYNC_REG)				*data = RCP::getVI()->getVsync();
@@ -114,8 +121,7 @@ inline bool MMU::read_from_register(word *data, word address)
 	else if (address == AI_DRAM_ADDR_REG)			*data = RCP::getAI()->getDramAddr();
 	else if (address == AI_LEN_REG)
 	{
-		*data = RCP::getAI()->getLen();
-		//res = AiReadLength();
+		*data = AUDIO::aiReadLength();
 	}
 	else if (address == AI_CONTROL_REG)				*data = RCP::getAI()->getControl();
 	else if (address == AI_STATUS_REG)				*data = RCP::getAI()->getStatus();
@@ -271,14 +277,33 @@ inline bool MMU::write_in_register(word data, word address)
 	else if (address == VI_Y_SCALE_REG)				RCP::getVI()->setYscale(data);
 
 	else if (address == AI_DRAM_ADDR_REG)			RCP::getAI()->setDramAddr(data);
-	else if (address == AI_LEN_REG)					RCP::getAI()->setLen(data);
-	else if (address == AI_CONTROL_REG)				RCP::getAI()->setControl(data);
+	else if (address == AI_LEN_REG)
+	{
+		RCP::getAI()->setLen(data);
+		AUDIO::aiLenChanged();
+	}
+	else if (address == AI_CONTROL_REG)
+	{
+		RCP::getAI()->setControl(data & 1);
+	}
 	else if (address == AI_STATUS_REG)
 	{
 		RCP::getMI()->setIntr(RCP::getMI()->getIntr() & ~MI_INTR_AI);
 		R4300i::check_interrupt();
 	}
-	else if (address == AI_DACRATE_REG)				RCP::getAI()->setDacrate(data);
+	else if (address == AI_DACRATE_REG)
+	{
+		RCP::getAI()->setDacrate(data);
+		switch (RCP::getROM()->getCountry() & 0xFF)
+		{
+		case 0x59:
+			AUDIO::aiDacrateChanged(SYSTEM_PAL);
+			break;
+		case 0x4a:
+			AUDIO::aiDacrateChanged(SYSTEM_NTSC);
+			break;
+		}
+	}
 	else if (address == AI_BITRATE_REG)				RCP::getAI()->setBitrate(data);
 
 	else if (address == PI_DRAM_ADDR_REG)			RCP::getPI()->setDramAddr(data);
