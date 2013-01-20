@@ -25,6 +25,16 @@
 #include "StdAfx.h"
 #include "Controller.h"
 
+bool						CONTROLLER::loaded = false;
+HINSTANCE					CONTROLLER::hDLL = 0;
+HWND						CONTROLLER::hWnd = 0;
+CLOSEDLL					CONTROLLER::closeDLL_ = 0;
+DLLABOUT					CONTROLLER::dllAbout_ = 0;
+DLLCONFIG					CONTROLLER::dllConfig_ = 0;
+DLLTEST						CONTROLLER::dllTest_ = 0;
+GETDLLINFO					CONTROLLER::getDllInfo_ = 0;
+ROMCLOSED					CONTROLLER::romClosed_ = 0;
+PLUGIN_INFO*				CONTROLLER::plugin_info = 0;
 CONTCLOSEDLL				CONTROLLER::contCloseDLL_ = 0;
 CONTROLLERCOMMAND			CONTROLLER::controllerCommand_ = 0;
 CONTDLLABOUT				CONTROLLER::contDllAbout_ = 0;
@@ -41,11 +51,28 @@ CONTROL_INFO*				CONTROLLER::control_info = 0;
 w							CONTROLLER::contVersion = 0;
 CONTROL						CONTROLLER::controllers[4];
 
+void CONTROLLER::load(string filename, HWND hWnd)
+{
+	CONTROLLER::load(filename, hWnd, NULL);
+}
 
 void CONTROLLER::load(string filename, HWND hWnd, HWND hStatusWnd)
 {
-	SendMessage( hStatusWnd, SB_SETTEXT, 0, (LPARAM)"loading Controller plugin" );
-	PLUGIN::load(filename, hWnd, hStatusWnd);
+	SendMessage(hStatusWnd, SB_SETTEXT, 0, (LPARAM)"loading Controller plugin" );
+	if (!(hDLL = LoadLibrary(filename.c_str())))
+		throw PLUGIN_FAILED_TO_LOAD;
+
+	hWnd						= hWnd;
+
+	closeDLL_					= (CLOSEDLL) GetProcAddress(hDLL, "CloseDLL");
+	dllAbout_					= (DLLABOUT) GetProcAddress(hDLL, "DllAbout");
+	dllConfig_					= (DLLCONFIG) GetProcAddress(hDLL, "DllConfig");
+	dllTest_					= (DLLTEST)	GetProcAddress(hDLL, "DllTest");
+	getDllInfo_					= (GETDLLINFO) GetProcAddress(hDLL, "GetDllInfo");
+	romClosed_					= (ROMCLOSED) GetProcAddress(hDLL, "RomClosed");
+
+	plugin_info					= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
+	getDllInfo_(plugin_info);
 	
 	contVersion = plugin_info->version;
 
@@ -103,7 +130,7 @@ void CONTROLLER::contCloseDLL(void)
 
 void CONTROLLER::controllerCommand(int Control, BYTE * Command)
 {
-	return controllerCommand_(Control, Command);
+//	return controllerCommand_(Control, Command);
 }	
 
 void CONTROLLER::contDllAbout(HWND hParent)
