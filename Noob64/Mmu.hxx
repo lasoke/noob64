@@ -318,13 +318,13 @@ inline bool MMU::write_in_register(word data, word address)
 	else if (address == SI_DRAM_ADDR_REG)			RCP::getSI()->setDramAddr(data);
 	else if (address == SI_PIF_ADDR_RD64B_REG)
 	{
-		RCP::getSI()->setPifAddrRd64b(data);
-		RCP::dma_si_read();
+		RCP::getSI()->setPifAddrWr64b(data);
+		RCP::dma_si_write();
 	}
 	else if (address == SI_PIF_ADDR_WR64B_REG)
 	{
-		RCP::getSI()->setPifAddrWr64b(data);
-		RCP::dma_si_write();
+		RCP::getSI()->setPifAddrRd64b(data);
+		RCP::dma_si_read();
 	}
 	else if (address == SI_STATUS_REG)
 	{

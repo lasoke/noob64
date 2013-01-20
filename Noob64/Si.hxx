@@ -30,7 +30,7 @@ inline void SI::setDramAddr(word w)		{ data.dram_addr = w; }
 inline void SI::setPifAddrRd64b(word w)	{ data.pif_addr_rd64b = w; }
 inline void SI::setPifAddrWr64b(word w)	{ data.pif_addr_wr64b = w; }
 inline void SI::setStatus(word w)			{ data.status = w; }
-inline void SI::setSpecialStatus(word w)	{ /*TODO*/ }
+inline void SI::setSpecialStatus(word w)	{ data.status = w; }
 
 inline word SI::getDramAddr()				{ return data.dram_addr; }
 inline word SI::getPifAddrRd64b()			{ return data.pif_addr_rd64b; }

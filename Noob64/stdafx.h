@@ -49,6 +49,7 @@
 #include <fstream>
 #include <stdio.h>
 #include <string>
+#include <Commctrl.h>
 
 #include "Noob64.h"
 #include "Helper.h"
@@ -93,3 +94,4 @@
 #include "Ri.hxx"
 #include "Si.hxx"
 #include "Rom.hxx"
+#include "Controller.h"

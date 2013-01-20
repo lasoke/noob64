@@ -39,10 +39,13 @@
 #define PIF_RAM_SEG_BEG		0x1FC007C0
 #define PIF_RAM_SEG_END		0x1FC007FF
 
+#define CHL_LEN 0x20
+
 class PIF_RAM : public MEM_SEG
 {
 public:
 	PIF_RAM();
+	void PifRamWrite (void);
 private:
 	struct {
 		byte pram[0x40];

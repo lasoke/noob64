@@ -807,16 +807,16 @@ inline void R4300i::LWR(int rt, int immed, int rs)
 	switch (address & 3)
 	{
 	case 0:
-		r[rt] = extend_sign_word(MMU::read<word>(address));
+		r[rt] = extend_sign_word((r[rt] & 0xFFFFFF00) | ((MMU::read<word>(address & ~3) >> 24) & 0xFF));
 		break;
 	case 1:
-		r[rt] = extend_sign_word((r[rt] & ~0xFFLL) | ((MMU::read<word>(address & ~3) >> 24) & 0xFF));
+		r[rt] = extend_sign_word((r[rt] & 0xFFFF0000) | ((MMU::read<word>(address & ~3) >> 16) & 0xFFFF));
 		break;
 	case 2:
-		r[rt] = extend_sign_word((r[rt] & ~0xFFFFLL) | ((MMU::read<word>(address & ~3) >> 16) & 0xFFFF));
+		r[rt] = extend_sign_word((r[rt] & 0xFF000000) + ((MMU::read<word>(address & ~3) >> 8) & 0xFFFFFF));
 		break;
 	case 3:
-		r[rt] = extend_sign_word((r[rt] & ~0xFFFFFFLL) | ((MMU::read<word>(address & ~3) >> 8) & 0xFFFFFF));
+		r[rt] = extend_sign_word((r[rt] & 0) + ((MMU::read<word>(address & ~3) >> 0) & 0xFFFFFFFF));
 		break;
 	}
 	PRINT(" r" << dec << rt << hex << "=0x" << r[rt]);
