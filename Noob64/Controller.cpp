@@ -35,20 +35,16 @@ DLLTEST						CONTROLLER::dllTest_ = 0;
 GETDLLINFO					CONTROLLER::getDllInfo_ = 0;
 ROMCLOSED					CONTROLLER::romClosed_ = 0;
 PLUGIN_INFO*				CONTROLLER::plugin_info = 0;
-CONTCLOSEDLL				CONTROLLER::contCloseDLL_ = 0;
+
+ROMOPEN						CONTROLLER::romOpen_ = 0;
 CONTROLLERCOMMAND			CONTROLLER::controllerCommand_ = 0;
-CONTDLLABOUT				CONTROLLER::contDllAbout_ = 0;
-CONTCONFIG					CONTROLLER::contConfig_ = 0;
-INITIATECONTROLLERS_1_0		CONTROLLER::initiateControllers_1_0_ = 0;
-INITIATECONTROLLERS_1_1		CONTROLLER::initiateControllers_1_1_ = 0;
+INITIATECONTROLLERS			CONTROLLER::initiateControllers_ = 0;
 GETKEYS						CONTROLLER::getKeys_ = 0;
 READCONTROLLER				CONTROLLER::readController_ = 0;
 WMKEYDOWN					CONTROLLER::wmKeyDown_ = 0;
 WMKEYUP						CONTROLLER::wmKeyUp_ = 0;
-RUMBLECOMMAND				CONTROLLER::rumbleCommand_ = 0;
 
 CONTROL_INFO*				CONTROLLER::control_info = 0;
-w							CONTROLLER::contVersion = 0;
 CONTROL						CONTROLLER::controllers[4];
 
 void CONTROLLER::load(string filename, HWND hWnd)
@@ -56,13 +52,12 @@ void CONTROLLER::load(string filename, HWND hWnd)
 	CONTROLLER::load(filename, hWnd, NULL);
 }
 
-void CONTROLLER::load(string filename, HWND hWnd, HWND hStatusWnd)
+void CONTROLLER::load(string filename, HWND handle, HWND hStatusWnd)
 {
-	SendMessage(hStatusWnd, SB_SETTEXT, 0, (LPARAM)"loading Controller plugin" );
 	if (!(hDLL = LoadLibrary(filename.c_str())))
 		throw PLUGIN_FAILED_TO_LOAD;
 
-	hWnd						= hWnd;
+	hWnd						= handle;
 
 	closeDLL_					= (CLOSEDLL) GetProcAddress(hDLL, "CloseDLL");
 	dllAbout_					= (DLLABOUT) GetProcAddress(hDLL, "DllAbout");
@@ -74,91 +69,81 @@ void CONTROLLER::load(string filename, HWND hWnd, HWND hStatusWnd)
 	plugin_info					= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
 	getDllInfo_(plugin_info);
 	
-	contVersion = plugin_info->version;
-
-	contCloseDLL_				= (CONTCLOSEDLL) GetProcAddress(hDLL, "ContCloseDLL");
-	controllerCommand_				= (CONTROLLERCOMMAND) GetProcAddress(hDLL, "ControllerCommand");
-	contDllAbout_					= (CONTDLLABOUT) GetProcAddress(hDLL, "ContDllAbout");
-	contConfig_				= (CONTCONFIG) GetProcAddress(hDLL, "ContConfig");
-	if (contVersion == 0x0100)
-		initiateControllers_1_0_ = (INITIATECONTROLLERS_1_0) GetProcAddress(hDLL, "InitiateControllers_1_0");
-	if (contVersion == 0x0101)
-		initiateControllers_1_1_ = (INITIATECONTROLLERS_1_1) GetProcAddress(hDLL, "InitiateControllers_1_1");
-	getKeys_ = (GETKEYS) GetProcAddress(hDLL, "GetKeys");
-	readController_	= (READCONTROLLER) GetProcAddress(hDLL, "ReadController");
+	romOpen_					= (ROMOPEN) GetProcAddress(hDLL, "RomOpen");
+	controllerCommand_			= (CONTROLLERCOMMAND) GetProcAddress(hDLL, "ControllerCommand");
+	initiateControllers_		= (INITIATECONTROLLERS) GetProcAddress(hDLL, "InitiateControllers");
+	getKeys_					= (GETKEYS) GetProcAddress(hDLL, "GetKeys");
+	readController_				= (READCONTROLLER) GetProcAddress(hDLL, "ReadController");
 	wmKeyDown_					= (WMKEYDOWN) GetProcAddress(hDLL, "WM_KeyDown");
-	wmKeyUp_				= (WMKEYUP) GetProcAddress(hDLL, "WM_KeyUp");
-	rumbleCommand_			= (RUMBLECOMMAND) GetProcAddress(hDLL, "RumbleCommand");
+	wmKeyUp_					= (WMKEYUP) GetProcAddress(hDLL, "WM_KeyUp");
 
-	controllers[0].Present = FALSE;
-	controllers[0].RawData = FALSE;
-	controllers[0].Plugin  = PLUGIN_NONE;
+	control_info				= (CONTROL_INFO*) malloc(sizeof(CONTROL_INFO));
 
-	controllers[1].Present = FALSE;
-	controllers[1].RawData = FALSE;
-	controllers[1].Plugin  = PLUGIN_NONE;
-
-	controllers[2].Present = FALSE;
-	controllers[2].RawData = FALSE;
-	controllers[2].Plugin  = PLUGIN_NONE;
-
-	controllers[3].Present = FALSE;
-	controllers[3].RawData = FALSE;
-	controllers[3].Plugin  = PLUGIN_NONE;
-
-	if (contVersion == 0x0100)
-		initiateControllers_1_0(hWnd, controllers);
-	if (contVersion == 0x0101)
+	control_info->hMainWindow	= hWnd;
+	control_info->hInst			= hDLL;
+	control_info->memoryBswaped = TRUE;
+	control_info->header		= (byte*) MMU::get(ROM_SEG_BEG);
+	control_info->controls		= controllers;
+	
+	for (int i = 0; i < 4; i++)
 	{
-		control_info = (CONTROL_INFO*) malloc(sizeof(CONTROL_INFO));
-		control_info->Controls = controllers;
-		control_info->HEADER = (byte*) MMU::get(ROM_SEG_BEG);
-		control_info->hinst = 0;
-		control_info->hMainWindow = hWnd;
-		control_info->MemoryBswaped = TRUE;
-		initiateControllers_1_1(*control_info);
+		controllers[i].Present	= FALSE;
+		controllers[i].RawData	= FALSE;
+		controllers[i].Plugin	= PLUGIN_NONE;
 	}
 
+	initiateControllers();
+
+	romOpen();
 	loaded = true;
-	SendMessage( hStatusWnd, SB_SETTEXT, 0, (LPARAM)"Controller plugin loaded" );
 }
 
-void CONTROLLER::contCloseDLL(void)
+void CONTROLLER::closeDLL()
 {
-	return contCloseDLL_();
+	return closeDLL_();
 }
 
-void CONTROLLER::controllerCommand(int Control, BYTE * Command)
+void CONTROLLER::dllAbout()
 {
-//	return controllerCommand_(Control, Command);
+	return dllAbout_(hWnd);
+}
+
+void CONTROLLER::dllConfig()
+{
+	return dllConfig_(hWnd);
+}
+
+void CONTROLLER::dllTest()
+{
+	return dllTest_(hWnd);
+}
+
+void CONTROLLER::romClosed()
+{
+	return romClosed_();
+}
+
+void CONTROLLER::romOpen()
+{
+	return romOpen_();
+}
+
+void CONTROLLER::controllerCommand(int Control, BYTE* Command)
+{
+	return controllerCommand_(Control, Command);
 }	
 
-void CONTROLLER::contDllAbout(HWND hParent)
+void CONTROLLER::initiateControllers()
 {
-	return contDllAbout_(hParent);
+	return initiateControllers_(*control_info);
 }
 
-bool CONTROLLER::contConfig(HWND hParent)
-{
-	return contConfig_(hParent);
-}
-
-void CONTROLLER::initiateControllers_1_0(HWND hMainWindow, CONTROL Controls[4])
-{
-//	return initiateControllers_1_0_(hMainWindow, Controls);
-}
-
-void CONTROLLER::initiateControllers_1_1(CONTROL_INFO ControlInfo)
-{
-	return initiateControllers_1_1_(ControlInfo);
-}
-
-void CONTROLLER::getKeys(int Control, BUTTONS * Keys)
+void CONTROLLER::getKeys(int Control, BUTTONS* Keys)
 {
 	return getKeys_(Control, Keys);
 }
 
-void CONTROLLER::readController(int Control, BYTE * Command)
+void CONTROLLER::readController(int Control, BYTE* Command)
 {
 	return readController_(Control, Command);
 }
@@ -173,7 +158,7 @@ void CONTROLLER::wmKeyUp(WPARAM wParam, LPARAM lParam)
 	return wmKeyUp_(wParam, lParam);
 }
 
-void CONTROLLER::rumbleCommand(int Control, BOOL bRumble)
+bool CONTROLLER::isLoaded(void)
 {
-	return rumbleCommand_(Control, bRumble);
+	return loaded;
 }

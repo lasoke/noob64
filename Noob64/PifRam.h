@@ -45,7 +45,7 @@ class PIF_RAM : public MEM_SEG
 {
 public:
 	PIF_RAM();
-	void PifRamWrite (void);
+	void PifRamWrite(void);
 private:
 	struct {
 		byte pram[0x40];

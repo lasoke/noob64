@@ -88,7 +88,7 @@ void RCP::dma_si_read()
 		cout << "unknown SI use" << endl;
 	memcpy((*pif_ram)[PIF_RAM_SEG_BEG],
 		(*rdram)[RDRAM_SEG_BEG] + (si->getDramAddr() & 0xFFFFFFF), 64);
-	pif_ram->PifRamWrite();
+	// TODO: UNCOMMENT THIS WHEN CONTROLLERS WORK pif_ram->PifRamWrite();
 	mi->setIntr(mi->getIntr() | MI_INTR_SI);
 	si->setStatus(si->getStatus() | SI_STATUS_INTERRUPT);
 	R4300i::check_interrupt();
