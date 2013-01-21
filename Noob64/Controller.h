@@ -32,14 +32,12 @@
 
 #include "Plugin.h"
 
-/*** Conteroller plugin's ****/
+/*** Controller plugin's ****/
 #define PLUGIN_NONE					1
 #define PLUGIN_MEMPAK				2
 #define PLUGIN_RUMBLE_PAK			3 
 #define PLUGIN_TANSFER_PAK			4 // not implemeted for non raw data
 #define PLUGIN_RAW					5 // the controller plugin is passed in raw data
-
-typedef int BOOL;
 
 typedef struct {
 	BOOL Present;
@@ -48,16 +46,11 @@ typedef struct {
 } CONTROL;
 
 typedef struct {
-	HWND hMainWindow;
-	HINSTANCE hinst;
-
-	BOOL MemoryBswaped;		// If this is set to TRUE, then the memory has been pre
-							//   bswap on a dword (32 bits) boundry, only effects header. 
-							//	eg. the first 8 bytes are stored like this:
-							//        4 3 2 1   8 7 6 5
-	BYTE * HEADER;			// This is the rom header (first 40h bytes of the rom)
-	CONTROL *Controls;		// A pointer to an array of 4 controllers .. eg:
-							// CONTROL Controls[4];
+	HWND		hMainWindow;
+	HINSTANCE	hInst;
+	BOOL		memoryBswaped;
+	byte*		header;			// This is the rom header (first 40h bytes of the rom)
+	CONTROL*	controls;		// A pointer to an array of 4 controllers
 } CONTROL_INFO;
 
 union BUTTONS {
@@ -87,17 +80,12 @@ union BUTTONS {
 	};
 };
 
-typedef void (__cdecl* CONTCLOSEDLL)(void);
-typedef void (__cdecl* CONTROLLERCOMMAND)(int Control, BYTE * Command);
-typedef void (__cdecl* CONTDLLABOUT)(HWND hParent);
-typedef bool (__cdecl* CONTCONFIG)(HWND hParent);
-typedef void (__cdecl* INITIATECONTROLLERS_1_0)(HWND hMainWindow, CONTROL Controls[4]);
-typedef void (__cdecl* INITIATECONTROLLERS_1_1)(CONTROL_INFO ControlInfo);
-typedef void (__cdecl* GETKEYS)(int Control, BUTTONS * Keys);
-typedef void (__cdecl* READCONTROLLER)(int Control, BYTE * Command);
-typedef void (__cdecl* WMKEYDOWN)(WPARAM wParam, LPARAM lParam);
-typedef void (__cdecl* WMKEYUP)(WPARAM wParam, LPARAM lParam);
-typedef void (__cdecl* RUMBLECOMMAND)(int Control, BOOL bRumble);
+typedef void (__cdecl* CONTROLLERCOMMAND)(int, byte*);
+typedef void (__cdecl* INITIATECONTROLLERS)(CONTROL_INFO);
+typedef void (__cdecl* GETKEYS)(int, BUTTONS*);
+typedef void (__cdecl* READCONTROLLER)(int, byte*);
+typedef void (__cdecl* WMKEYDOWN)(WPARAM, LPARAM);
+typedef void (__cdecl* WMKEYUP)(WPARAM, LPARAM);
 
 class CONTROLLER
 {
@@ -126,32 +114,23 @@ public:
 	static void load(string filename, HWND hWnd); // Plugs the DLL into the RCP
 	static void load(string filename, HWND hWnd, HWND hStatusWnd);	// Plugs the DLL into the RCP
 
-	static void contCloseDLL(void);
-	static void controllerCommand(int Control, BYTE * Command);	
-	static void contDllAbout(HWND hParent);
-	static bool contConfig(HWND hParent);
-	static void initiateControllers_1_0(HWND hMainWindow, CONTROL Controls[4]);
-	static void initiateControllers_1_1(CONTROL_INFO ControlInfo);
+	static void romOpen(void);
+	static void controllerCommand(int Control, byte * Command);
+	static void initiateControllers();
 	static void getKeys(int Control, BUTTONS * Keys);
-	static void readController(int Control, BYTE * Command);
+	static void readController(int Control, byte * Command);
 	static void wmKeyDown(WPARAM wParam, LPARAM lParam);
 	static void wmKeyUp(WPARAM wParam, LPARAM lParam);
-	static void rumbleCommand(int Control, BOOL bRumble);
 	
 	static CONTROL						controllers[4];
 private:
-	static CONTCLOSEDLL					contCloseDLL_;
+	static ROMOPEN						romOpen_;
 	static CONTROLLERCOMMAND			controllerCommand_;
-	static CONTDLLABOUT					contDllAbout_;
-	static CONTCONFIG					contConfig_;
-	static INITIATECONTROLLERS_1_0		initiateControllers_1_0_;
-	static INITIATECONTROLLERS_1_1		initiateControllers_1_1_;
+	static INITIATECONTROLLERS			initiateControllers_;
 	static GETKEYS						getKeys_;
 	static READCONTROLLER				readController_;
 	static WMKEYDOWN					wmKeyDown_;
 	static WMKEYUP						wmKeyUp_;
-	static RUMBLECOMMAND				rumbleCommand_;
 
 	static CONTROL_INFO*				control_info;
-	static w							contVersion;
 };

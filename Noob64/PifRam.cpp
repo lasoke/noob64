@@ -51,103 +51,103 @@ void n64_cic_nus_6105(char chl[], char rsp[], int len)
 	}
 }
 
-void ProcessControllerCommand ( int Control, BYTE * Command) 
+void ProcesscontrollerCommand(int control, BYTE* command) 
 {
-	switch (Command[2]) 
+	switch (command[2]) 
 	{
 	case 0x00: // check
 	case 0xFF: // reset & check ?
-		if ((Command[1] & 0x80) != 0)
+		if ((command[1] & 0x80) != 0)
 			break;
-		//if (Command[0] != 1 || Command[1] != 3)
-	//		DebugError("What am I meant to do with this Controller Command");
+		//if (command[0] != 1 || command[1] != 3)
+	//		DebugError("What am I meant to do with this controller command");
 		
-		if (CONTROLLER::controllers[Control].Present) 
+		if (CONTROLLER::controllers[control].Present) 
 		{
-			Command[3] = 0x05;
-			Command[4] = 0x00;
-			switch ( CONTROLLER::controllers[Control].Plugin) 
+			command[3] = 0x05;
+			command[4] = 0x00;
+			switch ( CONTROLLER::controllers[control].Plugin) 
 			{
 				case PLUGIN_RUMBLE_PAK: 
-					Command[5] = 1; 
+					command[5] = 1; 
 					break;
 				case PLUGIN_MEMPAK: 
-					Command[5] = 1; break;
+					command[5] = 1; break;
 				case PLUGIN_RAW: 
-					Command[5] = 1; 
+					command[5] = 1; 
 					break;
 				default: 
-					Command[5] = 0; 
+					command[5] = 0; 
 					break;
 			}
 		}
 		else
 		{
-			Command[1] |= 0x80;
+			command[1] |= 0x80;
 		}
 		break;
 
 	case 0x01: // read controller
-		/*if (Command[0] != 1 || Command[1] != 4)
-			DebugError("What am I meant to do with this Controller Command");*/
-		if (!CONTROLLER::controllers[Control].Present)
-			Command[1] |= 0x80;
+		/*if (command[0] != 1 || command[1] != 4)
+			DebugError("What am I meant to do with this controller command");*/
+		if (!CONTROLLER::controllers[control].Present)
+			command[1] |= 0x80;
 		break;
 	case 0x02: //read from controller pack
-		/*if (LogOptions.LogControllerPak) 
-			LogControllerPakData("Read: Before Gettting Results");
-		if (Command[0] != 3 || Command[1] != 33)
-			DebugError("What am I meant to do with this Controller Command");*/
-		if (CONTROLLER::controllers[Control].Present)
+		/*if (LogOptions.LogcontrollerPak) 
+			LogcontrollerPakData("Read: Before Gettting Results");
+		if (command[0] != 3 || command[1] != 33)
+			DebugError("What am I meant to do with this controller command");*/
+		if (CONTROLLER::controllers[control].Present)
 		{
-			DWORD address = ((Command[3] << 8) | Command[4]);
-			switch (CONTROLLER::controllers[Control].Plugin) 
+			DWORD address = ((command[3] << 8) | command[4]);
+			switch (CONTROLLER::controllers[control].Plugin) 
 			{
 				case PLUGIN_RUMBLE_PAK:
-					memset(&Command[5], (address >= 0x8000 && address < 0x9000) ? 0x80 : 0x00, 0x20);
-				//	Command[0x25] = Mempacks_CalulateCrc(&Command[5]);
+					memset(&command[5], (address >= 0x8000 && address < 0x9000) ? 0x80 : 0x00, 0x20);
+				//	command[0x25] = Mempacks_CalulateCrc(&command[5]);
 					break;
 				case PLUGIN_MEMPAK: 
-				//	ReadFromMempak(Control, address, &Command[5]); 
+				//	ReadFromMempak(control, address, &command[5]); 
 					break;
 				case PLUGIN_RAW: 
-					CONTROLLER::controllerCommand(Control, Command);
+					CONTROLLER::controllerCommand(control, command);
 					break;
 				default:
-					memset(&Command[5], 0, 0x20);
-					Command[0x25] = 0;
+					memset(&command[5], 0, 0x20);
+					command[0x25] = 0;
 					break;
 			}
 		} 
 		else
 		{
-			Command[1] |= 0x80;
+			command[1] |= 0x80;
 		}
 		break;
 	case 0x03: //write controller pak
-		/*if (Command[0] != 35 || Command[1] != 1) 
-			DebugError("What am I meant to do with this Controller Command");*/
+		/*if (command[0] != 35 || command[1] != 1) 
+			DebugError("What am I meant to do with this controller command");*/
 		
-		if (CONTROLLER::controllers[Control].Present)
+		if (CONTROLLER::controllers[control].Present)
 		{
-			DWORD address = ((Command[3] << 8) | Command[4]);
-			switch (CONTROLLER::controllers[Control].Plugin) 
+			DWORD address = ((command[3] << 8) | command[4]);
+			switch (CONTROLLER::controllers[control].Plugin) 
 			{
 				case PLUGIN_MEMPAK: 
-				//	WriteToMempak(Control, address, &Command[5]); 
+				//	WriteToMempak(control, address, &command[5]); 
 					break;
 				case PLUGIN_RAW: 
-					CONTROLLER::controllerCommand(Control, Command);
+					CONTROLLER::controllerCommand(control, command);
 					break;
 				case PLUGIN_RUMBLE_PAK: 
-					CONTROLLER::rumbleCommand(Control, *(BOOL *)(&Command[5]));
+					//CONTROLLER::rumblecommand(control, *(BOOL *)(&command[5]));
 					break;
 				default:
-					//Command[0x25] = Mempacks_CalulateCrc(&Command[5]);
+					//command[0x25] = Mempacks_CalulateCrc(&command[5]);
 					break;
 			}
 		} else {
-			Command[1] |= 0x80;
+			command[1] |= 0x80;
 		}
 		break;
 	default:
@@ -155,7 +155,7 @@ void ProcessControllerCommand ( int Control, BYTE * Command)
 	}
 }
 
-void PIF_RAM::PifRamWrite (void)
+void PIF_RAM::PifRamWrite(void)
 {
 /*	int Channel = 0, CurPos = 0;
 	char Challenge[30], Response[30];
@@ -230,7 +230,7 @@ void PIF_RAM::PifRamWrite (void)
 						if (CONTROLLER::controllers[Channel].Present && CONTROLLER::controllers[Channel].RawData)
 								CONTROLLER::controllerCommand(Channel,&data.pram[CurPos]);
 						else
-							ProcessControllerCommand(Channel,&data.pram[CurPos]);
+							ProcesscontrollerCommand(Channel,&data.pram[CurPos]);
 					}
 					//else if (Channel == 4)
 					//	EepromCommand(&data.pram[CurPos]);
@@ -242,7 +242,7 @@ void PIF_RAM::PifRamWrite (void)
 				else 
 				{
 					//if (ShowPifRamErrors)
-					//	DisplayError("Unknown Command in PifRamWrite(%X)",data.pram[CurPos]);
+					//	DisplayError("Unknown command in PifRamWrite(%X)",data.pram[CurPos]);
 					CurPos = 0x40;
 				}
 				break;
@@ -270,5 +270,5 @@ void PIF_RAM::PifRamWrite (void)
 		data.pram[4] = 0x02;
 	}
 	data.pram[0x3F] = 0;
-	//CONTROLLER::controllerCommand(-1,NULL);
+	CONTROLLER::controllerCommand(-1, NULL);
 }

@@ -54,3 +54,4 @@ typedef void (__cdecl* DLLCONFIG)(HWND);
 typedef void (__cdecl* DLLTEST)(HWND);
 typedef void (__cdecl* GETDLLINFO)(PLUGIN_INFO*);
 typedef void (__cdecl* ROMCLOSED)(void);
+typedef void (__cdecl* ROMOPEN)(void);

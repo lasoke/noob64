@@ -210,19 +210,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// Parse the menu selections:
 		switch (wmId)
 		{
-		case ID_FILE_PLAY:										// When we click on Play:
+		case ID_FILE_PLAY:															// When we click on Play:
 			char tmp_path[_MAX_PATH];
 			EnableMenuItem(GetMenu(hWnd), ID_FILE_PLAY, MF_BYCOMMAND | MF_GRAYED);	// We disable the Play button
+
 			RCP::setROM(new ROM(rom_path));											// Sets up the RCP with the given ROM
 			strcpy(tmp_path, main_directory);
-			strcat(tmp_path, "plugin\\RSP.dll");
+			strcat(tmp_path, "plugin\\mupen64_rsp_hle.dll");
 			RSP::load(tmp_path, hWnd);												// We create the RSP plugin
 			strcpy(tmp_path, main_directory);
-			strcat(tmp_path, "plugin\\Jabo_Direct3D8.dll");
+			strcat(tmp_path, "plugin\\Jabo_Direct3D8_1_0.dll");
 			GFX::load(tmp_path, hWnd, hStatusBar);									// We create the GFX plugin
 			strcpy(tmp_path, main_directory);
 			strcat(tmp_path, "plugin\\AudioHLE.dll");
 			AUDIO::load(tmp_path, hWnd);											// We create the AUDIO plugin
+			strcpy(tmp_path, main_directory);
+			strcat(tmp_path, "plugin\\NRage Input 2.2.2 Beta.dll");
+			//CONTROLLER::load(tmp_path, hWnd);								// We create the CONTROLLER plugin
+
 			audioThread = CreateThread(0, 0, sound, 0, 0, 0);						// Creates the audio thread
 			emuThread = CreateThread(0, 0, boot, 0, 0, 0);							// Creates the emulation thread
 			break;
@@ -253,9 +258,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_DESTROY:
-		if (GFX::isLoaded())	{ GFX::closeDLL(); }
-		if (AUDIO::isLoaded())	{ AUDIO::closeDLL(); }
-		if (RSP::isLoaded())	{ RSP::closeDLL(); }
+		if (CONTROLLER::isLoaded())	{ CONTROLLER::closeDLL(); }
+		if (AUDIO::isLoaded())		{ AUDIO::closeDLL(); }
+		if (GFX::isLoaded())		{ GFX::closeDLL(); }
+		if (RSP::isLoaded())		{ RSP::closeDLL(); }
 		CloseHandle(emuThread);
 		PostQuitMessage(0);
 		break;

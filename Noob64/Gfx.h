@@ -82,7 +82,6 @@ typedef bool (__cdecl* INITIATEGFX)(GFX_INFO);
 typedef void (__cdecl* MOVESCREEN)(int, int);
 typedef void (__cdecl* PROCESSDLIST)(void);
 typedef void (__cdecl* PROCESSRDPLIST)(void);
-typedef void (__cdecl* ROMOPEN)(void);
 typedef void (__cdecl* SHOWCFB)(void);
 typedef void (__cdecl* UPDATESCREEN)(void);
 typedef void (__cdecl* VISTATUSCHANGED)(void);
