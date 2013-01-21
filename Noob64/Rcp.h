@@ -102,6 +102,7 @@ public:
 	static inline SI*			getSI(void);
 	static inline PIF_ROM*		getPifRom(void);
 	static inline PIF_RAM*		getPifRam(void);
+	static inline byte*			getSRAM(void);
 
 	static inline ROM*			getROM(void);
 

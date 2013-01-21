@@ -387,6 +387,8 @@ inline char* MMU::virtual_to_physical(word a)
 	if (KSEG2 <= a && a <= KSEG3-1)			throw TLB_NOT_HANDLED; // TLB mapped
 	if (KSEG3 <= a && a <= 0xFFFFFFFF)		throw TLB_NOT_HANDLED; // TLB mapped
 
+	if (a == 0x05000508) return ((char *) RCP::getSRAM());
+
 	cerr << endl << "ERROR: Virtual address 0x" << hex << a << " not handled" << endl;
 	throw VIRTUAL_ADDRESS_ERROR;
 }

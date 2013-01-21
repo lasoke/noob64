@@ -67,11 +67,11 @@ void R4300i::reset()
 	running					= true;
 	cic_chip				= 0;
 	interrupt_detected		= false;
-	rounding_mode			= 0x33F;
-	round_mode				= 0x33F;
-	trunc_mode				= 0xF3F;
-	ceil_mode				= 0xB3F;
-	floor_mode				= 0x73F;
+	rounding_mode			= _RC_NEAR;
+	round_mode				= _RC_NEAR;
+	trunc_mode				= _RC_CHOP;
+	ceil_mode				= _RC_UP;
+	floor_mode				= _RC_DOWN;
 
 	MMU::reset();
 	TimerHandler::reset();
