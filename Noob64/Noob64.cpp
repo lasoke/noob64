@@ -52,9 +52,7 @@ void inline enableConsole()
 	freopen_s(&stream, "conout$","w", stderr);
 }
 
-string rsp_path		= "C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_rsp_hle.dll";
-string gfx_path		= "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Plugin\\Jabo_Direct3D8_1_0.dll";
-string audio_path	= "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Plugin\\AudioHLE.dll";
+char main_directory[_MAX_PATH];
 string rom_path		= "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
 
 HANDLE emuThread;
@@ -98,6 +96,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	// Initialize global strings
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadString(hInstance, IDC_NOOB64, szWindowClass, MAX_LOADSTRING);
+	Set_Noob64_Directory();
 	MyRegisterClass(hInstance);
 
 	// Perform application initialization:
@@ -211,12 +210,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// Parse the menu selections:
 		switch (wmId)
 		{
-		case ID_FILE_PLAY:															// When we click on Play:
+		case ID_FILE_PLAY:										// When we click on Play:
+			char tmp_path[_MAX_PATH];
 			EnableMenuItem(GetMenu(hWnd), ID_FILE_PLAY, MF_BYCOMMAND | MF_GRAYED);	// We disable the Play button
 			RCP::setROM(new ROM(rom_path));											// Sets up the RCP with the given ROM
-			RSP::load(rsp_path, hWnd);												// We create the RSP plugin
-			GFX::load(gfx_path, hWnd, hStatusBar);									// We create the GFX plugin
-			AUDIO::load(audio_path, hWnd);											// We create the AUDIO plugin
+			strcpy(tmp_path, main_directory);
+			strcat(tmp_path, "plugin\\RSP.dll");
+			RSP::load(tmp_path, hWnd);												// We create the RSP plugin
+			strcpy(tmp_path, main_directory);
+			strcat(tmp_path, "plugin\\Jabo_Direct3D8.dll");
+			GFX::load(tmp_path, hWnd, hStatusBar);									// We create the GFX plugin
+			strcpy(tmp_path, main_directory);
+			strcat(tmp_path, "plugin\\AudioHLE.dll");
+			AUDIO::load(tmp_path, hWnd);											// We create the AUDIO plugin
 			audioThread = CreateThread(0, 0, sound, 0, 0, 0);						// Creates the audio thread
 			emuThread = CreateThread(0, 0, boot, 0, 0, 0);							// Creates the emulation thread
 			break;
@@ -277,4 +283,19 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	return (INT_PTR)FALSE;
+}
+
+void Set_Noob64_Directory()
+{
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	char	path_buffer[_MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR];
+	char	fname[_MAX_FNAME], ext[_MAX_EXT];
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+	GetModuleFileName(NULL, path_buffer, sizeof(path_buffer));
+	_splitpath(path_buffer, drive, dir, fname, ext);
+
+	/* Set the main noob64.exe directory */
+	strcpy(main_directory, drive);
+	strcat(main_directory, dir);
 }

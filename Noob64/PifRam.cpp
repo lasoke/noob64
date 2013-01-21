@@ -157,7 +157,7 @@ void ProcessControllerCommand ( int Control, BYTE * Command)
 
 void PIF_RAM::PifRamWrite (void)
 {
-	int Channel = 0, CurPos = 0;
+/*	int Channel = 0, CurPos = 0;
 	char Challenge[30], Response[30];
 	Channel = 0;
 
@@ -199,8 +199,8 @@ void PIF_RAM::PifRamWrite (void)
 			break;
 		default:
 			;
-			/*if (ShowPifRamErrors)
-				DisplayError("Unkown PifRam control: %d",PIF_Ram[0x3F]);*/
+			//if (ShowPifRamErrors)
+			//	DisplayError("Unkown PifRam control: %d",PIF_Ram[0x3F]);
 		}
 		return;
 	}
@@ -221,7 +221,7 @@ void PIF_RAM::PifRamWrite (void)
 			case 0xB4: 
 			case 0x56: 
 			case 0xB8: 
-				break; /* ??? */
+				break;
 			default:
 				if (!(data.pram[CurPos] & 0xC0)) 
 				{
@@ -232,10 +232,10 @@ void PIF_RAM::PifRamWrite (void)
 						else
 							ProcessControllerCommand(Channel,&data.pram[CurPos]);
 					}
-					/*else if (Channel == 4)
-						EepromCommand(&data.pram[CurPos]);
-					else 
-						DebugError("Command on channel 5?");*/
+					//else if (Channel == 4)
+					//	EepromCommand(&data.pram[CurPos]);
+					//else 
+					//	DebugError("Command on channel 5?");
 					CurPos += data.pram[CurPos] + (data.pram[CurPos + 1] & 0x3F) + 1;
 					Channel += 1;
 				} 
@@ -248,11 +248,27 @@ void PIF_RAM::PifRamWrite (void)
 				break;
 		}
 		CurPos++;
+	}*/
+
+	if (data.pram[0] == 0xFF)
+	{
+		data.pram[4] = 0x05;
+		data.pram[5] = 0x00;
+		data.pram[6] = 0x02;
+		data.pram[10] |= 0x80;
+		data.pram[18] |= 0x80;
+		data.pram[26] |= 0x80;
 	}
-//	data.pram[0x04] = 0x05;
-//	data.pram[0x05] = 0x00;
-//	data.pram[0x06] = 0x02;
-//	data.pram[0x07] = 0xff;
+	else if (data.pram[4] == 0xFF)
+	{
+		data.pram[8] = 0;
+		data.pram[9] = 0x80;
+		data.pram[10] = 0;
+	}
+	else if (data.pram[3] == 0xFF)
+	{
+		data.pram[4] = 0x02;
+	}
 	data.pram[0x3F] = 0;
-	CONTROLLER::controllerCommand(-1,NULL);
+	//CONTROLLER::controllerCommand(-1,NULL);
 }

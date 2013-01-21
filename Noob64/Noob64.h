@@ -66,3 +66,5 @@ enum NOOB64_EXCEPTION
 	TLB_NOT_HANDLED,		// Thrown when we try to access an unregister TLB address
 	TIMER_BROKEN			// Thrown when there is a problem with the timer handler
 };
+
+void Set_Noob64_Directory(void);
