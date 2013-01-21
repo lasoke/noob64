@@ -44,10 +44,10 @@ RSP_INFO*				RSP::rsp_info = 0;
 RSPDEBUG_INFO*			RSP::rspdebug_info = 0;
 DEBUG_INFO*				RSP::debug_info = 0;
 
-void RSP::load(string filename, HWND handle)
+bool RSP::load(string filename, HWND handle)
 {
 	if (!(hDLL = LoadLibrary(filename.c_str())))
-		throw PLUGIN_FAILED_TO_LOAD;
+		return loaded = false;
 
 	hWnd						= handle;
 
@@ -57,14 +57,22 @@ void RSP::load(string filename, HWND handle)
 	dllTest_					= (DLLTEST)	GetProcAddress(hDLL, "DllTest");
 	getDllInfo_					= (GETDLLINFO) GetProcAddress(hDLL, "GetDllInfo");
 	romClosed_					= (ROMCLOSED) GetProcAddress(hDLL, "RomClosed");
-
-	plugin_info					= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
-	getDllInfo_(plugin_info);
-
 	doRspCycles_				= (DORSPCYCLES) GetProcAddress(hDLL, "DoRspCycles");
 	getRspDebugInfo_			= (GETRSPDEBUGINFO) GetProcAddress(hDLL, "GetRspDebugInfo");
 	initiateRSP_				= (INITIATERSP) GetProcAddress(hDLL, "InitiateRSP");
 	initiateRSPDebugger_		= (INITIATERSPDEBUGGER) GetProcAddress(hDLL, "InitiateRSPDebugger");
+
+	if (!initiateRSP_) return loaded = false;
+
+	plugin_info					= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
+	getDllInfo_(plugin_info);
+
+	return loaded = true;
+}
+
+bool RSP::init(void)
+{
+	if (!loaded) return false;
 
 	rsp_info					= (RSP_INFO*) malloc(sizeof(RSP_INFO));
 	rspdebug_info				= getRspDebugInfo_ == NULL ? NULL : (RSPDEBUG_INFO*) malloc(sizeof(RSPDEBUG_INFO));
@@ -97,7 +105,6 @@ void RSP::load(string filename, HWND handle)
 	rsp_info->dpc_pipebusy_reg	= (word*) MMU::get(DPC_PIPEBUSY_REG);
 	rsp_info->dpc_tmem_reg		= (word*) MMU::get(DPC_TMEM_REG);
 
-	// TODO:
 	rsp_info->CheckInterrupts	= &R4300i::check_interrupt;
 	rsp_info->ProcessDList		= &GFX::processDList;
 	rsp_info->ProcessAList		= &AUDIO::processAList;
@@ -107,7 +114,7 @@ void RSP::load(string filename, HWND handle)
 	int cycles;
 	initiateRSP((word*)&cycles);
 
-	loaded = true;
+	return true;
 }
 
 void RSP::closeDLL()

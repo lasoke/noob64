@@ -111,8 +111,9 @@ protected:
 
 	static PLUGIN_INFO*		plugin_info;
 public:
-	static void load(string filename, HWND hWnd); // Plugs the DLL into the RCP
-	static void load(string filename, HWND hWnd, HWND hStatusWnd);	// Plugs the DLL into the RCP
+	static bool load(string filename, HWND hWnd); // Plugs the DLL into the RCP
+	static bool load(string filename, HWND hWnd, HWND hStatusWnd);	// Plugs the DLL into the RCP
+	static bool init(void);
 
 	static void romOpen(void);
 	static void controllerCommand(int Control, byte * Command);

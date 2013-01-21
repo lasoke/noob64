@@ -47,15 +47,15 @@ WMKEYUP						CONTROLLER::wmKeyUp_ = 0;
 CONTROL_INFO*				CONTROLLER::control_info = 0;
 CONTROL						CONTROLLER::controllers[4];
 
-void CONTROLLER::load(string filename, HWND hWnd)
+bool CONTROLLER::load(string filename, HWND hWnd)
 {
-	CONTROLLER::load(filename, hWnd, NULL);
+	return CONTROLLER::load(filename, hWnd, NULL);
 }
 
-void CONTROLLER::load(string filename, HWND handle, HWND hStatusWnd)
+bool CONTROLLER::load(string filename, HWND handle, HWND hStatusWnd)
 {
 	if (!(hDLL = LoadLibrary(filename.c_str())))
-		throw PLUGIN_FAILED_TO_LOAD;
+		return loaded = false;
 
 	hWnd						= handle;
 
@@ -65,10 +65,6 @@ void CONTROLLER::load(string filename, HWND handle, HWND hStatusWnd)
 	dllTest_					= (DLLTEST)	GetProcAddress(hDLL, "DllTest");
 	getDllInfo_					= (GETDLLINFO) GetProcAddress(hDLL, "GetDllInfo");
 	romClosed_					= (ROMCLOSED) GetProcAddress(hDLL, "RomClosed");
-
-	plugin_info					= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
-	getDllInfo_(plugin_info);
-	
 	romOpen_					= (ROMOPEN) GetProcAddress(hDLL, "RomOpen");
 	controllerCommand_			= (CONTROLLERCOMMAND) GetProcAddress(hDLL, "ControllerCommand");
 	initiateControllers_		= (INITIATECONTROLLERS) GetProcAddress(hDLL, "InitiateControllers");
@@ -76,6 +72,18 @@ void CONTROLLER::load(string filename, HWND handle, HWND hStatusWnd)
 	readController_				= (READCONTROLLER) GetProcAddress(hDLL, "ReadController");
 	wmKeyDown_					= (WMKEYDOWN) GetProcAddress(hDLL, "WM_KeyDown");
 	wmKeyUp_					= (WMKEYUP) GetProcAddress(hDLL, "WM_KeyUp");
+
+	if (!initiateControllers_) return loaded = false;
+
+	plugin_info					= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
+	getDllInfo_(plugin_info);
+
+	return loaded = true;
+}
+
+bool CONTROLLER::init(void)
+{
+	if (!loaded) return false;
 
 	control_info				= (CONTROL_INFO*) malloc(sizeof(CONTROL_INFO));
 
@@ -93,9 +101,9 @@ void CONTROLLER::load(string filename, HWND handle, HWND hStatusWnd)
 	}
 
 	initiateControllers();
-
 	romOpen();
-	loaded = true;
+
+	return true;
 }
 
 void CONTROLLER::closeDLL()

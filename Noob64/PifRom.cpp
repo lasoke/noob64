@@ -15,32 +15,38 @@
  *
  * Noob64 is freeware for PERSONAL USE only. Commercial users should
  * seek permission of the copyright holders first. Commercial use includes
- * chwing money for Noob64 or software derived from Noob64.
+ * charging money for Noob64 or software derived from Noob64.
  *
  * The copyright holders request that bug fixes and improvements to the code
  * should be forwarded to them so if they want them.
  *
  */
 
-#pragma once
+#include "StdAfx.h"
 
-#include "Rcp.h"
-
-//****************************************************************************
-//** PIF ROM																**
-//****************************************************************************
-
-#define PIF_ROM_SEG_BEG		0x1FC00000
-#define PIF_ROM_SEG_END		0x1FC007BF
-
-class PIF_ROM : public MEM_SEG
+void n64_cic_nus_6105(char chl[], char rsp[], int len)
 {
-public:
-	PIF_ROM();
-private:
-	struct {
-		byte prom[0x7C0];
-	} data;
-};
+	static char lut0[0x10] = {
+		0x4, 0x7, 0xA, 0x7, 0xE, 0x5, 0xE, 0x1, 
+		0xC, 0xF, 0x8, 0xF, 0x6, 0x3, 0x6, 0x9
+	};
+	static char lut1[0x10] = {
+		0x4, 0x1, 0xA, 0x7, 0xE, 0x5, 0xE, 0x1, 
+		0xC, 0x9, 0x8, 0x5, 0x6, 0x3, 0xC, 0x9
+	};
+	char key, *lut;
+	int i, sgn, mag, mod;
 
-void n64_cic_nus_6105(char chl[], char rsp[], int len);
+	for (key = 0xB, lut = lut0, i = 0; i < len; i++) {
+		rsp[i] = (key + 5 * chl[i]) & 0xF;
+		key = lut[rsp[i]];
+		sgn = (rsp[i] >> 3) & 0x1;
+		mag = ((sgn == 1) ? ~rsp[i] : rsp[i]) & 0x7;
+		mod = (mag % 3 == 1) ? sgn : 1 - sgn;
+		if (lut == lut1 && (rsp[i] == 0x1 || rsp[i] == 0x9))
+			mod = 1;
+		if (lut == lut1 && (rsp[i] == 0xB || rsp[i] == 0xE))
+			mod = 0;
+		lut = (mod == 1) ? lut1 : lut0;
+	}
+}

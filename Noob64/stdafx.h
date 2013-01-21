@@ -50,6 +50,7 @@
 #include <stdio.h>
 #include <string>
 #include <Commctrl.h>
+#include <Commdlg.h>
 
 #include "Noob64.h"
 #include "Commctrl.h"

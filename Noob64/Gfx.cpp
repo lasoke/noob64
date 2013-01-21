@@ -28,6 +28,7 @@
 bool			GFX::loaded = false;
 HINSTANCE		GFX::hDLL = 0;
 HWND			GFX::hWnd = 0;
+HWND			GFX::hStatusBar = 0;
 CLOSEDLL		GFX::closeDLL_ = 0;
 DLLABOUT		GFX::dllAbout_ = 0;
 DLLCONFIG		GFX::dllConfig_ = 0;
@@ -50,15 +51,15 @@ VISTATUSCHANGED	GFX::viStatusChanged_ = 0;
 VIWIDTHCHANGED	GFX::viWidthChanged_ = 0;
 GFX_INFO*		GFX::gfx_info = 0;
 
-void GFX::load(string filename, HWND hWnd)
+bool GFX::load(string filename, HWND hWnd)
 {
-	GFX::load(filename, hWnd, NULL);
+	return GFX::load(filename, hWnd, NULL);
 }
 
-void GFX::load(string filename, HWND handle, HWND hStatusBar)
+bool GFX::load(string filename, HWND handle, HWND hStatusBar)
 {
 	if (!(hDLL = LoadLibrary(filename.c_str())))
-		throw PLUGIN_FAILED_TO_LOAD;
+		return loaded = false;
 
 	hWnd						= handle;
 
@@ -68,10 +69,6 @@ void GFX::load(string filename, HWND handle, HWND hStatusBar)
 	dllTest_					= (DLLTEST)	GetProcAddress(hDLL, "DllTest");
 	getDllInfo_					= (GETDLLINFO) GetProcAddress(hDLL, "GetDllInfo");
 	romClosed_					= (ROMCLOSED) GetProcAddress(hDLL, "RomClosed");
-
-	plugin_info					= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
-	getDllInfo_(plugin_info);
-
 	captureScreen_				= (CAPTURESCREEN) GetProcAddress(hDLL, "CaptureScreen");
 	changeWindow_				= (CHANGEWINDOW) GetProcAddress(hDLL, "ChangeWindow");
 	drawScreen_					= (DRAWSCREEN) GetProcAddress(hDLL, "DrawScreen");
@@ -84,6 +81,18 @@ void GFX::load(string filename, HWND handle, HWND hStatusBar)
 	updateScreen_				= (UPDATESCREEN) GetProcAddress(hDLL, "UpdateScreen");
 	viStatusChanged_			= (VISTATUSCHANGED) GetProcAddress(hDLL, "ViStatusChanged");
 	viWidthChanged_				= (VIWIDTHCHANGED) GetProcAddress(hDLL, "ViWidthChanged");
+
+	if (!initiateGFX_) return loaded = false;
+
+	plugin_info					= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
+	getDllInfo_(plugin_info);
+
+	return loaded = true;
+}
+
+bool GFX::init(void)
+{
+	if (!loaded) return false;
 
 	gfx_info					= (GFX_INFO*) malloc(sizeof(GFX_INFO));
 
@@ -124,11 +133,10 @@ void GFX::load(string filename, HWND handle, HWND hStatusBar)
 
 	gfx_info->CheckInterrupts	= &R4300i::check_interrupt;
 
-	if (!initiateGFX())
-		throw PLUGIN_FAILED_TO_INIT;
+	if (!initiateGFX())	return false;
 
 	romOpen();
-	loaded = true;
+	return true;
 }
 
 void GFX::closeDLL()

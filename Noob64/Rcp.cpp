@@ -49,6 +49,8 @@
 
 void RCP::start()
 {
+	if (!GFX::init() || !AUDIO::init() /*|| !CONTROLLER::init()*/ || !RSP::init())
+		throw PLUGIN_FAILED_TO_INIT;
 	memset(SRAM, 0, sizeof(SRAM));
 	vi_field_number	= 0;
 	R4300i::start();

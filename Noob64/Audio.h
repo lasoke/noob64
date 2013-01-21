@@ -98,7 +98,8 @@ private:
 
 	static PLUGIN_INFO*		plugin_info;
 public:
-	static void load(string filename, HWND hWnd); // Plugs the DLL into the RCP
+	static bool load(string filename, HWND hWnd); // Plugs the DLL into the RCP
+	static bool init(void);
 
 	static void aiDacrateChanged(int);		// Changes the sound system changed
 	static void aiLenChanged(void);			// Notifies the DLL that AI_LEN_REG changed

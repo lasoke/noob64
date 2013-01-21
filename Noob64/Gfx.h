@@ -104,6 +104,7 @@ protected:
 	static bool				loaded;
 	static HINSTANCE		hDLL;
 	static HWND				hWnd;
+	static HWND				hStatusBar;
 
 	static CLOSEDLL			closeDLL_;
 	static DLLABOUT			dllAbout_;
@@ -114,8 +115,9 @@ protected:
 
 	static PLUGIN_INFO*		plugin_info;
 public:
-	static void load(string filename, HWND hWnd); // Plugs the DLL into the RCP
-	static void load(string filename, HWND hWnd, HWND hStatusBar);
+	static bool load(string filename, HWND hWnd); // Plugs the DLL into the RCP
+	static bool load(string filename, HWND hWnd, HWND hStatusBar);
+	static bool init(void);
 
 	static void captureScreen(char*);	// Makes a screenshot
 	static void changeWindow(void);		// Switches between fullscreen and window mode

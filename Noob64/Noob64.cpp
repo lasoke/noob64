@@ -30,6 +30,20 @@
 
 #define MAX_LOADSTRING 100
 
+#define PLUGIN_FAILED(ID)																		\
+	{																							\
+		DialogBox(hInst, MAKEINTRESOURCE(IDD_PLUGIN_FAILED_TO_LOAD), hWnd, About);				\
+		EnableMenuItem(GetMenu(hWnd), ID, MF_BYCOMMAND | MF_GRAYED);							\
+		EnableMenuItem(GetMenu(hWnd), ID_FILE_PLAY, MF_BYCOMMAND | MF_GRAYED);					\
+	}																							\
+
+#define PLUGIN_SUCCESS(ID)																		\
+	{																							\
+		EnableMenuItem(GetMenu(hWnd), ID, MF_BYCOMMAND);										\
+		if (GFX::isLoaded() & RSP::isLoaded() & AUDIO::isLoaded() & CONTROLLER::isLoaded())		\
+			EnableMenuItem(GetMenu(hWnd), ID_FILE_PLAY, MF_BYCOMMAND);							\
+	}																							\
+
 // Global Variables:
 HINSTANCE	hInst;							// Current instance
 HWND		hStatusBar;						// Status bar
@@ -56,23 +70,116 @@ string rsp_path			= "C:\\Users\\Romain\\Desktop\\Mupen64K 0.8\\plugin\\mupen64_r
 string gfx_path			= "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Plugin\\Jabo_Direct3D8_1_0.dll";
 string audio_path		= "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Plugin\\AudioHLE.dll";
 string controller_path	= "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Plugin\\NRage Input 2.2.2 Beta.dll";
-string rom_path			= "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
+string rom_path;	//	= "C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Super Mario 64.z64";
 
 HANDLE emuThread;
 HANDLE audioThread;
 
+// This is the sound function that is start within
+// a new thread (the audio thread).
 DWORD WINAPI sound(LPVOID lpParameter)
 {
-	//SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+	SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 	for (;;) AUDIO::aiUpdate(TRUE);
 	return 0;
 }
 
+// This is the boot function that is start within
+// a new thread (the emulation thread).
 DWORD WINAPI boot(LPVOID lpParameter)
 {
 	//enableConsole();						// Displays the console
 	RCP::start();							// Initializes the CPU and boots the ROM
 	return 0;
+}
+
+//
+//  FUNCTION: load_rom(HWND hWnd)
+//
+//  PURPOSE: Open a file dialog to select the ROM to play.
+//
+//  COMMENTS:
+//
+//    If no file is selected, the function returns false and
+//	  nothing happens.
+//
+bool load_rom(HWND hWnd)
+{
+	OPENFILENAME ofn;
+	char szFileName[MAX_PATH] = "";
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = hWnd;
+	ofn.lpstrFilter = "z64 files (*.z64)\0*.z64\0n64 files (*.n64)\0*.n64\0All Files (*.*)\0*.*\0";
+	ofn.lpstrFile = szFileName;
+	ofn.nMaxFile = MAX_PATH;
+	ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+	ofn.lpstrDefExt = "";
+	if (GetOpenFileName(&ofn))
+	{
+		rom_path = szFileName;
+		return true;
+	}
+	rom_path = "";
+	return false;
+}
+
+//
+//  FUNCTION: load_default_plugins()
+//
+//  PURPOSE: Loads the default plugins, defined programmatically.
+//
+void load_default_plugins(HWND hWnd)
+{
+	if (!RSP::load(rsp_path, hWnd))					// We disable the Configure RSP button because the plugin failed to load
+		PLUGIN_FAILED(ID_RSP_CONFIGURE)
+	if (!GFX::load(gfx_path, hWnd, hStatusBar))		// We disable the Configure VIDEO button because the plugin failed to load
+		PLUGIN_FAILED(ID_VIDEO_CONFIGURE)
+	if (!AUDIO::load(audio_path, hWnd)) 			// We disable the Configure AUDIO button because the plugin failed to load
+		PLUGIN_FAILED(ID_AUDIO_CONFIGURE)
+	if (!CONTROLLER::load(controller_path, hWnd))	// We disable the Configure CONTROLLER button because the plugin failed to load
+		PLUGIN_FAILED(ID_CONTROLLER_CONFIGURE)
+}
+
+//
+//  FUNCTION: select_plugin(HWND hWnd)
+//
+//  PURPOSE: Open a file dialog to select the plugin to use.
+//
+//  COMMENTS:
+//
+//    If no file is selected, the function returns false and
+//	  nothing happens.
+//
+bool select_plugin(HWND hWnd, int plugin_type)
+{
+	OPENFILENAME ofn;
+	char szFileName[MAX_PATH] = "";
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = hWnd;
+	ofn.lpstrFilter = "DLL files (*.dll)\0*.dll\0";
+	ofn.lpstrFile = szFileName;
+	ofn.nMaxFile = MAX_PATH;
+	ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+	ofn.lpstrDefExt = "";
+	if (GetOpenFileName(&ofn))
+	{
+		switch (plugin_type)
+		{
+		case PLUGIN_TYPE_RSP:
+			return RSP::load(szFileName, hWnd);
+		case PLUGIN_TYPE_GFX:
+			return GFX::load(szFileName, hWnd);
+		case PLUGIN_TYPE_AUDIO:
+			return AUDIO::load(szFileName, hWnd);
+		case PLUGIN_TYPE_CONTROLLER:
+			return CONTROLLER::load(szFileName, hWnd);
+		default:
+			return false;
+		}
+	}
+	return false;
 }
 
 // Main
@@ -85,13 +192,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	// MAIN CODE HERE
-
-	//if (!(LoadLibrary("C:\\Users\\Romain\\Desktop\\EPITA\\Noob64\\Plugin\\GlideHQ.dll")))
-	//{
-	//	enableConsole();
-	//	cout << GetLastError();
-	//	getchar();
-	//}
 
 	MSG msg;
 	HACCEL hAccelTable;
@@ -168,24 +268,26 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   HWND hWnd;
+	HWND hWnd;
 
-   hInst = hInstance; // Store instance handle in our global variable
+	hInst = hInstance; // Store instance handle in our global variable
 
-   hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+	hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
-   if (!hWnd)
-   {
-      return FALSE;
-   }
+	if (!hWnd)
+	{
+		return FALSE;
+	}
 
-   hStatusBar = CreateStatusWindow(WS_CHILD | WS_VISIBLE, "", hWnd, 0);
+	hStatusBar = CreateStatusWindow(WS_CHILD | WS_VISIBLE, "", hWnd, 0);
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+	ShowWindow(hWnd, nCmdShow);
+	UpdateWindow(hWnd);
 
-   return TRUE;
+	load_default_plugins(hWnd);
+
+	return TRUE;
 }
 
 //
@@ -213,20 +315,45 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wmId)
 		{
 		case ID_FILE_PLAY:															// When we click on Play
+			if (!load_rom(hWnd)) break;												// if load_rom returned false, we abort
 			EnableMenuItem(GetMenu(hWnd), ID_FILE_PLAY, MF_BYCOMMAND | MF_GRAYED);	// We disable the Play button
-
 			RCP::setROM(new ROM(rom_path));											// Sets up the RCP with the given ROM
-			RSP::load(rsp_path, hWnd);												// We create the RSP plugin
-			GFX::load(gfx_path, hWnd, hStatusBar);									// We create the GFX plugin
-			AUDIO::load(audio_path, hWnd);											// We create the AUDIO plugin
-			//CONTROLLER::load(controller_path, hWnd);								// We create the CONTROLLER plugin
-			
 			audioThread = CreateThread(0, 0, sound, 0, 0, 0);						// Creates the audio thread
 			emuThread = CreateThread(0, 0, boot, 0, 0, 0);							// Creates the emulation thread
 			break;
-		case ID_SETTINGS_PLUGINS:
-			if (GFX::isLoaded())	{ GFX::dllConfig(); }
+
+		case ID_VIDEO_CHANGEPLUGIN:
+			if (select_plugin(hWnd, PLUGIN_TYPE_GFX)) PLUGIN_SUCCESS(ID_VIDEO_CONFIGURE)
+			else PLUGIN_FAILED(ID_VIDEO_CONFIGURE)
 			break;
+		case ID_VIDEO_CONFIGURE:
+			GFX::dllConfig();
+			break;
+
+		case ID_AUDIO_CHANGEPLUGIN:
+			if (select_plugin(hWnd, PLUGIN_TYPE_AUDIO)) PLUGIN_SUCCESS(ID_AUDIO_CONFIGURE)
+			else PLUGIN_FAILED(ID_AUDIO_CONFIGURE)
+			break;
+		case ID_AUDIO_CONFIGURE:
+			AUDIO::dllConfig();
+			break;
+
+		case ID_CONTROLLER_CHANGEPLUGIN:
+			if (select_plugin(hWnd, PLUGIN_TYPE_CONTROLLER)) PLUGIN_SUCCESS(ID_CONTROLLER_CONFIGURE)
+			else PLUGIN_FAILED(ID_CONTROLLER_CONFIGURE)
+			break;
+		case ID_CONTROLLER_CONFIGURE:
+			CONTROLLER::dllConfig();
+			break;
+
+		case ID_RSP_CHANGEPLUGIN:
+			if (select_plugin(hWnd, PLUGIN_TYPE_RSP)) PLUGIN_SUCCESS(ID_RSP_CONFIGURE)
+			else PLUGIN_FAILED(ID_RSP_CONFIGURE)
+			break;
+		case ID_RSP_CONFIGURE:
+			RSP::dllConfig();
+			break;
+
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 			break;

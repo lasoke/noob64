@@ -44,10 +44,10 @@ INITIATEAUDIO		AUDIO::initiateAudio_ = 0;
 PROCESSALIST		AUDIO::processAList_ = 0;
 AUDIO_INFO*			AUDIO::audio_info = 0;
 
-void AUDIO::load(string filename, HWND handle)
+bool AUDIO::load(string filename, HWND handle)
 {
 	if (!(hDLL = LoadLibrary(filename.c_str())))
-		throw PLUGIN_FAILED_TO_LOAD;
+		return loaded = false;
 
 	hWnd						= handle;
 
@@ -57,16 +57,24 @@ void AUDIO::load(string filename, HWND handle)
 	dllTest_					= (DLLTEST)	GetProcAddress(hDLL, "DllTest");
 	getDllInfo_					= (GETDLLINFO) GetProcAddress(hDLL, "GetDllInfo");
 	romClosed_					= (ROMCLOSED) GetProcAddress(hDLL, "RomClosed");
-
-	plugin_info					= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
-	getDllInfo_(plugin_info);
-
 	aiDacrateChanged_			= (AIDACRATECHANGED) GetProcAddress(hDLL, "AiDacrateChanged");
 	aiLenChanged_				= (AILENCHANGED) GetProcAddress(hDLL, "AiLenChanged");
 	aiReadLength_				= (AIREADLENGTH) GetProcAddress(hDLL, "AiReadLength");
 	aiUpdate_					= (AIUPDATE) GetProcAddress(hDLL, "AiUpdate");
 	initiateAudio_				= (INITIATEAUDIO) GetProcAddress(hDLL, "InitiateAudio");
 	processAList_				= (PROCESSALIST) GetProcAddress(hDLL, "ProcessAList");
+
+	if (!initiateAudio_) return loaded = false;
+
+	plugin_info					= (PLUGIN_INFO*) malloc(sizeof(PLUGIN_INFO));
+	getDllInfo_(plugin_info);
+
+	return loaded = true;
+}
+
+bool AUDIO::init(void)
+{
+	if (!loaded) return false;
 
 	audio_info					= (AUDIO_INFO*) malloc(sizeof(AUDIO_INFO));
 
@@ -90,10 +98,9 @@ void AUDIO::load(string filename, HWND handle)
 
 	audio_info->CheckInterrupts	= &R4300i::check_interrupt;
 
-	if (!initiateAudio())
-		throw PLUGIN_FAILED_TO_INIT;
+	if (!initiateAudio()) return false;
 
-	loaded = true;
+	return true;
 }
 
 void AUDIO::closeDLL()

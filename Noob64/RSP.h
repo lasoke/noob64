@@ -147,7 +147,8 @@ private:
 	static PLUGIN_INFO*		plugin_info;
 
 public:
-	static void load(string filename, HWND hWnd);	// Plugs the DLL into the RCP
+	static bool load(string filename, HWND hWnd);	// Plugs the DLL into the RCP
+	static bool init(void);
 
 	static word doRspCycles(word);			// Allows the RSP to run in parrel with the CPU
 	static void getRspDebugInfo(void);		// Retreives the debug info of the RSP
